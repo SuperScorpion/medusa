@@ -23,6 +23,8 @@ public class Home {
     public static String entityNameSuffix;//实体文件后缀名
     public static String lazyLoad;
 
+    public static final String mixMapper = "com.jy.medusa.commons.Mapper";
+
     String packagePath;
     String tableName;
     String jdbcName;
@@ -39,6 +41,7 @@ public class Home {
     String validJsonStr;//参数校验
     String ignorAssociation;//忽略的不映射的普通数据库字段
     String pluralAssociation;//设定映射字段的后罪名
+    String baseServiceSwitch;///是否生成基础的service类
 
     public Home(String medusaProName) {
         this.medusaProName = medusaProName;
@@ -57,7 +60,7 @@ public class Home {
 
     public void process() {
 
-        System.out.println("**^_^**   有问题或者建议请联系 我为liam上王者 ");
+        System.out.println("**^_^**   有问题或者建议请联系 Binya ");
 
         loadProperties(medusaProName);
 
@@ -126,6 +129,8 @@ public class Home {
 
             }
         }
+
+        if(StringUtils.isNotBlank(baseServiceSwitch)) new GenBaseService(servicePath, tag).process();//处理生成基础的 service
     }
 
     private JSONObject parseValidJson(String validJsonStr) {
@@ -215,6 +220,7 @@ public class Home {
         this.author = StringUtils.isBlank(props.getProperty("medusa.author")) ? "administrator" : props.getProperty("medusa.author");
         this.entityNameSuffix = props.getProperty("medusa.entityNameSuffix") == null ? "" : props.getProperty("medusa.entityNameSuffix");
         this.lazyLoad = StringUtils.isBlank(props.getProperty("medusa.lazyLoad"))  ? "" : "fetchType=\"lazy\"";
+        this.baseServiceSwitch = StringUtils.isBlank(props.getProperty("medusa.baseServiceSwitch"))  ? "" : "gen";
 
         //this.basePoPath = props.getProperty("medusa.basePoPath");
 //        this.baseMapperPath = props.getProperty("medusa.baseMapperPath");

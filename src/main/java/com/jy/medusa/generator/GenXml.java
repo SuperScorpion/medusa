@@ -133,7 +133,7 @@ public class GenXml {
             }
 
             //外间关联
-            //if(StringUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].contains("_id") && !ignorArrayAssociation.contains(colSqlNames[i])) {
+            //if(StringUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !ignorArrayAssociation.contains(colSqlNames[i])) {
 
                 /*String p = colSqlNames[i].trim().replace("_id", "").trim().concat(pluralAssociation);
                 String bigStr = MyGenUtils.upcaseFirst(p);
@@ -157,7 +157,7 @@ public class GenXml {
         for (int i = 0; i < colSqlNames.length; i++) {
 
             //外间关联
-            if(StringUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].contains("_id") && !ignorArrayAssociation.contains(colSqlNames[i])) {
+            if(StringUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !ignorArrayAssociation.contains(colSqlNames[i])) {
 
                 String p = colSqlNames[i].trim().replace("_id", "").trim().concat(pluralAssociation);
                 String bigStr = MyGenUtils.upcaseFirst(p);
@@ -183,7 +183,7 @@ public class GenXml {
         for (int i = 0; i < colSqlNames.length; i++) {
 
             //外间关联sss
-            if(StringUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].contains("_id") && !ignorArrayAssociation.contains(colSqlNames[i])) {
+            if(StringUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !ignorArrayAssociation.contains(colSqlNames[i])) {
 
                 String p = colSqlNames[i].trim().replace("_id", "").trim().concat(pluralAssociation);
                 String bigStr = MyGenUtils.upcaseFirst(p);
