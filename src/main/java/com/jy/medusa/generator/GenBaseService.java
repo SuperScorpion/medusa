@@ -61,9 +61,9 @@ public class GenBaseService {
                 "\n" +
                 "\tT selectOne(T entity, Object... ps);\n" +
                 "\n" +
-                "\tT findById(Integer id, Object... ps);\n" +
+                "\tT selectById(Integer id, Object... ps);\n" +
                 "\n" +
-                "\tList<T> findListBy(T po, Object... ps);\n" +
+                "\tList<T> selectListBy(T po, Object... ps);\n" +
                 "\n" +
                 "\tint saveOrUpdate(T t);\n" +
                 "\n" +
@@ -77,7 +77,7 @@ public class GenBaseService {
                 "\n" +
                 "\tint deleteMulti(List<Integer> ids);\n" +
                 "\n" +
-                "\tList<T> selectByCondition(T po, Object... ps);\n" +
+                "\tList<T> selectByComplex(T po, Object... ps);\n" +
                 "}");
 
         MyGenUtils.processAllRemains(markServiceList, sbb, tag, "service");
@@ -118,11 +118,11 @@ public class GenBaseService {
                 "\t\treturn mapper.selectOne(entity, ps);\n" +
                 "\t}\n" +
                 "\n" +
-                "\tpublic T findById(Integer id, Object... ps) {\n" +
+                "\tpublic T selectById(Integer id, Object... ps) {\n" +
                 "\t\treturn mapper.selectByPrimaryKey(id, ps);\n" +
                 "\t}\n" +
                 "\n" +
-                "\tpublic List<T> findListBy(T po, Object... ps) {\n" +
+                "\tpublic List<T> selectListBy(T po, Object... ps) {\n" +
                 "\t\treturn mapper.select(po, ps);\n" +
                 "\t}\n" +
                 "\n" +
@@ -150,7 +150,7 @@ public class GenBaseService {
                 "\t\treturn mapper.deleteBatch(ids);\n" +
                 "\t}\n" +
                 "\n" +
-                "\tpublic List<T> selectByCondition(T t, Object... ps) {\n" +
+                "\tpublic List<T> selectByComplex(T t, Object... ps) {\n" +
                 "\t\treturn mapper.medusaGaze(t, ps);\n" +
                 "\t}\n" +
                 "}");
