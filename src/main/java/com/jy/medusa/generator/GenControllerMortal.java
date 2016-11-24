@@ -99,7 +99,7 @@ public class GenControllerMortal {
 
         sbb.append("\t\t" + "Pager<" + entityName + Home.entityNameSuffix +"> pager = MyRestrictions.getPager().setPageSize(10);\r\n\r\n");
 
-        sbb.append("\t\t" + MyGenUtils.lowcaseFirst(entityName) + "Service.selectByCondition(param, pager);\r\n\r\n");
+        sbb.append("\t\t" + MyGenUtils.lowcaseFirst(entityName) + "Service.selectByComplex(param, pager);\r\n\r\n");
 
         sbb.append("\t\t" + "model.put(\"result\", pager);\r\n\r\n");
 
@@ -134,7 +134,7 @@ public class GenControllerMortal {
         sbb.append("\t@RequestMapping(value = \"/toUpdate.do\", method = RequestMethod.GET)\r\n");
         sbb.append("\tpublic String toUpdate(@RequestParam Integer id, ModelMap model, HttpServletRequest request) {\r\n\r\n");
 
-        sbb.append("\t\t" + entityName + " param = " + MyGenUtils.lowcaseFirst(entityName) + "Service.findById(id);\r\n\r\n");
+        sbb.append("\t\t" + entityName + " param = " + MyGenUtils.lowcaseFirst(entityName) + "Service.selectById(id);\r\n\r\n");
 
         sbb.append("\t\tmodel.put(\"result\", param);\r\n\r\n");
 

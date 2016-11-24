@@ -82,7 +82,7 @@ public class GenService {
 
         sbb.append("public interface "+ entityName +"Service extends BaseService<" + entityName+ Home.entityNameSuffix + "> {\r\n");
 
-/*        sbb.append("\t" + entityName + " findById(" + entityName + " entity);\r\n\r\n");
+/*        sbb.append("\t" + entityName + " selectById(" + entityName + " entity);\r\n\r\n");
         sbb.append("\tvoid save" + entityName + "(" + entityName + " entity);\r\n\r\n");
         sbb.append("\tvoid update" + entityName + "(" + entityName + " entity);\r\n\r\n");
         sbb.append("\tvoid delete" + entityName + "(" + entityName + " entity);\r\n\r\n");
@@ -128,8 +128,8 @@ public class GenService {
         sbb.append("\tprivate Mapper<" + entityName + ",Integer> superMapper;\r\n\r\n");
 
         sbb.append("\t@Override\r\n");
-        sbb.append("\tpublic " + entityName + " findById(" + entityName + " entity) {\r\n");
-        sbb.append("\t\treturn superMapper.findOneById(entity);\r\n");
+        sbb.append("\tpublic " + entityName + " selectById(" + entityName + " entity) {\r\n");
+        sbb.append("\t\treturn superMapper.selectOneById(entity);\r\n");
         sbb.append("\t}\r\n\r\n");
 
         sbb.append("\t@Override\r\n");
