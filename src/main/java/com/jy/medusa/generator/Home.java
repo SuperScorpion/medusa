@@ -60,7 +60,7 @@ public class Home {
 
     public void process() {
 
-        System.out.println("**^_^**   有问题或者建议请联系 Binya ");
+        System.out.println("**^_^**   有问题或者建议请联系 XBinya ");
 
         loadProperties(medusaProName);
 
@@ -215,7 +215,7 @@ public class Home {
 
         this.validJsonStr = props.getProperty("medusa.validator") == null ? "" : props.getProperty("medusa.validator");
         this.ignorAssociation = props.getProperty("medusa.ignorAssociation") == null ? "" : props.getProperty("medusa.ignorAssociation");
-        this.pluralAssociation = props.getProperty("medusa.pluralAssociation") == null ? "" : props.getProperty("medusa.pluralAssociation");
+        this.pluralAssociation = StringUtils.isBlank(props.getProperty("medusa.pluralAssociation")) ? "" : props.getProperty("medusa.pluralAssociation");
 
         this.author = StringUtils.isBlank(props.getProperty("medusa.author")) ? "administrator" : props.getProperty("medusa.author");
         this.entityNameSuffix = props.getProperty("medusa.entityNameSuffix") == null ? "" : props.getProperty("medusa.entityNameSuffix");

@@ -135,7 +135,11 @@ public class GenXml {
             //外间关联
             //if(StringUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !ignorArrayAssociation.contains(colSqlNames[i])) {
 
-                /*String p = colSqlNames[i].trim().replace("_id", "").trim().concat(pluralAssociation);
+                /*
+            String p = colSqlNames[i].trim().replace("_id", "").trim();
+                if(StringUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
+                    p = p.concat(pluralAssociation);
+                }
                 String bigStr = MyGenUtils.upcaseFirst(p);
                 String smallStr = MyGenUtils.getCamelStr(p);
 
@@ -159,7 +163,11 @@ public class GenXml {
             //外间关联
             if(StringUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !ignorArrayAssociation.contains(colSqlNames[i])) {
 
-                String p = colSqlNames[i].trim().replace("_id", "").trim().concat(pluralAssociation);
+                String p = colSqlNames[i].trim().replace("_id", "").trim();
+                if(StringUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
+                    p = p.concat(pluralAssociation);
+                }
+
                 String bigStr = MyGenUtils.upcaseFirst(p);
                 String smallStr = MyGenUtils.getCamelStr(p);
 
@@ -185,10 +193,13 @@ public class GenXml {
             //外间关联sss
             if(StringUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !ignorArrayAssociation.contains(colSqlNames[i])) {
 
-                String p = colSqlNames[i].trim().replace("_id", "").trim().concat(pluralAssociation);
+                String p = colSqlNames[i].trim().replace("_id", "").trim();
+                if(StringUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
+                    p = p.concat(pluralAssociation);
+                }
+
                 String bigStr = MyGenUtils.upcaseFirst(p);
                 //String smallStr = MyGenUtils.getCamelStr(p);
-
 
                 //String param = "\t<select id = \"find" + bigStr + "ById\" resultType=\"" + entityPath + "." + bigStr + "\">\r\n" + "\t\tSELECT * FROM " + p + " WHERE id = #{id} limit 0,1\r\n" + "\t</select>\r\n\r\n";
                 //String paramStr11 = MyGenUtils.genMarkStr(markXmlList , param, "resultType=");

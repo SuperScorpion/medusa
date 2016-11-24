@@ -144,7 +144,10 @@ public class GenEntity {
 
         //for (int i = 0; i < colnames.length; i++) {
            // if(StringUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !ignorAssociation.contains(colSqlNames[i])) {
-//                String p = colSqlNames[i].trim().replace("_id", "").trim().concat(pluralAssociation);;
+//         String p = colSqlNames[i].trim().replace("_id", "").trim();
+//        if(StringUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
+//            p = p.concat(pluralAssociation);
+//        }
 //                sb.append("import " + packagePath + "." + MyGenUtils.upcaseFirst(p) + ";\r\n");
          //       sb.append("import java.util.Set;\r\n\r\n");
            // }
@@ -225,7 +228,12 @@ public class GenEntity {
         for (int i = 0; i < colnames.length; i++) {
             //处理外间关联的表字段名称
             if(StringUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !ignorAssociation.contains(colSqlNames[i])) {
-                String p = colSqlNames[i].trim().replace("_id", "").trim().concat(pluralAssociation);
+
+                String p = colSqlNames[i].trim().replace("_id", "").trim();
+                if(StringUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {//modify by neo, on 2016.11.25
+                    p = p.concat(pluralAssociation);
+                }
+
                 String bigStr = MyGenUtils.upcaseFirst(p) + Home.entityNameSuffix;
                 String smallStr = MyGenUtils.getCamelStr(p);
 
@@ -313,7 +321,10 @@ public class GenEntity {
             //外间关联表关系
             if(StringUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !ignorAssociation.contains(colSqlNames[i])) {
 
-                String p = colSqlNames[i].trim().replace("_id", "").trim().concat(pluralAssociation);
+                String p = colSqlNames[i].trim().replace("_id", "").trim();
+                if(StringUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
+                    p = p.concat(pluralAssociation);
+                }
 
                 //sb.append("\tprivate Set<" + MyGenUtils.upcaseFirst(p) + "> " + MyGenUtils.getCamelStr(p) + "Set;\r\n\r\n");
 
