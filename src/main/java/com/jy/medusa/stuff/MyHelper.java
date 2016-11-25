@@ -5,21 +5,13 @@ import com.jy.medusa.utils.MySqlGenerator;
 import com.jy.medusa.utils.SystemConfigs;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.binding.MapperMethod;
-import org.apache.ibatis.builder.SqlSourceBuilder;
-import org.apache.ibatis.builder.annotation.ProviderSqlSource;
 import org.apache.ibatis.executor.ErrorContext;
-import org.apache.ibatis.executor.ExecutorException;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.mapping.ParameterMode;
-import org.apache.ibatis.parsing.GenericTokenParser;
 import org.apache.ibatis.reflection.MetaObject;
-import org.apache.ibatis.reflection.property.PropertyTokenizer;
-import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
-import org.apache.ibatis.scripting.xmltags.ForEachSqlNode;
 import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeException;
 import org.apache.ibatis.type.TypeHandler;
@@ -37,7 +29,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by neo on 16/9/14.
@@ -45,8 +39,6 @@ import java.util.*;
 public class MyHelper {
 
     private static final Logger logger = LoggerFactory.getLogger(MyHelper.class);
-
-    //private static Map<String, Class<?>> entityClassMap = new HashMap<>();//缓存下来数据
 
     /**
      * 获取返回值类型 - 实体类型
@@ -70,13 +62,13 @@ public class MyHelper {
                     if (t.getRawType() == mapperClass || ((Class<?>) t.getRawType()).isAssignableFrom(mapperClass)) {
                         Class<?> returnType = (Class<?>) t.getActualTypeArguments()[0];
                         MyHelperCacheManager.putCacheClass(sn, returnType);
-                        logger.debug("成功初始化 " + sn + " 的缓存信息");
+                        logger.debug("Neo :成功初始化 " + sn + " 的缓存信息");
                         return returnType;
                     }
                 }
             }
         }
-        throw new RuntimeException("无法获取Mapper<T>泛型类型:" + sn);
+        throw new RuntimeException("Neo: 无法获取Mapper<T>泛型类型:" + sn);
     }
 
     /**
@@ -89,6 +81,7 @@ public class MyHelper {
             try {
                 return Class.forName(classPath);
             } catch (ClassNotFoundException e) {
+                logger.error("Neo: 根据路径构建Class对象 " + classPath + " 出现了异常情况!");
                 e.printStackTrace();
             }
         }
@@ -128,15 +121,19 @@ public class MyHelper {
 
     }
 
+
+    //在interceptori 里面判断方法是不是用户自定义方法
+    public static boolean checkMortalMethds(String msidWho) {//modify by neo on 2016.10.25 sq
+
+        return SystemConfigs.MY_ALL_METHOD_NANES_LIST.contains(msidWho) ? true : false;
+    }
+
     /**
      * check end with-insertSelective
      * @return
      */
     public static boolean checkInsertMethod(String methodName) {
-        if(methodName.equals("insertSelective")) {
-            return true;
-        }
-        return false;
+        return methodName.equals("insertSelective") ? true : false;
     }
 
     /**
@@ -144,22 +141,7 @@ public class MyHelper {
      * @return
      */
     public static boolean checkUpdateMethod(String methodName) {
-        if(methodName.equals("updateByPrimaryKeySelective") || methodName.equals("updateByPrimaryKey")) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * check page methods
-     * @deprecated
-     * @return
-     */
-    public static boolean checkPageMethod(String methodName) {
-        if(methodName.equals("selectPage")) {
-            return true;
-        }
-        return false;
+        return (methodName.equals("updateByPrimaryKeySelective") || methodName.equals("updateByPrimaryKey")) ? true : false;
     }
 
     /**
@@ -167,10 +149,7 @@ public class MyHelper {
      * @return
      */
     public static boolean checkMedusaMethod(String methodName) {
-        if(methodName.equals("medusaGaze")) {
-            return true;
-        }
-        return false;
+        return methodName.equals("medusaGaze") ? true : false;
     }
 
 //    private static Map<String, MySqlGenerator> generatorMap = new HashMap<>();//缓存下来数据
@@ -187,7 +166,7 @@ public class MyHelper {
             Class<?> c = getEntityClass(p);
             MySqlGenerator q = initSqlGenerator(c);
             MyHelperCacheManager.putCacheGenerator(p, q);
-            logger.debug("成功缓存初始化 " + c.getSimpleName() + " 的MySqlGenerator基础信息!");
+            logger.debug("Neo: 成功缓存初始化 " + c.getSimpleName() + " 的MySqlGenerator基础信息!");
             return q;
         }
     }
@@ -195,7 +174,7 @@ public class MyHelper {
     private static MySqlGenerator initSqlGenerator(Class<?> entityClass) {
 
         if(entityClass == null) {
-            throw new RuntimeException("initSqlGenerator 没有实体类型传入!");
+            throw new RuntimeException("Neo: initSqlGenerator 没有实体类型传入!");
         }
 
         String pkName = SystemConfigs.PRIMARY_KEY;//实体类主键名称
@@ -208,8 +187,8 @@ public class MyHelper {
         Field[] fields = MyReflectCacheManager.getCacheFieldArray(entityClass);////从缓存读取 modify by neo on 2016.11.13
 
         //获取子类属性上的注解
-        String fieldName = null;
-        String columnName = null;
+        String fieldName;
+        String columnName;
         for (Field field : fields) {
 
             if(field == null) continue;
@@ -217,11 +196,10 @@ public class MyHelper {
             fieldName = field.getName();
 
             Column tableColumn = field.getAnnotation(Column.class);
-            if (tableColumn != null) {
-                columnName = tableColumn.name();
-            } else {
-                continue;
-            }
+
+            if (tableColumn == null) continue;
+
+            columnName = tableColumn.name();
 
             if (field.isAnnotationPresent(Id.class)) pkName = tableColumn.name();
 
@@ -233,7 +211,7 @@ public class MyHelper {
         }
 
         Table table = entityClass.getAnnotation(Table.class);
-        if (table == null) throw new RuntimeException("类- " + entityClass + " 未用@Table注解标识!");
+        if (table == null) throw new RuntimeException("Neo: 类- " + entityClass + " 未用@Table注解标识!");
         tableName = table.name();
 
         return new MySqlGenerator(currentColumnFieldNameMap, currentFieldTypeNameMap, tableName, pkName);
@@ -248,7 +226,7 @@ public class MyHelper {
             resultMap = new HashMap<T, K>();
             for(K key : map.keySet()) {
                 T value = map.get(key);
-                //resultMap.remove(key);
+                //resultMap.remove(key);会报错
                 resultMap.put(value, key);
             }
         }
@@ -316,7 +294,6 @@ public class MyHelper {
         else
             result = ori.trim();
 
-
         return result;
     }
 
@@ -324,6 +301,7 @@ public class MyHelper {
      * @deprecated
      * @param pss
      * @return
+     * buildColumnName2 replace
      */
     public static String convertEntityName2SqlName(String pss) {
 
@@ -368,24 +346,18 @@ public class MyHelper {
 
         } catch (SQLException e) {
             logger.error("Neo: Pager分页时查询总记录数出现了异常   " + e);
-//            e.printStackTrace();
+            e.printStackTrace();
         } finally {
             try {
                 rs.close();
                 countStmt.close();
             } catch (SQLException e) {
                 logger.error("Neo: Pager分页时查询总记录数连接关闭出现了异常   " + e);
+                e.printStackTrace();
             }
         }
 
         return totalCount;
-    }
-
-
-    //在interceptori 里面判断方法是不是用户自定义方法
-    public static boolean checkMortalMethds(String msidWho) {//modify by neo on 2016.10.25 sq
-
-        return SystemConfigs.MY_ALL_METHOD_NANES_LIST.contains(msidWho) ? true : false;
     }
 
 
@@ -400,6 +372,7 @@ public class MyHelper {
         StringBuilder sbs = new StringBuilder(256);
 
         for(String fieName : currentFieldTypeNameMap.keySet()) {
+
             if(fieName.trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY)) continue;
 
             sbb.append("#{pobj.");
@@ -470,7 +443,6 @@ public class MyHelper {
 
             String countSql = getSqlGenerator(p).sql_findAllCount(((MapperMethod.ParamMap) p.get("pobj")).get("param1"),
                     ((MapperMethod.ParamMap) p.get("pobj")).get("param2"));
-
 
 //            BoundSql countBS = new BoundSql(mst.getConfiguration(), countSql, boundSql.getParameterMappings(),p);
 

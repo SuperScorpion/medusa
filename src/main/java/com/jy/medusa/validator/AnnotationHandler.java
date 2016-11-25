@@ -114,7 +114,7 @@ public class AnnotationHandler {
     Class superClass = cla.getSuperclass();
 
     if(superClass != null) {
-      fields = (Field[]) ArrayUtils.addAll(fields, superClass.getDeclaredFields());
+      fields = ArrayUtils.addAll(fields, superClass.getDeclaredFields());
     }
 
     //遍历对象属性

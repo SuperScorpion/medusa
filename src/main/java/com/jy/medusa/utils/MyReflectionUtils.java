@@ -163,31 +163,12 @@ public class MyReflectionUtils {
         //} catch (NoSuchMethodException e) {
           //  logger.debug("Neo: " + superClass.getName() + " Method 不在当前类定义，向上转型");
         } catch (Exception e) {
-            logger.debug("Neo: " + superClass.getName() + " Method 不在当前类定义，向上转型");
+            logger.error("Neo: " + superClass.getName() + " Method " + methodName + " 获取反射时出现了异常!");
+            e.printStackTrace();
         }
 
         return null;
     }
-
-    /**
-     * 不能确定方法是否包含参数时，通过方法名匹配获得方法
-     * @param obj
-     * @param methodName
-     * @return
-     */
-/*    public static Method obtainMethod(final Object obj, final String methodName) {
-        Class<?> clazz = obj.getClass();
-        Method[] methods = METHODS_CACHEMAP.get(clazz);
-        if (methods == null) { // 尚未缓存
-            methods = clazz.getDeclaredMethods();
-            METHODS_CACHEMAP.put(clazz, methods);
-        }
-        for (Method method : methods) {
-            if (method.getName().equals(methodName)) return method;
-        }
-        return null;
-
-    }*/
 
     /**
      * 直接读取对象属性值 忽视private/protected修饰符，不经过getter函数
@@ -273,8 +254,8 @@ public class MyReflectionUtils {
             // Field不在当前类定义，向上转型
         //    logger.debug("Neo: " + superClass.getName() + " Field不在当前类定义，向上转型");
         } catch (Exception e) {
-            // Field不在当前类定义，向上转型
-            logger.debug("Neo: " + superClass.getName() + " Field不在当前类定义，向上转型");
+            logger.error("Neo: " + superClass.getName() + " Field " + fieldName + " 获取反射时出现了异常!");
+            e.printStackTrace();
         }
 
         return null;

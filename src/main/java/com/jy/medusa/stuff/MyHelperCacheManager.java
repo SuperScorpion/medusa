@@ -10,8 +10,10 @@ import java.util.Map;
  * 享元模式
  */
 public class MyHelperCacheManager {
+
     /**
-     * 缓存方法
+     * 缓存
+     * TODO class 要缓存起来的
      */
     private static final Map<String, Class<?>> entityClassMap = new HashMap<>();//缓存class
     private static final Map<String, MySqlGenerator> generatorMap = new HashMap<>();//缓存个 generator
