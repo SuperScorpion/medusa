@@ -6,6 +6,8 @@ package com.jy.medusa.utils;
 
 import org.apache.ibatis.ognl.OgnlException;
 
+import java.lang.reflect.Method;
+
 public class OgnlAccess {
 
     /**
@@ -103,26 +105,44 @@ public class OgnlAccess {
 
 //    }
 
-}
 
-/*class Vm{
 
-    private String bbb;
-    private String mmm;
 
-    public String getBbb() {
-        return bbb;
+        /*long f = System.nanoTime();
+        Method[] paramMethods = Vm.class.getDeclaredMethods();
+        System.out.println(System.nanoTime() - f);
+
+        try {
+            long g = System.nanoTime();
+            Method paramMethod = Vm.class.getDeclaredMethod("getBbb");
+            System.out.println(System.nanoTime() - g);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }*/
+
+
+
     }
 
-    public void setBbb(String bbb) {
-        this.bbb = bbb;
-    }
+    /*class Vm {
 
-    public String getMmm() {
-        return mmm;
-    }
+        private String bbb;
+        private String mmm;
 
-    public void setMmm(String mmm) {
-        this.mmm = mmm;
+        public String getBbb() {
+            return bbb;
+        }
+
+        public void setBbb(String bbb) {
+            this.bbb = bbb;
+        }
+
+        public String getMmm() {
+            return mmm;
+        }
+
+        public void setMmm(String mmm) {
+            this.mmm = mmm;
+        }
     }*/
 }

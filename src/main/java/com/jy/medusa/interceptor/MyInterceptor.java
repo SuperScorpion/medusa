@@ -65,6 +65,7 @@ public class MyInterceptor implements Interceptor {
                     for (Object m : x) {
                         if (m instanceof Pager) {
                             z = (Pager) m;
+                            break;
                         }
                     }
 
