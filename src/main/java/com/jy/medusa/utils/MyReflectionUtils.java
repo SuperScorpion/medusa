@@ -137,12 +137,12 @@ public class MyReflectionUtils {
         Class<?> superClass = obj.getClass();
         Class<Object> objClass = Object.class;
 
+        Method method = null;
+
         try {
             for (; superClass != objClass; superClass = superClass.getSuperclass()) {
 
                 if(superClass == null) continue;
-
-                Method method = null;
 
                     Method[] methods = MyReflectCacheManager.getCacheMethodArray(superClass);
 
@@ -155,8 +155,10 @@ public class MyReflectionUtils {
                       //  method = superClass.getDeclaredMethod(methodName, parameterTypes);
                     //}
 
-                    if(method != null) method.setAccessible(true);
-                    return method;
+                    if(method != null) {
+                        method.setAccessible(true);
+                        return method;
+                    }
             }
         //} catch (NoSuchMethodException e) {
           //  logger.debug("Neo: " + superClass.getName() + " Method 不在当前类定义，向上转型");
@@ -244,12 +246,12 @@ public class MyReflectionUtils {
         Class<?> superClass = obj.getClass();
         Class<Object> objClass = Object.class;
 
+        Field field = null;
+
         try {
             for (; superClass != objClass; superClass = superClass.getSuperclass()) {
 
                 if(superClass == null) continue;
-
-                    Field field = null;
 
                     Field[] cacheFields = MyReflectCacheManager.getCacheFieldArray(superClass);////从缓存读取
 
@@ -262,8 +264,10 @@ public class MyReflectionUtils {
                     //    field = superClass.getDeclaredField(fieldName);
                     //}
 
-                    if(field != null) field.setAccessible(true);
-                    return field;
+                    if(field != null) {
+                        field.setAccessible(true);
+                        return field;
+                    }
             }
         //} catch (NoSuchFieldException e) {
             // Field不在当前类定义，向上转型
