@@ -122,22 +122,9 @@ public class OgnlAccess {
 
 
 
-/*        OgnlAccess o = new OgnlAccess();
-        Vm vnm = new Vm();
-        vnm.setBbb("123");
-        o.gso(vnm);
-        System.out.println(vnm.getBbb());*/
     }
 
-
-/*    public void gso(Vm vmm) {//方法参数的引用  会在在栈区新建空间
-        vmm = new Vm();
-
-
-        vmm.setBbb("bbbbbbb");
-    }*/
-
-/*   class Vm {
+    /*class Vm {
 
         private String bbb;
         private String mmm;
