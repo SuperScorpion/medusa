@@ -17,6 +17,7 @@ public class OgnlAccess {
     public static void main(String[] args) throws OgnlException, NoSuchFieldException, IllegalAccessException {
 
 
+/*测试了 ognl 反射和 asm 的性能*/
 
         /*Vm nnn = new Vm();
 
@@ -41,13 +42,6 @@ public class OgnlAccess {
 
         // 953522256
         //3580 3615
-
-
-
-
-
-
-
 
 /*
         Vm mmm = new Vm();
@@ -108,6 +102,8 @@ public class OgnlAccess {
 
 
 
+        /*测试乐性能 拿到所有的方法 和 单独的方法的呢 的性能*/
+
         /*long f = System.nanoTime();
         Method[] paramMethods = Vm.class.getDeclaredMethods();
         System.out.println(System.nanoTime() - f);
@@ -122,9 +118,73 @@ public class OgnlAccess {
 
 
 
+
+
+
+        /*测试了new 和 clone 的性能*/
+
+/*        long g = System.nanoTime();
+
+        int i = 0;
+
+        while (i < 1000000) {
+            Vm gj = new Vm();
+            System.out.println(i);
+            i++;
+        }
+
+        System.out.println(System.nanoTime() - g);//3732106785 3571740396*/
+
+
+
+/*        Vm2 gjr = new Vm2();
+
+        long g = System.nanoTime();
+
+        int i = 1;
+
+        while (i < 1000000) {
+            Vm2 gj = (Vm2) gjr.clone();
+            System.out.println(i);
+            i++;
+        }
+
+        System.out.println(System.nanoTime() - g);//3288476262 3622226493*/
+
     }
 
-    /*class Vm {
+   /*static class Vm {
+
+        private String bbb;
+        private String mmm;
+
+        public String getBbb() {
+            return bbb;
+        }
+
+        public void setBbb(String bbb) {
+            this.bbb = bbb;
+        }
+
+        public String getMmm() {
+            return mmm;
+        }
+
+        public void setMmm(String mmm) {
+            this.mmm = mmm;
+        }
+    }
+
+    static class Vm2 implements Cloneable{
+
+        public Object clone(){
+            Object obj = null ;
+            try{
+                obj = super.clone();
+            }catch(Exception e){
+            }
+            return obj;
+        }
 
         private String bbb;
         private String mmm;
