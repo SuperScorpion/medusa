@@ -4,17 +4,13 @@ package com.jy.medusa.utils;
  * Created by neo on 2016/11/11.
  */
 
-import org.apache.ibatis.ognl.OgnlException;
-
-import java.lang.reflect.Method;
-
 public class OgnlAccess {
 
     /**
      * 为测试性能方面 从类中取出属性值来 实验证明出jdk1.8 反射的速度最快
      * @param args
      */
-    public static void main(String[] args) throws OgnlException, NoSuchFieldException, IllegalAccessException {
+    //public static void main(String[] args) throws OgnlException, NoSuchFieldException, IllegalAccessException {
 
 
 /*测试了 ognl 反射和 asm 的性能*/
@@ -205,4 +201,4 @@ public class OgnlAccess {
             this.mmm = mmm;
         }
     }*/
-}
+//}

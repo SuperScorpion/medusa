@@ -5,8 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -74,7 +72,7 @@ public class MyDateUtils {
 
 
 
-    public static void main(String[] args) {
+//    public static void main(String[] args) {
         /*System.out.println(convertStrToDate("2016-07-25 17:22:43"));
 
         List d = new ArrayList();
@@ -187,5 +185,5 @@ public class MyDateUtils {
         /*String bnm = "SELECT a,j,m,h,l,f_fdsa FROM users WHERE name=#{pobj.param1.name} AND updated_at BETWEEN #{pobj.param2[1].start, jdbcType=TIMESTAMP} AND #{pobj.param2[1].end ,jdbcType=TIMESTAMP} order by id desc limit 0,1";
         String handSql = bnm.replaceAll("SELECT\\b.*\\bFROM", "SELECT COUNT(1) FROM").replaceAll("\\border by\\b.*", "");
         System.out.println(handSql);*/
-    }
+//    }
 }

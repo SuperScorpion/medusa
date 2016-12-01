@@ -62,13 +62,13 @@ public class MyHelper {
                     if (t.getRawType() == mapperClass || ((Class<?>) t.getRawType()).isAssignableFrom(mapperClass)) {
                         Class<?> returnType = (Class<?>) t.getActualTypeArguments()[0];
 //                        MyHelperCacheManager.putCacheClass(sn, returnType);///modify by neo on 2016.12.1
-                        logger.debug("Neo :成功初始化 " + sn + " 的缓存信息");
+                        logger.debug("Neo :Successfully initialize the " + sn + " cache information");
                         return returnType;
                     }
                 }
             }
 //        }
-        throw new RuntimeException("Neo: 无法获取Mapper<T>泛型类型:" + sn);
+        throw new RuntimeException("Neo: Can't get Mapper<T> generic type: " + sn);
     }
 
     /**
@@ -81,7 +81,7 @@ public class MyHelper {
             try {
                 return Class.forName(classPath);
             } catch (ClassNotFoundException e) {
-                logger.error("Neo: 根据路径构建Class对象 " + classPath + " 出现了异常情况!");
+                logger.error("Neo: According to the path to build Class object " + classPath + " appeared abnormal situation!");
                 e.printStackTrace();
             }
         }
@@ -166,7 +166,7 @@ public class MyHelper {
             Class<?> c = getEntityClass(p);
             MySqlGenerator q = initSqlGenerator(c);
             MyHelperCacheManager.putCacheGenerator(p, q);
-            logger.debug("Neo: 成功缓存初始化 " + c.getSimpleName() + " 的MySqlGenerator基础信息!");
+            logger.debug("Neo: Successfully initialize the " + c.getSimpleName() + " Basic information of MySqlGenerator!");
             return q;
         }
     }
@@ -174,7 +174,7 @@ public class MyHelper {
     private static MySqlGenerator initSqlGenerator(Class<?> entityClass) {
 
         if(entityClass == null) {
-            throw new RuntimeException("Neo: initSqlGenerator 没有实体类型传入!");
+            throw new RuntimeException("Neo: initSqlGenerator No entity type introduced!");
         }
 
         String pkName = SystemConfigs.PRIMARY_KEY;//实体类主键名称
@@ -211,7 +211,7 @@ public class MyHelper {
         }
 
         Table table = entityClass.getAnnotation(Table.class);
-        if (table == null) throw new RuntimeException("Neo: 类- " + entityClass + " 未用@Table注解标识!");
+        if (table == null) throw new RuntimeException("Neo: class - " + entityClass + " Not using @Table annotation identification!");
         tableName = table.name();
 
         return new MySqlGenerator(currentColumnFieldNameMap, currentFieldTypeNameMap, tableName, pkName);
@@ -345,14 +345,14 @@ public class MyHelper {
             }
 
         } catch (SQLException e) {
-            logger.error("Neo: Pager分页时查询总记录数出现了异常   " + e);
+            logger.error("Neo: The total number of queries is abnormal when paging " + e);
             e.printStackTrace();
         } finally {
             try {
                 rs.close();
                 countStmt.close();
             } catch (SQLException e) {
-                logger.error("Neo: Pager分页时查询总记录数连接关闭出现了异常   " + e);
+                logger.error("Neo: Close connection appears abnormal in paging query total number " + e);
                 e.printStackTrace();
             }
         }
@@ -462,14 +462,14 @@ public class MyHelper {
             }
 
             } catch (SQLException e) {
-                logger.error("Neo: Pager分页时查询总记录数出现了异常   " + e);
+                logger.error("Neo: The total number of queries is abnormal when paging " + e);
                 e.printStackTrace();
             } finally {
                 try {
                     if(rs != null) rs.close();
                     if(countStmt != null) countStmt.close();
                 } catch (SQLException e) {
-                    logger.error("Neo: Pager分页时查询总记录数连接关闭出现了异常   " + e);
+                    logger.error("Neo: Close connection appears abnormal in paging query total number " + e);
                     e.printStackTrace();
                 }
             }

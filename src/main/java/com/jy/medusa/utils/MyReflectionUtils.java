@@ -146,11 +146,11 @@ public class MyReflectionUtils {
 
                     Method[] methods = MyReflectCacheManager.getCacheMethodArray(superClass);
 
-                    //if(methods != null && methods.length != 0) {
-                    for(Method med : methods) {
-                        if(med.getName().equals(methodName)) method = med;break;
-                    }
-                    //} else {
+                    if(methods != null && methods.length != 0) {
+                        for(Method med : methods) {
+                            if(med.getName().equals(methodName)) method = med;break;
+                        }
+                    } //else {
                         //METHODS_CACHEMAP.put(superClass, superClass.getDeclaredMethods());
                       //  method = superClass.getDeclaredMethod(methodName, parameterTypes);
                     //}
@@ -160,10 +160,8 @@ public class MyReflectionUtils {
                         return method;
                     }
             }
-        //} catch (NoSuchMethodException e) {
-          //  logger.debug("Neo: " + superClass.getName() + " Method 不在当前类定义，向上转型");
         } catch (Exception e) {
-            logger.error("Neo: " + superClass.getName() + " Method " + methodName + " 获取反射时出现了异常!");
+            logger.error("Neo: There was an exception in the reflection " + superClass.getName() + " get the Method " + methodName);
             e.printStackTrace();
         }
 
@@ -250,11 +248,8 @@ public class MyReflectionUtils {
                         return field;
                     }
             }
-        //} catch (NoSuchFieldException e) {
-            // Field不在当前类定义，向上转型
-        //    logger.debug("Neo: " + superClass.getName() + " Field不在当前类定义，向上转型");
         } catch (Exception e) {
-            logger.error("Neo: " + superClass.getName() + " Field " + fieldName + " 获取反射时出现了异常!");
+            logger.error("Neo: There was an exception in the reflection " + superClass.getName() + " get the Field " + fieldName);
             e.printStackTrace();
         }
 

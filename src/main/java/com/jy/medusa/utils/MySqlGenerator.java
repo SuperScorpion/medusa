@@ -54,7 +54,7 @@ public class MySqlGenerator {
                 .append(insertDynamicSql).append(")");//modify by neo on2016.11.12
         String sql = sql_build.toString();
 
-        logger.debug("Neo :生成的SQL为: " + sql);
+        logger.debug("Neo :Generated SQL ^_^ " + sql);
 
         return sql;
     }
@@ -109,7 +109,7 @@ public class MySqlGenerator {
 
         String sql = sql_build.toString();
 
-        logger.debug("Neo :生成的SQL为: " + sql);
+        logger.debug("Neo :Generated SQL ^_^ " + sql);
 
         return sql;
     }
@@ -144,7 +144,7 @@ public class MySqlGenerator {
 
         String sql = sql_build.toString();
 
-        logger.debug("Neo :生成的SQL为: " + sql);
+        logger.debug("Neo :Generated SQL ^_^ " + sql);
 
         return sql;
     }
@@ -163,7 +163,7 @@ public class MySqlGenerator {
             sql_build.append(StringUtils.join(values, " AND "));
 
         String sql = sql_build.toString();
-        logger.debug("Neo :生成的SQL为: " + sql);
+        logger.debug("Neo :Generated SQL ^_^ " + sql);
         return sql;
     }
 
@@ -191,7 +191,7 @@ public class MySqlGenerator {
 
         String sql = sql_build.toString();
 
-        logger.debug("Neo :生成的SQL为: " + sql);
+        logger.debug("Neo :Generated SQL ^_^ " + sql);
 
         return sql;
     }
@@ -219,7 +219,7 @@ public class MySqlGenerator {
 
         String sql = sql_build.toString();
 
-        logger.debug("Neo :生成的SQL为: " + sql);
+        logger.debug("Neo :Generated SQL ^_^ " + sql);
 
         return sql;
     }
@@ -318,7 +318,7 @@ public class MySqlGenerator {
 
         String sql = sql_build.toString();
 
-        logger.debug("Neo: sql_findOne生成的SQL为: " + sql);
+        logger.debug("Neo :Generated SQL ^_^ " + sql);
 
         return sql;
     }
@@ -338,7 +338,7 @@ public class MySqlGenerator {
 
         String sql = sql_build.toString();
 
-        logger.debug("Neo :生成的SQL为: " + sql);
+        logger.debug("Neo :Generated SQL ^_^ " + sql);
 
         return sql;
     }
@@ -360,7 +360,7 @@ public class MySqlGenerator {
 
         String sql = sql_build.toString();
 
-        logger.debug("Neo :生成的SQL为: " + sql);
+        logger.debug("Neo :Generated SQL ^_^ " + sql);
 
         return sql;
     }
@@ -374,7 +374,7 @@ public class MySqlGenerator {
         sql_build.append("SELECT ").append(columnsStr).append(" FROM ").append(this.tableName);
         String sql = sql_build.toString();
 
-        logger.debug("Neo :生成的SQL为: " + sql);
+        logger.debug("Neo :Generated SQL ^_^ " + sql);
 
         return sql;
     }
@@ -389,9 +389,9 @@ public class MySqlGenerator {
         String cacheSq = MyHelper.myThreadLocal.get();
         if(StringUtils.isNotBlank(cacheSq)) {
             MyHelper.myThreadLocal.remove();
-            logger.debug("Neo: 成功清除了缓存里的查询分页语句");
+            logger.debug("Neo: Successfully cleared the query page in the cache");
             String countSq = cacheSq.replaceAll("SELECT\\b.*\\bFROM", "SELECT COUNT(1) FROM").replaceAll("\\border by\\b.*", "");
-            logger.debug("Neo: 成功返回缓存里的查询分页的语句-->" + countSq);
+            logger.debug("Neo: Successfully returns the count sql of pages in the cache ^_^ " + countSq);
             return countSq;
         }
 
@@ -474,7 +474,7 @@ public class MySqlGenerator {
 
         String sql = sbb.toString();
 
-        logger.debug("Neo :生成的SQL为: " + sql);
+        logger.debug("Neo :Generated SQL ^_^ " + sql);
 
         return sql;
     }
@@ -506,7 +506,7 @@ public class MySqlGenerator {
             }
         }
 
-        logger.debug("Neo :生成的SQL为: " + sbb.toString());
+        logger.debug("Neo :Generated SQL ^_^ " + sql);
 
         return sbb.toString();
     }*/
@@ -541,7 +541,7 @@ public class MySqlGenerator {
             }
         }
 
-        logger.debug("Neo :生成的SQL为: " + sbb.toString());
+        logger.debug("Neo :Generated SQL ^_^ " + sql);
 
         return sbb.toString();
     }*/
@@ -558,7 +558,7 @@ public class MySqlGenerator {
         ///分页时先执行查询分页再执行查询分页 再执行总计数句 boundsql(因为)
         String cacheSq = MyHelper.myThreadLocal.get();
         if(StringUtils.isNotBlank(cacheSq)) {
-            logger.debug("Neo: 成功返回缓存里的查询分页语句-->" + cacheSq);
+            logger.debug("Neo: Successfully returns the query page in the cache ^_^ " + cacheSq);
             return cacheSq;
         }
 
@@ -668,11 +668,11 @@ public class MySqlGenerator {
 
                 //缓存了分页的查询语句
                 MyHelper.myThreadLocal.set(sbb.toString());
-                logger.debug("Neo: 成功保存了分页查询语句到缓存->" + sbb.toString());
+                logger.debug("Neo: Successfully saved the page query statement to the cache ^_^ " + sbb.toString());
             }
         }
 
-        logger.debug("Neo :生成的SQL为: " + sbb.toString());
+        logger.debug("Neo :Generated SQL ^_^ " + sbb.toString());
 
         return sbb.toString();
     }
