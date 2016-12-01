@@ -2,13 +2,14 @@ package com.jy.medusa.stuff;
 
 import com.jy.medusa.utils.SystemConfigs;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Bean类 - 分页
  */
 
-public class Pager<T> {
+public class Pager<T> implements Serializable {
 
 	public final String[] legalColumn = { SystemConfigs.PRIMARY_KEY, "created_at"};
 	public final String[] legalSort = { "desc", "asc" };

@@ -103,7 +103,7 @@ public class GenControllerMortal {
 
         sbb.append("\t\t" + "model.put(\"result\", pager);\r\n\r\n");
 
-        sbb.append("\t\t" + "return \"" + MyGenUtils.lowcaseFirst(entityName) + "/index\";\r\n\r\n");
+        sbb.append("\t\t" + "return \"" + MyGenUtils.lowcaseFirst(entityName) + "/index\";\r\n");
 
         sbb.append("\t}\r\n\r\n");
 
