@@ -21,7 +21,7 @@ public class MyRestrictions {
             case GT: return new GreatThanParam();
             case LE: return new LessEqualParam();
             case LT: return new LessThanParam();
-            default: throw new RuntimeException("不支持该类型的查询条件输入");
+            default: throw new RuntimeException("Query condition input for this type is not supported");
         }
     }*/
 

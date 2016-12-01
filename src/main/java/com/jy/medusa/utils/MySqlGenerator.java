@@ -178,7 +178,7 @@ public class MySqlGenerator {
         List<String> values = obtainColumnValusForModify(t);
         //Object id = MyReflectionUtils.obtainFieldValue(t, currentColumnFieldNameMap.get(pkName));
 
-        //if(id == null) throw new MedusaException("Neo: 更新方法传入主键值为空！(selective)");//modify by neo on 2016.11.04
+        //if(id == null) throw new MedusaException("Neo: Update method incoming primary key value is null (selective)");//modify by neo on 2016.11.04
 
         //id = handleValue(id);///这是为了处理id不为 int 变成 string 时 modify by neo on 2016.11.2
 
@@ -206,7 +206,7 @@ public class MySqlGenerator {
         List<String> values = obtainColumnValsForModifyNull(t);
         //Object id = MyReflectionUtils.obtainFieldValue(t, currentColumnFieldNameMap.get(pkName));
 
-        //if(id == null) throw new MedusaException("Neo: 更新方法传入主键值为空！(selectall)");//modify by neo on 2016.11.04
+        //if(id == null) throw new MedusaException("Neo: Update method incoming primary key value is null (selectall)");//modify by neo on 2016.11.04
 
         //id = handleValue(id);///这是为了处理id不为 int 变成 string 时 modify by neo on 2016.11.2
 
