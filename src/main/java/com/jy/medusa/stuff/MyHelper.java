@@ -50,24 +50,24 @@ public class MyHelper {
 
         String sn = mapperClass.getSimpleName();
 
-        Class<?> ps = MyHelperCacheManager.getCacheClass(sn);
+        ///Class<?> ps = MyHelperCacheManager.getCacheClass(sn);///modify by neo on 2016.12.1
 
-        if (ps != null) {
-            return ps;
-        } else {
+        //if (ps != null) {
+        //    return ps;
+        //} else {
             Type[] types = mapperClass.getGenericInterfaces();
             for (Type type : types) {
                 if (type instanceof ParameterizedType) {
                     ParameterizedType t = (ParameterizedType) type;
                     if (t.getRawType() == mapperClass || ((Class<?>) t.getRawType()).isAssignableFrom(mapperClass)) {
                         Class<?> returnType = (Class<?>) t.getActualTypeArguments()[0];
-                        MyHelperCacheManager.putCacheClass(sn, returnType);
+//                        MyHelperCacheManager.putCacheClass(sn, returnType);///modify by neo on 2016.12.1
                         logger.debug("Neo :成功初始化 " + sn + " 的缓存信息");
                         return returnType;
                     }
                 }
             }
-        }
+//        }
         throw new RuntimeException("Neo: 无法获取Mapper<T>泛型类型:" + sn);
     }
 
