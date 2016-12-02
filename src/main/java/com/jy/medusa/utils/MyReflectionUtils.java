@@ -148,7 +148,10 @@ public class MyReflectionUtils {
 
                     if(methods != null && methods.length != 0) {
                         for(Method med : methods) {
-                            if(med.getName().equals(methodName)) method = med;break;
+                            if(med.getName().equals(methodName)) {
+                                method = med;
+                                break;
+                            }
                         }
                     } //else {
                         //METHODS_CACHEMAP.put(superClass, superClass.getDeclaredMethods());
@@ -236,7 +239,10 @@ public class MyReflectionUtils {
 
                     //if(cacheFields != null && cacheFields.length != 0) {
                     for(Field field2 : cacheFields) {
-                        if(field2.getName().equals(fieldName)) field = field2;break;
+                        if(field2.getName().equals(fieldName)) {
+                            field = field2;
+                            break;
+                        }
                     }
                     //} else {
                     //    FIELDS_CACHEMAP.put(superClass, superClass.getDeclaredFields());///加入到类的缓存 参数域
