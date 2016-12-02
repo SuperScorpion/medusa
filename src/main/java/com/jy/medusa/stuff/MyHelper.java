@@ -217,10 +217,18 @@ public class MyHelper {
         return new MySqlGenerator(currentColumnFieldNameMap, currentFieldTypeNameMap, tableName, pkName);
     }
 
-
+    /**
+     * reverse map - value
+     * @param map
+     * @param <K>
+     * @param <T>
+     * @return
+     */
     public static <K, T> Map<T, K> exchangeKeyValues(Map<K, T> map) {
 
-        Map<T, K> resultMap = null;
+         Map<T, K> resultMap = null;
+
+        //map.forEach((K, T) -> resultMap.put(T, K));///modify by neo on 2016.12.3
 
         if(map != null && !map.isEmpty()) {
             resultMap = new HashMap<T, K>();
@@ -233,6 +241,27 @@ public class MyHelper {
 
         return resultMap;
     }
+
+    /*public static void main(String[] args) {
+        Map o = new HashMap();
+
+        for(int i = 1; i<123; i++) {
+            o.put(i, i + "qwe");
+        }
+
+        //91600482 78832011
+        //293691 737809
+        //468044 486645
+
+        long s = System.nanoTime();
+        Map j = exchangeKeyValues(o);
+        System.out.println(System.nanoTime() - s);
+
+        *//*for(Object key : j.keySet()) {
+            Object value = j.get(key);
+            System.out.println(key +"="+value);
+        }*//*
+    }*/
 
     /**
      * 提供给生成查询字段使用
