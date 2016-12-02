@@ -93,7 +93,7 @@ public class GenControllerJson {
         //index.json
         sbb.append("\t@RequestMapping(value = \"/index.json\", method = RequestMethod.GET)\r\n");
         sbb.append("\t@ResponseBody\r\n");
-        sbb.append("\tpublic JSONObject index(" + entityName + Home.entityNameSuffix + " param, ModelMap model, HttpServletRequest request) {\r\n\r\n");
+        sbb.append("\tpublic JSONObject index(" + entityName + Home.entityNameSuffix + " param, HttpServletRequest request) {\r\n\r\n");
         sbb.append("\t\tJSONObject json = new JSONObject();\r\n\r\n");
 
         StringBuilder sb2 = new StringBuilder();
@@ -107,11 +107,11 @@ public class GenControllerJson {
         //save.json
         sbb.append("\t@RequestMapping(value = \"/save.json\", method = RequestMethod.POST)\r\n");
         sbb.append("\t@ResponseBody\r\n");
-        sbb.append("\tpublic JSONObject save(" + entityName + Home.entityNameSuffix + " param, ModelMap model, HttpServletRequest request) {\r\n\r\n");
+        sbb.append("\tpublic JSONObject save(" + entityName + Home.entityNameSuffix + " param, HttpServletRequest request) {\r\n\r\n");
         sbb.append("\t\tJSONObject json = new JSONObject();\r\n\r\n");
 
         sb2.delete(0, sb2.length());
-        sb2.append("\t\t\tif((param == null) || " + MyGenUtils.lowcaseFirst(entityName) + "Service.save(param) != 1) throw new RuntimeException(\"" + entityName + "新增方法出现异常\");\r\n\r\n");
+        sb2.append("\t\t\tif(param != null) " + MyGenUtils.lowcaseFirst(entityName) + "Service.save(param);\r\n\r\n");
         genTryCatch(sbb, sb2.toString());
         sbb.append("\t\treturn json;\r\n");
         sbb.append("\t}\r\n\r\n");
@@ -119,11 +119,11 @@ public class GenControllerJson {
         //update.json
         sbb.append("\t@RequestMapping(value = \"/update.json\", method = RequestMethod.POST)\r\n");
         sbb.append("\t@ResponseBody\r\n");
-        sbb.append("\tpublic JSONObject update(" + entityName + Home.entityNameSuffix + " param, ModelMap model, HttpServletRequest request) {\r\n\r\n");
+        sbb.append("\tpublic JSONObject update(" + entityName + Home.entityNameSuffix + " param, HttpServletRequest request) {\r\n\r\n");
         sbb.append("\t\tJSONObject json = new JSONObject();\r\n\r\n");
 
         sb2.delete(0, sb2.length());
-        sb2.append("\t\t\tif((param == null) || " + MyGenUtils.lowcaseFirst(entityName) + "Service.updateSelective(param) != 1) throw new RuntimeException(\"" + entityName + "更新方法出现异常\");\r\n\r\n");
+        sb2.append("\t\t\tif(param != null) " + MyGenUtils.lowcaseFirst(entityName) + "Service.updateSelective(param);\r\n\r\n");
         genTryCatch(sbb, sb2.toString());
         sbb.append("\t\treturn json;\r\n");
         sbb.append("\t}\r\n\r\n");
@@ -131,7 +131,7 @@ public class GenControllerJson {
         //delete.json
         sbb.append("\t@RequestMapping(value = \"/delete.json\", method = RequestMethod.GET)\r\n");
         sbb.append("\t@ResponseBody\r\n");
-        sbb.append("\tpublic JSONObject delete(@RequestParam Integer id, ModelMap model, HttpServletRequest request) {\r\n\r\n");
+        sbb.append("\tpublic JSONObject delete(@RequestParam Integer id, HttpServletRequest request) {\r\n\r\n");
         sbb.append("\t\tJSONObject json = new JSONObject();\r\n\r\n");
 
         sb2.delete(0, sb2.length());
