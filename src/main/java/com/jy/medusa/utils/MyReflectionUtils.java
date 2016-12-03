@@ -237,11 +237,12 @@ public class MyReflectionUtils {
 
                     Field[] cacheFields = MyReflectCacheManager.getCacheFieldArray(superClass);////从缓存读取
 
-                    //if(cacheFields != null && cacheFields.length != 0) {
-                    for(Field field2 : cacheFields) {
-                        if(field2.getName().equals(fieldName)) {
-                            field = field2;
-                            break;
+                    if(cacheFields != null && cacheFields.length != 0) {
+                        for(Field field2 : cacheFields) {
+                            if(field2.getName().equals(fieldName)) {
+                                field = field2;
+                                break;
+                            }
                         }
                     }
                     //} else {
