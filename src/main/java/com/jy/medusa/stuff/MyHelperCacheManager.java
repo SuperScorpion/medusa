@@ -2,8 +2,8 @@ package com.jy.medusa.stuff;
 
 import com.jy.medusa.utils.MySqlGenerator;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by neo on 16/10/12.
@@ -15,8 +15,8 @@ public class MyHelperCacheManager {
      * 缓存
      * TODO class 要缓存起来的
      */
-    private static final Map<String, Class<?>> entityClassMap = new HashMap<>();//缓存class
-    private static final Map<String, MySqlGenerator> generatorMap = new HashMap<>();//缓存个 generator
+    private static final Map<String, Class<?>> entityClassMap = new ConcurrentHashMap<>();//缓存class
+    private static final Map<String, MySqlGenerator> generatorMap = new ConcurrentHashMap<>();//缓存个 generator
 
 
     public static Class<?> getCacheClass(String p) {

@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by neo on 16/10/12.
@@ -19,8 +19,8 @@ public class MyReflectCacheManager {
     /**
      * 缓存方法
      */
-    private static final Map<Class<?>, Method[]> METHODS_CACHEMAP = new HashMap<>();///缓存methods
-    private static final Map<Class<?>, Field[]> FIELDS_CACHEMAP = new HashMap<>();/////缓存fields
+    private static final Map<Class<?>, Method[]> METHODS_CACHEMAP = new ConcurrentHashMap<>();///缓存methods
+    private static final Map<Class<?>, Field[]> FIELDS_CACHEMAP = new ConcurrentHashMap<>();/////缓存fields
 
 
     /**
