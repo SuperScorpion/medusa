@@ -1,12 +1,9 @@
 package com.jy.medusa.generator;
 
-import com.jy.medusa.stuff.Pager;
-import com.jy.medusa.stuff.param.MyRestrictions;
 import com.jy.medusa.utils.MyDateUtils;
 import com.jy.medusa.utils.SystemConfigs;
 import org.apache.commons.io.FileUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;

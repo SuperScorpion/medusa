@@ -2,7 +2,6 @@ package com.jy.medusa.generator;
 
 import com.jy.medusa.utils.MyDateUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
