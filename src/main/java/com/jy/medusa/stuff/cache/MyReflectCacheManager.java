@@ -1,4 +1,4 @@
-package com.jy.medusa.stuff;
+package com.jy.medusa.stuff.cache;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

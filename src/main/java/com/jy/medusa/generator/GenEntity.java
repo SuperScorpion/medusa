@@ -7,9 +7,8 @@ package com.jy.medusa.generator;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jy.medusa.utils.MyDateUtils;
+import com.jy.medusa.utils.MyUtils;
 import com.jy.medusa.utils.SystemConfigs;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -110,7 +109,7 @@ public class GenEntity {
                 }
                 String resPath = path + "/" + MyGenUtils.upcaseFirst(tableName) + Home.entityNameSuffix + ".java";
 //                System.out.println("resPath=" + resPath);
-                FileUtils.writeStringToFile(new File(resPath), content, "UTF-8");
+                MyUtils.writeString2File(new File(resPath), content, "UTF-8");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -129,9 +128,9 @@ public class GenEntity {
         sb.append("package " + packagePath + ";\r\n\r\n");
 
 //        sb.append("import " + basePoPath + ";\r\n");//TODO
-        sb.append("import javax.persistence.Column;\r\n");//TODO
-        sb.append("import javax.persistence.Table;\r\n");//TODO
-        sb.append("import javax.persistence.Id;\r\n\r\n");//TODO
+        sb.append("import com.jy.medusa.stuff.annotation.Column;\r\n");//TODO
+        sb.append("import com.jy.medusa.stuff.annotation.Table;\r\n");//TODO
+        sb.append("import com.jy.medusa.stuff.annotation.Id;\r\n\r\n");//TODO
 
         //参数校验
         if(colValidArray != null && !colValidArray.isEmpty()) {
@@ -143,9 +142,9 @@ public class GenEntity {
         //外间关联表关系
 
         //for (int i = 0; i < colnames.length; i++) {
-           // if(StringUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !ignorAssociation.contains(colSqlNames[i])) {
+           // if(MyUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !ignorAssociation.contains(colSqlNames[i])) {
 //         String p = colSqlNames[i].trim().replace("_id", "").trim();
-//        if(StringUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
+//        if(MyUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
 //            p = p.concat(pluralAssociation);
 //        }
 //                sb.append("import " + packagePath + "." + MyGenUtils.upcaseFirst(p) + ";\r\n");
@@ -227,10 +226,10 @@ public class GenEntity {
         //字段都生成完了 再生成映射属性
         for (int i = 0; i < colnames.length; i++) {
             //处理外间关联的表字段名称
-            if(StringUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !ignorAssociation.contains(colSqlNames[i])) {
+            if(MyUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !ignorAssociation.contains(colSqlNames[i])) {
 
                 String p = colSqlNames[i].trim().replace("_id", "").trim();
-                if(StringUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {//modify by neo, on 2016.11.25
+                if(MyUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {//modify by neo, on 2016.11.25
                     p = p.concat(pluralAssociation);
                 }
 
@@ -277,7 +276,7 @@ public class GenEntity {
             //if(colnames[i].trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY)) continue;//去除生成ID属性
 
             //添加注释
-            if(StringUtils.isNotBlank(commentMap.get(colnames[i]))) {
+            if(MyUtils.isNotBlank(commentMap.get(colnames[i]))) {
                 sb.append("\t/*");
                 sb.append(commentMap.get(colnames[i]));
                 sb.append("*/\r\n");
@@ -287,7 +286,7 @@ public class GenEntity {
             if(colValidArray != null && !colValidArray.isEmpty()) {
                 String[] validStrArray = null;
                 for (Object n : colValidArray) {
-                    if (StringUtils.isNotBlank(((JSONObject) n).getString(colnames[i])))
+                    if (MyUtils.isNotBlank(((JSONObject) n).getString(colnames[i])))
                         validStrArray = ((JSONObject) n).getString(colnames[i]).split("&");
                 }
 
@@ -319,10 +318,10 @@ public class GenEntity {
         //字段都生成完了 再生成映射属性
         for (int i = 0; i < colnames.length; i++) {
             //外间关联表关系
-            if(StringUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !ignorAssociation.contains(colSqlNames[i])) {
+            if(MyUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !ignorAssociation.contains(colSqlNames[i])) {
 
                 String p = colSqlNames[i].trim().replace("_id", "").trim();
-                if(StringUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
+                if(MyUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
                     p = p.concat(pluralAssociation);
                 }
 

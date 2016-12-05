@@ -4,7 +4,7 @@ package com.jy.medusa.interceptor;
  * Created by neo on 16/9/15.
  */
 
-import com.jy.medusa.stuff.MedusaException;
+import com.jy.medusa.stuff.exception.MedusaException;
 import com.jy.medusa.stuff.MyHelper;
 import com.jy.medusa.stuff.Pager;
 import com.jy.medusa.utils.MyReflectionUtils;

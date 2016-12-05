@@ -2,7 +2,7 @@ package com.jy.medusa.generator;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.lang3.StringUtils;
+import com.jy.medusa.utils.MyUtils;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -79,13 +79,13 @@ public class Home {
         //参数校验
         JSONObject job;
         JSONArray m = null;
-        if(StringUtils.isNotBlank(validJsonStr)) {
+        if(MyUtils.isNotBlank(validJsonStr)) {
             job = parseValidJson(validJsonStr);
             m = (JSONArray) job.get("validator");
         }
 
         for(String tabName : tableNameArray) {
-            if(StringUtils.isNotBlank(tabName)) {
+            if(MyUtils.isNotBlank(tabName)) {
 
                 tabName = tabName.trim();//祛除空格
 
@@ -97,31 +97,31 @@ public class Home {
                     }
                 }
 
-                if(StringUtils.isNotBlank(entitySuffix)) {
+                if(MyUtils.isNotBlank(entitySuffix)) {
                     long nanoSs = System.nanoTime();
                     new GenEntity(entityPath, tabName, jdbcName, tag, colValidArray, ignorAssociation, pluralAssociation).process();//生成 实体类
                     System.out.println(tabName + " entity文件生成用时:" + (System.nanoTime()-nanoSs) + " ns");
                 }
 
-                if(StringUtils.isNotBlank(serviceSuffix) && StringUtils.isNotBlank(entitySuffix) && StringUtils.isNotBlank(mapperSuffix)) {
+                if(MyUtils.isNotBlank(serviceSuffix) && MyUtils.isNotBlank(entitySuffix) && MyUtils.isNotBlank(mapperSuffix)) {
                     long nanoSs = System.nanoTime();
                     new GenService(tabName, entityPath, servicePath, mapperPath, tag).process();//执行生成service serviceimpl mapper
                     System.out.println(tabName + " service文件 mapper文件生成用时:" + (System.nanoTime()-nanoSs) + " ns");
                 }
 
-                if(StringUtils.isNotBlank(xmlSuffix) && StringUtils.isNotBlank(entitySuffix) && StringUtils.isNotBlank(mapperSuffix)) {
+                if(MyUtils.isNotBlank(xmlSuffix) && MyUtils.isNotBlank(entitySuffix) && MyUtils.isNotBlank(mapperSuffix)) {
                     long nanoSs = System.nanoTime();
                     new GenXml(mapperPath, xmlPath, entityPath, tabName, jdbcName, tag, ignorAssociation, pluralAssociation).process();//执行生成xml
                     System.out.println(tabName + " xml文件生成用时:" + (System.nanoTime()-nanoSs) + " ns");
                 }
 
-                if(StringUtils.isNotBlank(controlJsonSuffix) && StringUtils.isNotBlank(entitySuffix) && StringUtils.isNotBlank(serviceSuffix)) {
+                if(MyUtils.isNotBlank(controlJsonSuffix) && MyUtils.isNotBlank(entitySuffix) && MyUtils.isNotBlank(serviceSuffix)) {
                     long nanoSs = System.nanoTime();
                     new GenControllerJson(tabName, controlPathJson, entityPath, servicePath, tag).process();//生成controller
                     System.out.println(tabName + " controllerJson文件生成用时:" + (System.nanoTime()-nanoSs) + " ns");
                 }
 
-                if(StringUtils.isNotBlank(controlMortalSuffix) && StringUtils.isNotBlank(entitySuffix) && StringUtils.isNotBlank(serviceSuffix)) {
+                if(MyUtils.isNotBlank(controlMortalSuffix) && MyUtils.isNotBlank(entitySuffix) && MyUtils.isNotBlank(serviceSuffix)) {
                     long nanoSs = System.nanoTime();
                     new GenControllerMortal(tabName, controlPathMortal, entityPath, servicePath, tag).process();//生成controller
                     System.out.println(tabName + " controllerMortal文件生成用时:" + (System.nanoTime()-nanoSs) + " ns");
@@ -130,58 +130,58 @@ public class Home {
             }
         }
 
-        if(StringUtils.isNotBlank(baseServiceSwitch)) new GenBaseService(servicePath, tag).process();//处理生成基础的 service
+        if(MyUtils.isNotBlank(baseServiceSwitch)) new GenBaseService(servicePath, tag).process();//处理生成基础的 service
     }
 
     private JSONObject parseValidJson(String validJsonStr) {
-        return StringUtils.isNotBlank(validJsonStr) ? JSONObject.parseObject(validJsonStr) : null;
+        return MyUtils.isNotBlank(validJsonStr) ? JSONObject.parseObject(validJsonStr) : null;
     }
 
     private boolean checkParams() {
 
         boolean result = true;
 
-        if(StringUtils.isBlank(packagePath)) {
+        if(MyUtils.isBlank(packagePath)) {
             System.out.println("大兄弟你的packagePath没填写!");
             result = false;
         }
-        if(StringUtils.isBlank(tableName)) {
+        if(MyUtils.isBlank(tableName)) {
             System.out.println("大兄弟你的tableName没填写!");
             result = false;
         }
-        if(StringUtils.isBlank(jdbcName)) {
+        if(MyUtils.isBlank(jdbcName)) {
             System.out.println("大兄弟你的jdbcName没填写!");
             result = false;
         }
-        if(StringUtils.isBlank(tag)) {
+        if(MyUtils.isBlank(tag)) {
             System.out.println("大兄弟你的tag没填写!");
             result = false;
         }
-        if(StringUtils.isBlank(entitySuffix)) {
+        if(MyUtils.isBlank(entitySuffix)) {
             System.out.println("大兄弟你的entitySuffix没填写!");
             result = false;
         }
-        /*if(StringUtils.isBlank(serviceSuffix)) {
+        /*if(MyUtils.isBlank(serviceSuffix)) {
             System.out.println("大兄弟你的serviceSuffix没填写!");
             result = false;
         }
-        if(StringUtils.isBlank(mapperSuffix)) {
+        if(MyUtils.isBlank(mapperSuffix)) {
             System.out.println("大兄弟你的mapperSuffix没填写!");
             result = false;
         }
-        if(StringUtils.isBlank(controlSuffix)) {
+        if(MyUtils.isBlank(controlSuffix)) {
             System.out.println("大兄弟你的controlSuffix没填写!");
             result = false;
         }*/
-/*        if(StringUtils.isBlank(author)) {
+/*        if(MyUtils.isBlank(author)) {
             System.out.println("大兄弟你的author没有填写完!");
             result = false;
         }*/
-/*        if(StringUtils.isBlank(basePoPath)) {
+/*        if(MyUtils.isBlank(basePoPath)) {
             System.out.println("大兄弟你的basePoPath没填写!");
             result = false;
         }*/
-        /*if(StringUtils.isBlank(baseMapperPath)) {
+        /*if(MyUtils.isBlank(baseMapperPath)) {
             System.out.println("大兄弟你的mapperImplPath没填写!");
             result = false;
         }*/
@@ -215,12 +215,12 @@ public class Home {
 
         this.validJsonStr = props.getProperty("medusa.validator") == null ? "" : props.getProperty("medusa.validator");
         this.ignorAssociation = props.getProperty("medusa.ignorAssociation") == null ? "" : props.getProperty("medusa.ignorAssociation");
-        this.pluralAssociation = StringUtils.isBlank(props.getProperty("medusa.pluralAssociation")) ? "" : props.getProperty("medusa.pluralAssociation");
+        this.pluralAssociation = MyUtils.isBlank(props.getProperty("medusa.pluralAssociation")) ? "" : props.getProperty("medusa.pluralAssociation");
 
-        this.author = StringUtils.isBlank(props.getProperty("medusa.author")) ? "administrator" : props.getProperty("medusa.author");
+        this.author = MyUtils.isBlank(props.getProperty("medusa.author")) ? "administrator" : props.getProperty("medusa.author");
         this.entityNameSuffix = props.getProperty("medusa.entityNameSuffix") == null ? "" : props.getProperty("medusa.entityNameSuffix");
-        this.lazyLoad = StringUtils.isBlank(props.getProperty("medusa.lazyLoad"))  ? "" : "fetchType=\"lazy\"";
-        this.baseServiceSwitch = StringUtils.isBlank(props.getProperty("medusa.baseServiceSwitch"))  ? "" : "gen";
+        this.lazyLoad = MyUtils.isBlank(props.getProperty("medusa.lazyLoad"))  ? "" : "fetchType=\"lazy\"";
+        this.baseServiceSwitch = MyUtils.isBlank(props.getProperty("medusa.baseServiceSwitch"))  ? "" : "gen";
 
         //this.basePoPath = props.getProperty("medusa.basePoPath");
 //        this.baseMapperPath = props.getProperty("medusa.baseMapperPath");

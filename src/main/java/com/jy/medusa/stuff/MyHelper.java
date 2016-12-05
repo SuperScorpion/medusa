@@ -1,9 +1,14 @@
 package com.jy.medusa.stuff;
 
 import com.jy.medusa.generator.MyGenUtils;
+import com.jy.medusa.stuff.annotation.Column;
+import com.jy.medusa.stuff.annotation.Id;
+import com.jy.medusa.stuff.annotation.Table;
+import com.jy.medusa.stuff.cache.MyHelperCacheManager;
+import com.jy.medusa.stuff.cache.MyReflectCacheManager;
 import com.jy.medusa.utils.MySqlGenerator;
+import com.jy.medusa.utils.MyUtils;
 import com.jy.medusa.utils.SystemConfigs;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.mapping.BoundSql;
@@ -19,9 +24,6 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -204,7 +206,7 @@ public class MyHelper {
             if (field.isAnnotationPresent(Id.class)) pkName = tableColumn.name();
 
             // 如果未标识特殊的列名，默认取字段名
-            columnName = StringUtils.isEmpty(columnName) ? MyGenUtils.camelToUnderline(fieldName) : columnName;
+            columnName = MyUtils.isBlank(columnName) ? MyGenUtils.camelToUnderline(fieldName) : columnName;
 
             currentFieldTypeNameMap.put(fieldName, field.getType().getSimpleName());
             currentColumnFieldNameMap.put(columnName, fieldName);
@@ -279,13 +281,13 @@ public class MyHelper {
 
             if(z instanceof String) {
 
-                if (StringUtils.isBlank(z.toString())) continue;
+                if (MyUtils.isBlank(z.toString())) continue;
 
-                String[] p = StringUtils.split(z.toString(), ",");
+                String[] p = z.toString().split(",");//modify by neo on 2016.12.04
 
                 for (String m : p) {
 
-                    if(StringUtils.isBlank(m)) continue;
+                    if(MyUtils.isBlank(m)) continue;
 
 //                    if(m.contains("_"))//让用户用的可选字段 属性名字和数据库表字段名称容错
 //                        sbb.append(m.trim());
@@ -313,7 +315,7 @@ public class MyHelper {
      */
     public static String buildColumnName3(String ori, Map<String, String> currentFieldColumnNameMap) {
 
-        if(StringUtils.isBlank(ori)) return "";
+        if(MyUtils.isBlank(ori)) return "";
 
         String result;
         if (ori.contains("_"))//让用户用的可选字段 属性名字和数据库表字段名称容错
@@ -334,7 +336,8 @@ public class MyHelper {
      */
     public static String convertEntityName2SqlName(String pss) {
 
-        String[] p = StringUtils.split(pss, ",");
+//        String[] p = MyUtils.split(pss, ",");
+        String[] p = pss.split(",");
 
         StringBuilder sbb = new StringBuilder();
 

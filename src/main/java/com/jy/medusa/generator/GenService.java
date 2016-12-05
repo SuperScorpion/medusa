@@ -1,7 +1,7 @@
 package com.jy.medusa.generator;
 
 import com.jy.medusa.utils.MyDateUtils;
-import org.apache.commons.io.FileUtils;
+import com.jy.medusa.utils.MyUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,13 +46,13 @@ public class GenService {
             }
             String resPath1 = path + "/" + entityName + "Service.java";
             String resPath2 = path + "/" + entityName + "ServiceImpl.java";
-            FileUtils.writeStringToFile(new File(resPath1), process1(), "UTF-8");
-            FileUtils.writeStringToFile(new File(resPath2), process2(), "UTF-8");
+            MyUtils.writeString2File(new File(resPath1), process1(), "UTF-8");
+            MyUtils.writeString2File(new File(resPath2), process2(), "UTF-8");
 
             //mapper
             String pathmm = System.getProperty("user.dir") + "/src/main/java/" + mapperPath.replaceAll("\\.", "/");
             String resPath3 = pathmm + "/" + entityName + "Mapper.java";
-            FileUtils.writeStringToFile(new File(resPath3), process3(), "UTF-8");
+            MyUtils.writeString2File(new File(resPath3), process3(), "UTF-8");
 
         } catch (IOException e) {
             e.printStackTrace();

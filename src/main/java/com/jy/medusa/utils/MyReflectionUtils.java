@@ -1,7 +1,7 @@
 package com.jy.medusa.utils;
 
-import com.jy.medusa.stuff.MyReflectCacheManager;
-import org.apache.commons.lang3.StringUtils;
+import com.jy.medusa.generator.MyGenUtils;
+import com.jy.medusa.stuff.cache.MyReflectCacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +33,7 @@ public class MyReflectionUtils {
      * @return
      */
     public static Object invokeGetterMethod(Object obj, String propertyName) {
-        String getterMethodName = "get" + StringUtils.capitalize(propertyName);
+        String getterMethodName = "get" + MyGenUtils.upcaseFirst(propertyName);
         return invokeMethod(obj, getterMethodName, null, null);
     }
 
@@ -60,13 +60,13 @@ public class MyReflectionUtils {
         if(value == null) return;
 
         propertyType = propertyType != null ? propertyType : value.getClass();
-        String setterMethodName = "set" + StringUtils.capitalize(propertyName);
+        String setterMethodName = "set" + MyGenUtils.upcaseFirst(propertyName);
         invokeMethod(obj, setterMethodName, new Class<?>[] { propertyType }, new Object[] { value });
     }
 
     private static Object handleValueType(Object obj, String propertyName, Object value) throws ParseException {
 
-        String getterMethodName = "get" + StringUtils.capitalize(propertyName);
+        String getterMethodName = "get" + MyGenUtils.upcaseFirst(propertyName);
         Class<?> argsType = value.getClass();
         Class<?> returnType = obtainAccessibleMethod(obj, getterMethodName).getReturnType();
 
@@ -76,7 +76,7 @@ public class MyReflectionUtils {
 
         if (returnType == Boolean.class) {
             String temp = value.toString();
-            value = (StringUtils.isNotBlank(temp) && Long.valueOf(temp) > 0) ? true : false;
+            value = (MyUtils.isNotBlank(temp) && Long.valueOf(temp) > 0) ? true : false;
         } else if (returnType == Long.class) {
             value = Long.valueOf(value.toString());
         }else if(returnType == Date.class){

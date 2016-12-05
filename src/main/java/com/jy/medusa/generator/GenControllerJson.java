@@ -1,8 +1,8 @@
 package com.jy.medusa.generator;
 
 import com.jy.medusa.utils.MyDateUtils;
+import com.jy.medusa.utils.MyUtils;
 import com.jy.medusa.utils.SystemConfigs;
-import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class GenControllerJson {
                 file.mkdirs();
             }
             String resPath = path + "/" + entityName + "Controller.java";
-            FileUtils.writeStringToFile(new File(resPath), home(), "UTF-8");
+            MyUtils.writeString2File(new File(resPath), home(), "UTF-8");
 
         } catch (IOException e) {
             e.printStackTrace();

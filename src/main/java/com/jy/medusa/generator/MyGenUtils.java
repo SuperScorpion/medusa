@@ -1,6 +1,6 @@
 package com.jy.medusa.generator;
 
-import org.apache.commons.lang3.StringUtils;
+import com.jy.medusa.utils.MyUtils;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ public class MyGenUtils {
      */
     public static String camelToUnderline(String param) {
 
-        if (StringUtils.isBlank(param)) return "";
+        if (MyUtils.isBlank(param)) return "";
 
         int i = 0, len = param.length();
 
@@ -123,7 +123,7 @@ public class MyGenUtils {
         p = p.substring(0, p.indexOf(endChar));
 
         for(String markStr: markStrList){
-            if(StringUtils.isNotBlank(markStr)){
+            if(MyUtils.isNotBlank(markStr)){
 
                 int x = markStr.trim().indexOf(endChar);
 
@@ -146,7 +146,7 @@ public class MyGenUtils {
 
         List<String> resultList = new ArrayList<>();
 
-        if (StringUtils.isBlank(tag) || StringUtils.isBlank(resPath)) return null;
+        if (MyUtils.isBlank(tag) || MyUtils.isBlank(resPath)) return null;
 
 
         String startTag;

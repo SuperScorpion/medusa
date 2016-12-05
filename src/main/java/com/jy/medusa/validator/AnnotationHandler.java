@@ -1,13 +1,15 @@
 package com.jy.medusa.validator;
 
 
+import com.jy.medusa.utils.MyUtils;
 import com.jy.medusa.utils.SystemConfigs;
 import com.jy.medusa.validator.annotation.ConParamValidator;
 import com.jy.medusa.validator.annotation.Length;
 import com.jy.medusa.validator.annotation.Validator;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -21,7 +23,8 @@ import java.util.List;
  * 2016.07.11
  * 参数校验主要类
  */
-public class AnnotationHandler {
+@Aspect
+public class AnnotationHandler {//TODO
 	
  	/*public void takeSeats(JoinPoint joinPoint, Validator parameter) throws NoSuchMethodException, SecurityException{
 
@@ -31,7 +34,7 @@ public class AnnotationHandler {
  		System.out.println(joinPoint.getArgs());
  		System.out.println(joinPoint.getSignature().getName());
     }*/
-    public String concatErrorStr(List<ErrorInfo> errorInfos){
+    private String concatErrorStr(List<ErrorInfo> errorInfos){
 
         StringBuilder sb = new StringBuilder(100);
 
@@ -51,6 +54,8 @@ public class AnnotationHandler {
     /**
      * 所有校验标注的处理
      * */
+//    @Pointcut(value= "execution(* *.*ServiceImpl.*(..)) and @annotation(parameter))")
+    @Before(value = "execution(public * *(..)) and @annotation(parameter))")
     public void paramHandler(JoinPoint joinPoint, ConParamValidator parameter) throws IllegalArgumentException, IllegalAccessException{
 
 //        if(!errorInfoList.isEmpty()) errorInfoList.clear();
@@ -75,12 +80,12 @@ public class AnnotationHandler {
                     || object instanceof Double || object instanceof Float || object instanceof BigDecimal) {//TODO 普通参数判断
 
                 /*for(String regExp : regArray){
-                    if(StringUtils.isNotBlank(object.toString()) && StringUtils.isNotBlank(regExp) && object.toString().matches(regExp)) {
+                    if(MyUtils.isNotBlank(object.toString()) && MyUtils.isNotBlank(regExp) && object.toString().matches(regExp)) {
                         var1 = Boolean.TRUE;
                         break;
                     }
                 }*/
-                if(StringUtils.isNotBlank(object.toString()) && StringUtils.isNotBlank(regArray[i]) && !object.toString().matches(regArray[i])) {
+                if(MyUtils.isNotBlank(object.toString()) && MyUtils.isNotBlank(regArray[i]) && !object.toString().matches(regArray[i])) {
 
                     ErrorInfo errorInfo = new ErrorInfo();
                     errorInfo.setMessage("第" + (i+1) + "个参数" + object.toString() + "校验失败请重试");
@@ -114,7 +119,7 @@ public class AnnotationHandler {
     Class superClass = cla.getSuperclass();
 
     if(superClass != null) {
-      fields = ArrayUtils.addAll(fields, superClass.getDeclaredFields());
+      fields = MyUtils.addArrayAll(fields, superClass.getDeclaredFields());
     }
 
     //遍历对象属性
@@ -189,7 +194,7 @@ public class AnnotationHandler {
 
     List<ErrorInfo> errors = new ArrayList<>();
 
-    String message = StringUtils.isNotBlank(valid.message()) ? valid.message() : fieldName + "不符合校验表达式";
+    String message = MyUtils.isNotBlank(valid.message()) ? valid.message() : fieldName + "不符合校验表达式";
     String regExp = valid.regExp();
 
     String[] selects = valid.selects();
@@ -210,7 +215,7 @@ public class AnnotationHandler {
 	    		  errors.add(errorInfo);
 	    	  }
 	      } else {
-	    	  if(StringUtils.isNotBlank(regExp) && !value.matches(regExp)) {
+	    	  if(MyUtils.isNotBlank(regExp) && !value.matches(regExp)) {
 	    		  ErrorInfo errorInfo = new ErrorInfo();
 	    		  errorInfo.setMessage(message);
 	    		  errors.add(errorInfo);

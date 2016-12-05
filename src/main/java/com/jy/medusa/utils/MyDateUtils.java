@@ -1,7 +1,5 @@
 package com.jy.medusa.utils;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -45,7 +43,7 @@ public class MyDateUtils {
 
         if(date == null) return "";
 
-        if(StringUtils.isBlank(regx)) regx = DATE_FULL_STR;
+        if(MyUtils.isBlank(regx)) regx = DATE_FULL_STR;
 
         SimpleDateFormat sdf = new SimpleDateFormat(regx);
         return sdf.format(date);
@@ -58,7 +56,7 @@ public class MyDateUtils {
      */
     public static Date convertStrToDate(String dateStr){
 
-        if(StringUtils.isBlank(dateStr)) return null;
+        if(MyUtils.isBlank(dateStr)) return null;
         dateStr = dateStr.split("\\.")[0];//处理末尾的.0
         SimpleDateFormat sdf;
 
@@ -102,7 +100,7 @@ public class MyDateUtils {
         d.add('c');
         d.add('d');
 
-        String  p  =  StringUtils.join(d, " AND ");
+        String  p  =  MyUtils.join(d, " AND ");
 
         System.out.println(p);
 
@@ -119,7 +117,7 @@ public class MyDateUtils {
         System.out.println((String) m.get("l"));
 
         String mnn = "j, ,";
-        String[] pmjk = StringUtils.split(mnn, ".");
+        String[] pmjk = MyUtils.split(mnn, ".");
         System.out.println(pmjk.length);
 
         StringBuilder sbbbbbbb = new StringBuilder();

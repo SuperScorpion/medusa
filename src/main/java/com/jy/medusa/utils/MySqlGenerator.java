@@ -1,12 +1,11 @@
 package com.jy.medusa.utils;
 
 
-import com.jy.medusa.stuff.MedusaException;
 import com.jy.medusa.stuff.MyHelper;
 import com.jy.medusa.stuff.Pager;
+import com.jy.medusa.stuff.exception.MedusaException;
 import com.jy.medusa.stuff.param.*;
 import com.jy.medusa.stuff.param.gele.*;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +31,7 @@ public class MySqlGenerator {
         this.columns = cfMap.keySet();
         this.tableName = tableName;
         this.pkName = pkName;
-        this.columnsStr = StringUtils.join(this.columns, ",");
+        this.columnsStr = MyUtils.join(this.columns, ",");
 //        this.insertColumn = columnsStr.endsWith(SystemConfigs.PRIMARY_KEY) ? columnsStr.replaceAll("," + SystemConfigs.PRIMARY_KEY, "") : columnsStr.replaceAll(SystemConfigs.PRIMARY_KEY + ",", "");
         this.currentColumnFieldNameMap = cfMap;
         this.currentFieldColumnNameMap = MyHelper.exchangeKeyValues(cfMap);
@@ -89,7 +88,7 @@ public class MySqlGenerator {
         } else if (value instanceof Boolean) {
             Boolean v = (Boolean) value;
             value = v ? 1 : 0;//TODO true 1 false 0
-        }else if(null == value || StringUtils.isBlank(value.toString())){
+        }else if(null == value || MyUtils.isBlank(value.toString())){
             value = "null";
         }
         return value;
@@ -160,7 +159,7 @@ public class MySqlGenerator {
         if(values == null || values.isEmpty())
             sql_build.append("1=1");
         else
-            sql_build.append(StringUtils.join(values, " AND "));
+            sql_build.append(MyUtils.join(values, " AND "));
 
         String sql = sql_build.toString();
         logger.debug("Neo :Generated SQL ^_^ " + sql);
@@ -186,7 +185,7 @@ public class MySqlGenerator {
 
         StringBuilder sql_build = new StringBuilder(256);
         sql_build.append("UPDATE ").append(tableName).append(" SET ")
-                .append(StringUtils.join(values, ",")).append(" WHERE ")
+                .append(MyUtils.join(values, ",")).append(" WHERE ")
                 .append(pkName).append(" = ").append("#{pobj." + SystemConfigs.PRIMARY_KEY + "}");
 
         String sql = sql_build.toString();
@@ -214,7 +213,7 @@ public class MySqlGenerator {
 
         StringBuilder sql_build = new StringBuilder(256);
         sql_build.append("UPDATE ").append(tableName).append(" SET ")
-                .append(StringUtils.join(values, ",")).append(" WHERE ")
+                .append(MyUtils.join(values, ",")).append(" WHERE ")
                 .append(pkName).append(" = ").append("#{pobj." + SystemConfigs.PRIMARY_KEY + "}");
 
         String sql = sql_build.toString();
@@ -235,7 +234,7 @@ public class MySqlGenerator {
         for (String column : columns) {
             String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
 //            Object value = MyReflectionUtils.obtainFieldValue(t, fieldName);
-            if (!StringUtils.equalsIgnoreCase(column, pkName)) {
+            if (!column.equalsIgnoreCase(pkName)) {
 //                colVals.add(column + "=" + handleValue(value));
                 colVals.add(column + "=" + "#{pobj." + fieldName +"}");
             }
@@ -262,7 +261,7 @@ public class MySqlGenerator {
 
 //            Object value = MyReflectionUtils.obtainFieldValue(t, fieldName);
 
-            if (value != null && !StringUtils.equalsIgnoreCase(column, pkName)) {
+            if (value != null && !column.equalsIgnoreCase(pkName)) {
 //                colVals.add(column + "=" + handleValue(value));
                 colVals.add(column + "=" + "#{pobj." + fieldName + "}");///modify by neo on 2016.11.12
             }
@@ -312,7 +311,7 @@ public class MySqlGenerator {
         if(values == null || values.isEmpty())
             sql_build.append("1=1");
         else
-            sql_build.append(StringUtils.join(values, " AND "));
+            sql_build.append(MyUtils.join(values, " AND "));
 
         sql_build.append(" limit 0,1");
 
@@ -356,7 +355,7 @@ public class MySqlGenerator {
         if(values == null || values.isEmpty())
             sql_build.append("1=1");
         else
-            sql_build.append(StringUtils.join(values, " AND "));
+            sql_build.append(MyUtils.join(values, " AND "));
 
         String sql = sql_build.toString();
 
@@ -387,7 +386,7 @@ public class MySqlGenerator {
 
         // 从缓存里拿到分页查询语句 必须清理掉缓存
         String cacheSq = MyHelper.myThreadLocal.get();
-        if(StringUtils.isNotBlank(cacheSq)) {
+        if(MyUtils.isNotBlank(cacheSq)) {
             MyHelper.myThreadLocal.remove();
             logger.debug("Neo: Successfully cleared the query page in the cache");
             String countSq = cacheSq.replaceAll("SELECT\\b.*\\bFROM", "SELECT COUNT(1) FROM").replaceAll("\\border by\\b.*", "");
@@ -404,7 +403,7 @@ public class MySqlGenerator {
         if(values == null || values.isEmpty())
             sbb.append("1=1");
         else
-            sbb.append(StringUtils.join(values, " AND "));
+            sbb.append(MyUtils.join(values, " AND "));
 
         //多条件查询
         if(ps != null && ps.length > 0) {
@@ -496,7 +495,7 @@ public class MySqlGenerator {
 
         for(String p : values) {
 
-            if(StringUtils.isBlank(p)) continue;
+            if(MyUtils.isBlank(p)) continue;
 
             String[] k = p.split("=");
 
@@ -527,7 +526,7 @@ public class MySqlGenerator {
         if(values == null || values.isEmpty())
             sbb.append("1=1");
         else
-            sbb.append(StringUtils.join(values, " AND "));
+            sbb.append(MyUtils.join(values, " AND "));
 
         for(Object z : (Object[])ps[0]) {
             if(z instanceof BetweenParam) {
@@ -557,7 +556,7 @@ public class MySqlGenerator {
         //获取到缓存中的分页查询语句 modify by neo on 2016.11.16
         ///分页时先执行查询分页再执行查询分页 再执行总计数句 boundsql(因为)
         String cacheSq = MyHelper.myThreadLocal.get();
-        if(StringUtils.isNotBlank(cacheSq)) {
+        if(MyUtils.isNotBlank(cacheSq)) {
             logger.debug("Neo: Successfully returns the query page in the cache ^_^ " + cacheSq);
             return cacheSq;
         }
@@ -572,7 +571,7 @@ public class MySqlGenerator {
         if(values == null || values.isEmpty())
             sbb.append("1=1");
         else
-            sbb.append(StringUtils.join(values, " AND "));
+            sbb.append(MyUtils.join(values, " AND "));
 
 
         if(ps != null && ps.length > 0) {

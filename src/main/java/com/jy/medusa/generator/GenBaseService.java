@@ -1,6 +1,6 @@
 package com.jy.medusa.generator;
 
-import org.apache.commons.io.FileUtils;
+import com.jy.medusa.utils.MyUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,8 +33,8 @@ public class GenBaseService {
             }
             String resPath1 = path + "/" + "BaseService.java";
             String resPath2 = path + "/" + "BaseServiceImpl.java";
-            FileUtils.writeStringToFile(new File(resPath1), process1(), "UTF-8");
-            FileUtils.writeStringToFile(new File(resPath2), process2(), "UTF-8");
+            MyUtils.writeString2File(new File(resPath1), process1(), "UTF-8");
+            MyUtils.writeString2File(new File(resPath2), process2(), "UTF-8");
 
         } catch (IOException e) {
             e.printStackTrace();

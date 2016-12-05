@@ -1,9 +1,8 @@
 package com.jy.medusa.generator;
 
 import com.jy.medusa.utils.MyDateUtils;
+import com.jy.medusa.utils.MyUtils;
 import com.jy.medusa.utils.SystemConfigs;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,7 +55,7 @@ public class GenXml {
 
     private void changeTypes(){//TODO
         for(int i=0; i < colTypesSql.length ;i++){
-            if(StringUtils.isBlank(colTypesSql[i])) continue;
+            if(MyUtils.isBlank(colTypesSql[i])) continue;
 
             switch (colTypesSql[i]) {
                 case "INT" : colTypes[i] = "INTEGER"; break;
@@ -102,7 +101,7 @@ public class GenXml {
                 }
                 String resPath = path + "/" + entityName + "Mapper.xml";
 
-                FileUtils.writeStringToFile(new File(resPath), content, "UTF-8");
+                MyUtils.writeString2File(new File(resPath), content, "UTF-8");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -133,11 +132,11 @@ public class GenXml {
             }
 
             //外间关联
-            //if(StringUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !ignorArrayAssociation.contains(colSqlNames[i])) {
+            //if(MyUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !ignorArrayAssociation.contains(colSqlNames[i])) {
 
                 /*
             String p = colSqlNames[i].trim().replace("_id", "").trim();
-                if(StringUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
+                if(MyUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
                     p = p.concat(pluralAssociation);
                 }
                 String bigStr = MyGenUtils.upcaseFirst(p);
@@ -161,10 +160,10 @@ public class GenXml {
         for (int i = 0; i < colSqlNames.length; i++) {
 
             //外间关联
-            if(StringUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !ignorArrayAssociation.contains(colSqlNames[i])) {
+            if(MyUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !ignorArrayAssociation.contains(colSqlNames[i])) {
 
                 String p = colSqlNames[i].trim().replace("_id", "").trim();
-                if(StringUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
+                if(MyUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
                     p = p.concat(pluralAssociation);
                 }
 
@@ -191,10 +190,10 @@ public class GenXml {
         for (int i = 0; i < colSqlNames.length; i++) {
 
             //外间关联sss
-            if(StringUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !ignorArrayAssociation.contains(colSqlNames[i])) {
+            if(MyUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !ignorArrayAssociation.contains(colSqlNames[i])) {
 
                 String p = colSqlNames[i].trim().replace("_id", "").trim();
-                if(StringUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
+                if(MyUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
                     p = p.concat(pluralAssociation);
                 }
 

@@ -1,7 +1,7 @@
 package com.jy.medusa.provider;
 
 import com.jy.medusa.stuff.MyHelper;
-import com.jy.medusa.stuff.MedusaException;
+import com.jy.medusa.stuff.exception.MedusaException;
 
 import java.util.Map;
 

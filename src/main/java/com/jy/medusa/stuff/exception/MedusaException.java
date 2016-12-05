@@ -1,4 +1,4 @@
-package com.jy.medusa.stuff;
+package com.jy.medusa.stuff.exception;
 
 /**
  * Created by neo on 2016/11/4.

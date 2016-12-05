@@ -1,4 +1,4 @@
-package com.jy.medusa.stuff;
+package com.jy.medusa.stuff.cache;
 
 import com.jy.medusa.utils.MySqlGenerator;
 
