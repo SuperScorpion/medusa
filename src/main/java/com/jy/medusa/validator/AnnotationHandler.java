@@ -9,7 +9,6 @@ import com.jy.medusa.validator.annotation.Validator;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -53,6 +52,8 @@ public class AnnotationHandler {//TODO
 
     /**
      * 所有校验标注的处理
+     * 	<aop:aspectj-autoproxy proxy-target-class="true"/>
+     *  <bean class="com.jy.medusa.validator.AnnotationHandler"/>
      * */
 //    @Pointcut(value= "execution(* *.*ServiceImpl.*(..)) and @annotation(parameter))")
     @Before(value = "execution(public * *(..)) and @annotation(parameter))")
