@@ -77,7 +77,7 @@ public class GenBaseService {
                 "\n" +
                 "\tint deleteBy(T entity);\n" +
                 "\n" +
-                "\tList<T> selectByComplex(T entity, Object... ps);\n" +
+                "\tList<T> selectByGaze(T entity, Object... ps);\n" +
                 "}");
 
         MyGenUtils.processAllRemains(markServiceList, sbb, tag, "service");
@@ -154,7 +154,7 @@ public class GenBaseService {
                 "\t\treturn mapper.delete(entity);\n" +
                 "\t}\n" +
                 "\n" +
-                "\tpublic List<T> selectByComplex(T entity, Object... ps) {\n" +
+                "\tpublic List<T> selectByGaze(T entity, Object... ps) {\n" +
                 "\t\treturn mapper.medusaGaze(entity, ps);\n" +
                 "\t}\n" +
                 "}");
