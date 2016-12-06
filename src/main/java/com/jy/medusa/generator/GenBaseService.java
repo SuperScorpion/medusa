@@ -61,9 +61,9 @@ public class GenBaseService {
                 "\n" +
                 "\tT selectById(Integer id, Object... ps);\n" +
                 "\n" +
-                "\tList<T> selectListBy(T po, Object... ps);\n" +
+                "\tList<T> selectListBy(T entity, Object... ps);\n" +
                 "\n" +
-                "\tint saveOrUpdate(T t);\n" +
+                "\tint saveOrUpdate(T entity);\n" +
                 "\n" +
                 "\tint save(T entity);\n" +
                 "\n" +
@@ -73,9 +73,11 @@ public class GenBaseService {
                 "\n" +
                 "\tint deleteById(Integer id);\n" +
                 "\n" +
-                "\tint deleteMulti(List<Integer> ids);\n" +
+                "\tint deleteBatch(List<Integer> ids);\n" +
                 "\n" +
-                "\tList<T> selectByComplex(T po, Object... ps);\n" +
+                "\tint deleteBy(T entity);\n" +
+                "\n" +
+                "\tList<T> selectByComplex(T entity, Object... ps);\n" +
                 "}");
 
         MyGenUtils.processAllRemains(markServiceList, sbb, tag, "service");
@@ -120,11 +122,11 @@ public class GenBaseService {
                 "\t\treturn mapper.selectByPrimaryKey(id, ps);\n" +
                 "\t}\n" +
                 "\n" +
-                "\tpublic List<T> selectListBy(T po, Object... ps) {\n" +
-                "\t\treturn mapper.select(po, ps);\n" +
+                "\tpublic List<T> selectListBy(T entity, Object... ps) {\n" +
+                "\t\treturn mapper.select(entity, ps);\n" +
                 "\t}\n" +
                 "\n" +
-                "\tpublic int saveOrUpdate(T t) {\n" +
+                "\tpublic int saveOrUpdate(T entity) {\n" +
                 "\t\treturn 0;//TODO\n" +
                 "\t}\n" +
                 "\n" +
@@ -144,12 +146,16 @@ public class GenBaseService {
                 "\t\treturn mapper.deleteByPrimaryKey(id);\n" +
                 "\t}\n" +
                 "\n" +
-                "\tpublic int deleteMulti(List<Integer> ids) {\n" +
+                "\tpublic int deleteBatch(List<Integer> ids) {\n" +
                 "\t\treturn mapper.deleteBatch(ids);\n" +
                 "\t}\n" +
                 "\n" +
-                "\tpublic List<T> selectByComplex(T t, Object... ps) {\n" +
-                "\t\treturn mapper.medusaGaze(t, ps);\n" +
+                "\tpublic int deleteBy(T entity) {\n" +
+                "\t\treturn mapper.delete(entity);\n" +
+                "\t}\n" +
+                "\n" +
+                "\tpublic List<T> selectByComplex(T entity, Object... ps) {\n" +
+                "\t\treturn mapper.medusaGaze(entity, ps);\n" +
                 "\t}\n" +
                 "}");
 
