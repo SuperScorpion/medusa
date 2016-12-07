@@ -413,57 +413,7 @@ public class MySqlGenerator {
             for (Object z : (Object[]) ps[0]) {///先遍历条件like between类
 
                 if(z instanceof BaseParam) {
-
-                    //转换一下column的属性值 也许是数据库字段 也有可能是属性值
-                    String column = MyHelper.buildColumnName3(((BaseParam) z).getColumn(), currentFieldColumnNameMap);
-
-                    if (z instanceof BaseComplexParam) {
-
-
-                        if (z instanceof SingleParam) {//modify by neo on 2016.11.17
-
-                            sbb.append(" AND ").append(column).append(" = ").append("#{pobj.param2[" + isd + "].value}");
-
-                        } else if (z instanceof BetweenParam) {
-
-//                        BetweenParam p = (BetweenParam) z;
-
-                            sbb.append(" AND ").append(column).append(" BETWEEN ")
-                                    //.append("'").append(MyDateUtils.convertDateToStr(p.getEnd(), MyDateUtils.DATE_FULL_STR)).append("'")
-                                    .append("#{pobj.param2[" + isd + "].start}")
-                                    .append(" AND ")
-                                    .append("#{pobj.param2[" + isd + "].end}");
-                        } else if (z instanceof LikeParam) {
-
-//                        LikeParam p = (LikeParam) z;
-
-                            sbb.append(" AND ").append(column).append(" LIKE ").append("CONCAT('%',#{pobj.param2[" + isd + "].value},'%')");
-                        }
-                    } else if (z instanceof BaseGeLeParam) {
-
-                        if (z instanceof GreatThanParam) {
-
-//                            GreatThanParam p = (GreatThanParam) z;
-
-                            sbb.append(" AND ").append(column).append(" > ").append("#{pobj.param2[" + isd + "].value}");
-                        } else if (z instanceof GreatEqualParam) {
-
-//                            GreatEqualParam p = (GreatEqualParam) z;
-
-                            sbb.append(" AND ").append(column).append(" >= ").append("#{pobj.param2[" + isd + "].value}");
-                        } else if (z instanceof LessThanParam) {
-
-//                            LessThanParam p = (LessThanParam) z;
-
-                            sbb.append(" AND ").append(column).append(" < ").append("#{pobj.param2[" + isd + "].value}");
-                        } else if (z instanceof LessEqualParam) {
-
-//                            LessEqualParam p = (LessEqualParam) z;
-
-                            sbb.append(" AND ").append(column).append(" <= ").append("#{pobj.param2[" + isd + "].value");
-                        }
-                    }
-
+                    baseParamHandler(sbb, z, isd);
                 }
 
                 isd++;
@@ -584,54 +534,7 @@ public class MySqlGenerator {
 
                 if(z instanceof BaseParam) {
 
-                    //转换一下column的属性值 也许是数据库字段 也有可能是属性值
-                    String column = MyHelper.buildColumnName3(((BaseParam) z).getColumn(), currentFieldColumnNameMap);
-
-                    if (z instanceof BaseComplexParam) {
-
-                        if (z instanceof SingleParam) {//modify by neo on 2016.11.17
-
-                            sbb.append(" AND ").append(column).append(" = ").append("#{pobj.param2[" + isd + "].value}");
-
-                        } else if (z instanceof BetweenParam) {
-
-    //                        BetweenParam p = (BetweenParam) z;
-
-                            sbb.append(" AND ").append(column).append(" BETWEEN ")
-                            //.append("'").append(MyDateUtils.convertDateToStr(p.getEnd(), MyDateUtils.DATE_FULL_STR)).append("'")
-                            .append("#{pobj.param2[" + isd + "].start}")
-                            .append(" AND ")
-                            .append("#{pobj.param2[" + isd + "].end}");
-                        } else if (z instanceof LikeParam) {
-
-    //                        LikeParam p = (LikeParam) z;
-
-                            sbb.append(" AND ").append(column).append(" LIKE ").append("CONCAT('%',#{pobj.param2[" + isd + "].value},'%')");
-                        }
-                    } else if (z instanceof BaseGeLeParam) {
-
-                        if (z instanceof GreatThanParam) {
-
-//                            GreatThanParam p = (GreatThanParam) z;
-
-                            sbb.append(" AND ").append(column).append(" > ").append("#{pobj.param2[" + isd + "].value}");
-                        } else if (z instanceof GreatEqualParam) {
-
-//                            GreatEqualParam p = (GreatEqualParam) z;
-
-                            sbb.append(" AND ").append(column).append(" >= ").append("#{pobj.param2[" + isd + "].value}");
-                        } else if (z instanceof LessThanParam) {
-
-//                            LessThanParam p = (LessThanParam) z;
-
-                            sbb.append(" AND ").append(column).append(" < ").append("#{pobj.param2[" + isd + "].value}");
-                        } else if (z instanceof LessEqualParam) {
-
-//                            LessEqualParam p = (LessEqualParam) z;
-
-                            sbb.append(" AND ").append(column).append(" <= ").append("#{pobj.param2[" + isd + "].value");
-                        }
-                    }
+                    baseParamHandler(sbb, z, isd);
 
                 } else if (z instanceof Pager) {
 
@@ -674,6 +577,63 @@ public class MySqlGenerator {
         logger.debug("Neo :Generated SQL ^_^ " + sbb.toString());
 
         return sbb.toString();
+    }
+
+
+
+
+
+    public void baseParamHandler(StringBuilder sbb, Object z, int isd) {
+
+        //转换一下column的属性值 也许是数据库字段 也有可能是属性值
+        String column = MyHelper.buildColumnName3(((BaseParam) z).getColumn(), currentFieldColumnNameMap);
+
+        if (z instanceof BaseComplexParam) {
+
+            if (z instanceof SingleParam) {//modify by neo on 2016.11.17
+
+                sbb.append(" AND ").append(column).append(" = ").append("#{pobj.param2[" + isd + "].value}");
+
+            } else if (z instanceof BetweenParam) {
+
+                //                        BetweenParam p = (BetweenParam) z;
+
+                sbb.append(" AND ").append(column).append(" BETWEEN ")
+                        //.append("'").append(MyDateUtils.convertDateToStr(p.getEnd(), MyDateUtils.DATE_FULL_STR)).append("'")
+                        .append("#{pobj.param2[" + isd + "].start}")
+                        .append(" AND ")
+                        .append("#{pobj.param2[" + isd + "].end}");
+            } else if (z instanceof LikeParam) {
+
+                //                        LikeParam p = (LikeParam) z;
+
+                sbb.append(" AND ").append(column).append(" LIKE ").append("CONCAT('%',#{pobj.param2[" + isd + "].value},'%')");
+            }
+        } else if (z instanceof BaseGeLeParam) {
+
+            if (z instanceof GreatThanParam) {
+
+                //                            GreatThanParam p = (GreatThanParam) z;
+
+                sbb.append(" AND ").append(column).append(" > ").append("#{pobj.param2[" + isd + "].value}");
+            } else if (z instanceof GreatEqualParam) {
+
+                //                            GreatEqualParam p = (GreatEqualParam) z;
+
+                sbb.append(" AND ").append(column).append(" >= ").append("#{pobj.param2[" + isd + "].value}");
+            } else if (z instanceof LessThanParam) {
+
+                //                            LessThanParam p = (LessThanParam) z;
+
+                sbb.append(" AND ").append(column).append(" < ").append("#{pobj.param2[" + isd + "].value}");
+            } else if (z instanceof LessEqualParam) {
+
+                //                            LessEqualParam p = (LessEqualParam) z;
+
+                sbb.append(" AND ").append(column).append(" <= ").append("#{pobj.param2[" + isd + "].value");
+            }
+        }
+
     }
 }
 
