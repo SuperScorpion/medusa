@@ -6,6 +6,9 @@ import com.jy.medusa.stuff.param.gele.GreatThanParam;
 import com.jy.medusa.stuff.param.gele.LessEqualParam;
 import com.jy.medusa.stuff.param.gele.LessThanParam;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by neo on 2016/10/14.
  * 一个构造参数对象的类 方便用户使用
@@ -25,29 +28,64 @@ public class MyRestrictions {
         }
     }*/
 
-    public static LikeParam getLikeParam(String c) {
-        return new LikeParam(c);
+    MyRestrictions() {
+        this.paramList = new ArrayList<>();
     }
-    public static BetweenParam getBetweenParam(String c) {
-        return new BetweenParam(c);
+
+    private List<BaseParam> paramList;
+
+    public List<BaseParam> getParamList() {
+        return paramList;
     }
-    public static GreatEqualParam getGreatEqualParam(String c) {
-        return new GreatEqualParam(c);
+
+    public MyRestrictions likeParam(String c, String v) {
+
+        paramList.add(new LikeParam(c, v));
+        return this;
     }
-    public static GreatThanParam getGreatThanParam(String c) {
-        return new GreatThanParam(c);
+
+    public MyRestrictions betweenParam(String c, Object start, Object end) {
+
+        paramList.add(new BetweenParam(c, start, end));
+        return this;
     }
-    public static LessEqualParam getLessEqualParam(String c) {
-        return new LessEqualParam(c);
+
+    public MyRestrictions greatEqualParam(String c, Object v) {
+
+        paramList.add(new GreatEqualParam(c, v));
+        return this;
     }
-    public static LessThanParam getLessThanParam(String c) {
-        return new LessThanParam(c);
+
+    public MyRestrictions greatThanParam(String c, Object v) {
+
+        paramList.add(new GreatThanParam(c, v));
+        return this;
     }
-    public static SingleParam getSingleParam(String c) {
-        return new SingleParam(c);
+
+    public MyRestrictions lessEqualParam(String c, Object v) {
+
+        paramList.add(new LessEqualParam(c, v));
+        return this;
     }
+
+    public MyRestrictions lessThanParam(String c, Object v) {
+
+        paramList.add(new LessThanParam(c, v));
+        return this;
+    }
+
+    public MyRestrictions singleParam(String c, Object v) {
+
+        paramList.add(new SingleParam(c, v));
+        return this;
+    }
+
 
     public static Pager getPager() {
         return new Pager();
+    }
+
+    public static MyRestrictions getMyRestrctions() {
+        return new MyRestrictions();
     }
 }

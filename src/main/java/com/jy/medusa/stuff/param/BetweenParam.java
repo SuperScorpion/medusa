@@ -4,29 +4,43 @@ import java.util.Date;
 
 public class BetweenParam extends BaseComplexParam {
 
-    BetweenParam(String column) {
+    BetweenParam(String column, Object start, Object end) {
         this.setColumn(column);
+        this.setStart(start);
+
+        if(end == null)
+            this.setEnd(new Date());
+        else
+            this.setEnd(end);
     }
 
-    Date start;
+    Object start;
 
-    Date end = new Date();///默认设为现在系统的时间
+    Object end;
 
-    public Date getEnd() {
-        return end;
-    }
-
-    public BetweenParam setEnd(Date end) {
-        this.end = end;
-        return this;
-    }
-
-    public Date getStart() {
+    public Object getStart() {
         return start;
     }
 
-    public BetweenParam setStart(Date start) {
+/*    public BetweenParam setStart(Object start) {
         this.start = start;
         return this;
+    }*/
+
+    public void setStart(Object start) {
+        this.start = start;
+    }
+
+    public Object getEnd() {
+        return end;
+    }
+
+/*    public BetweenParam setEnd(Object end) {
+        this.end = end;
+        return this;
+    }*/
+
+    public void setEnd(Object end) {
+        this.end = end;
     }
 }
