@@ -1,4 +1,4 @@
-package com.jy.medusa.stuff.hotLoad;
+package com.jy.medusa.stuff.hotload;
 
 import com.jy.medusa.utils.MyUtils;
 import org.apache.ibatis.session.SqlSessionFactory;

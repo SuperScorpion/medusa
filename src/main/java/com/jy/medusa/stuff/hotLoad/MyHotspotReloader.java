@@ -1,4 +1,4 @@
-package com.jy.medusa.stuff.hotLoad;
+package com.jy.medusa.stuff.hotload;
 
 /**
  * Created by neo on 2016/12/10.
