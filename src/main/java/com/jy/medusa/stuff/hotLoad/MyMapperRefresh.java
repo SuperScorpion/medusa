@@ -24,7 +24,6 @@ public class MyMapperRefresh {
     }*/
 
     MyMapperRefresh(SqlSessionFactory sqlSessionFactory, String xmlPath, short seconds) {
-
         Thread getTokenThread = new Thread(new MyMapperReloaderThread(xmlPath, sqlSessionFactory, seconds));
         getTokenThread.start();
     }

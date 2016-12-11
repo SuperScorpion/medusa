@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
                 log.debug("MyMapperReloaderThread has completed the hot - loading and began to sleep {} seconds.", seconds);
                 Thread.sleep(seconds * 1000);
             } catch (InterruptedException e) {
-                log.error("{MyMapperReloaderThread 线程出现异常被打断！}", e);
+                log.error("{MyMapperReloaderThread catch the InterruptedException！}", e);
                 e.printStackTrace();
                 try {
                     Thread.sleep(seconds * 1000);
@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
                     e1.printStackTrace();
                 }
             } catch (Exception e) {
-            	log.error("{MyMapperReloaderThread 出现异常情况！}", e);
+            	log.error("{MyMapperReloaderThread catch the Exception！}", e);
                 e.printStackTrace();
                 try {
                     Thread.sleep(seconds * 1000);

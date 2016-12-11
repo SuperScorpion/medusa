@@ -20,10 +20,10 @@ import java.util.*;
  class MyHotspotReloader {
 
     private SqlSessionFactory sqlSessionFactory;
-    private String xmlPath;
-    private List<File> mapperXmlFileList;
-    private static Map<String, Long> fileChangeMap = new HashMap<>();// 记录文件是否变化
-    private static List<String> myMappedStatementCacheKeyList = new ArrayList<>();
+    private String xmlPath;//用户配置的属性
+    private List<File> mapperXmlFileList;//记录所有的 xml 文件
+    private static Map<String, Long> fileChangeMap = new HashMap<>();// 记录文件是否变化了
+    private static List<String> mappedStatementCacheKeyList = new ArrayList<>();//框架内部的方法名称 对应的 mapperstatement 的 key 记录
 
 
     MyHotspotReloader(String xmlPath, SqlSessionFactory sqlSessionFactory){
@@ -31,6 +31,9 @@ import java.util.*;
         this.sqlSessionFactory = sqlSessionFactory;
     }
 
+     /**
+      * 主方法热加载体
+      */
     public void refreshMapper() {
 
         try {
@@ -54,15 +57,9 @@ import java.util.*;
                 return;
             }
 
-/*            System.out.println("==============刷新前mapper中的内容===============");
-            for (String name : configuration.getMappedStatementNames()) {
-                System.out.println(name);
-            }*/
-
             // step.2 判断是否有文件发生了变化
 
             boolean changed = false;///所有文件是否有 一个出现了改变
-
             for (File mapperXml : mapperXmlFileList) {
 
                 if (isChanged(mapperXml)) {
@@ -89,10 +86,6 @@ import java.util.*;
                 }
             }
 
-            /*System.out.println("==============刷新后mapper中的内容===============");
-            for (String name : configuration.getMappedStatementNames()) {
-                System.out.println(name);
-            }*/
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -105,7 +98,7 @@ import java.util.*;
      */
     private void scanMapperXml(String xmlAbsolutelyPath) throws IOException {
 
-        if(MyUtils.isBlank(xmlPath)) throw new RuntimeException("Mybatis xml path is null!");
+        if(MyUtils.isBlank(xmlPath)) throw new RuntimeException("Mybatis xmlPath is null!");
 
         File xmlDirs = new File(xmlAbsolutelyPath);
 
@@ -122,8 +115,6 @@ import java.util.*;
                 if (!readfile.isDirectory()) mapperXmlFileList.add(readfile);
             }
         }
-
-//        mapperXmlFileList = new PathMatchingResourcePatternResolver().getResources(packageSearchPath);
     }
 
     /**
@@ -135,7 +126,6 @@ import java.util.*;
 
         if(configuration == null) throw new RuntimeException("removeConfig - configuration is null!");
 
-//        String[] p = new String[]{"mappedStatements", "caches", "resultMaps", "parameterMaps", "keyGenerators", "sqlFragments"};
         String[] p = new String[]{"mappedStatements", "caches", "resultMaps", "parameterMaps", "keyGenerators", "sqlFragments"};
 
         clearMaps(configuration, p);
@@ -156,13 +146,12 @@ import java.util.*;
             Field field = MyReflectionUtils.obtainAccessibleField(configuration, f);
             Map<Object, Object> configMap = (Map) field.get(configuration);
 
-
             if(f.equals("mappedStatements")) {
 
                 List<String> paramList = new ArrayList<>();///////标记为非框架的 内部方法名
 
                 for(Object v : configMap.keySet()) {
-                    if(!myMappedStatementCacheKeyList.contains(v.toString())) paramList.add(v.toString());
+                    if(!mappedStatementCacheKeyList.contains(v.toString())) paramList.add(v.toString());
                 }
 
                 for(String z : paramList) {
@@ -194,8 +183,6 @@ import java.util.*;
 
         String resourceName = resource.getName();
 
-//        boolean addFlag = !fileChangeMap.containsKey(resourceName);// 此为新增标识
-
         long lastFrame = resource.lastModified();
 
         // 修改文件:判断文件内容是否有变化
@@ -211,10 +198,20 @@ import java.util.*;
         return false;
     }
 
+     /**
+      * 判断是否是第一次初始化容器
+      * @return
+      */
      private boolean isFirst() {
          return fileChangeMap.isEmpty() ? true : false;
      }
 
+
+     /**
+      * 把属于框架方法 medusa里的方法名 对应 mapperstatement 的 key 缓存下来待使用
+      * @param configuration
+      * @throws IllegalAccessException
+      */
      private void initCacheMapperStatement(Configuration configuration) throws IllegalAccessException {
 
          for (File mapperXml : mapperXmlFileList) {
@@ -231,7 +228,7 @@ import java.util.*;
 
          for(String k : configMap.keySet()) {
              for(String l : SystemConfigs.MY_ALL_METHOD_NANES_LIST) {
-                 if(k.endsWith(l)) myMappedStatementCacheKeyList.add(k);
+                 if(k.endsWith(l)) mappedStatementCacheKeyList.add(k);
              }
          }
      }
