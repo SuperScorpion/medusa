@@ -98,7 +98,7 @@ public class GenControllerJson {
 
         StringBuilder sb2 = new StringBuilder();
         sb2.append("\t\t\t" + "Pager<" + entityName + Home.entityNameSuffix +"> pager = MyRestrictions.getPager().setPageSize(10);\r\n");
-        sb2.append("\t\t\t" + MyGenUtils.lowcaseFirst(entityName) + "Service.selectByComplex(param, pager);\r\n\r\n");
+        sb2.append("\t\t\t" + MyGenUtils.lowcaseFirst(entityName) + "Service.selectByGaze(param, pager);\r\n\r\n");
 
         genTryCatch(sbb, sb2.toString());
         sbb.append("\t\treturn json;\r\n");

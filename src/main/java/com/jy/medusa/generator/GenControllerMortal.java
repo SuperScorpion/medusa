@@ -96,7 +96,7 @@ public class GenControllerMortal {
 
         sbb.append("\t\t" + "Pager<" + entityName + Home.entityNameSuffix +"> pager = MyRestrictions.getPager().setPageSize(10);\r\n\r\n");
 
-        sbb.append("\t\t" + MyGenUtils.lowcaseFirst(entityName) + "Service.selectByComplex(param, pager);\r\n\r\n");
+        sbb.append("\t\t" + MyGenUtils.lowcaseFirst(entityName) + "Service.selectByGaze(param, pager);\r\n\r\n");
 
         sbb.append("\t\t" + "model.put(\"result\", pager);\r\n\r\n");
 
