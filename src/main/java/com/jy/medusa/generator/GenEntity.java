@@ -128,9 +128,11 @@ public class GenEntity {
         sb.append("package " + packagePath + ";\r\n\r\n");
 
 //        sb.append("import " + basePoPath + ";\r\n");//TODO
-        sb.append("import com.jy.medusa.stuff.annotation.Column;\r\n");//TODO
-        sb.append("import com.jy.medusa.stuff.annotation.Table;\r\n");//TODO
-        sb.append("import com.jy.medusa.stuff.annotation.Id;\r\n\r\n");//TODO
+        if(MyUtils.isNotBlank(Home.lazyLoad)) sb.append("import com.fasterxml.jackson.annotation.JsonIgnoreProperties;\r\n");
+
+        sb.append("import com.jy.medusa.stuff.annotation.Column;\r\n");
+        sb.append("import com.jy.medusa.stuff.annotation.Table;\r\n");
+        sb.append("import com.jy.medusa.stuff.annotation.Id;\r\n\r\n");
 
         //参数校验
         if(colValidArray != null && !colValidArray.isEmpty()) {
@@ -152,7 +154,6 @@ public class GenEntity {
            // }
         //}
 
-
         if (f_util) {
             sb.append("import java.util.Date;\r\n\r\n");
         }
@@ -169,6 +170,8 @@ public class GenEntity {
         sb.append(" */\r\n");
 
         sb.append("@Table(name = \""+ tableName +"\")\r\n");
+
+        if(MyUtils.isNotBlank(Home.lazyLoad)) sb.append("@JsonIgnoreProperties(value={\"handler\"})\r\n");
 
         sb.append("public class " + MyGenUtils.upcaseFirst(tableName) + Home.entityNameSuffix + " {\r\n\r\n");
 
