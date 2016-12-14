@@ -23,7 +23,7 @@ public class MyMapperRefresh {
         this.sqlSessionFactory = sqlSessionFactory;
     }*/
 
-    MyMapperRefresh(SqlSessionFactory sqlSessionFactory, String xmlPath, short seconds) {
+    MyMapperRefresh(SqlSessionFactory sqlSessionFactory, String xmlPath, int seconds) {
         Thread getTokenThread = new Thread(new MyMapperReloaderThread(xmlPath, sqlSessionFactory, seconds));
         getTokenThread.start();
     }
