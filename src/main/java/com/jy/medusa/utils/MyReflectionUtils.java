@@ -109,7 +109,7 @@ public class MyReflectionUtils {
 
         Method method = obtainAccessibleMethod(obj, methodName, parameterTypes);
 
-        if (method == null) throw new IllegalArgumentException("Neo: Could not find method [" + methodName + "] on target [" + obj + "].");
+        if (method == null) throw new IllegalArgumentException("Medusa: Could not find method [" + methodName + "] on target [" + obj + "].");
 
         try {
             return method.invoke(obj, args);
@@ -164,7 +164,7 @@ public class MyReflectionUtils {
                     }
             }
         } catch (Exception e) {
-            logger.error("Neo: There was an exception in the reflection " + superClass.getName() + " get the Method " + methodName);
+            logger.error("Medusa: There was an exception in the reflection " + superClass.getName() + " get the Method " + methodName);
             e.printStackTrace();
         }
 
@@ -181,7 +181,7 @@ public class MyReflectionUtils {
 
         Field field = obtainAccessibleField(obj, fieldName);
 
-        if (field == null) throw new IllegalArgumentException("Neo: could not find field [" + fieldName + "] on target [" + obj + "]");
+        if (field == null) throw new IllegalArgumentException("Medusa: could not find field [" + fieldName + "] on target [" + obj + "]");
 
         Object retval = null;
 
@@ -206,7 +206,7 @@ public class MyReflectionUtils {
 
         Field field = obtainAccessibleField(obj, fieldName);
 
-        if (field == null) throw new IllegalArgumentException("Neo: could not find field [" + fieldName + "] on target [" + obj + "]");
+        if (field == null) throw new IllegalArgumentException("Medusa: could not find field [" + fieldName + "] on target [" + obj + "]");
 
         try {
             field.set(obj, value);
@@ -256,7 +256,7 @@ public class MyReflectionUtils {
                     }
             }
         } catch (Exception e) {
-            logger.error("Neo: There was an exception in the reflection " + superClass.getName() + " get the Field " + fieldName);
+            logger.error("Medusa: There was an exception in the reflection " + superClass.getName() + " get the Field " + fieldName);
             e.printStackTrace();
         }
 

@@ -64,13 +64,13 @@ public class MyHelper {
                     if (t.getRawType() == mapperClass || ((Class<?>) t.getRawType()).isAssignableFrom(mapperClass)) {
                         Class<?> returnType = (Class<?>) t.getActualTypeArguments()[0];
 //                        MyHelperCacheManager.putCacheClass(sn, returnType);///modify by neo on 2016.12.1
-                        logger.debug("Neo :Successfully initialize the " + sn + " cache information");
+                        logger.debug("Medusa:Successfully initialize the " + sn + " cache information");
                         return returnType;
                     }
                 }
             }
 //        }
-        throw new RuntimeException("Neo: Can't get Mapper<T> generic type: " + sn);
+        throw new RuntimeException("Medusa: Can't get Mapper<T> generic type: " + sn);
     }
 
     /**
@@ -83,7 +83,7 @@ public class MyHelper {
             try {
                 return Class.forName(classPath);
             } catch (ClassNotFoundException e) {
-                logger.error("Neo: According to the path to build Class object " + classPath + " appeared abnormal situation!");
+                logger.error("Medusa: According to the path to build Class object " + classPath + " appeared abnormal situation!");
                 e.printStackTrace();
             }
         }
@@ -168,7 +168,7 @@ public class MyHelper {
             Class<?> c = getEntityClass(p);
             MySqlGenerator q = initSqlGenerator(c);
             MyHelperCacheManager.putCacheGenerator(p, q);
-            logger.debug("Neo: Successfully initialize the " + c.getSimpleName() + " Basic information of MySqlGenerator!");
+            logger.debug("Medusa: Successfully initialize the " + c.getSimpleName() + " Basic information of MySqlGenerator!");
             return q;
         }
     }
@@ -176,7 +176,7 @@ public class MyHelper {
     private static MySqlGenerator initSqlGenerator(Class<?> entityClass) {
 
         if(entityClass == null) {
-            throw new RuntimeException("Neo: initSqlGenerator No entity type introduced!");
+            throw new RuntimeException("Medusa: initSqlGenerator No entity type introduced!");
         }
 
         String pkName = SystemConfigs.PRIMARY_KEY;//实体类主键名称
@@ -213,7 +213,7 @@ public class MyHelper {
         }
 
         Table table = entityClass.getAnnotation(Table.class);
-        if (table == null) throw new RuntimeException("Neo: class - " + entityClass + " Not using @Table annotation identification!");
+        if (table == null) throw new RuntimeException("Medusa: class - " + entityClass + " Not using @Table annotation identification!");
         tableName = table.name();
 
         return new MySqlGenerator(currentColumnFieldNameMap, currentFieldTypeNameMap, tableName, pkName);
@@ -377,14 +377,14 @@ public class MyHelper {
             }
 
         } catch (SQLException e) {
-            logger.error("Neo: The total number of queries is abnormal when paging " + e);
+            logger.error("Medusa: The total number of queries is abnormal when paging " + e);
             e.printStackTrace();
         } finally {
             try {
                 rs.close();
                 countStmt.close();
             } catch (SQLException e) {
-                logger.error("Neo: Close connection appears abnormal in paging query total number " + e);
+                logger.error("Medusa: Close connection appears abnormal in paging query total number " + e);
                 e.printStackTrace();
             }
         }
@@ -494,14 +494,14 @@ public class MyHelper {
             }
 
             } catch (SQLException e) {
-                logger.error("Neo: The total number of queries is abnormal when paging " + e);
+                logger.error("Medusa: The total number of queries is abnormal when paging " + e);
                 e.printStackTrace();
             } finally {
                 try {
                     if(rs != null) rs.close();
                     if(countStmt != null) countStmt.close();
                 } catch (SQLException e) {
-                    logger.error("Neo: Close connection appears abnormal in paging query total number " + e);
+                    logger.error("Medusa: Close connection appears abnormal in paging query total number " + e);
                     e.printStackTrace();
                 }
             }

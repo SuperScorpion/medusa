@@ -53,7 +53,7 @@ public class MySqlGenerator {
                 .append(insertDynamicSql).append(")");//modify by neo on2016.11.12
         String sql = sql_build.toString();
 
-        logger.debug("Neo :Generated SQL ^_^ " + sql);
+        logger.debug("Medusa: Generated SQL ^_^ " + sql);
 
         return sql;
     }
@@ -108,7 +108,7 @@ public class MySqlGenerator {
 
         String sql = sql_build.toString();
 
-        logger.debug("Neo :Generated SQL ^_^ " + sql);
+        logger.debug("Medusa: Generated SQL ^_^ " + sql);
 
         return sql;
     }
@@ -143,7 +143,7 @@ public class MySqlGenerator {
 
         String sql = sql_build.toString();
 
-        logger.debug("Neo :Generated SQL ^_^ " + sql);
+        logger.debug("Medusa: Generated SQL ^_^ " + sql);
 
         return sql;
     }
@@ -162,7 +162,7 @@ public class MySqlGenerator {
             sql_build.append(MyUtils.join(values, " AND "));
 
         String sql = sql_build.toString();
-        logger.debug("Neo :Generated SQL ^_^ " + sql);
+        logger.debug("Medusa: Generated SQL ^_^ " + sql);
         return sql;
     }
 
@@ -177,7 +177,7 @@ public class MySqlGenerator {
         List<String> values = obtainColumnValusForModify(t);
         //Object id = MyReflectionUtils.obtainFieldValue(t, currentColumnFieldNameMap.get(pkName));
 
-        //if(id == null) throw new MedusaException("Neo: Update method incoming primary key value is null (selective)");//modify by neo on 2016.11.04
+        //if(id == null) throw new MedusaException("Medusa:  Update method incoming primary key value is null (selective)");//modify by neo on 2016.11.04
 
         //id = handleValue(id);///这是为了处理id不为 int 变成 string 时 modify by neo on 2016.11.2
 
@@ -190,7 +190,7 @@ public class MySqlGenerator {
 
         String sql = sql_build.toString();
 
-        logger.debug("Neo :Generated SQL ^_^ " + sql);
+        logger.debug("Medusa: Generated SQL ^_^ " + sql);
 
         return sql;
     }
@@ -205,7 +205,7 @@ public class MySqlGenerator {
         List<String> values = obtainColumnValsForModifyNull(t);
         //Object id = MyReflectionUtils.obtainFieldValue(t, currentColumnFieldNameMap.get(pkName));
 
-        //if(id == null) throw new MedusaException("Neo: Update method incoming primary key value is null (selectall)");//modify by neo on 2016.11.04
+        //if(id == null) throw new MedusaException("Medusa:  Update method incoming primary key value is null (selectall)");//modify by neo on 2016.11.04
 
         //id = handleValue(id);///这是为了处理id不为 int 变成 string 时 modify by neo on 2016.11.2
 
@@ -218,7 +218,7 @@ public class MySqlGenerator {
 
         String sql = sql_build.toString();
 
-        logger.debug("Neo :Generated SQL ^_^ " + sql);
+        logger.debug("Medusa: Generated SQL ^_^ " + sql);
 
         return sql;
     }
@@ -317,7 +317,7 @@ public class MySqlGenerator {
 
         String sql = sql_build.toString();
 
-        logger.debug("Neo :Generated SQL ^_^ " + sql);
+        logger.debug("Medusa: Generated SQL ^_^ " + sql);
 
         return sql;
     }
@@ -337,7 +337,7 @@ public class MySqlGenerator {
 
         String sql = sql_build.toString();
 
-        logger.debug("Neo :Generated SQL ^_^ " + sql);
+        logger.debug("Medusa: Generated SQL ^_^ " + sql);
 
         return sql;
     }
@@ -359,7 +359,7 @@ public class MySqlGenerator {
 
         String sql = sql_build.toString();
 
-        logger.debug("Neo :Generated SQL ^_^ " + sql);
+        logger.debug("Medusa: Generated SQL ^_^ " + sql);
 
         return sql;
     }
@@ -373,7 +373,7 @@ public class MySqlGenerator {
         sql_build.append("SELECT ").append(columnsStr).append(" FROM ").append(this.tableName);
         String sql = sql_build.toString();
 
-        logger.debug("Neo :Generated SQL ^_^ " + sql);
+        logger.debug("Medusa: Generated SQL ^_^ " + sql);
 
         return sql;
     }
@@ -388,9 +388,9 @@ public class MySqlGenerator {
         String cacheSq = MyHelper.myThreadLocal.get();
         if(MyUtils.isNotBlank(cacheSq)) {
             MyHelper.myThreadLocal.remove();
-            logger.debug("Neo: Successfully cleared the query page in the cache");
+            logger.debug("Medusa:  Successfully cleared the query page in the cache");
             String countSq = cacheSq.replaceAll("SELECT\\b.*\\bFROM", "SELECT COUNT(1) FROM").replaceAll("\\border by\\b.*", "");
-            logger.debug("Neo: Successfully returns the count sql of pages in the cache ^_^ " + countSq);
+            logger.debug("Medusa:  Successfully returns the count sql of pages in the cache ^_^ " + countSq);
             return countSq;
         }
 
@@ -430,7 +430,7 @@ public class MySqlGenerator {
 
         String sql = sbb.toString();
 
-        logger.debug("Neo :Generated SQL ^_^ " + sql);
+        logger.debug("Medusa: Generated SQL ^_^ " + sql);
 
         return sql;
     }
@@ -462,7 +462,7 @@ public class MySqlGenerator {
             }
         }
 
-        logger.debug("Neo :Generated SQL ^_^ " + sql);
+        logger.debug("Medusa: Generated SQL ^_^ " + sql);
 
         return sbb.toString();
     }*/
@@ -497,7 +497,7 @@ public class MySqlGenerator {
             }
         }
 
-        logger.debug("Neo :Generated SQL ^_^ " + sql);
+        logger.debug("Medusa: Generated SQL ^_^ " + sql);
 
         return sbb.toString();
     }*/
@@ -514,7 +514,7 @@ public class MySqlGenerator {
         ///分页时先执行查询分页再执行查询分页 再执行总计数句 boundsql(因为)
         String cacheSq = MyHelper.myThreadLocal.get();
         if(MyUtils.isNotBlank(cacheSq)) {
-            logger.debug("Neo: Successfully returns the query page in the cache ^_^ " + cacheSq);
+            logger.debug("Medusa:  Successfully returns the query page in the cache ^_^ " + cacheSq);
             return cacheSq;
         }
 
@@ -583,11 +583,11 @@ public class MySqlGenerator {
 
                 //缓存了分页的查询语句
                 MyHelper.myThreadLocal.set(sbb.toString());
-                logger.debug("Neo: Successfully saved the page query statement to the cache ^_^ " + sbb.toString());
+                logger.debug("Medusa:  Successfully saved the page query statement to the cache ^_^ " + sbb.toString());
             }
         }
 
-        logger.debug("Neo :Generated SQL ^_^ " + sbb.toString());
+        logger.debug("Medusa: Generated SQL ^_^ " + sbb.toString());
 
         return sbb.toString();
     }

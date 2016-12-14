@@ -89,7 +89,7 @@ public class MyInterceptor implements Interceptor {
 
                 } else if (MyHelper.checkUpdateMethod(medusaMethodName)) {
 
-                    if (result.toString().equals("0")) throw new MedusaException("Neo: The update method is there a number of exceptions to zero!(Maybe your incoming primary key is empty please check!)");
+                    if (result.toString().equals("0")) throw new MedusaException("Medusa: The update method is there a number of exceptions to zero!(Maybe your incoming primary key is empty please check!)");
                 }
             }
         } else {///如果为普通方法 自定义

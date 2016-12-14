@@ -39,7 +39,7 @@ public class MyReflectCacheManager {
         Method[] paramMethods = c.getDeclaredMethods();
         METHODS_CACHEMAP.put(c, paramMethods);
 
-        logger.debug("Neo: " + c.getName() + " DeclaredMethods Caches all initialized");
+        logger.debug("Medusa: " + c.getName() + " DeclaredMethods Caches all initialized");
 
         return paramMethods;
     }
@@ -55,7 +55,7 @@ public class MyReflectCacheManager {
         Field[] paramFields = c.getDeclaredFields();
         FIELDS_CACHEMAP.put(c, paramFields);
 
-        logger.debug("Neo: " + c.getName() + " DeclaredFields Caches all initialized");
+        logger.debug("Medusa: " + c.getName() + " DeclaredFields Caches all initialized");
 
         return paramFields;
     }
