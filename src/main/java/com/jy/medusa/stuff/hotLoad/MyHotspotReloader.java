@@ -10,6 +10,8 @@ import com.jy.medusa.utils.SystemConfigs;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,12 +20,14 @@ import java.lang.reflect.Field;
 import java.util.*;
 
  class MyHotspotReloader {
+     
+     private static Logger log = LoggerFactory.getLogger(MyHotspotReloader.class);
 
     private SqlSessionFactory sqlSessionFactory;
     private String xmlPath;//用户配置的属性
     private List<File> mapperXmlFileList;//记录所有的 xml 文件
-    private static Map<String, Long> fileChangeMap = new HashMap<>();// 记录文件是否变化了
-    private static List<String> mappedStatementCacheKeyList = new ArrayList<>();//框架内部的方法名称 对应的 mapperstatement 的 key 记录
+    private Map<String, Long> fileChangeMap = new HashMap<>();// 记录文件是否变化了
+    private List<String> mappedStatementCacheKeyList = new ArrayList<>();//框架内部的方法名称 对应的 mapperstatement 的 key 记录
 
 
     MyHotspotReloader(String xmlPath, SqlSessionFactory sqlSessionFactory){
@@ -59,11 +63,13 @@ import java.util.*;
 
             // step.2 判断是否有文件发生了变化
 
+            String xmlParamName = null;
             boolean changed = false;///所有文件是否有 一个出现了改变
             for (File mapperXml : mapperXmlFileList) {
 
                 if (isChanged(mapperXml)) {
                     changed = true;
+                    xmlParamName = mapperXml.getName();
                     break;
                 }
             }
@@ -84,7 +90,11 @@ import java.util.*;
                         continue;
                     }
                 }
+
+                log.debug("Because of xml file {} changed - all xml has been overloaded.", xmlParamName);
             }
+
+            if(mapperXmlFileList.size() != 0) mapperXmlFileList.clear();//modify by neo on 2016.12.15
 
         } catch (Exception e) {
             e.printStackTrace();

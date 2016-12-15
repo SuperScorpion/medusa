@@ -5,8 +5,6 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
  class MyMapperReloaderThread implements Runnable {
 
     private static Logger log = LoggerFactory.getLogger(MyMapperReloaderThread.class);
@@ -14,6 +12,7 @@ import org.slf4j.LoggerFactory;
     private SqlSessionFactory sqlSessionFactory;
     private String xmlPath;
     private int seconds = 3600;
+    private MyHotspotReloader mr;
 
     MyMapperReloaderThread(String xmlPath, SqlSessionFactory sqlSessionFactory, int seconds){
         this.xmlPath = xmlPath;
@@ -34,7 +33,9 @@ import org.slf4j.LoggerFactory;
                     continue;
                 }
 
-                new MyHotspotReloader(xmlPath, sqlSessionFactory).refreshMapper();
+                mr = mr == null ? new MyHotspotReloader(xmlPath, sqlSessionFactory) : mr;
+
+                mr.refreshMapper();
 
                 log.debug("MyMapperReloaderThread has completed the hot - loading and began to sleep {} seconds.", seconds);
                 Thread.sleep(seconds * 1000);
