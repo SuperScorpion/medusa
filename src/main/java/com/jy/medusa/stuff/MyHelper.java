@@ -31,6 +31,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -426,7 +427,7 @@ public class MyHelper {
         return result;
     }
 
-    private static String javaType2SqlTypes(String javaType) {
+    public static String javaType2SqlTypes(String javaType) {
         if (javaType.equals("Boolean")) {
             return "BIT";
         } else if (javaType.equals("Byte")) {
@@ -453,6 +454,50 @@ public class MyHelper {
             return "TEXT";
         }
         return null;
+    }
+
+    /**
+     * 生成插入的sql语句时 要把动态部分缓存起 批量
+     * @return
+     */
+    public static String concatInsertDynamicSqlForBatch(Map<String, String> currentFieldTypeNameMap, Object t) {
+
+        List<Object> obs;
+        if(t != null && t instanceof List)
+            obs = (ArrayList)t;
+        else
+            return "";
+
+        if(obs.size() == 0) return "";
+
+        StringBuilder sbb = new StringBuilder(512);
+
+        int len = obs.size(), i = 0;
+        for (; i < len; i++) {
+
+            sbb.append("(");
+
+            for(String fieName : currentFieldTypeNameMap.keySet()) {
+
+                if(fieName.trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY)) continue;
+
+                sbb.append("#{pobj.list[");
+                sbb.append(i);
+                sbb.append("].");
+                sbb.append(fieName);
+                sbb.append(", jdbcType=");
+                sbb.append(MyHelper.javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)));
+                sbb.append("},");
+            }
+
+            if(sbb.indexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
+            sbb.append("),");
+        }
+
+        if(sbb.indexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
+
+
+        return sbb.toString();
     }
 
 

@@ -25,14 +25,6 @@ import java.util.List;
 @Aspect
 public class AnnotationHandler {//TODO
 	
- 	/*public void takeSeats(JoinPoint joinPoint, Validator parameter) throws NoSuchMethodException, SecurityException{
-
- 		System.out.println(joinPoint.getKind());
- 		System.out.println(joinPoint.getTarget());
- 		System.out.println(joinPoint.getThis());
- 		System.out.println(joinPoint.getArgs());
- 		System.out.println(joinPoint.getSignature().getName());
-    }*/
     private String concatErrorStr(List<ErrorInfo> errorInfos){
 
         StringBuilder sb = new StringBuilder(100);
@@ -47,8 +39,8 @@ public class AnnotationHandler {//TODO
     }
 
     private final String validatorPath = SystemConfigs.VALID_VALIDATOR_PATH;
-    private final String lengthPath = SystemConfigs.VALID_LENGTH_PATH;
 
+    private final String lengthPath = SystemConfigs.VALID_LENGTH_PATH;
 
     /**
      * 所有校验标注的处理

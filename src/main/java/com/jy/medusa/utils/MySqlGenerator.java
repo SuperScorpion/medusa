@@ -24,6 +24,7 @@ public class MySqlGenerator {
     private String        pkName;
     private Map<String, String> currentColumnFieldNameMap;
     private Map<String, String> currentFieldColumnNameMap;
+    private Map<String, String> currentFieldTypeNameMap;
     private String insertColumn;
     private String insertDynamicSql;
 
@@ -36,8 +37,30 @@ public class MySqlGenerator {
         this.currentColumnFieldNameMap = cfMap;
         this.currentFieldColumnNameMap = MyHelper.exchangeKeyValues(cfMap);
         String[] parArra = MyHelper.concatInsertDynamicSql(ftMap, currentFieldColumnNameMap);
-        insertColumn = parArra[1];
         insertDynamicSql = parArra[0];
+        insertColumn = parArra[1];
+        this.currentFieldTypeNameMap = ftMap;///modify by neo on 2016.12.15
+    }
+
+    /**
+     * 生成根据IDs批量删除的SQL
+     * @param t
+     * @return
+     */
+    public String sql_insertOfBatch(Object t) {
+
+        String dynamicSqlForBatch = MyHelper.concatInsertDynamicSqlForBatch(currentFieldTypeNameMap, t);
+
+        StringBuilder sql_build = new StringBuilder(512);
+        sql_build.append("INSERT INTO ").append(tableName).append("(")
+                .append(insertColumn).append(") values ")
+                .append(dynamicSqlForBatch);//modify by neo on2016.11.13
+
+        String sql = sql_build.toString();
+
+        logger.debug("Medusa: Generated SQL ^_^ " + sql);
+
+        return sql;
     }
 
     /**
@@ -49,7 +72,7 @@ public class MySqlGenerator {
 
         StringBuilder sql_build = new StringBuilder(256);
         sql_build.append("INSERT INTO ").append(tableName).append("(")
-                .append(insertColumn).append(")values(")
+                .append(insertColumn).append(") values (")
                 .append(insertDynamicSql).append(")");//modify by neo on2016.11.12
         String sql = sql_build.toString();
 

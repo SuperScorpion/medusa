@@ -67,6 +67,8 @@ public class GenBaseService {
                 "\n" +
                 "\tint save(T entity);\n" +
                 "\n" +
+                "\tint saveBatch(List<T> obs);\n" +
+                "\n" +
                 "\tint update(T entity);\n" +
                 "\n" +
                 "\tint updateSelective(T entity);\n" +
@@ -132,6 +134,10 @@ public class GenBaseService {
                 "\n" +
                 "\tpublic int save(T entity) {\n" +
                 "\t\treturn mapper.insertSelective(entity);\n" +
+                "\t}\n" +
+                "\n" +
+                "\tpublic int saveBatch(List<T> obs) {\n" +
+                "\t\treturn mapper.insertBatch(obs);\n" +
                 "\t}\n" +
                 "\n" +
                 "\tpublic int update(T entity) {\n" +
