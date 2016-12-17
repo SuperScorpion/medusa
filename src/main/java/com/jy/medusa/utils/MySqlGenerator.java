@@ -171,10 +171,14 @@ public class MySqlGenerator {
         return sql;
     }
 
-
+    /**
+     * 根据条件来删除
+     * @param t
+     * @return
+     */
     public String sql_removeByCondition(Object t) {
 
-        List<String> values = obtainColumnValusForSelectList(t);
+        List<String> values = obtainColumnValuesForDeleteByCondition(t);
 
         StringBuilder sql_build = new StringBuilder(256);
         sql_build.append("DELETE FROM ").append(this.tableName).append(" WHERE ");
@@ -308,6 +312,28 @@ public class MySqlGenerator {
             if (value != null) {
 //                colVals.add(column + "=" + handleValue(value));
                 colVals.add(column + "=" + "#{pobj.param1." + fieldName + "}");///modify by neo on 2016.11.12
+            }
+        }
+        return colVals;
+    }
+
+    /**
+     * 提供给
+     * sql_removeByCondition
+     * @param t
+     * @return
+     */
+    private List<String> obtainColumnValuesForDeleteByCondition(Object t) {
+
+        if(t == null) return null;
+
+        List<String> colVals = new ArrayList<>();
+        for (String column : columns) {
+            String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
+            Object value = MyReflectionUtils.obtainFieldValue(t, fieldName);
+            if (value != null) {
+//                colVals.add(column + "=" + handleValue(value));
+                colVals.add(column + "=" + "#{pobj." + fieldName + "}");///modify by neo on 2016.11.12
             }
         }
         return colVals;
