@@ -148,11 +148,20 @@ public class MyHelper {
     }
 
     /**
-     * check medusas methdss
+     * check medusas method
      * @return
      */
     public static boolean checkMedusaMethod(String methodName) {
         return methodName.equals("medusaGaze") ? true : false;
+    }
+
+    /**
+     * check insertUUID method
+     * @param methodName
+     * @return
+     */
+    public static boolean checkInsertUUIDMethod(String methodName) {
+        return methodName.equals("insertSelectiveUUID") ? true : false;
     }
 
 //    private static Map<String, MySqlGenerator> generatorMap = new HashMap<>();//缓存下来数据
@@ -404,9 +413,17 @@ public class MyHelper {
 
         StringBuilder sbs = new StringBuilder(256);
 
-        for(String fieName : currentFieldTypeNameMap.keySet()) {
+        for(String fieName : currentFieldTypeNameMap.keySet()) {//同一个hashset 遍历的元素顺序是否一样的
 
-            if(fieName.trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY)) continue;
+            if(fieName.trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY)) {
+
+                sbb.append("#{id, jdbcType=" + javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)) + "},");
+
+                sbs.append(currentFieldColumnNameMap.get(fieName));
+                sbs.append(",");
+
+                continue;
+            }
 
             sbb.append("#{pobj.");
             sbb.append(fieName);
@@ -477,9 +494,14 @@ public class MyHelper {
 
             sbb.append("(");
 
-            for(String fieName : currentFieldTypeNameMap.keySet()) {
+            for(String fieName : currentFieldTypeNameMap.keySet()) {//同一个hashset 遍历的元素顺序是否一样的
 
-                if(fieName.trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY)) continue;
+                if(fieName.trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY)) {
+
+                    sbb.append("#{id, jdbcType=" + javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)) + "},");
+
+                    continue;
+                }
 
                 sbb.append("#{pobj.list[");
                 sbb.append(i);
@@ -607,4 +629,5 @@ public class MyHelper {
 
     //主要是为了解决 分页时 多次生成查询分页语句和总计数的查询语句时 缓存分页的查询语句
     public static ThreadLocal<String> myThreadLocal = new ThreadLocal<>();
+
 }
