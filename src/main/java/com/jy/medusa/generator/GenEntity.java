@@ -129,6 +129,7 @@ public class GenEntity {
 
 //        sb.append("import " + basePoPath + ";\r\n");//TODO
         if(MyUtils.isNotBlank(Home.lazyLoad)) sb.append("import com.fasterxml.jackson.annotation.JsonIgnoreProperties;\r\n");
+        if(MyUtils.isNotBlank(Home.entitySerializable)) sb.append("import java.io.Serializable;\r\n");
 
         sb.append("import com.jy.medusa.stuff.annotation.Column;\r\n");
         sb.append("import com.jy.medusa.stuff.annotation.Table;\r\n");
@@ -173,7 +174,9 @@ public class GenEntity {
 
         if(MyUtils.isNotBlank(Home.lazyLoad)) sb.append("@JsonIgnoreProperties(value={\"handler\"})\r\n");
 
-        sb.append("public class " + MyGenUtils.upcaseFirst(tableName) + Home.entityNameSuffix + " {\r\n\r\n");
+        sb.append("public class " + MyGenUtils.upcaseFirst(tableName) + Home.entityNameSuffix);
+        if(MyUtils.isNotBlank(Home.entitySerializable)) sb.append(" implements Serializable");
+        sb.append(" {\r\n\r\n");
 
         processAllAttrs(sb);
         sb.append("\r\n");

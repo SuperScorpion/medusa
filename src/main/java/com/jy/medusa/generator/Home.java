@@ -22,6 +22,7 @@ public class Home {
     public static String author;
     public static String entityNameSuffix;//实体文件后缀名
     public static String lazyLoad;
+    public static String entitySerializable;
 
     public static final String mixMapper = "com.jy.medusa.commons.Mapper";
 
@@ -51,12 +52,10 @@ public class Home {
         return devflag ? medusaPropPath : medusaPropPathDev;
     }
 
-    public static void main(String[] args) {
-
-//        System.out.println(System.getProperty("user.dir") + "/src/main/resources/");
+/*    public static void main(String[] args) {
 
         new Home("medusa.properties").process();
-    }
+    }*/
 
     public void process() {
 
@@ -218,11 +217,9 @@ public class Home {
         this.pluralAssociation = MyUtils.isBlank(props.getProperty("medusa.pluralAssociation")) ? "" : props.getProperty("medusa.pluralAssociation");
 
         this.author = MyUtils.isBlank(props.getProperty("medusa.author")) ? "administrator" : props.getProperty("medusa.author");
-        this.entityNameSuffix = props.getProperty("medusa.entityNameSuffix") == null ? "" : props.getProperty("medusa.entityNameSuffix");
+        this.entityNameSuffix = MyUtils.isBlank(props.getProperty("medusa.entityNameSuffix")) ? "" : props.getProperty("medusa.entityNameSuffix");
         this.lazyLoad = MyUtils.isBlank(props.getProperty("medusa.lazyLoad"))  ? "" : "fetchType=\"lazy\"";
+        this.entitySerializable = MyUtils.isBlank(props.getProperty("medusa.entitySerializable"))  ? "" : props.getProperty("medusa.entitySerializable");
         this.baseServiceSwitch = MyUtils.isBlank(props.getProperty("medusa.baseServiceSwitch"))  ? "" : "gen";
-
-        //this.basePoPath = props.getProperty("medusa.basePoPath");
-//        this.baseMapperPath = props.getProperty("medusa.baseMapperPath");
     }
 }
