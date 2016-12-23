@@ -414,7 +414,7 @@ public class MySqlGenerator {
      * 生成根据ID查询的SQL
      * @return
      */
-    public String sql_findOneById(Object t, Object... ps) {///modify by neo on 2016.11.21 Object id,
+    public String sql_findOneById(Object id, Object... ps) {///modify by neo on 2016.11.21 Object id,这个 id 不能去掉的
 
         String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnName2((Object[])ps[0], currentFieldColumnNameMap);
 
