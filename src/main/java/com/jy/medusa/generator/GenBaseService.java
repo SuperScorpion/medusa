@@ -55,7 +55,7 @@ public class GenBaseService {
                 "\n" +
                 "public interface BaseService<T> {\n" +
                 "\n" +
-                "\tint selectCount(T entity, Object... ps);\n" +
+                "\tint selectCount(Object... ps);\n" +
                 "\n" +
                 "\tT selectOne(T entity, Object... ps);\n" +
                 "\n" +
@@ -79,7 +79,7 @@ public class GenBaseService {
                 "\n" +
                 "\tint deleteBy(T entity);\n" +
                 "\n" +
-                "\tList<T> selectByGaze(T entity, Object... ps);\n" +
+                "\tList<T> selectByGaze(Object... ps);\n" +
                 "}");
 
         MyGenUtils.processAllRemains(markServiceList, sbb, tag, "service");
@@ -112,8 +112,8 @@ public class GenBaseService {
                 "\t@Autowired\n" +
                 "\tprotected Mapper<T> mapper;\n" +
                 "\n" +
-                "\tpublic int selectCount(T entity, Object... ps) {\n" +
-                "\t\treturn mapper.selectCount(entity, ps);\n" +
+                "\tpublic int selectCount(Object... ps) {\n" +
+                "\t\treturn mapper.selectCount(ps);\n" +
                 "\t}\n" +
                 "\n" +
                 "\tpublic T selectOne(T entity, Object... ps) {\n" +
@@ -160,8 +160,8 @@ public class GenBaseService {
                 "\t\treturn mapper.delete(entity);\n" +
                 "\t}\n" +
                 "\n" +
-                "\tpublic List<T> selectByGaze(Object... param) {\n" +
-                "\t\treturn mapper.showMedusaGaze(param);\n" +
+                "\tpublic List<T> selectByGaze(Object... ps) {\n" +
+                "\t\treturn mapper.showMedusaGaze(ps);\n" +
                 "\t}\n" +
                 "}");
 
