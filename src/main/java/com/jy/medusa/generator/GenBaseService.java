@@ -160,8 +160,8 @@ public class GenBaseService {
                 "\t\treturn mapper.delete(entity);\n" +
                 "\t}\n" +
                 "\n" +
-                "\tpublic List<T> selectByGaze(T entity, Object... ps) {\n" +
-                "\t\treturn mapper.medusaGaze(entity, ps);\n" +
+                "\tpublic List<T> selectByGaze(Object... param) {\n" +
+                "\t\treturn mapper.showMedusaGaze(param);\n" +
                 "\t}\n" +
                 "}");
 

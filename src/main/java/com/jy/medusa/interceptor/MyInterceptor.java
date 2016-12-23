@@ -15,6 +15,7 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.plugin.*;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
+import org.apache.ibatis.session.defaults.DefaultSqlSession;
 
 import java.util.HashMap;
 import java.util.List;
@@ -58,7 +59,8 @@ public class MyInterceptor implements Interceptor {
 
                 if (MyHelper.checkMedusaMethod(medusaMethodName)) {//若是多条件查询 medusas
 
-                    Object[] x = (Object[]) ((MapperMethod.ParamMap) p.get("pobj")).get("param2");
+//                    Object[] x = (Object[]) ((MapperMethod.ParamMap) p.get("pobj")).get("param2");
+                    Object[] x = (Object[]) ((DefaultSqlSession.StrictMap) p.get("pobj")).get("array");//modify by neo on 2016.12.23
 
                     Pager z = null;
 

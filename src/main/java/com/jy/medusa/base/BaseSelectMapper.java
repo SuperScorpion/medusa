@@ -14,5 +14,5 @@ public interface BaseSelectMapper<T> extends
         SelectAllMapper<T>,
         SelectCountMapper<T>,
         SelectByPrimaryKeyMapper<T>,
-        SelectComplexConditionMapper<T> {
+        SelectMedusaGazeMapper<T> {
 }

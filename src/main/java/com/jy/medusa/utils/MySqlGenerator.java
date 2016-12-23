@@ -27,8 +27,9 @@ public class MySqlGenerator {
     private Map<String, String> currentFieldTypeNameMap;
     private String insertColumn;
     private String insertDynamicSql;
+    private Class<?> entityClass;
 
-    public MySqlGenerator(Map<String, String> cfMap, Map<String, String> ftMap, String tableName, String pkName) {
+    public MySqlGenerator(Map<String, String> cfMap, Map<String, String> ftMap, String tableName, String pkName, Class<?> entityClass) {
         this.columns = cfMap.keySet();
         this.tableName = tableName;
         this.pkName = pkName;
@@ -36,10 +37,14 @@ public class MySqlGenerator {
 //        this.insertColumn = columnsStr.endsWith(SystemConfigs.PRIMARY_KEY) ? columnsStr.replaceAll("," + SystemConfigs.PRIMARY_KEY, "") : columnsStr.replaceAll(SystemConfigs.PRIMARY_KEY + ",", "");
         this.currentColumnFieldNameMap = cfMap;
         this.currentFieldColumnNameMap = MyHelper.exchangeKeyValues(cfMap);
+
         String[] parArra = MyHelper.concatInsertDynamicSql(ftMap, currentFieldColumnNameMap);
         insertDynamicSql = parArra[0];
         insertColumn = parArra[1];
+
         this.currentFieldTypeNameMap = ftMap;///modify by neo on 2016.12.15
+
+        this.entityClass = entityClass;
     }
 
     /**
@@ -317,6 +322,38 @@ public class MySqlGenerator {
         return colVals;
     }
 
+
+    /**
+     * 提供给selectList使用的
+     * @return
+     */
+    private List<String> obtainMedusaGazeS(Object[] psArray) {
+
+        if(psArray != null && psArray.length != 0) {
+
+            short i = 0;
+            for(Object o : psArray) {
+
+                if(entityClass.isInstance(o)) {
+
+                    List<String> colVals = new ArrayList<>();
+                    for (String column : columns) {
+                        String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
+                        Object value = MyReflectionUtils.obtainFieldValue(o, fieldName);
+                        if (value != null) {
+                            colVals.add(column + "=" + "#{pobj.array[" + i + "]." + fieldName + "}");///modify by neo on 2016.11.12
+                        }
+                    }
+                    return colVals;
+                }
+
+                i++;
+            }
+        }
+
+        return null;
+    }
+
     /**
      * 提供给
      * sql_removeByCondition
@@ -377,7 +414,7 @@ public class MySqlGenerator {
      * 生成根据ID查询的SQL
      * @return
      */
-    public String sql_findOneById(Object... ps) {///modify by neo on 2016.11.21 Object id,
+    public String sql_findOneById(Object t, Object... ps) {///modify by neo on 2016.11.21 Object id,
 
         String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnName2((Object[])ps[0], currentFieldColumnNameMap);
 
@@ -431,7 +468,7 @@ public class MySqlGenerator {
      * 生成查询数量的SQL
      * @return
      */
-    public String sql_findAllCount(Object t, Object... ps) {
+    public String sql_findAllCount(Object[] objParams) {
 
         // 从缓存里拿到分页查询语句 必须清理掉缓存
         String cacheSq = MyHelper.myThreadLocal.get();
@@ -443,7 +480,7 @@ public class MySqlGenerator {
             return countSq;
         }
 
-        List<String> values = obtainColumnValusForSelectList(t);
+        List<String> values = obtainMedusaGazeS(objParams);
 //        if(values == null || values.isEmpty()) return null;
 
         StringBuilder sbb = new StringBuilder(512);
@@ -455,11 +492,11 @@ public class MySqlGenerator {
             sbb.append(MyUtils.join(values, " AND "));
 
         //多条件查询
-        if(ps != null && ps.length > 0) {
+        if(objParams != null && objParams.length > 0) {
 
             short isd = 0;
 
-            for (Object z : (Object[]) ps[0]) {///先遍历条件like between类
+            for (Object z : objParams) {///先遍历条件like between类
 
                 if(z instanceof MyRestrictions) {//modify by neo on 2016.12.09  if(z instanceof BaseParam) {
 
@@ -557,7 +594,7 @@ public class MySqlGenerator {
      * find sql to build a multifunctional method
      * 通过多条件查询 like between 用and连接 查询出交集
      */
-    public String sql_complex_condition_page(Object po, Object... ps) {
+    public String sql_findMedusaGaze(Object[] objParams) {//modify by neo on 2016.12.23
 
         //获取到缓存中的分页查询语句 modify by neo on 2016.11.16
         ///分页时先执行查询分页再执行查询分页 再执行总计数句 boundsql(因为)
@@ -567,12 +604,12 @@ public class MySqlGenerator {
             return cacheSq;
         }
 
-        String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnName2((Object[])ps[0], currentFieldColumnNameMap);
+        String paramColumn = (objParams == null || objParams.length == 0) ? columnsStr : MyHelper.buildColumnName2(objParams, currentFieldColumnNameMap);
 
         StringBuilder sbb = new StringBuilder(512);
         sbb.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName).append(" WHERE ");
 
-        List<String> values = obtainColumnValusForSelectList(po);
+        List<String> values = obtainMedusaGazeS(objParams);
 
         if(values == null || values.isEmpty())
             sbb.append("1=1");
@@ -580,13 +617,13 @@ public class MySqlGenerator {
             sbb.append(MyUtils.join(values, " AND "));
 
 
-        if(ps != null && ps.length > 0) {
+        if(objParams != null && objParams.length > 0) {
 
             Pager pa = null;
 
             short isd = 0;
 
-            for (Object z : (Object[]) ps[0]) {///先遍历条件like between类
+            for (Object z : objParams) {///先遍历条件like between类
 
                 if(z instanceof MyRestrictions) {//modify by neo on 2016.12.09  if(z instanceof BaseParam) {
 
@@ -659,7 +696,7 @@ public class MySqlGenerator {
 
             if (z instanceof SingleParam) {//modify by neo on 2016.11.17
 
-                sbb.append(" AND ").append(column).append(" = ").append("#{pobj.param2[" + isd + "].paramList[" + ind + "].value}");
+                sbb.append(" AND ").append(column).append(" = ").append("#{pobj.array[" + isd + "].paramList[" + ind + "].value}");
 
             } else if (z instanceof BetweenParam) {
 
@@ -667,14 +704,14 @@ public class MySqlGenerator {
 
                 sbb.append(" AND ").append(column).append(" BETWEEN ")
                         //.append("'").append(MyDateUtils.convertDateToStr(p.getEnd(), MyDateUtils.DATE_FULL_STR)).append("'")
-                        .append("#{pobj.param2[" + isd + "].paramList[" + ind + "].start}")
+                        .append("#{pobj.array[" + isd + "].paramList[" + ind + "].start}")
                         .append(" AND ")
-                        .append("#{pobj.param2[" + isd + "].paramList[" + ind + "].end}");
+                        .append("#{pobj.array[" + isd + "].paramList[" + ind + "].end}");
             } else if (z instanceof LikeParam) {
 
                 //                        LikeParam p = (LikeParam) z;
 
-                sbb.append(" AND ").append(column).append(" LIKE ").append("CONCAT('%',#{pobj.param2[" + isd + "].paramList[" + ind + "].value},'%')");
+                sbb.append(" AND ").append(column).append(" LIKE ").append("CONCAT('%',#{pobj.array[" + isd + "].paramList[" + ind + "].value},'%')");
             }
         } else if (z instanceof BaseGeLeParam) {
 
@@ -682,22 +719,22 @@ public class MySqlGenerator {
 
                 //                            GreatThanParam p = (GreatThanParam) z;
 
-                sbb.append(" AND ").append(column).append(" > ").append("#{pobj.param2[" + isd + "].paramList[" + ind + "].value}");
+                sbb.append(" AND ").append(column).append(" > ").append("#{pobj.array[" + isd + "].paramList[" + ind + "].value}");
             } else if (z instanceof GreatEqualParam) {
 
                 //                            GreatEqualParam p = (GreatEqualParam) z;
 
-                sbb.append(" AND ").append(column).append(" >= ").append("#{pobj.param2[" + isd + "].paramList[" + ind + "].value}");
+                sbb.append(" AND ").append(column).append(" >= ").append("#{pobj.array[" + isd + "].paramList[" + ind + "].value}");
             } else if (z instanceof LessThanParam) {
 
                 //                            LessThanParam p = (LessThanParam) z;
 
-                sbb.append(" AND ").append(column).append(" < ").append("#{pobj.param2[" + isd + "].paramList[" + ind + "].value}");
+                sbb.append(" AND ").append(column).append(" < ").append("#{pobj.array[" + isd + "].paramList[" + ind + "].value}");
             } else if (z instanceof LessEqualParam) {
 
                 //                            LessEqualParam p = (LessEqualParam) z;
 
-                sbb.append(" AND ").append(column).append(" <= ").append("#{pobj.param2[" + isd + "].paramList[" + ind + "].value");
+                sbb.append(" AND ").append(column).append(" <= ").append("#{pobj.array[" + isd + "].paramList[" + ind + "].value");
             }
         }
 

@@ -25,9 +25,9 @@ public class SystemConfigs {
     public static final List<String> MY_ALL_METHOD_NANES_LIST = new ArrayList<>(17);
 
     static {
+        MY_ALL_METHOD_NANES_LIST.add("showMedusaGaze");
         MY_ALL_METHOD_NANES_LIST.add("selectAll");
         MY_ALL_METHOD_NANES_LIST.add("selectByPrimaryKey");
-        MY_ALL_METHOD_NANES_LIST.add("medusaGaze");
         MY_ALL_METHOD_NANES_LIST.add("selectCount");
         MY_ALL_METHOD_NANES_LIST.add("select");
         MY_ALL_METHOD_NANES_LIST.add("selectOne");

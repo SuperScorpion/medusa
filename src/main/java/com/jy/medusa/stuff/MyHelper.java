@@ -9,7 +9,6 @@ import com.jy.medusa.stuff.cache.MyReflectCacheManager;
 import com.jy.medusa.utils.MySqlGenerator;
 import com.jy.medusa.utils.MyUtils;
 import com.jy.medusa.utils.SystemConfigs;
-import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -17,6 +16,7 @@ import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.mapping.ParameterMode;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.defaults.DefaultSqlSession;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeException;
 import org.apache.ibatis.type.TypeHandler;
@@ -152,7 +152,7 @@ public class MyHelper {
      * @return
      */
     public static boolean checkMedusaMethod(String methodName) {
-        return methodName.equals("medusaGaze") ? true : false;
+        return methodName.equals("showMedusaGaze") ? true : false;
     }
 
     /**
@@ -226,7 +226,7 @@ public class MyHelper {
         if (table == null) throw new RuntimeException("Medusa: class - " + entityClass + " Not using @Table annotation identification!");
         tableName = table.name();
 
-        return new MySqlGenerator(currentColumnFieldNameMap, currentFieldTypeNameMap, tableName, pkName);
+        return new MySqlGenerator(currentColumnFieldNameMap, currentFieldTypeNameMap, tableName, pkName, entityClass);
     }
 
     /**
@@ -283,30 +283,32 @@ public class MyHelper {
      * 改进后的方法用map缓存直接取
      * @return
      */
-    public static String buildColumnName2(Object[] pssArray, Map<String, String> currentFieldColumnNameMap) {
+    public static String buildColumnName2(Object[] psArray, Map<String, String> currentFieldColumnNameMap) {
 
         StringBuilder sbb = new StringBuilder(100);
 
-        for(Object z : pssArray) {//["a,b,b,n,m","a"] 可选的字段有可能是分开写入的 多参数传入的值
+        if(psArray != null && psArray.length != 0) {
+            for (Object z : psArray) {//["a,b,b,n,m","a"] 可选的字段有可能是分开写入的 多参数传入的值
 
-            if(z instanceof String) {
+                if (z instanceof String) {
 
-                if (MyUtils.isBlank(z.toString())) continue;
+                    if (MyUtils.isBlank(z.toString())) continue;
 
-                String[] p = z.toString().split(",");//modify by neo on 2016.12.04
+                    String[] p = z.toString().split(",");//modify by neo on 2016.12.04
 
-                for (String m : p) {
+                    for (String m : p) {
 
-                    if(MyUtils.isBlank(m)) continue;
+                        if (MyUtils.isBlank(m)) continue;
 
 //                    if(m.contains("_"))//让用户用的可选字段 属性名字和数据库表字段名称容错
 //                        sbb.append(m.trim());
-                    if(currentFieldColumnNameMap.get(m.trim()) != null)//modify by neo on 2016.11.19
-                        sbb.append(currentFieldColumnNameMap.get(m.trim()));
-                    else
-                        sbb.append(m.trim());//都取不到时候则
+                        if (currentFieldColumnNameMap.get(m.trim()) != null)//modify by neo on 2016.11.19
+                            sbb.append(currentFieldColumnNameMap.get(m.trim()));
+                        else
+                            sbb.append(m.trim());//都取不到时候则
 
-                    sbb.append(",");
+                        sbb.append(",");
+                    }
                 }
             }
         }
@@ -373,7 +375,8 @@ public class MyHelper {
         PreparedStatement countStmt = null;
         ResultSet rs = null;
 
-        String countSql = getSqlGenerator(p).sql_findAllCount(((MapperMethod.ParamMap) p.get("pobj")).get("param1"));
+//        String countSql = getSqlGenerator(p).sql_findAllCount(((MapperMethod.ParamMap) p.get("pobj")).get("param1"));
+        String countSql = getSqlGenerator(p).sql_findAllCount((Object[]) ((DefaultSqlSession.StrictMap) p.get("pobj")).get("array"));
 
         int totalCount = 0;
 
@@ -540,8 +543,9 @@ public class MyHelper {
         try {
             BoundSql boundSql = mst.getBoundSql(p);
 
-            String countSql = getSqlGenerator(p).sql_findAllCount(((MapperMethod.ParamMap) p.get("pobj")).get("param1"),
-                    ((MapperMethod.ParamMap) p.get("pobj")).get("param2"));
+/*            String countSql = getSqlGenerator(p).sql_findAllCount(((MapperMethod.ParamMap) p.get("pobj")).get("param1"),
+                    ((MapperMethod.ParamMap) p.get("pobj")).get("param2"));*/
+            String countSql = getSqlGenerator(p).sql_findAllCount((Object[]) ((DefaultSqlSession.StrictMap) p.get("pobj")).get("array"));
 
 //            BoundSql countBS = new BoundSql(mst.getConfiguration(), countSql, boundSql.getParameterMappings(),p);
 

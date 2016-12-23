@@ -12,15 +12,14 @@ import java.util.List;
  * @param <T> 不能为空
  * @author neo
  */
-public interface SelectComplexConditionMapper<T> {
+public interface SelectMedusaGazeMapper<T> {
 
     /**
      * 根据多条件查询数据 like查询 或者是 between查询   and 连接各条件
-     * @param record
-     * @param paramColumn
+     * @param params
      * @return
      */
-    @SelectProvider(type = BaseSelectProvider.class, method = "medusaGaze")
+    @SelectProvider(type = BaseSelectProvider.class, method = "selectMedusaGaze")
     @ResultMap("BaseResultMap")
-    List<T> medusaGaze(T record, Object... paramColumn);
+    List<T> showMedusaGaze(Object... params);
 }
