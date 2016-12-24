@@ -57,6 +57,8 @@ public class GenBaseService {
                 "\n" +
                 "\tint selectCount(Object... ps);\n" +
                 "\n" +
+                "\tList<T> selectAll(Object... ps);\n" +
+                "\n" +
                 "\tT selectOne(T entity, Object... ps);\n" +
                 "\n" +
                 "\tT selectById(Integer id, Object... ps);\n" +
@@ -114,6 +116,10 @@ public class GenBaseService {
                 "\n" +
                 "\tpublic int selectCount(Object... ps) {\n" +
                 "\t\treturn mapper.selectCount(ps);\n" +
+                "\t}\n" +
+                "\n" +
+                "\tpublic List<T> selectAll(Object... ps) {\n" +
+                "\t\treturn mapper.selectAll(ps);\n" +
                 "\t}\n" +
                 "\n" +
                 "\tpublic T selectOne(T entity, Object... ps) {\n" +

@@ -2,7 +2,6 @@
 package com.jy.medusa.provider;
 
 import com.jy.medusa.stuff.MyHelper;
-import com.jy.medusa.stuff.Pager;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.session.defaults.DefaultSqlSession;
 
@@ -66,7 +65,10 @@ public class BaseSelectProvider {
      */
     public String selectAll(Map<String, Object> m) {
 
-        return MyHelper.getSqlGenerator(m).sql_findAll();
+        if(m.get("pobj") instanceof DefaultSqlSession.StrictMap)
+            return MyHelper.getSqlGenerator(m).sql_findAll((Object[]) ((DefaultSqlSession.StrictMap) m.get("pobj")).get("array"));
+
+        throw new RuntimeException("Medusa: selectAll DefaultSqlSession.StrictMap Exception");
     }
 
 

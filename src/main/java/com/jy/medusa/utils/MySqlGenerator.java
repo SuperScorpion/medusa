@@ -324,7 +324,7 @@ public class MySqlGenerator {
 
 
     /**
-     * 提供给selectList使用的
+     * 提供给selectMedusaGaze使用的
      * @return
      */
     private List<String> obtainMedusaGazeS(Object[] psArray) {
@@ -454,9 +454,12 @@ public class MySqlGenerator {
      * 生成查询所有的SQL
      * @return
      */
-    public String sql_findAll() {
+    public String sql_findAll(Object[] objParams) {
+
+        String paramColumn = (objParams == null || objParams.length == 0) ? columnsStr : MyHelper.buildColumnName2(objParams, currentFieldColumnNameMap);
+
         StringBuilder sql_build = new StringBuilder(100);
-        sql_build.append("SELECT ").append(columnsStr).append(" FROM ").append(this.tableName);
+        sql_build.append("SELECT ").append(paramColumn).append(" FROM ").append(this.tableName);
         String sql = sql_build.toString();
 
         logger.debug("Medusa: Generated SQL ^_^ " + sql);

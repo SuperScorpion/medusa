@@ -19,5 +19,5 @@ public interface SelectAllMapper<T> {
      */
     @SelectProvider(type = BaseSelectProvider.class, method = "selectAll")
     @ResultMap("BaseResultMap")
-    List<T> selectAll();
+    List<T> selectAll(Object... params);
 }
