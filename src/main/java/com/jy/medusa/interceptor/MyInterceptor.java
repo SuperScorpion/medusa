@@ -9,7 +9,6 @@ import com.jy.medusa.stuff.Pager;
 import com.jy.medusa.stuff.exception.MedusaException;
 import com.jy.medusa.utils.MyReflectionUtils;
 import com.jy.medusa.utils.SystemConfigs;
-import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.plugin.*;

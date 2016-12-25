@@ -34,7 +34,6 @@ public class MySqlGenerator {
         this.tableName = tableName;
         this.pkName = pkName;
         this.columnsStr = MyUtils.join(this.columns, ",");
-//        this.insertColumn = columnsStr.endsWith(SystemConfigs.PRIMARY_KEY) ? columnsStr.replaceAll("," + SystemConfigs.PRIMARY_KEY, "") : columnsStr.replaceAll(SystemConfigs.PRIMARY_KEY + ",", "");
         this.currentColumnFieldNameMap = cfMap;
         this.currentFieldColumnNameMap = MyHelper.exchangeKeyValues(cfMap);
 
@@ -102,6 +101,7 @@ public class MySqlGenerator {
     }
 
     /**
+     * @deprecated
      * 处理value
      * @param value
      * @return
@@ -218,7 +218,7 @@ public class MySqlGenerator {
         StringBuilder sql_build = new StringBuilder(256);
         sql_build.append("UPDATE ").append(tableName).append(" SET ")
                 .append(MyUtils.join(values, ",")).append(" WHERE ")
-                .append(pkName).append(" = ").append("#{pobj." + SystemConfigs.PRIMARY_KEY + "}");
+                .append(pkName).append(" = ").append("#{pobj." + pkName + "}");
 
         String sql = sql_build.toString();
 
@@ -246,7 +246,7 @@ public class MySqlGenerator {
         StringBuilder sql_build = new StringBuilder(256);
         sql_build.append("UPDATE ").append(tableName).append(" SET ")
                 .append(MyUtils.join(values, ",")).append(" WHERE ")
-                .append(pkName).append(" = ").append("#{pobj." + SystemConfigs.PRIMARY_KEY + "}");
+                .append(pkName).append(" = ").append("#{pobj." + pkName + "}");
 
         String sql = sql_build.toString();
 
@@ -514,7 +514,6 @@ public class MySqlGenerator {
 
                 isd++;
             }
-
         }
 
         String sql = sbb.toString();

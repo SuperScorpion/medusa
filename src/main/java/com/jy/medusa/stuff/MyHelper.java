@@ -254,27 +254,6 @@ public class MyHelper {
         return resultMap;
     }
 
-    /*public static void main(String[] args) {
-        Map o = new HashMap();
-
-        for(int i = 1; i<123; i++) {
-            o.put(i, i + "qwe");
-        }
-
-        //91600482 78832011
-        //293691 737809
-        //468044 486645
-
-        long s = System.nanoTime();
-        Map j = exchangeKeyValues(o);
-        System.out.println(System.nanoTime() - s);
-
-        *//*for(Object key : j.keySet()) {
-            Object value = j.get(key);
-            System.out.println(key +"="+value);
-        }*//*
-    }*/
-
     /**
      * 提供给生成查询字段使用
      * 上一步的方法会先判断 尾部参数是否为空 不为空也可能是pager参数 不是string参数 本方法会进一步校验
