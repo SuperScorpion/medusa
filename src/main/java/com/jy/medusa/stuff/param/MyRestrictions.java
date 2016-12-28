@@ -88,4 +88,9 @@ public class MyRestrictions {
     public static MyRestrictions getMyRestrctions() {
         return new MyRestrictions();
     }
+
+    public MyRestrictions clear() {
+        this.paramList.clear();
+        return this;
+    }
 }
