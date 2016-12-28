@@ -410,7 +410,7 @@ public class DataBaseTools{
 
     private void loadProperties(String fileName) {
 
-        String resPaths = System.getProperty("user.dir") + Home.getProperPath() + fileName;
+/*        String resPaths = System.getProperty("user.dir") + Home.getProperPath() + fileName;
 
         Properties props = new Properties();
         try {
@@ -419,11 +419,16 @@ public class DataBaseTools{
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        this.driver = props.getProperty("jdbc.driver");
+        }*/
+/*        this.driver = props.getProperty("jdbc.driver");
         this.url = props.getProperty("jdbc.url");
         this.user = props.getProperty("jdbc.username");
-        this.password = props.getProperty("jdbc.password");
+        this.password = props.getProperty("jdbc.password");*/
+
+        this.driver = Home.jdbcDriver;
+        this.url = Home.jdbcUrl;
+        this.user = Home.jdbcUsername;
+        this.password = Home.jdbcPassword;
     }
 
 

@@ -24,6 +24,11 @@ public class Home {
     public static String lazyLoad;
     public static String entitySerializable;
 
+    public static String jdbcDriver;
+    public static String jdbcUrl;
+    public static String jdbcUsername;
+    public static String jdbcPassword;
+
     public static final String mixMapper = "com.jy.medusa.commons.Mapper";
 
     String packagePath;
@@ -160,6 +165,18 @@ public class Home {
             System.out.println("大兄弟你的entitySuffix没填写!");
             result = false;
         }
+
+        if(MyUtils.isBlank(jdbcDriver)) {
+            System.out.println("大兄弟你的jdbcDriver没填写!");
+            result = false;
+        }if(MyUtils.isBlank(jdbcUrl)) {
+            System.out.println("大兄弟你的jdbcUrl没填写!");
+            result = false;
+        }if(MyUtils.isBlank(jdbcUsername)) {
+            System.out.println("大兄弟你的jdbcUsername没填写!");
+            result = false;
+        }
+
         /*if(MyUtils.isBlank(serviceSuffix)) {
             System.out.println("大兄弟你的serviceSuffix没填写!");
             result = false;
@@ -221,5 +238,11 @@ public class Home {
         this.lazyLoad = MyUtils.isBlank(props.getProperty("medusa.lazyLoad"))  ? "" : "fetchType=\"lazy\"";
         this.entitySerializable = MyUtils.isBlank(props.getProperty("medusa.entitySerializable"))  ? "" : props.getProperty("medusa.entitySerializable");
         this.baseServiceSwitch = MyUtils.isBlank(props.getProperty("medusa.baseServiceSwitch"))  ? "" : "gen";
+
+
+        this.jdbcDriver = props.getProperty("jdbc.driver") == null ? "" : props.getProperty("jdbc.driver");
+        this.jdbcUrl = props.getProperty("jdbc.url") == null ? "" : props.getProperty("jdbc.url");
+        this.jdbcUsername = props.getProperty("jdbc.username") == null ? "" : props.getProperty("jdbc.username");
+        this.jdbcPassword = props.getProperty("jdbc.password") == null ? "" : props.getProperty("jdbc.password");
     }
 }
