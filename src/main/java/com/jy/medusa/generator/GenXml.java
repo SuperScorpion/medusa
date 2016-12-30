@@ -10,9 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by neo on 16/7/27.
@@ -20,10 +18,10 @@ import java.util.List;
 public class GenXml {
 
     private String[] colSqlNames;//数据库列名数组
-    private String[] colnames; // 列名数组
+    private String[] colNames; // 列名数组
     private String[] colTypes; // 列名类型数组
     private String[] colTypesSql;//mysql 对应的类型数组
-    private int[] colSizes; // 列名大小数组
+    private Integer[] colSizes; // 列名大小数组
 
     private String packagePath;//mapper
     private String mapperPath;//xml
@@ -53,7 +51,7 @@ public class GenXml {
         this.markXmlList = MyGenUtils.genTagStrList(entityName + "Mapper.xml", packagePath, tag, "xml");
     }
 
-    private void changeTypes(){//TODO
+    private void changeTypes(String[] colTypes, String[] colTypesSql){//TODO
         for(int i=0; i < colTypesSql.length ;i++){
             if(MyUtils.isBlank(colTypesSql[i])) continue;
 
@@ -67,6 +65,37 @@ public class GenXml {
 
     public void process() {
 
+        Map<String, Object[]> resultMap = genAllKindTypes(tableName);
+
+        colSqlNames = (String[]) resultMap.get("colSqlNames");
+        colNames = (String[]) resultMap.get("colNames");
+        colTypes = (String[]) resultMap.get("colTypes");
+        colSizes = (Integer[]) resultMap.get("colSizes");
+        colTypesSql = (String[]) resultMap.get("colTypesSql");
+
+        try {
+            String content = parse();
+            String path = System.getProperty("user.dir") + "/src/main/java/" + packagePath.replaceAll("\\.", "/");
+            File file = new File(path);
+            if(!file.exists()){
+                file.mkdirs();
+            }
+            String resPath = path + "/" + entityName + "Mapper.xml";
+
+            MyUtils.writeString2File(new File(resPath), content, "UTF-8");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public Map<String, Object[]> genAllKindTypes(String tableName) {
+
+        Map<String, Object[]> resultMap = new HashMap<>();
+
+        String[] colSqlNames = null,colNames = null,colTypes = null,colTypesSql = null;
+        Integer[] colSizes = null;
+
         GenEntity.DataBaseTools dataBaseTools = new GenEntity().new DataBaseTools(propertyFilename);
 
         Connection conn = dataBaseTools.openConnection(); // 得到数据库连接
@@ -77,40 +106,37 @@ public class GenXml {
             ResultSetMetaData rsmd = pstmt.getMetaData();
             int size = rsmd.getColumnCount(); // 共有多少列
             colSqlNames = new String[size];
-            colnames = new String[size];
+            colNames = new String[size];
             colTypes = new String[size];
-            colSizes = new int[size];
+            colSizes = new Integer[size];
             colTypesSql = new String[size];
 
             for (int i = 0; i < rsmd.getColumnCount(); i++) {
 
                 colSqlNames[i] = rsmd.getColumnName(i + 1);
-                colnames[i] = MyGenUtils.getCamelStr(rsmd.getColumnName(i + 1));
+                colNames[i] = MyGenUtils.getCamelStr(rsmd.getColumnName(i + 1));
                 colTypesSql[i] = rsmd.getColumnTypeName(i + 1);
                 colSizes[i] = rsmd.getColumnDisplaySize(i + 1);
             }
 
-            changeTypes();//处理mybatis类型 和 sql类型不一致
+            changeTypes(colTypes, colTypesSql);//处理mybatis类型 和 sql类型不一致
 
-            try {
-                String content = parse();
-                String path = System.getProperty("user.dir") + "/src/main/java/" + packagePath.replaceAll("\\.", "/");
-                File file = new File(path);
-                if(!file.exists()){
-                    file.mkdirs();
-                }
-                String resPath = path + "/" + entityName + "Mapper.xml";
-
-                MyUtils.writeString2File(new File(resPath), content, "UTF-8");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             dataBaseTools.closeConnection(conn, pstmt);
         }
+
+        resultMap.put("colSqlNames", colSqlNames);
+        resultMap.put("colNames", colNames);
+        resultMap.put("colTypes", colTypes);
+        resultMap.put("colSizes", colSizes);
+        resultMap.put("colTypesSql", colTypesSql);
+
+        return resultMap;
     }
+
+
 
     /**
      * 解析处理(生成实体类主体代码)
@@ -125,10 +151,10 @@ public class GenXml {
 
         for (int i = 0; i < colSqlNames.length; i++) {
 
-            if (colnames[i].trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY)) {
+            if (colNames[i].trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY)) {
                 sb.append("\t\t<id column=\"id\" jdbcType=\"INTEGER\" property=\"id\" />\r\n");
             } else {
-                sb.append("\t\t<result column=\"" + colSqlNames[i] + "\" jdbcType=\"" + colTypes[i] + "\" property=\"" + colnames[i] + "\" />\r\n");
+                sb.append("\t\t<result column=\"" + colSqlNames[i] + "\" jdbcType=\"" + colTypes[i] + "\" property=\"" + colNames[i] + "\" />\r\n");
             }
 
             //外间关联
@@ -197,6 +223,28 @@ public class GenXml {
                     p = p.concat(pluralAssociation);
                 }
 
+                Map<String, Object[]> resultMap = genAllKindTypes(p);
+
+                String[] colSqlNames = (String[]) resultMap.get("colSqlNames");
+                String[] colNames = (String[]) resultMap.get("colNames");
+                
+                StringBuilder sbb = new StringBuilder();
+
+                for (int j = 0; j < colSqlNames.length; j++) {
+
+                    if(colSqlNames[j].equals(colNames[j])) {
+                        sbb.append(colSqlNames[j]);
+                        sbb.append(",");
+                        continue;
+                    }
+
+                    sbb.append(colSqlNames[j] + " ");
+                    sbb.append(colNames[j]);
+                    sbb.append(",");
+                }
+
+                if(sbb.indexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));//去掉最后一个,
+
                 String bigStr = MyGenUtils.upcaseFirst(p);
                 //String smallStr = MyGenUtils.getCamelStr(p);
 
@@ -212,7 +260,7 @@ public class GenXml {
 
                 //select 标签sql模块代码完全保留 不会跟association一样替代 不重复生产
                 sb.append("\t<select id = \"find" + bigStr + "ById\" resultType=\"" + entityPath + "." + bigStr + Home.entityNameSuffix + "\">\r\n");
-                sb.append("\t\tSELECT * FROM " + p + " WHERE id = #{id} limit 0,1\r\n");
+                sb.append("\t\tSELECT " + sbb.toString() + " FROM " + p + " WHERE id = #{id} limit 0,1\r\n");
                 sb.append("\t</select>\r\n\r\n");
             }
         }

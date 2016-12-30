@@ -33,7 +33,7 @@ public class Home {
 
     String packagePath;
     String tableName;
-    String jdbcName;
+    String jdbcName;///////该字段已弃用了
 
     String tag;
     String medusaProName;
@@ -153,10 +153,10 @@ public class Home {
             System.out.println("大兄弟你的tableName没填写!");
             result = false;
         }
-        if(MyUtils.isBlank(jdbcName)) {
+/*        if(MyUtils.isBlank(jdbcName)) {
             System.out.println("大兄弟你的jdbcName没填写!");
             result = false;
-        }
+        }*/
         if(MyUtils.isBlank(tag)) {
             System.out.println("大兄弟你的tag没填写!");
             result = false;
