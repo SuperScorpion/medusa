@@ -88,7 +88,7 @@ public class GenEntity {
                 colSqlNames[i] = rsmd.getColumnName(i + 1);
                 colnames[i] = MyGenUtils.getCamelStr(rsmd.getColumnName(i + 1));
                 colTypes[i] = rsmd.getColumnTypeName(i + 1);
-                if (colTypes[i].equalsIgnoreCase("datetime")) {
+                if (colTypes[i].equalsIgnoreCase("datetime") || colTypes[i].equalsIgnoreCase("date") || colTypes[i].equalsIgnoreCase("TIMESTAMP")) {
                     f_util = true;
                 }
                 if (colTypes[i].equalsIgnoreCase("image") || colTypes[i].equalsIgnoreCase("text")) {
