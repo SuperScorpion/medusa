@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 public @interface ConParamValidator {
 
   /** 验证失败提示语 */
-  public String message() default "";
+  public String[] message() default "";
 
   /** 正则表达式 **/
   public String[] regExp() default "";

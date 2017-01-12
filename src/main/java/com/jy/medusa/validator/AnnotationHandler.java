@@ -5,6 +5,7 @@ import com.jy.medusa.utils.MyUtils;
 import com.jy.medusa.utils.SystemConfigs;
 import com.jy.medusa.validator.annotation.ConParamValidator;
 import com.jy.medusa.validator.annotation.Length;
+import com.jy.medusa.validator.annotation.NotNull;
 import com.jy.medusa.validator.annotation.Validator;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -42,6 +43,8 @@ public class AnnotationHandler {//TODO
 
     private final String lengthPath = SystemConfigs.VALID_LENGTH_PATH;
 
+    private final String notNullPath = SystemConfigs.VALID_NOTNULL_PATH;
+
     /**
      * 所有校验标注的处理
      * 	<aop:aspectj-autoproxy proxy-target-class="true"/>
@@ -57,7 +60,7 @@ public class AnnotationHandler {//TODO
 
         String[] regArray = parameter.regExp();
 
-        String message = parameter.message();
+        String[] message = parameter.message();
 
         Class<?> entityClass = parameter.entityClass();
 
@@ -72,16 +75,18 @@ public class AnnotationHandler {//TODO
             if(object instanceof Long || object instanceof Integer || object instanceof String
                     || object instanceof Double || object instanceof Float || object instanceof BigDecimal) {//TODO 普通参数判断
 
-                /*for(String regExp : regArray){
-                    if(MyUtils.isNotBlank(object.toString()) && MyUtils.isNotBlank(regExp) && object.toString().matches(regExp)) {
-                        var1 = Boolean.TRUE;
-                        break;
-                    }
-                }*/
                 if(MyUtils.isNotBlank(object.toString()) && MyUtils.isNotBlank(regArray[i]) && !object.toString().matches(regArray[i])) {
 
                     ErrorInfo errorInfo = new ErrorInfo();
-                    errorInfo.setMessage("第" + (i+1) + "个参数" + object.toString() + "校验失败请重试");
+
+                    if(message != null && message.length > i) {
+
+                        errorInfo.setMessage(message[i]);
+                    } else {
+
+                        errorInfo.setMessage("第" + (i+1) + "个普通参数" + object.toString() + "校验失败请重试");
+                    }
+
                     errorInfoList.add(errorInfo);
                 }
 
@@ -120,20 +125,46 @@ public class AnnotationHandler {//TODO
       field.setAccessible(true);
       Annotation[] annos = field.getAnnotations();
       for(Annotation anno : annos) {
-        if(anno.annotationType().getName().equals(validatorPath)) {
+          if(anno.annotationType().getName().equals(notNullPath)) {
 
-          errors.addAll(handleValidator(obj, field, anno));
+            errors.addAll(handlerNotNull(obj, field, anno));
 
-        } else if(anno.annotationType().getName().equals(lengthPath)) {
+          } else if(anno.annotationType().getName().equals(validatorPath)) {
 
-          errors.addAll(handleLength(obj, field, anno));
+            errors.addAll(handleValidator(obj, field, anno));
 
+          } else if(anno.annotationType().getName().equals(lengthPath)) {
+
+            errors.addAll(handleLength(obj, field, anno));
         }
       }
     }
 
     return errors;
   }
+
+    /**
+     * 处理NotNull
+     * */
+    private List<ErrorInfo> handlerNotNull(Object source, Field field, Annotation anno) throws IllegalArgumentException, IllegalAccessException{
+
+        List<ErrorInfo> errors = new ArrayList<>();
+
+        String fieldName = field.getName();
+        Object fieldValue = field.get(source);
+
+        NotNull notNull = (NotNull)anno;
+        String message = notNull.message();
+
+        if(fieldValue == null) {
+            ErrorInfo errorInfo = new ErrorInfo();
+            message = MyUtils.isNotBlank(message) ? message : "参数" + fieldName + "不能为空值";
+            errorInfo.setMessage(message);
+            errors.add(errorInfo);
+        }
+
+        return errors;
+    }
   
   /**
    * 处理Validator标注
@@ -161,13 +192,15 @@ public class AnnotationHandler {//TODO
 
     List<ErrorInfo> errors = new ArrayList<>();
 
+    Length len = (Length)anno;
+
     Object fieldValue = field.get(source);
     String fieldName = field.getName();
-
-    Length len = (Length) anno;
+    String message = len.message();
 
     int maxLength = len.max();
     int minLength = len.min();
+
 
     if(fieldValue != null){
 
@@ -176,7 +209,8 @@ public class AnnotationHandler {//TODO
       if(value.length() > maxLength || value.length() < minLength){
 
         ErrorInfo errorInfo = new ErrorInfo();
-        errorInfo.setMessage("参数" + fieldName + "长度控制在" + minLength + "与" + maxLength + "之间");
+        message = MyUtils.isNotBlank(message) ? message : "参数" + fieldName + "长度控制在" + minLength + "与" + maxLength + "之间";
+        errorInfo.setMessage(message);
         errors.add(errorInfo);
       }
     }
@@ -187,33 +221,37 @@ public class AnnotationHandler {//TODO
 
     List<ErrorInfo> errors = new ArrayList<>();
 
-    String message = MyUtils.isNotBlank(valid.message()) ? valid.message() : fieldName + "不符合校验表达式";
+    String message = valid.message();
     String regExp = valid.regExp();
 
     String[] selects = valid.selects();
-    
-    if(fieldValue == null) {
+
+    /*if(fieldValue == null) {
 	      ErrorInfo errorInfo = new ErrorInfo();
-	      errorInfo.setMessage(fieldName + "必填");
+	      errorInfo.setMessage(fieldName + "不能为空值");
 	      errors.add(errorInfo);
-    } else {
-	      String value = String.valueOf(fieldValue);
-	      
+    } else {*/
+
+      if(fieldValue != null) {
+
+        String value = String.valueOf(fieldValue);
 	      //modify by neo 20160128
-	      if(selects != null && selects.length > 0) {
-	    	  List<String> paramList = Arrays.asList(selects);
-	    	  if(!paramList.contains(value)){
-	    		  ErrorInfo errorInfo = new ErrorInfo();
-	    		  errorInfo.setMessage(fieldName + "不在设定选定值内");
-	    		  errors.add(errorInfo);
-	    	  }
-	      } else {
-	    	  if(MyUtils.isNotBlank(regExp) && !value.matches(regExp)) {
-	    		  ErrorInfo errorInfo = new ErrorInfo();
-	    		  errorInfo.setMessage(message);
-	    		  errors.add(errorInfo);
-	    	  }
-	      }
+          if(selects != null && selects.length > 0) {
+              List<String> paramList = Arrays.asList(selects);
+              if(!paramList.contains(value)){
+                  ErrorInfo errorInfo = new ErrorInfo();
+                  message = MyUtils.isNotBlank(message) ? message : fieldName + "不在设定选定的值内";
+                  errorInfo.setMessage(message);
+                  errors.add(errorInfo);
+              }
+          } else {
+              if(MyUtils.isNotBlank(regExp) && !value.matches(regExp)) {
+                  ErrorInfo errorInfo = new ErrorInfo();
+                  message = MyUtils.isNotBlank(message) ? message : fieldName + "不符合表达式的校验";
+                  errorInfo.setMessage(message);
+                  errors.add(errorInfo);
+              }
+          }
     }
 
     return errors;

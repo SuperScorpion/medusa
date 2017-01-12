@@ -18,6 +18,7 @@ public class SystemConfigs {
     public static final String VALID_VALIDATOR_PATH = "com.jy.medusa.validator.annotation.Validator";
     public static final String VALID_LENGTH_PATH = "com.jy.medusa.validator.annotation.Length";
     public static final String VALID_PATTERN_PATH = "com.jy.medusa.validator.MyPattern";
+    public static final String VALID_NOTNULL_PATH = "com.jy.medusa.validator.annotation.NotNull";
 
     public static final String MEDUSA_PAGER_PATH = "com.jy.medusa.stuff.Pager";
     public static final String MEDUSA_MYRESTRICTION_PATH = "com.jy.medusa.stuff.param.MyRestrictions";
