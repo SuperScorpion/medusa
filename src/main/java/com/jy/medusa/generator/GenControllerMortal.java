@@ -92,9 +92,9 @@ public class GenControllerMortal {
 
         //index.do
         sbb.append("\t@RequestMapping(value = \"/index.do\", method = RequestMethod.GET)\r\n");
-        sbb.append("\tpublic String index(" + entityName + Home.entityNameSuffix + " param, ModelMap model, HttpServletRequest request) {\r\n\r\n");
+        sbb.append("\tpublic String index(@RequestParam Integer pageNum, " + entityName + Home.entityNameSuffix + " param, ModelMap model, HttpServletRequest request) {\r\n\r\n");
 
-        sbb.append("\t\t" + "Pager<" + entityName + Home.entityNameSuffix +"> pager = MyRestrictions.getPager().setPageSize(10);\r\n\r\n");
+        sbb.append("\t\t" + "Pager<" + entityName + Home.entityNameSuffix +"> pager = MyRestrictions.getPager().setPageSize(10).setPageNumber(pageNum);\r\n");
 
         sbb.append("\t\t" + MyGenUtils.lowcaseFirst(entityName) + "Service.selectByGaze(param, pager);\r\n\r\n");
 

@@ -93,11 +93,11 @@ public class GenControllerJson {
         //index.json
         sbb.append("\t@RequestMapping(value = \"/index.json\", method = RequestMethod.GET)\r\n");
         sbb.append("\t@ResponseBody\r\n");
-        sbb.append("\tpublic JSONObject index(" + entityName + Home.entityNameSuffix + " param, HttpServletRequest request) {\r\n\r\n");
+        sbb.append("\tpublic JSONObject index(@RequestParam Integer pageNum, " + entityName + Home.entityNameSuffix + " param, HttpServletRequest request) {\r\n\r\n");
         sbb.append("\t\tJSONObject json = new JSONObject();\r\n\r\n");
 
         StringBuilder sb2 = new StringBuilder();
-        sb2.append("\t\t\t" + "Pager<" + entityName + Home.entityNameSuffix +"> pager = MyRestrictions.getPager().setPageSize(10);\r\n");
+        sb2.append("\t\t\t" + "Pager<" + entityName + Home.entityNameSuffix +"> pager = MyRestrictions.getPager().setPageSize(10).setPageNumber(pageNum);\r\n");
         sb2.append("\t\t\t" + MyGenUtils.lowcaseFirst(entityName) + "Service.selectByGaze(param, pager);\r\n\r\n");
 
         genTryCatch(sbb, sb2.toString());
@@ -154,7 +154,11 @@ public class GenControllerJson {
 
         sb.append(sbbb);
 
-        sb.append("\t\t\tjson.put(\"data\", param);\r\n");
+        if(sbbb.contains("pager"))
+            sb.append("\t\t\tjson.put(\"data\", pager);\r\n");
+        else
+            sb.append("\t\t\tjson.put(\"data\", param);\r\n");
+
         sb.append("\t\t\tjson.put(\"result\",0);\r\n");
         sb.append("\t\t\tjson.put(\"msg\",\"ok\");\r\n");
 
