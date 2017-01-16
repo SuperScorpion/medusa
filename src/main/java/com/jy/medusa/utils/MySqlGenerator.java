@@ -694,49 +694,64 @@ public class MySqlGenerator {
         //转换一下column的属性值 也许是数据库字段 也有可能是属性值
         String column = MyHelper.buildColumnName3(((BaseParam) z).getColumn(), currentFieldColumnNameMap);
 
+        if(MyUtils.isBlank(column)) return;
+
         if (z instanceof BaseComplexParam) {
 
             if (z instanceof SingleParam) {//modify by neo on 2016.11.17
 
-                sbb.append(" AND ").append(column).append(" = ").append("#{pobj.array[" + isd + "].paramList[" + ind + "].value}");
+                Object p = ((SingleParam) z).getValue();
+
+                if(p != null && MyUtils.isNotBlank(p.toString())) {
+                    sbb.append(" AND ").append(column).append(" = ").append("#{pobj.array[" + isd + "].paramList[" + ind + "].value}");
+                }
 
             } else if (z instanceof BetweenParam) {
 
-                //                        BetweenParam p = (BetweenParam) z;
+                Object start = ((BetweenParam) z).getStart();
 
-                sbb.append(" AND ").append(column).append(" BETWEEN ")
-                        //.append("'").append(MyDateUtils.convertDateToStr(p.getEnd(), MyDateUtils.DATE_FULL_STR)).append("'")
-                        .append("#{pobj.array[" + isd + "].paramList[" + ind + "].start}")
-                        .append(" AND ")
-                        .append("#{pobj.array[" + isd + "].paramList[" + ind + "].end}");
+                if(start != null) {
+                    sbb.append(" AND ").append(column).append(" BETWEEN ")
+                            //.append("'").append(MyDateUtils.convertDateToStr(p.getEnd(), MyDateUtils.DATE_FULL_STR)).append("'")
+                            .append("#{pobj.array[" + isd + "].paramList[" + ind + "].start}")
+                            .append(" AND ")
+                            .append("#{pobj.array[" + isd + "].paramList[" + ind + "].end}");
+                }
             } else if (z instanceof LikeParam) {
 
-                //                        LikeParam p = (LikeParam) z;
+                Object p = ((LikeParam) z).getValue();
 
-                sbb.append(" AND ").append(column).append(" LIKE ").append("CONCAT('%',#{pobj.array[" + isd + "].paramList[" + ind + "].value},'%')");
+                if(p != null && MyUtils.isNotBlank(p.toString())) {
+                    sbb.append(" AND ").append(column).append(" LIKE ").append("CONCAT('%',#{pobj.array[" + isd + "].paramList[" + ind + "].value},'%')");
+                }
             }
         } else if (z instanceof BaseGeLeParam) {
 
-            if (z instanceof GreatThanParam) {
+            Object p = ((BaseGeLeParam) z).getValue();
 
-                //                            GreatThanParam p = (GreatThanParam) z;
+            if(p != null && MyUtils.isNotBlank(p.toString())) {
 
-                sbb.append(" AND ").append(column).append(" > ").append("#{pobj.array[" + isd + "].paramList[" + ind + "].value}");
-            } else if (z instanceof GreatEqualParam) {
+                if (z instanceof GreatThanParam) {
 
-                //                            GreatEqualParam p = (GreatEqualParam) z;
+                    //                            GreatThanParam p = (GreatThanParam) z;
 
-                sbb.append(" AND ").append(column).append(" >= ").append("#{pobj.array[" + isd + "].paramList[" + ind + "].value}");
-            } else if (z instanceof LessThanParam) {
+                    sbb.append(" AND ").append(column).append(" > ").append("#{pobj.array[" + isd + "].paramList[" + ind + "].value}");
+                } else if (z instanceof GreatEqualParam) {
 
-                //                            LessThanParam p = (LessThanParam) z;
+                    //                            GreatEqualParam p = (GreatEqualParam) z;
 
-                sbb.append(" AND ").append(column).append(" < ").append("#{pobj.array[" + isd + "].paramList[" + ind + "].value}");
-            } else if (z instanceof LessEqualParam) {
+                    sbb.append(" AND ").append(column).append(" >= ").append("#{pobj.array[" + isd + "].paramList[" + ind + "].value}");
+                } else if (z instanceof LessThanParam) {
 
-                //                            LessEqualParam p = (LessEqualParam) z;
+                    //                            LessThanParam p = (LessThanParam) z;
 
-                sbb.append(" AND ").append(column).append(" <= ").append("#{pobj.array[" + isd + "].paramList[" + ind + "].value");
+                    sbb.append(" AND ").append(column).append(" < ").append("#{pobj.array[" + isd + "].paramList[" + ind + "].value}");
+                } else if (z instanceof LessEqualParam) {
+
+                    //                            LessEqualParam p = (LessEqualParam) z;
+
+                    sbb.append(" AND ").append(column).append(" <= ").append("#{pobj.array[" + isd + "].paramList[" + ind + "].value");
+                }
             }
         }
 

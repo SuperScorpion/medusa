@@ -15,9 +15,9 @@ public class SystemConfigs {
     public static final String REGX_TIME_YYYY0mm0dd_SIMPLE_5 = "^((((1[6-9]|[2-9]\\d)\\d{2})-(0?[13578]|1[02])-(0?[1-9]|[12]\\d|3[01]))|(((1[6-9]|[2-9]\\d)\\d{2})-(0?[13456789]|1[012])-(0?[1-9]|[12]\\d|30))|(((1[6-9]|[2-9]\\d)\\d{2})-0?2-(0?[1-9]|1\\d|2[0-8]))|(((1[6-9]|[2-9]\\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00))-0?2-29-)) (20|21|22|23|[0-1]?\\d):[0-5]?\\d:[0-5]?\\d$";
     public static final String REGX_TIME_YYYY0mm0dd_SIMPLE_6 = "^((((1[6-9]|[2-9]\\d)\\d{2})(0?[13578]|1[02])(0?[1-9]|[12]\\d|3[01]))|(((1[6-9]|[2-9]\\d)\\d{2})(0?[13456789]|1[012])(0?[1-9]|[12]\\d|30))|(((1[6-9]|[2-9]\\d)\\d{2})-0?2-(0?[1-9]|1\\d|2[0-8]))|(((1[6-9]|[2-9]\\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00))-0?2-29-)) (20|21|22|23|[0-1]?\\d):[0-5]?\\d:[0-5]?\\d$";
 
+    public static final String VALID_PATTERN_PATH = "com.jy.medusa.validator.MyPattern";
     public static final String VALID_VALIDATOR_PATH = "com.jy.medusa.validator.annotation.Validator";
     public static final String VALID_LENGTH_PATH = "com.jy.medusa.validator.annotation.Length";
-    public static final String VALID_PATTERN_PATH = "com.jy.medusa.validator.MyPattern";
     public static final String VALID_NOTNULL_PATH = "com.jy.medusa.validator.annotation.NotNull";
 
     public static final String MEDUSA_PAGER_PATH = "com.jy.medusa.stuff.Pager";

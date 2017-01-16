@@ -39,11 +39,11 @@ public class AnnotationHandler {//TODO
         return sb.toString();
     }
 
-    private final String validatorPath = SystemConfigs.VALID_VALIDATOR_PATH;
+/*    private final String validatorPath = SystemConfigs.VALID_VALIDATOR_PATH;
 
     private final String lengthPath = SystemConfigs.VALID_LENGTH_PATH;
 
-    private final String notNullPath = SystemConfigs.VALID_NOTNULL_PATH;
+    private final String notNullPath = SystemConfigs.VALID_NOTNULL_PATH;*/
 
     /**
      * 所有校验标注的处理
@@ -125,15 +125,15 @@ public class AnnotationHandler {//TODO
       field.setAccessible(true);
       Annotation[] annos = field.getAnnotations();
       for(Annotation anno : annos) {
-          if(anno.annotationType().getName().equals(notNullPath)) {
+          if(NotNull.class.isInstance(anno)) {
 
             errors.addAll(handlerNotNull(obj, field, anno));
 
-          } else if(anno.annotationType().getName().equals(validatorPath)) {
+          } else if(Validator.class.isInstance(anno)) {
 
             errors.addAll(handleValidator(obj, field, anno));
 
-          } else if(anno.annotationType().getName().equals(lengthPath)) {
+          } else if(Length.class.isInstance(anno)) {
 
             errors.addAll(handleLength(obj, field, anno));
         }
