@@ -2,6 +2,7 @@
 package com.jy.medusa.base;
 
 import com.jy.medusa.base.insert.InsertBatchMapper;
+import com.jy.medusa.base.insert.InsertMapper;
 import com.jy.medusa.base.insert.InsertSelectiveMapper;
 import com.jy.medusa.base.insert.InsertSelectiveUUIDMapper;
 
@@ -13,5 +14,6 @@ import com.jy.medusa.base.insert.InsertSelectiveUUIDMapper;
 public interface BaseInsertMapper<T> extends
         InsertSelectiveMapper<T>,
         InsertBatchMapper<T>,
-        InsertSelectiveUUIDMapper {
+        InsertSelectiveUUIDMapper,
+        InsertMapper<T> {
 }
