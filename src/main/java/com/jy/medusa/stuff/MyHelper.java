@@ -6,6 +6,7 @@ import com.jy.medusa.stuff.annotation.Id;
 import com.jy.medusa.stuff.annotation.Table;
 import com.jy.medusa.stuff.cache.MyHelperCacheManager;
 import com.jy.medusa.stuff.cache.MyReflectCacheManager;
+import com.jy.medusa.utils.MyReflectionUtils;
 import com.jy.medusa.utils.MySqlGenerator;
 import com.jy.medusa.utils.MyUtils;
 import com.jy.medusa.utils.SystemConfigs;
@@ -136,7 +137,7 @@ public class MyHelper {
      * @return
      */
     public static boolean checkInsertMethod(String methodName) {
-        return methodName.equals("insertSelective") ? true : false;
+        return methodName.equals("insertSelective") || methodName.equals("insert") ? true : false;
     }
 
     /**
@@ -389,13 +390,15 @@ public class MyHelper {
      * 生成插入的sql语句时 要把动态部分缓存起
      * @return
      */
-    public static String[] concatInsertDynamicSql(Map<String, String> currentFieldTypeNameMap, Map<String, String> currentFieldColumnNameMap) {
+    public static String[] concatInsertDynamicSql(Map<String, String> currentFieldTypeNameMap, Map<String, String> currentFieldColumnNameMap, Object t) {
 
         StringBuilder sbb = new StringBuilder(512);
 
         StringBuilder sbs = new StringBuilder(256);
 
         for(String fieName : currentFieldTypeNameMap.keySet()) {//同一个hashset 遍历的元素顺序是否一样的
+
+            if(t != null && MyReflectionUtils.obtainFieldValue(t, fieName) == null) continue;///modify by neo on 20170117 selective
 
             if(fieName.trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY)) {
 

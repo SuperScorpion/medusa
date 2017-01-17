@@ -37,9 +37,9 @@ public class MySqlGenerator {
         this.currentColumnFieldNameMap = cfMap;
         this.currentFieldColumnNameMap = MyHelper.exchangeKeyValues(cfMap);
 
-        String[] parArra = MyHelper.concatInsertDynamicSql(ftMap, currentFieldColumnNameMap);
-        insertDynamicSql = parArra[0];
+        String[] parArra = MyHelper.concatInsertDynamicSql(ftMap, currentFieldColumnNameMap, null);
         insertColumn = parArra[1];
+        insertDynamicSql = parArra[0];
 
         this.currentFieldTypeNameMap = ftMap;///modify by neo on 2016.12.15
 
@@ -47,7 +47,7 @@ public class MySqlGenerator {
     }
 
     /**
-     * 生成根据IDs批量删除的SQL
+     * 生成根据IDs批量删除的SQL not selective
      * @param t
      * @return
      */
@@ -73,6 +73,28 @@ public class MySqlGenerator {
      */
     public String sql_create() {//modify by neo on2016.11.12 Object t
 //        List<Object> values = obtainFieldValues(t);// modify by neo on 2016.11.15
+
+        StringBuilder sql_build = new StringBuilder(256);
+        sql_build.append("INSERT INTO ").append(tableName).append("(")
+                .append(insertColumn).append(") values (")
+                .append(insertDynamicSql).append(")");//modify by neo on2016.11.12
+        String sql = sql_build.toString();
+
+        logger.debug("Medusa: Generated SQL ^_^ " + sql);
+
+        return sql;
+    }
+
+
+    /**
+     * 生成新增的SQL
+     * @return
+     * @param t
+     */
+    public String sql_create_selective(Object t) {//modify by neo on 20170117
+
+        String[] dynamicSqlForSelective = MyHelper.concatInsertDynamicSql(currentFieldTypeNameMap, currentFieldColumnNameMap, t);
+        String insertColumn = dynamicSqlForSelective[1], insertDynamicSql = dynamicSqlForSelective[0];
 
         StringBuilder sql_build = new StringBuilder(256);
         sql_build.append("INSERT INTO ").append(tableName).append("(")

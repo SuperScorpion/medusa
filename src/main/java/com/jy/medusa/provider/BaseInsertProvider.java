@@ -14,8 +14,12 @@ import java.util.Map;
  */
 public class BaseInsertProvider {
 
-    public String insertSelective(Map<String, Object> m) {
+    public String insert(Map<String, Object> m) {
         return MyHelper.getSqlGenerator(m).sql_create();//modify by neo on 2016/11/12 m.get("pobj")
+    }
+
+    public String insertSelective(Map<String, Object> m) {
+        return MyHelper.getSqlGenerator(m).sql_create_selective(m.get("pobj"));//modify by neo on 2016/11/12 m.get("pobj")
     }
 
     public String insertBatch(Map<String, Object> m) {

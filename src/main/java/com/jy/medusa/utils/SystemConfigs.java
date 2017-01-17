@@ -35,6 +35,7 @@ public class SystemConfigs {
         MY_ALL_METHOD_NANES_LIST.add("selectPage");
         MY_ALL_METHOD_NANES_LIST.add("insertSelective");
         MY_ALL_METHOD_NANES_LIST.add("insertBatch");
+        MY_ALL_METHOD_NANES_LIST.add("insert");
         MY_ALL_METHOD_NANES_LIST.add("insertSelectiveUUID");
         MY_ALL_METHOD_NANES_LIST.add("updateByPrimaryKey");
         MY_ALL_METHOD_NANES_LIST.add("updateByPrimaryKeySelective");
