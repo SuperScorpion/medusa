@@ -751,7 +751,7 @@ public class MySqlGenerator {
 
             Object p = ((BaseGeLeParam) z).getValue();
 
-            if(p != null && MyUtils.isNotBlank(p.toString())) {
+            if(p != null) {
 
                 if (z instanceof GreatThanParam) {
 
