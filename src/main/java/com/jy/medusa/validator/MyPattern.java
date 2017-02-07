@@ -66,7 +66,7 @@ public class MyPattern {
     /**
      * mobile num
      */
-    public static final String REGX_MOBILE = "^(13[0-9]|14[0-9]|15[0-9]|18[0-9])\\d{8}$";
+    public static final String REGX_MOBILE = "^1[3|4|5|7|8][0-9]{9}$";
 
     /**
      * id card
