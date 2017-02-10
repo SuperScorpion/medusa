@@ -51,9 +51,11 @@ public class MySqlGenerator {
      * @param t
      * @return
      */
-    public String sql_insertOfBatch(Object t) {
+    public String sql_insertOfBatch(Object t) throws MedusaException {
 
         String dynamicSqlForBatch = MyHelper.concatInsertDynamicSqlForBatch(currentFieldTypeNameMap, t);
+
+        if(MyUtils.isBlank(dynamicSqlForBatch)) throw new MedusaException("insertBatch method parameter is null or empty");
 
         StringBuilder sql_build = new StringBuilder(512);
         sql_build.append("INSERT INTO ").append(tableName).append("(")

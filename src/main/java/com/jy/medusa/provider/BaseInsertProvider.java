@@ -2,6 +2,7 @@
 package com.jy.medusa.provider;
 
 import com.jy.medusa.stuff.MyHelper;
+import com.jy.medusa.stuff.exception.MedusaException;
 import org.apache.ibatis.session.defaults.DefaultSqlSession;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public class BaseInsertProvider {
         return MyHelper.getSqlGenerator(m).sql_create_selective(m.get("pobj"));//modify by neo on 2016/11/12 m.get("pobj")
     }
 
-    public String insertBatch(Map<String, Object> m) {
+    public String insertBatch(Map<String, Object> m) throws MedusaException {
 
         List<Object> p = (List<Object>) ((DefaultSqlSession.StrictMap) m.get("pobj")).get("list");
 
