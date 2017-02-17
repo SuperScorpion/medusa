@@ -15,6 +15,7 @@ public class GenService {
 
     private String entityPath;
     private String servicePath;
+    private String serviceImplPath;
     private String mapperPath;
 
     private String entityName;
@@ -22,16 +23,17 @@ public class GenService {
     private final String mixMapper = "com.jy.medusa.commons.Mapper";
 
 
-    public GenService(String tableName, String entityPath, String servicePath, String mapperPath, String tag){
+    public GenService(String tableName, String entityPath, String servicePath, String serviceImplPath, String mapperPath, String tag){
         this.entityPath = entityPath;
         this.servicePath = servicePath;
+        this.serviceImplPath = serviceImplPath;
         this.mapperPath = mapperPath;
         this.entityName = MyGenUtils.upcaseFirst(tableName);
 
         this.tag = tag;
 
         this.markServiceList = MyGenUtils.genTagStrList(entityName + "Service.java", servicePath, tag, "service");
-        this.markServiceImplList = MyGenUtils.genTagStrList(entityName + "ServiceImpl.java", servicePath, tag, "serviceImpl");
+        this.markServiceImplList = MyGenUtils.genTagStrList(entityName + "ServiceImpl.java", serviceImplPath, tag, "serviceImpl");
         this.markMapperList = MyGenUtils.genTagStrList(entityName + "Mapper.java", mapperPath, tag, "mapper");
     }
 
@@ -40,12 +42,13 @@ public class GenService {
         try {
             //写入service 和 impl
             String path = System.getProperty("user.dir") + "/src/main/java/" + servicePath.replaceAll("\\.", "/");
+            String pathImp = System.getProperty("user.dir") + "/src/main/java/" + serviceImplPath.replaceAll("\\.", "/");
             File file = new File(path);
             if(!file.exists()){
                 file.mkdirs();
             }
             String resPath1 = path + "/" + entityName + "Service.java";
-            String resPath2 = path + "/" + entityName + "ServiceImpl.java";
+            String resPath2 = pathImp + "/" + entityName + "ServiceImpl.java";
             MyUtils.writeString2File(new File(resPath1), process1(), "UTF-8");
             MyUtils.writeString2File(new File(resPath2), process2(), "UTF-8");
 
@@ -102,11 +105,12 @@ public class GenService {
 
         StringBuilder sbb = new StringBuilder();
 
-        sbb.append("package " + servicePath + ";\r\n\r\n");
+        sbb.append("package " + serviceImplPath + ";\r\n\r\n");
 
         sbb.append("import " + entityPath + "." + entityName + Home.entityNameSuffix + ";\r\n");
         sbb.append("import javax.annotation.Resource;\r\n");
-        sbb.append("import " + mapperPath + "." + entityName + "Mapper;\r\n\r\n");
+        sbb.append("import " + mapperPath + "." + entityName + "Mapper;\r\n");
+        sbb.append("import " + servicePath + "." + entityName + "Service;\r\n\r\n");
 //        sbb.append("import java.util.List;\r\n");
 //        sbb.append("import " + baseMapperPath + ";\r\n\r\n");
         sbb.append("import " + "org.springframework.stereotype.Service" + ";\r\n\r\n");

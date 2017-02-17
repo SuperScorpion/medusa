@@ -12,14 +12,16 @@ import java.util.List;
 public class GenBaseService {
 
     private String servicePath;
+    private String serviceImplPath;
 
-    public GenBaseService(String servicePath, String tag){
+    public GenBaseService(String servicePath, String serviceImplPath, String tag){
         this.servicePath = servicePath;
+        this.serviceImplPath = serviceImplPath;
 
         this.tag = tag;
 
         this.markServiceList = MyGenUtils.genTagStrList("BaseService.java", servicePath, tag, "service");
-        this.markServiceImplList = MyGenUtils.genTagStrList("BaseServiceImpl.java", servicePath, tag, "serviceImpl");
+        this.markServiceImplList = MyGenUtils.genTagStrList("BaseServiceImpl.java", serviceImplPath, tag, "serviceImpl");
     }
 
     public void process(){
@@ -27,12 +29,13 @@ public class GenBaseService {
         try {
             //写入service 和 impl
             String path = System.getProperty("user.dir") + "/src/main/java/" + servicePath.replaceAll("\\.", "/");
+            String pathImp = System.getProperty("user.dir") + "/src/main/java/" + serviceImplPath.replaceAll("\\.", "/");
             File file = new File(path);
             if(!file.exists()){
                 file.mkdirs();
             }
             String resPath1 = path + "/" + "BaseService.java";
-            String resPath2 = path + "/" + "BaseServiceImpl.java";
+            String resPath2 = pathImp + "/" + "BaseServiceImpl.java";
             MyUtils.writeString2File(new File(resPath1), process1(), "UTF-8");
             MyUtils.writeString2File(new File(resPath2), process2(), "UTF-8");
 
@@ -99,9 +102,10 @@ public class GenBaseService {
 
         StringBuilder sbb = new StringBuilder();
 
-        sbb.append("package " + servicePath + ";\r\n\r\n");
+        sbb.append("package " + serviceImplPath + ";\r\n\r\n");
 
         sbb.append("import " + Home.mixMapper + ";\n" +
+                "import " + servicePath + ".BaseService;\n" +
                 "import org.slf4j.Logger;\n" +
                 "import org.slf4j.LoggerFactory;\n" +
                 "import org.springframework.beans.factory.annotation.Autowired;\n" +

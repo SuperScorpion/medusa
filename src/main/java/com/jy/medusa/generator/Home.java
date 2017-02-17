@@ -39,6 +39,7 @@ public class Home {
     String medusaProName;
     String entitySuffix;
     String serviceSuffix;
+    String serviceImplSuffix;
     String mapperSuffix;
     String xmlSuffix;
 
@@ -72,6 +73,7 @@ public class Home {
 
         String entityPath = packagePath.concat(".").concat(entitySuffix);
         String servicePath = packagePath.concat(".").concat(serviceSuffix);
+        String serviceImplPath = packagePath.concat(".").concat(serviceImplSuffix);
         String mapperPath = packagePath.concat(".").concat(mapperSuffix);
         String xmlPath = packagePath.concat(".").concat(xmlSuffix);
         String controlPathJson = packagePath.concat(".").concat(controlJsonSuffix);
@@ -109,7 +111,7 @@ public class Home {
 
                 if(MyUtils.isNotBlank(serviceSuffix) && MyUtils.isNotBlank(entitySuffix) && MyUtils.isNotBlank(mapperSuffix)) {
                     long nanoSs = System.nanoTime();
-                    new GenService(tabName, entityPath, servicePath, mapperPath, tag).process();//执行生成service serviceimpl mapper
+                    new GenService(tabName, entityPath, servicePath, serviceImplPath, mapperPath, tag).process();//执行生成service serviceimpl mapper
                     System.out.println(tabName + " service文件 mapper文件生成用时:" + (System.nanoTime()-nanoSs) + " ns");
                 }
 
@@ -134,7 +136,7 @@ public class Home {
             }
         }
 
-        if(MyUtils.isNotBlank(baseServiceSwitch)) new GenBaseService(servicePath, tag).process();//处理生成基础的 service
+        if(MyUtils.isNotBlank(baseServiceSwitch)) new GenBaseService(servicePath, serviceImplPath, tag).process();//处理生成基础的 service
     }
 
     private JSONObject parseValidJson(String validJsonStr) {
@@ -224,6 +226,7 @@ public class Home {
 
         this.entitySuffix = props.getProperty("medusa.entitySuffix") == null ? "" : props.getProperty("medusa.entitySuffix");
         this.serviceSuffix = props.getProperty("medusa.serviceSuffix") == null ? "" : props.getProperty("medusa.serviceSuffix");
+        this.serviceImplSuffix = props.getProperty("medusa.serviceImplSuffix") == null ? "" : props.getProperty("medusa.serviceImplSuffix");
         this.mapperSuffix = props.getProperty("medusa.mapperSuffix") == null ? "" : props.getProperty("medusa.mapperSuffix");
         this.xmlSuffix = props.getProperty("medusa.xmlSuffix") == null ? "" : props.getProperty("medusa.xmlSuffix");
         this.controlJsonSuffix = props.getProperty("medusa.controlJsonSuffix") == null ? "" : props.getProperty("medusa.controlJsonSuffix");
