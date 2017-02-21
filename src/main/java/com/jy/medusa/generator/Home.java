@@ -109,7 +109,7 @@ public class Home {
                     System.out.println(tabName + " entity文件生成用时:" + (System.nanoTime()-nanoSs) + " ns");
                 }
 
-                if(MyUtils.isNotBlank(serviceSuffix) && MyUtils.isNotBlank(entitySuffix) && MyUtils.isNotBlank(mapperSuffix)) {
+                if(MyUtils.isNotBlank(serviceImplSuffix) && MyUtils.isNotBlank(serviceSuffix) && MyUtils.isNotBlank(entitySuffix) && MyUtils.isNotBlank(mapperSuffix)) {
                     long nanoSs = System.nanoTime();
                     new GenService(tabName, entityPath, servicePath, serviceImplPath, mapperPath, tag).process();//执行生成service serviceimpl mapper
                     System.out.println(tabName + " service文件 mapper文件生成用时:" + (System.nanoTime()-nanoSs) + " ns");
