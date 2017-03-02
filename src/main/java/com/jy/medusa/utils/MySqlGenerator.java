@@ -364,7 +364,7 @@ public class MySqlGenerator {
                     for (String column : columns) {
                         String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
                         Object value = MyReflectionUtils.obtainFieldValue(o, fieldName);
-                        if (value != null) {
+                        if (value != null && !value.toString().equals("")) {
                             colVals.add(column + "=" + "#{pobj.array[" + i + "]." + fieldName + "}");///modify by neo on 2016.11.12
                         }
                     }
