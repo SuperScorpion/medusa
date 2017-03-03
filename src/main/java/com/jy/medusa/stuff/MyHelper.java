@@ -402,7 +402,8 @@ public class MyHelper {
 
             if(fieName.trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY)) {
 
-                sbb.append("#{id, jdbcType=" + javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)) + "},");
+//                sbb.append("#{id, jdbcType=" + javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)) + "},");
+                sbb.append("#{pobj." + SystemConfigs.PRIMARY_KEY + ", jdbcType=" + javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)) + "},");
 
                 sbs.append(currentFieldColumnNameMap.get(fieName));
                 sbs.append(",");
@@ -483,7 +484,8 @@ public class MyHelper {
 
                 if(fieName.trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY)) {
 
-                    sbb.append("#{id, jdbcType=" + javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)) + "},");
+//                sbb.append("#{id, jdbcType=" + javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)) + "},");
+                    sbb.append("#{pobj.list[" + i + "]." + SystemConfigs.PRIMARY_KEY + ", jdbcType=" + javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)) + "},");
 
                     continue;
                 }
