@@ -2,6 +2,7 @@
 package com.jy.medusa.base;
 
 
+import com.jy.medusa.base.update.UpdateByPrimaryKeyBatchMapper;
 import com.jy.medusa.base.update.UpdateByPrimaryKeyMapper;
 import com.jy.medusa.base.update.UpdateByPrimaryKeySelectiveMapper;
 
@@ -13,5 +14,6 @@ import com.jy.medusa.base.update.UpdateByPrimaryKeySelectiveMapper;
  */
 public interface BaseUpdateMapper<T> extends
         UpdateByPrimaryKeySelectiveMapper<T>,
-        UpdateByPrimaryKeyMapper<T> {
+        UpdateByPrimaryKeyMapper<T>,
+        UpdateByPrimaryKeyBatchMapper<T> {
 }

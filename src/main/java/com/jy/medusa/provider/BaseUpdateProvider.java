@@ -2,6 +2,7 @@ package com.jy.medusa.provider;
 
 import com.jy.medusa.stuff.MyHelper;
 import com.jy.medusa.stuff.exception.MedusaException;
+import org.apache.ibatis.binding.MapperMethod;
 
 import java.util.Map;
 
@@ -26,5 +27,20 @@ public class BaseUpdateProvider {
      */
     public String updateByPrimaryKeySelective(Map<String, Object> m) throws MedusaException {
         return MyHelper.getSqlGenerator(m).sql_modify(m.get("pobj"));
+    }
+
+    /**
+     * 通过主键更新批量的
+     *
+     * @return
+     */
+    public String updateByPrimaryKeyBatch(Map<String, Object> m) throws MedusaException {
+
+        if(m.get("pobj") instanceof MapperMethod.ParamMap)
+            return MyHelper.getSqlGenerator(m).sql_modifyOfBatch(
+                    ((MapperMethod.ParamMap) m.get("pobj")).get("param1"),
+                    ((MapperMethod.ParamMap) m.get("pobj")).get("param2"));
+
+        throw new RuntimeException("Medusa: updateByPrimaryKeyBatch MapperMethod.ParamMap Exception");
     }
 }

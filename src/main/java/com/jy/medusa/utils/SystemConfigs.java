@@ -23,7 +23,7 @@ public class SystemConfigs {
     public static final String MEDUSA_PAGER_PATH = "com.jy.medusa.stuff.Pager";
     public static final String MEDUSA_MYRESTRICTION_PATH = "com.jy.medusa.stuff.param.MyRestrictions";
 
-    public static final List<String> MY_ALL_METHOD_NANES_LIST = new ArrayList<>(17);
+    public static final List<String> MY_ALL_METHOD_NANES_LIST = new ArrayList<>(20);
 
     static {
         MY_ALL_METHOD_NANES_LIST.add("showMedusaGaze");
@@ -39,6 +39,7 @@ public class SystemConfigs {
         MY_ALL_METHOD_NANES_LIST.add("insertSelectiveUUID");
         MY_ALL_METHOD_NANES_LIST.add("updateByPrimaryKey");
         MY_ALL_METHOD_NANES_LIST.add("updateByPrimaryKeySelective");
+        MY_ALL_METHOD_NANES_LIST.add("updateByPrimaryKeyBatch");
         MY_ALL_METHOD_NANES_LIST.add("deleteBatch");
         MY_ALL_METHOD_NANES_LIST.add("deleteByPrimaryKey");
         MY_ALL_METHOD_NANES_LIST.add("delete");

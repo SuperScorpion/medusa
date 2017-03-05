@@ -222,6 +222,38 @@ public class MySqlGenerator {
         return sql;
     }
 
+
+    /**
+     * 生成根据条件批量更新的语句
+     * @param t
+     * @return
+     */
+    public String sql_modifyOfBatch(Object t, Object... ps) throws MedusaException {
+
+        String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnName2((Object[])ps[0], currentFieldColumnNameMap);
+
+        if(paramColumn.equals("*")) paramColumn = columnsStr;
+
+        if(paramColumn != columnsStr && !paramColumn.contains(SystemConfigs.PRIMARY_KEY)) paramColumn = SystemConfigs.PRIMARY_KEY + "," + paramColumn;
+
+        String dynamicSqlForBatch = MyHelper.concatUpdateDynamicSqlValuesForBatch(t, paramColumn, currentColumnFieldNameMap);
+        String dynamicSqlLastForBatch = MyHelper.concatUpdateDynamicSqlValuesStrForBatch(paramColumn);
+
+        StringBuilder sql_build = new StringBuilder(512);
+
+        sql_build.append("INSERT INTO ").append(tableName).append("(")
+                .append(paramColumn).append(") values ")
+                .append(dynamicSqlForBatch)
+                .append(" on duplicate key update ")
+                .append(dynamicSqlLastForBatch);
+
+        String sql = sql_build.toString();
+
+        logger.debug("Medusa: Generated SQL ^_^ " + sql);
+
+        return sql;
+    }
+
     /**
      * 生成更新的SQL
      * 不允许空置
@@ -685,7 +717,7 @@ public class MySqlGenerator {
                         sbb.append(",");
                     }
 
-                    sbb.deleteCharAt(sbb.lastIndexOf(","));//去除最后的一个,
+                    if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));//去除最后的一个,
                 }
 
                 sbb.append(" limit ");

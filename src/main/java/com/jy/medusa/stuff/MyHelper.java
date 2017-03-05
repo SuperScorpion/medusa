@@ -295,7 +295,7 @@ public class MyHelper {
 
         //modify by neo on 2016 10 13
         if(sbb.length() == 0) sbb.append(" * ");///如果后面一个参数都没匹配到string 则会查处所有的字段值
-        if(sbb.indexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));//去掉最后一个,
+        if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));//去掉最后一个,
         return sbb.toString();
     }
 
@@ -421,9 +421,9 @@ public class MyHelper {
             sbs.append(",");
         }
 
-        if(sbb.indexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
+        if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
 
-        if(sbs.indexOf(",") != -1) sbs.deleteCharAt(sbs.lastIndexOf(","));
+        if(sbs.lastIndexOf(",") != -1) sbs.deleteCharAt(sbs.lastIndexOf(","));
 
         String[] result = {sbb.toString(), sbs.toString()};///////一个是插入语句的 字段名 一个是动态值
 
@@ -499,11 +499,11 @@ public class MyHelper {
                 sbb.append("},");
             }
 
-            if(sbb.indexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
+            if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
             sbb.append("),");
         }
 
-        if(sbb.indexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
+        if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
 
 
         return sbb.toString();
@@ -618,4 +618,63 @@ public class MyHelper {
     //主要是为了解决 分页时 多次生成查询分页语句和总计数的查询语句时 缓存分页的查询语句
     public static ThreadLocal<String> myThreadLocal = new ThreadLocal<>();
 
+
+
+
+
+    public static String concatUpdateDynamicSqlValuesForBatch(Object t, String paramColumn, Map<String, String> currentColumnFieldNameMap) {
+
+        List<Object> obs;
+        if(t != null && t instanceof List)
+            obs = (ArrayList)t;
+        else
+            return "";
+
+        if(obs.size() == 0) return "";
+
+        String[] columnArr = paramColumn.split(",");
+
+        StringBuilder sbb = new StringBuilder(512);
+
+        int len = obs.size(), i = 0;
+        for (; i < len; i++) {
+            sbb.append("(");
+            for(String columns : columnArr) {
+
+                /*if(columns.equals(SystemConfigs.PRIMARY_KEY)) {
+                    int v = sbb.lastIndexOf("(");
+                    sbb.insert(v + 1, "#{pobj.param1[" + i + "]." + SystemConfigs.PRIMARY_KEY + "},");
+                    continue;
+                }*/
+
+                sbb.append("#{pobj.param1[");
+                sbb.append(i);
+                sbb.append("].");
+                sbb.append(currentColumnFieldNameMap.get(columns));
+                sbb.append("},");
+            }
+
+            if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
+            sbb.append("),");
+        }
+
+        if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
+        return sbb.toString();
+    }
+
+    public static String concatUpdateDynamicSqlValuesStrForBatch(String paramColumn) {
+
+        String[] columnArr = paramColumn.split(",");
+
+        StringBuilder sbb = new StringBuilder(512);
+
+        for(String columns : columnArr) {
+            if(columns.equals(SystemConfigs.PRIMARY_KEY)) continue;
+            sbb.append(columns + "=values(" + columns + "),");
+        }
+
+        if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
+
+        return sbb.toString();
+    }
 }
