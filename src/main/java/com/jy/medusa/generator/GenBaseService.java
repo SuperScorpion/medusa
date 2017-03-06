@@ -80,6 +80,8 @@ public class GenBaseService {
                 "\n" +
                 "\tint updateSelective(T entity);\n" +
                 "\n" +
+                "\tint updateBatch(List<T> obs, Object... ps);\n" +
+                "\n" +
                 "\tint deleteById(Integer id);\n" +
                 "\n" +
                 "\tint deleteBatch(List<Integer> ids);\n" +
@@ -162,6 +164,10 @@ public class GenBaseService {
                 "\n" +
                 "\tpublic int updateSelective(T entity) {\n" +
                 "\t\treturn mapper.updateByPrimaryKeySelective(entity);\n" +
+                "\t}\n" +
+                "\n" +
+                "\tpublic int updateBatch(List<T> obs, Object... ps) {\n" +
+                "\t\treturn mapper.updateByPrimaryKeyBatch(obs, ps);\n" +
                 "\t}\n" +
                 "\n" +
                 "\tpublic int deleteById(Integer id) {\n" +
