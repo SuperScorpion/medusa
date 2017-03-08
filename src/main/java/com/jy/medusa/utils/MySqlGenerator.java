@@ -57,7 +57,10 @@ public class MySqlGenerator {
 
         if(MyUtils.isBlank(dynamicSqlForBatch)) throw new MedusaException("insertBatch method parameter is null or empty");
 
-        StringBuilder sql_build = new StringBuilder(512);
+        int sbbLength = insertColumn.length() + tableName.length() + dynamicSqlForBatch.length() + 33;
+
+        StringBuilder sql_build = new StringBuilder(sbbLength);
+
         sql_build.append("INSERT INTO ").append(tableName).append("(")
                 .append(insertColumn).append(") values ")
                 .append(dynamicSqlForBatch);//modify by neo on2016.11.13
@@ -239,7 +242,9 @@ public class MySqlGenerator {
         String dynamicSqlForBatch = MyHelper.concatUpdateDynamicSqlValuesForBatch(t, paramColumn, currentColumnFieldNameMap);
         String dynamicSqlLastForBatch = MyHelper.concatUpdateDynamicSqlValuesStrForBatch(paramColumn);
 
-        StringBuilder sql_build = new StringBuilder(512);
+        int sbbLength = paramColumn.length() + tableName.length() + dynamicSqlForBatch.length() + dynamicSqlLastForBatch.length() + 66;
+
+        StringBuilder sql_build = new StringBuilder(sbbLength);
 
         sql_build.append("INSERT INTO ").append(tableName).append("(")
                 .append(paramColumn).append(") values ")
