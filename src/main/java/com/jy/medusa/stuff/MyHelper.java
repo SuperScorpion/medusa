@@ -263,7 +263,7 @@ public class MyHelper {
      * 改进后的方法用map缓存直接取
      * @return
      */
-    public static String buildColumnName2(Object[] psArray, Map<String, String> currentFieldColumnNameMap) {
+    public static String buildColumnNameForSelect(Object[] psArray, Map<String, String> currentFieldColumnNameMap) {
 
         StringBuilder sbb = new StringBuilder(100);
 
@@ -282,7 +282,7 @@ public class MyHelper {
 
 //                    if(m.contains("_"))//让用户用的可选字段 属性名字和数据库表字段名称容错
 //                        sbb.append(m.trim());
-                        if (currentFieldColumnNameMap.get(m.trim()) != null)//modify by neo on 2016.11.19
+                        if (currentFieldColumnNameMap.containsKey(m.trim()))//modify by neo on 2016.11.19
                             sbb.append(currentFieldColumnNameMap.get(m.trim()));
                         else
                             sbb.append(m.trim());//都取不到时候则
@@ -305,14 +305,14 @@ public class MyHelper {
      * @param currentFieldColumnNameMap
      * @return
      */
-    public static String buildColumnName3(String ori, Map<String, String> currentFieldColumnNameMap) {
+    public static String buildColumnNameForMedusaGaze(String ori, Map<String, String> currentFieldColumnNameMap) {
 
         if(MyUtils.isBlank(ori)) return "";
 
         String result;
-        if (ori.contains("_"))//让用户用的可选字段 属性名字和数据库表字段名称容错
-            result = ori.trim();
-        else if(currentFieldColumnNameMap.get(ori.trim()) != null)//modify by neo on 2016.11.3
+//        if (ori.contains("_"))//让用户用的可选字段 属性名字和数据库表字段名称容错
+//            result = ori.trim();
+        if(currentFieldColumnNameMap.containsKey(ori.trim()))//modify by neo on 2016.11.3
             result = currentFieldColumnNameMap.get(ori.trim());
         else
             result = ori.trim();
@@ -324,7 +324,7 @@ public class MyHelper {
      * @deprecated
      * @param pss
      * @return
-     * buildColumnName2 replace
+     * buildColumnNameForSelect replace
      */
     public static String convertEntityName2SqlName(String pss) {
 
@@ -619,9 +619,14 @@ public class MyHelper {
     public static ThreadLocal<String> myThreadLocal = new ThreadLocal<>();
 
 
-
-
-
+    /**
+     * 提供给批量更新使用
+     * 前一部分sql
+     * @param t
+     * @param paramColumn
+     * @param currentColumnFieldNameMap
+     * @return
+     */
     public static String concatUpdateDynamicSqlValuesForBatch(Object t, String paramColumn, Map<String, String> currentColumnFieldNameMap) {
 
         List<Object> obs;
@@ -662,6 +667,12 @@ public class MyHelper {
         return sbb.toString();
     }
 
+    /**
+     * 提供给批量更新使用
+     * 后一部分sql
+     * @param paramColumn
+     * @return
+     */
     public static String concatUpdateDynamicSqlValuesStrForBatch(String paramColumn) {
 
         String[] columnArr = paramColumn.split(",");

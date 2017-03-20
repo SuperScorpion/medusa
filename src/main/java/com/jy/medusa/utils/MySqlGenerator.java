@@ -233,7 +233,7 @@ public class MySqlGenerator {
      */
     public String sql_modifyOfBatch(Object t, Object... ps) throws MedusaException {
 
-        String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnName2((Object[])ps[0], currentFieldColumnNameMap);
+        String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect((Object[])ps[0], currentFieldColumnNameMap);
 
         if(paramColumn.equals("*")) paramColumn = columnsStr;
 
@@ -447,7 +447,7 @@ public class MySqlGenerator {
 //    return "SELECT * FROM  users WHERE NAME = #{pobj.param1.name} limit 0,1";
     public String sql_findOne(Object t, Object... ps) {
 
-        String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnName2((Object[])ps[0], currentFieldColumnNameMap);
+        String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect((Object[])ps[0], currentFieldColumnNameMap);
 
         StringBuilder sql_build = new StringBuilder(256);
 
@@ -477,7 +477,7 @@ public class MySqlGenerator {
      */
     public String sql_findOneById(Object id, Object... ps) {///modify by neo on 2016.11.21 Object id,这个 id 不能去掉的
 
-        String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnName2((Object[])ps[0], currentFieldColumnNameMap);
+        String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect((Object[])ps[0], currentFieldColumnNameMap);
 
         StringBuilder sql_build = new StringBuilder(256);
         sql_build.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName).append(" WHERE " + pkName + " = " + "#{pobj.param1}");
@@ -491,7 +491,7 @@ public class MySqlGenerator {
 
     public String sql_findListBy(Object t, Object... ps) {
 
-        String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnName2((Object[])ps[0], currentFieldColumnNameMap);
+        String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect((Object[])ps[0], currentFieldColumnNameMap);
 
         List<String> values = obtainColumnValusForSelectList(t);
 //        if(values == null || valudes.isEmpty()) return null;
@@ -517,7 +517,7 @@ public class MySqlGenerator {
      */
     public String sql_findAll(Object[] objParams) {
 
-        String paramColumn = (objParams == null || objParams.length == 0) ? columnsStr : MyHelper.buildColumnName2(objParams, currentFieldColumnNameMap);
+        String paramColumn = (objParams == null || objParams.length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect(objParams, currentFieldColumnNameMap);
 
         StringBuilder sql_build = new StringBuilder(100);
         sql_build.append("SELECT ").append(paramColumn).append(" FROM ").append(this.tableName);
@@ -594,7 +594,7 @@ public class MySqlGenerator {
 
         if(values == null || values.isEmpty()) return "";
 
-        String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnName2((Object[])ps[0], currentFieldColumnNameMap);
+        String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect((Object[])ps[0], currentFieldColumnNameMap);
 
         StringBuilder sbb = new StringBuilder(256);
         sbb.append("SELECT ").append(paramColumn).append(" FROM ").append(this.tableName).append(" WHERE 1=2 ");
@@ -624,7 +624,7 @@ public class MySqlGenerator {
 
         List<String> values = obtainColumnValusForSelectList(po);
 
-        String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnName2((Object[])ps[0], currentFieldColumnNameMap);
+        String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect((Object[])ps[0], currentFieldColumnNameMap);
 
         StringBuilder sbb = new StringBuilder(256);
         sbb.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName).append(" WHERE ");
@@ -667,7 +667,7 @@ public class MySqlGenerator {
             return cacheSq;
         }
 
-        String paramColumn = (objParams == null || objParams.length == 0) ? columnsStr : MyHelper.buildColumnName2(objParams, currentFieldColumnNameMap);
+        String paramColumn = (objParams == null || objParams.length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect(objParams, currentFieldColumnNameMap);
 
         StringBuilder sbb = new StringBuilder(512);
         sbb.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName).append(" WHERE ");
@@ -753,7 +753,7 @@ public class MySqlGenerator {
     public void baseParamHandler(StringBuilder sbb, Object z, short isd, short ind) {
 
         //转换一下column的属性值 也许是数据库字段 也有可能是属性值
-        String column = MyHelper.buildColumnName3(((BaseParam) z).getColumn(), currentFieldColumnNameMap);
+        String column = MyHelper.buildColumnNameForMedusaGaze(((BaseParam) z).getColumn(), currentFieldColumnNameMap);
 
         if(MyUtils.isBlank(column)) return;
 
