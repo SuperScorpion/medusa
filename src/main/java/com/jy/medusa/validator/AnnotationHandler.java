@@ -72,6 +72,8 @@ public class AnnotationHandler {//TODO
 
             if(object == null) continue;
 
+            if(i == regArray.length) break;
+
             if(object instanceof Long || object instanceof Integer || object instanceof String
                     || object instanceof Double || object instanceof Float || object instanceof BigDecimal) {//TODO 普通参数判断
 
