@@ -2,7 +2,6 @@ package com.jy.medusa.validator;
 
 
 import com.jy.medusa.utils.MyUtils;
-import com.jy.medusa.utils.SystemConfigs;
 import com.jy.medusa.validator.annotation.ConParamValidator;
 import com.jy.medusa.validator.annotation.Length;
 import com.jy.medusa.validator.annotation.NotNull;
@@ -72,10 +71,10 @@ public class AnnotationHandler {//TODO
 
             if(object == null) continue;
 
-            if(i == regArray.length) break;
-
             if(object instanceof Long || object instanceof Integer || object instanceof String
                     || object instanceof Double || object instanceof Float || object instanceof BigDecimal) {//TODO 普通参数判断
+
+                if(i == regArray.length) continue;
 
                 if(MyUtils.isNotBlank(object.toString()) && MyUtils.isNotBlank(regArray[i]) && !object.toString().matches(regArray[i])) {
 
