@@ -13,10 +13,10 @@
         <!-- mybatis版本号 -->
         <mybatis.version>3.4.2</mybatis.version>
         <!-- log4j日志文件管理包版本 -->
-        <slf4j.version>1.7.21</slf4j.version>
+        <slf4j.version>1.7.25</slf4j.version>
         <log4j.version>1.2.17</log4j.version>
-        <org.aspectj>1.8.9</org.aspectj>
-        <com.alibaba.fastjson>1.2.21</com.alibaba.fastjson>
+        <org.aspectj>1.8.10</org.aspectj>
+        <com.alibaba.fastjson>1.2.29</com.alibaba.fastjson>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
