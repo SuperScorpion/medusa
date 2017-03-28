@@ -44,6 +44,10 @@ public class MyHelper {
 
     private static final Logger logger = LoggerFactory.getLogger(MyHelper.class);
 
+    //主要是为了解决 分页时 多次生成查询分页语句和总计数的查询语句时 缓存分页的查询语句
+    public static ThreadLocal<String> myThreadLocal = new ThreadLocal<>();
+
+
     /**
      * 获取返回值类型 - 实体类型
      * @return
@@ -387,130 +391,6 @@ public class MyHelper {
 
 
     /**
-     * 生成插入的sql语句时 要把动态部分缓存起
-     * @return
-     */
-    public static String[] concatInsertDynamicSql(Map<String, String> currentFieldTypeNameMap, Map<String, String> currentFieldColumnNameMap, Object t) {
-
-        StringBuilder sbb = new StringBuilder(512);
-
-        StringBuilder sbs = new StringBuilder(256);
-
-        for(String fieName : currentFieldTypeNameMap.keySet()) {//同一个hashset 遍历的元素顺序是否一样的
-
-            if(t != null && MyReflectionUtils.obtainFieldValue(t, fieName) == null) continue;///modify by neo on 20170117 selective
-
-            if(fieName.trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY)) {
-
-//                sbb.append("#{id, jdbcType=" + javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)) + "},");
-                sbb.append("#{pobj." + SystemConfigs.PRIMARY_KEY + ", jdbcType=" + javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)) + "},");
-
-                sbs.append(currentFieldColumnNameMap.get(fieName));
-                sbs.append(",");
-
-                continue;
-            }
-
-            sbb.append("#{pobj.");
-            sbb.append(fieName);
-            sbb.append(", jdbcType=");
-            sbb.append(javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)));
-            sbb.append("},");
-
-            sbs.append(currentFieldColumnNameMap.get(fieName));
-            sbs.append(",");
-        }
-
-        if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
-
-        if(sbs.lastIndexOf(",") != -1) sbs.deleteCharAt(sbs.lastIndexOf(","));
-
-        String[] result = {sbb.toString(), sbs.toString()};///////一个是插入语句的 字段名 一个是动态值
-
-        return result;
-    }
-
-    public static String javaType2SqlTypes(String javaType) {
-        if (javaType.equals("Boolean")) {
-            return "BIT";
-        } else if (javaType.equals("Byte")) {
-            return "TINYINT";
-        } else if (javaType.equals("Short")) {
-            return "SMALLINT";
-        } else if (javaType.equals("Integer")) {
-            return "INTEGER";
-        } else if (javaType.equals("Long")) {
-            return "BIGINT";
-        } else if (javaType.equals("Float")) {
-            return "FLOAT";
-        } else if (javaType.equals("Double")) {
-            return "DOUBLE";
-        } else if (javaType.equals("BigDecimal")) {
-            return "DECIMAL";
-        } else if (javaType.equals("String")) {
-            return "VARCHAR";
-        } else if (javaType.equals("Date")) {
-            return "TIMESTAMP";
-        } else if (javaType.equals("Blob")) {
-            return "IMAGE";
-        } else if (javaType.equals("Clob")) {
-            return "TEXT";
-        }
-        return null;
-    }
-
-    /**
-     * 生成插入的sql语句时 要把动态部分缓存起 批量
-     * @return
-     */
-    public static String concatInsertDynamicSqlForBatch(Map<String, String> currentFieldTypeNameMap, Object t) {
-
-        List<Object> obs;
-        if(t != null && t instanceof List)
-            obs = (ArrayList)t;
-        else
-            return "";
-
-        if(obs.size() == 0) return "";
-
-        StringBuilder sbb = new StringBuilder(512);
-
-        int len = obs.size(), i = 0;
-        for (; i < len; i++) {
-
-            sbb.append("(");
-
-            for(String fieName : currentFieldTypeNameMap.keySet()) {//同一个hashset 遍历的元素顺序是否一样的
-
-                if(fieName.trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY)) {
-
-//                sbb.append("#{id, jdbcType=" + javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)) + "},");
-                    sbb.append("#{pobj.list[" + i + "]." + SystemConfigs.PRIMARY_KEY + ", jdbcType=" + javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)) + "},");
-
-                    continue;
-                }
-
-                sbb.append("#{pobj.list[");
-                sbb.append(i);
-                sbb.append("].");
-                sbb.append(fieName);
-                sbb.append(", jdbcType=");
-                sbb.append(MyHelper.javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)));
-                sbb.append("},");
-            }
-
-            if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
-            sbb.append("),");
-        }
-
-        if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
-
-
-        return sbb.toString();
-    }
-
-
-    /**
      * 预编译执行 分页的操作 总数
      * @param conne
      * @param mst
@@ -548,18 +428,18 @@ public class MyHelper {
                 totalCount = rs.getInt(1);
             }
 
+        } catch (SQLException e) {
+            logger.error("Medusa: The total number of queries is abnormal when paging " + e);
+            e.printStackTrace();
+        } finally {
+            try {
+                if(rs != null) rs.close();
+                if(countStmt != null) countStmt.close();
             } catch (SQLException e) {
-                logger.error("Medusa: The total number of queries is abnormal when paging " + e);
+                logger.error("Medusa: Close connection appears abnormal in paging query total number " + e);
                 e.printStackTrace();
-            } finally {
-                try {
-                    if(rs != null) rs.close();
-                    if(countStmt != null) countStmt.close();
-                } catch (SQLException e) {
-                    logger.error("Medusa: Close connection appears abnormal in paging query total number " + e);
-                    e.printStackTrace();
-                }
             }
+        }
 
         return totalCount;
     }
@@ -615,8 +495,101 @@ public class MyHelper {
 
     }
 
-    //主要是为了解决 分页时 多次生成查询分页语句和总计数的查询语句时 缓存分页的查询语句
-    public static ThreadLocal<String> myThreadLocal = new ThreadLocal<>();
+
+    /**
+     * 生成插入的sql语句时 要把动态部分缓存起
+     * @return
+     */
+    public static String[] concatInsertDynamicSql(Map<String, String> currentFieldTypeNameMap, Map<String, String> currentFieldColumnNameMap, Object t) {
+
+        StringBuilder sbb = new StringBuilder(512);
+
+        StringBuilder sbs = new StringBuilder(256);
+
+        for(String fieName : currentFieldTypeNameMap.keySet()) {//同一个hashset 遍历的元素顺序是否一样的
+
+            if(t != null && MyReflectionUtils.obtainFieldValue(t, fieName) == null) continue;///modify by neo on 20170117 selective
+
+            if(fieName.trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY)) {
+
+//                sbb.append("#{id, jdbcType=" + javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)) + "},");
+                sbb.append("#{pobj." + SystemConfigs.PRIMARY_KEY + ", jdbcType=" + javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)) + "},");
+
+                sbs.append(currentFieldColumnNameMap.get(fieName));
+                sbs.append(",");
+
+                continue;
+            }
+
+            sbb.append("#{pobj.");
+            sbb.append(fieName);
+            sbb.append(", jdbcType=");
+            sbb.append(javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)));
+            sbb.append("},");
+
+            sbs.append(currentFieldColumnNameMap.get(fieName));
+            sbs.append(",");
+        }
+
+        if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
+
+        if(sbs.lastIndexOf(",") != -1) sbs.deleteCharAt(sbs.lastIndexOf(","));
+
+        String[] result = {sbb.toString(), sbs.toString()};///////一个是插入语句的 字段名 一个是动态值
+
+        return result;
+    }
+
+
+    /**
+     * 生成插入的sql语句时 要把动态部分缓存起 批量
+     * @return
+     */
+    public static String concatInsertDynamicSqlForBatch(Map<String, String> currentFieldTypeNameMap, Object t) {
+
+        List<Object> obs;
+        if(t != null && t instanceof List)
+            obs = (ArrayList)t;
+        else
+            return "";
+
+        if(obs.size() == 0) return "";
+
+        StringBuilder sbb = new StringBuilder(512);
+
+        int len = obs.size(), i = 0;
+        for (; i < len; i++) {
+
+            sbb.append("(");
+
+            for(String fieName : currentFieldTypeNameMap.keySet()) {//同一个hashset 遍历的元素顺序是否一样的
+
+                if(fieName.trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY)) {
+
+//                sbb.append("#{id, jdbcType=" + javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)) + "},");
+                    sbb.append("#{pobj.list[" + i + "]." + SystemConfigs.PRIMARY_KEY + ", jdbcType=" + javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)) + "},");
+
+                    continue;
+                }
+
+                sbb.append("#{pobj.list[");
+                sbb.append(i);
+                sbb.append("].");
+                sbb.append(fieName);
+                sbb.append(", jdbcType=");
+                sbb.append(MyHelper.javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)));
+                sbb.append("},");
+            }
+
+            if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
+            sbb.append("),");
+        }
+
+        if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
+
+
+        return sbb.toString();
+    }
 
 
     /**
@@ -687,5 +660,35 @@ public class MyHelper {
         if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
 
         return sbb.toString();
+    }
+
+
+    public static String javaType2SqlTypes(String javaType) {
+        if (javaType.equals("Boolean")) {
+            return "BIT";
+        } else if (javaType.equals("Byte")) {
+            return "TINYINT";
+        } else if (javaType.equals("Short")) {
+            return "SMALLINT";
+        } else if (javaType.equals("Integer")) {
+            return "INTEGER";
+        } else if (javaType.equals("Long")) {
+            return "BIGINT";
+        } else if (javaType.equals("Float")) {
+            return "FLOAT";
+        } else if (javaType.equals("Double")) {
+            return "DOUBLE";
+        } else if (javaType.equals("BigDecimal")) {
+            return "DECIMAL";
+        } else if (javaType.equals("String")) {
+            return "VARCHAR";
+        } else if (javaType.equals("Date")) {
+            return "TIMESTAMP";
+        } else if (javaType.equals("Blob")) {
+            return "IMAGE";
+        } else if (javaType.equals("Clob")) {
+            return "TEXT";
+        }
+        return null;
     }
 }
