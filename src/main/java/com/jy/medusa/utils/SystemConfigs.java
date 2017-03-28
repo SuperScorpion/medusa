@@ -7,7 +7,7 @@ import java.util.List;
  * Created by neo on 16/6/28.
  */
 public class SystemConfigs {
-    public static final String REGZ_TIME_YYYYmmdd_COMPLEX = "(([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]{1}|[0-9]{1}[1-9][0-9]{2}|[1-9][0-9]{3})(((0[13578]|1[02])(0[1-9]|[12][0-9]|3[01]))|((0[469]|11)(0[1-9]|[12][0-9]|30))|(02(0[1-9]|[1][0-9]|2[0-8]))))|((([0-9]{2})(0[48]|[2468][048]|[13579][26])|((0[48]|[2468][048]|[3579][26])00))0229)";
+//    public static final String REGZ_TIME_YYYYmmdd_COMPLEX = "(([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]{1}|[0-9]{1}[1-9][0-9]{2}|[1-9][0-9]{3})(((0[13578]|1[02])(0[1-9]|[12][0-9]|3[01]))|((0[469]|11)(0[1-9]|[12][0-9]|30))|(02(0[1-9]|[1][0-9]|2[0-8]))))|((([0-9]{2})(0[48]|[2468][048]|[13579][26])|((0[48]|[2468][048]|[3579][26])00))0229)";
     public static final String REGX_TIME_YYYY0mm0dd_SIMPLE_1 = "^[1-9][0-9]{3}(0[1-9]|1[0-2]|[1-9])([0-2][1-9]|3[0-1]|[1-9])$";
     public static final String REGX_TIME_YYYY0mm0dd_SIMPLE_2 = "^[1-9][0-9]{3}-(0[1-9]|1[0-2]|[1-9])-([0-2][1-9]|3[0-1]|[1-9])$";
     public static final String REGX_TIME_YYYY0mm0dd_SIMPLE_3 = "^[1-9][0-9]{3}\\.(0[1-9]|1[0-2]|[1-9])\\.([0-2][1-9]|3[0-1]|[1-9])$";
@@ -18,7 +18,7 @@ public class SystemConfigs {
     public static final String VALID_PATTERN_PATH = "com.jy.medusa.validator.MyPattern";
     public static final String VALID_VALIDATOR_PATH = "com.jy.medusa.validator.annotation.Validator";
     public static final String VALID_LENGTH_PATH = "com.jy.medusa.validator.annotation.Length";
-    public static final String VALID_NOTNULL_PATH = "com.jy.medusa.validator.annotation.NotNull";
+//    public static final String VALID_NOTNULL_PATH = "com.jy.medusa.validator.annotation.NotNull";
 
     public static final String MEDUSA_PAGER_PATH = "com.jy.medusa.stuff.Pager";
     public static final String MEDUSA_MYRESTRICTION_PATH = "com.jy.medusa.stuff.param.MyRestrictions";
