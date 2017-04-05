@@ -80,6 +80,12 @@ public class MyRestrictions {
         return this;
     }
 
+    public MyRestrictions notNullParam(String c, Boolean v) {
+
+        paramList.add(new NotNullParam(c, v));
+        return this;
+    }
+
 
     public static Pager getPager() {
         return new Pager();

@@ -785,6 +785,16 @@ public class MySqlGenerator {
                 if(p != null && MyUtils.isNotBlank(p.toString())) {
                     sbb.append(" AND ").append(column).append(" LIKE ").append("CONCAT('%',#{pobj.array[" + isd + "].paramList[" + ind + "].value},'%')");
                 }
+            } else if (z instanceof NotNullParam) {
+
+                Boolean p = ((NotNullParam) z).getValue();
+
+                if(p != null) {
+                    if(p)
+                        sbb.append(" AND ").append(column).append(" IS NOT NULL ");
+                    else
+                        sbb.append(" AND ").append(column).append(" IS NULL ");
+                }
             }
         } else if (z instanceof BaseGeLeParam) {
 
@@ -815,7 +825,6 @@ public class MySqlGenerator {
                 }
             }
         }
-
     }
 }
 
