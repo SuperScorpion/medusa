@@ -112,30 +112,36 @@ public class MyInterceptor implements Interceptor {
 
                 result = invocation.proceed();
             }
-        } else if(invocation.getTarget() instanceof StatementHandler) {//批量插入会回写id
+        } else if(invocation.getTarget() instanceof StatementHandler) {//delete insert update 都会进来此拦截
 
             result = invocation.proceed();//先执行再处理的 不然处理的是上次的
 
             StatementHandler sh = (StatementHandler) invocation.getTarget();
 
-            if(sh.getBoundSql().getSql().contains("INSERT")) {
+            if(sh.getBoundSql().getSql().contains("INSERT")) {//先判断是否插入方法
 
-                List<Object> paramList = (List) ((Map) ((Map) sh.getBoundSql().getParameterObject()).get("pobj")).get("list");
+                Object c = ((Map) sh.getBoundSql().getParameterObject()).get("pobj");
 
-                if (paramList != null && paramList.size() > 1) {
+                if (c instanceof Map) {//去除单个的insert 只为批量插入而存在
 
-                    Statement st = (Statement) invocation.getArgs()[0];
+                    List<Object> paramList = (List) ((Map) c).get("list");
 
-                    ResultSet rs = st.getGeneratedKeys();
+                    if (paramList != null && !paramList.isEmpty()) {
 
-                    for (Object ot : paramList) {
+                        Statement st = (Statement) invocation.getArgs()[0];
 
-                        if (!rs.next()) break;
+                        ResultSet rs = st.getGeneratedKeys();
 
-                        MyReflectionUtils.invokeSetterMethod(ot, SystemConfigs.PRIMARY_KEY, rs.getInt(1));//注入属性id值 rs.getInt(1) 每次执行都取到不同 id 很神奇
+                        for (Object ot : paramList) {
+
+                            if (!rs.next()) break;
+
+                            MyReflectionUtils.invokeSetterMethod(ot, SystemConfigs.PRIMARY_KEY, rs.getInt(1));//注入属性id值 rs.getInt(1) 每次执行都取到不同 id 很神奇 (一行多列的原因是吗)
+                        }
                     }
                 }
             }
+
         } else {
             result = invocation.proceed();
         }
