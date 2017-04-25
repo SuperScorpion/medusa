@@ -118,7 +118,7 @@ public class MyInterceptor implements Interceptor {
 
             StatementHandler sh = (StatementHandler) invocation.getTarget();
 
-            if(sh.getBoundSql().getSql().contains("INSERT")) {//过滤掉delete update 之类的 非insert方法
+            if(sh.getBoundSql().getSql().contains("INSERT INTO") && !sh.getBoundSql().getSql().contains("on duplicate key update")) {//过滤掉delete update 批量更新之类的 非insert方法
 
                 Object c = ((Map) sh.getBoundSql().getParameterObject()).containsKey("pobj") ? ((Map) sh.getBoundSql().getParameterObject()).get("pobj") : null;//过滤掉用户自定义的方法
 
