@@ -112,17 +112,17 @@ public class MyInterceptor implements Interceptor {
 
                 result = invocation.proceed();
             }
-        } else if(invocation.getTarget() instanceof StatementHandler) {//delete insert update 都会进来此拦截
+        } else if(invocation.getTarget() instanceof StatementHandler) {//delete insert update 都会进来此拦截(medusa的或非medusa的)
 
             result = invocation.proceed();//先执行再处理的 不然处理的是上次的
 
             StatementHandler sh = (StatementHandler) invocation.getTarget();
 
-            if(sh.getBoundSql().getSql().contains("INSERT")) {//先判断是否插入方法
+            if(sh.getBoundSql().getSql().contains("INSERT")) {//过滤掉delete update 之类的 非insert方法
 
-                Object c = ((Map) sh.getBoundSql().getParameterObject()).get("pobj");
+                Object c = ((Map) sh.getBoundSql().getParameterObject()).containsKey("pobj") ? ((Map) sh.getBoundSql().getParameterObject()).get("pobj") : null;//过滤掉用户自定义的方法
 
-                if (c instanceof Map) {//去除单个的insert 只为批量插入而存在
+                if (c instanceof Map) {//过滤掉普通插入
 
                     List<Object> paramList = (List) ((Map) c).get("list");
 
