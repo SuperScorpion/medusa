@@ -566,10 +566,15 @@ public class MySqlGenerator {
 
                     short v = 0;
 
-                    for(BaseParam x : ((MyRestrictions) z).getParamList()) {
+                    List<BaseParam> paramList = ((MyRestrictions) z).getParamList();
 
-                        baseParamHandler(sbb, x, isd, v);
-                        v++;
+                    if(paramList != null && !paramList.isEmpty()) {
+
+                        for (BaseParam x : paramList) {
+
+                            baseParamHandler(sbb, x, isd, v);
+                            v++;
+                        }
                     }
                 }
 
@@ -692,15 +697,19 @@ public class MySqlGenerator {
 
                     short v = 0;
 
-                    for(BaseParam x : ((MyRestrictions) z).getParamList()) {
+                    List<BaseParam> paramList = ((MyRestrictions) z).getParamList();
 
-                        baseParamHandler(sbb, x, isd, v);
-                        v++;
+                    if(paramList != null && !paramList.isEmpty()) {
+
+                        for (BaseParam x : paramList) {
+
+                            baseParamHandler(sbb, x, isd, v);
+                            v++;
+                        }
                     }
-
                 } else if (z instanceof Pager) {
 
-                    pa = (Pager) z;
+                    if(pa == null) pa = (Pager) z;//只要第一个对象 pager
                 }
 
                 isd++;

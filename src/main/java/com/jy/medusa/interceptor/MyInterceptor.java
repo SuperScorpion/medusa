@@ -69,7 +69,7 @@ public class MyInterceptor implements Interceptor {
                         for (Object m : x) {
                             if (m instanceof Pager) {
                                 z = (Pager) m;
-                                break;
+                                break;//只要第一个对象 pager
                             }
                         }
 
@@ -79,6 +79,14 @@ public class MyInterceptor implements Interceptor {
                             z.setTotalCount(MyHelper.caculatePagerTotalCount(((Executor) invocation.getTarget()).getTransaction().getConnection(), mt, p));/////通过invocation参数获得connection连接 并且通过这个连接查询出totalCount
                             z.setPageCount(z.getPageCount());
                         }
+
+                        /*for (Object m : x) {
+                            if(m instanceof MyRestrictions) {
+                                ((MyRestrictions) m).clear();//自动帮使用者删除了 条件list modify by neo on 2017.04.26
+                            }
+                        }*/
+
+
                         //MyReflectionUtils.invokeSetterMethod(z, "list", result, List.class);//参数注入属性的值
                     } else if (MyHelper.checkInsertMethod(medusaMethodName)) {//如果是insert方法相关的则修改传入对象的id 回执其
 
