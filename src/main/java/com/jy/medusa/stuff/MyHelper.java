@@ -548,14 +548,16 @@ public class MyHelper {
     public static String concatInsertDynamicSqlForBatch(Map<String, String> currentFieldTypeNameMap, Object t) {
 
         List<Object> obs;
-        if(t != null && t instanceof List)
+        if(t instanceof List)
             obs = (ArrayList)t;
         else
             return "";
 
         if(obs.size() == 0) return "";
 
-        StringBuilder sbb = new StringBuilder(512);
+        int contentLength = obs.size() * currentFieldTypeNameMap.keySet().size() * 50;
+
+        StringBuilder sbb = new StringBuilder(contentLength);
 
         int len = obs.size(), i = 0;
         for (; i < len; i++) {
@@ -593,6 +595,7 @@ public class MyHelper {
 
 
     /**
+     * @deprecated
      * 提供给批量更新使用
      * 前一部分sql
      * @param t
@@ -603,7 +606,7 @@ public class MyHelper {
     public static String concatUpdateDynamicSqlValuesForBatch(Object t, String paramColumn, Map<String, String> currentColumnFieldNameMap) {
 
         List<Object> obs;
-        if(t != null && t instanceof List)
+        if(t instanceof List)
             obs = (ArrayList)t;
         else
             return "";
@@ -641,6 +644,7 @@ public class MyHelper {
     }
 
     /**
+     * @deprecated
      * 提供给批量更新使用
      * 后一部分sql
      * @param paramColumn
@@ -658,6 +662,78 @@ public class MyHelper {
         }
 
         if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
+
+        return sbb.toString();
+    }
+
+    /**
+     * 提供给批量更新使用
+     * 使用update方式批量更新
+     * 为解决insert into ... on duplicate key update引起的not null列需要default values
+     * @param tableName
+     * @param paramColumn
+     * @return
+     */
+    public static String concatUpdateDynamicSqlValuesForBatchPre(String tableName, Object t, String paramColumn, Map<String, String> currentColumnFieldNameMap) {
+
+        /*UPDATE users SET
+                name = CASE id
+        WHEN 7 THEN '7nn'
+        WHEN 8 THEN '8nn'
+        WHEN 9 THEN '9nn'
+        END,
+                home_no = CASE id
+        WHEN 7 THEN 'New Title 1'
+        WHEN 8 THEN 'New Title 2'
+        WHEN 9 THEN 'New Title 3'
+        END
+        WHERE id IN (7,8,9)*/
+
+        List<Object> obs;
+        if(t instanceof List)
+            obs = (ArrayList)t;
+        else
+            return "";
+
+        if(obs.size() == 0) return "";
+
+        String[] columnArr = paramColumn.split(",");
+
+        int contentLength = columnArr.length * (30 + obs.size() * 70), iddLength = obs.size() * 30;
+
+        StringBuilder sbb = new StringBuilder(contentLength),sbbIdd = new StringBuilder(iddLength);
+
+        sbb.append("UPDATE ").append(tableName).append(" SET ");
+
+        boolean flag = true;///只让sbbIdd 记录一次循环id值
+
+        int len = obs.size();
+        for( String columns : columnArr) {
+
+            if(columns.equals(SystemConfigs.PRIMARY_KEY)) continue;
+
+            sbb.append(columns).append(" = CASE ").append(SystemConfigs.PRIMARY_KEY);
+
+            for (int i = 0 ; i < len; i++) {
+
+                if(flag) sbbIdd.append("#{pobj.param1[").append(i).append("].").append(SystemConfigs.PRIMARY_KEY).append("},");
+
+                sbb.append(" WHEN ")
+                    .append("#{pobj.param1[").append(i).append("].").append(SystemConfigs.PRIMARY_KEY).append("}")
+                    .append(" THEN ")
+                    .append("#{pobj.param1[").append(i).append("].").append(currentColumnFieldNameMap.get(columns)).append("}");
+            }
+
+            if(flag && sbbIdd.lastIndexOf(",") != -1) sbbIdd.deleteCharAt(sbbIdd.lastIndexOf(","));
+
+            flag = false;
+
+            sbb.append(" END, ");
+        }
+
+        if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
+
+        sbb.append(" WHERE ").append(SystemConfigs.PRIMARY_KEY).append(" IN (").append(sbbIdd).append(")");
 
         return sbb.toString();
     }

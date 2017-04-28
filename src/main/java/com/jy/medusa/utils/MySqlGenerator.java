@@ -177,7 +177,7 @@ public class MySqlGenerator {
 
 //        Boolean b = List.class.isAssignableFrom(t.getClass());
         List<Object> ids;
-        if(t != null && t instanceof List)
+        if(t instanceof List)
             ids = (ArrayList)t;
         else
             return "";
@@ -239,24 +239,26 @@ public class MySqlGenerator {
 
         if(paramColumn != columnsStr && (!paramColumn.contains("," + SystemConfigs.PRIMARY_KEY) || !paramColumn.startsWith(SystemConfigs.PRIMARY_KEY + ","))) paramColumn = SystemConfigs.PRIMARY_KEY + "," + paramColumn;/////modify by neo on 2017.04.20
 
-        String dynamicSqlForBatch = MyHelper.concatUpdateDynamicSqlValuesForBatch(t, paramColumn, currentColumnFieldNameMap);
-        String dynamicSqlLastForBatch = MyHelper.concatUpdateDynamicSqlValuesStrForBatch(paramColumn);
+        String dynamicSqlForBatch = MyHelper.concatUpdateDynamicSqlValuesForBatchPre(tableName, t, paramColumn, currentColumnFieldNameMap);
+//        String dynamicSqlLastForBatch = MyHelper.concatUpdateDynamicSqlValuesForBatchBeh(paramColumn);
 
-        int sbbLength = paramColumn.length() + tableName.length() + dynamicSqlForBatch.length() + dynamicSqlLastForBatch.length() + 66;
+//        int sbbLength = paramColumn.length() + tableName.length() + dynamicSqlForBatch.length() + dynamicSqlLastForBatch.length() + 66;
 
-        StringBuilder sql_build = new StringBuilder(sbbLength);
+//        StringBuilder sql_build = new StringBuilder(sbbLength);
 
-        sql_build.append("INSERT INTO ").append(tableName).append("(")
+        /*sql_build.append("INSERT INTO ").append(tableName).append("(")
                 .append(paramColumn).append(") values ")
                 .append(dynamicSqlForBatch)
                 .append(" on duplicate key update ")
-                .append(dynamicSqlLastForBatch);
+                .append(dynamicSqlLastForBatch);*/
 
-        String sql = sql_build.toString();
+//        sql_build.append("UPDATE ").append(tableName).append(" SET");
 
-        logger.debug("Medusa: Generated SQL ^_^ " + sql);
+//        String sql = sql_build.toString();
 
-        return sql;
+        logger.debug("Medusa: Generated SQL ^_^ " + dynamicSqlForBatch);
+
+        return dynamicSqlForBatch;
     }
 
     /**
