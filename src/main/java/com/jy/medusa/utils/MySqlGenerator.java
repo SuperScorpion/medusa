@@ -491,6 +491,41 @@ public class MySqlGenerator {
         return sql;
     }
 
+    /**
+     * 生成根据IDs批量查询的SQL
+     * @param t
+     * @return
+     */
+    public String sql_findBatchOfIds(Object t, Object... ps) {
+
+        List<Object> ids;
+        if(t instanceof List)
+            ids = (ArrayList)t;
+        else
+            return "";
+
+        String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect((Object[])ps[0], currentFieldColumnNameMap);
+
+        StringBuilder sql_build = new StringBuilder(256);
+        sql_build.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName).append(" WHERE ")
+                .append(SystemConfigs.PRIMARY_KEY).append(" in (");
+
+        int len = ids.size(), i = 0;
+        for (; i < len; i++) {
+            sql_build.append(ids.get(i)).append(",");
+        }
+
+        sql_build.append(")");
+
+        if(sql_build.lastIndexOf(",") != -1) sql_build.deleteCharAt(sql_build.lastIndexOf(","));
+
+        String sql = sql_build.toString();
+
+        logger.debug("Medusa: Generated SQL ^_^ " + sql);
+
+        return sql;
+    }
+
     public String sql_findListBy(Object t, Object... ps) {
 
         String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect((Object[])ps[0], currentFieldColumnNameMap);
@@ -590,73 +625,6 @@ public class MySqlGenerator {
 
         return sql;
     }
-
-
-    /**
-     * 多字段模糊查询 like
-     */
-   /* public String sql_searchLike(Object po, Object... ps) {
-
-        List<String> values = obtainColumnValusForSelectList(po);
-
-        if(values == null || values.isEmpty()) return "";
-
-        String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect((Object[])ps[0], currentFieldColumnNameMap);
-
-        StringBuilder sbb = new StringBuilder(256);
-        sbb.append("SELECT ").append(paramColumn).append(" FROM ").append(this.tableName).append(" WHERE 1=2 ");
-
-        for(String p : values) {
-
-            if(MyUtils.isBlank(p)) continue;
-
-            String[] k = p.split("=");
-
-            if(k != null && k.length == 2) {
-                k[1] = k[1].replace("'", "");//p : name='baba'
-                sbb.append(" OR ").append(k[0]).append(" LIKE ").append("'%").append(k[1]).append("%'");
-            }
-        }
-
-        logger.debug("Medusa: Generated SQL ^_^ " + sql);
-
-        return sbb.toString();
-    }*/
-
-    /**
-     * 某个时间段内的记录
-     * between >= <=
-     */
-/*    public String sql_betweenTime(Object po, Object... ps) {
-
-        List<String> values = obtainColumnValusForSelectList(po);
-
-        String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect((Object[])ps[0], currentFieldColumnNameMap);
-
-        StringBuilder sbb = new StringBuilder(256);
-        sbb.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName).append(" WHERE ");
-
-        if(values == null || values.isEmpty())
-            sbb.append("1=1");
-        else
-            sbb.append(MyUtils.join(values, " AND "));
-
-        for(Object z : (Object[])ps[0]) {
-            if(z instanceof BetweenParam) {
-
-                BetweenParam p = (BetweenParam)z;
-
-                sbb.append(" AND ").append(p.getColumn()).append(" BETWEEN ")
-                        .append("'").append(MyDateUtils.convertDateToStr(p.getStart(), MyDateUtils.DATE_FULL_STR)).append("'")
-                        .append(" AND ")
-                        .append("'").append(MyDateUtils.convertDateToStr(p.getEnd(), MyDateUtils.DATE_FULL_STR)).append("'");
-            }
-        }
-
-        logger.debug("Medusa: Generated SQL ^_^ " + sql);
-
-        return sbb.toString();
-    }*/
 
 
     /**

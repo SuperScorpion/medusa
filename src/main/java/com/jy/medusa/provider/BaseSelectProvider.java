@@ -13,6 +13,19 @@ import java.util.Map;
  */
 public class BaseSelectProvider {
 
+    /**
+     * 可根据ids条件查询出记录
+     * @return
+     */
+    public String selectByIds(Map<String, Object> m) {
+
+        if(m.get("pobj") instanceof MapperMethod.ParamMap)
+            return MyHelper.getSqlGenerator(m).sql_findBatchOfIds(
+                    ((MapperMethod.ParamMap) m.get("pobj")).get("param1"),
+                    ((MapperMethod.ParamMap) m.get("pobj")).get("param2"));
+
+        throw new RuntimeException("Medusa: selectByIds MapperMethod.ParamMap Exception");
+    }
 
     /**
      * 可根据条件查询出一个记录
