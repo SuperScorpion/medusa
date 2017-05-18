@@ -64,6 +64,8 @@ public class GenBaseService {
                 "\n" +
                 "\tT selectOne(T entity, Object... ps);\n" +
                 "\n" +
+                "\tList<T> selectByIds(List<Integer> ids, Object... ps);\n" +
+                "\n" +
                 "\tT selectById(Integer id, Object... ps);\n" +
                 "\n" +
                 "\tList<T> selectListBy(T entity, Object... ps);\n" +
@@ -132,6 +134,10 @@ public class GenBaseService {
                 "\n" +
                 "\tpublic T selectOne(T entity, Object... ps) {\n" +
                 "\t\treturn mapper.selectOne(entity, ps);\n" +
+                "\t}\n" +
+                "\n" +
+                "\tpublic List<T> selectByIds(List<Integer> ids, Object... ps) {\n" +
+                "\t\treturn mapper.selectByIds(ids, ps);\n" +
                 "\t}\n" +
                 "\n" +
                 "\tpublic T selectById(Integer id, Object... ps) {\n" +
