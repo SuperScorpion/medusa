@@ -176,19 +176,21 @@ public class MySqlGenerator {
     public String sql_removeOfBatch(Object t) {
 
 //        Boolean b = List.class.isAssignableFrom(t.getClass());
-        List<Object> ids;
+
+        List<Object> ids = t instanceof List ? (ArrayList)t : new ArrayList<>();
+
+        /*List<Object> ids;
         if(t instanceof List)
             ids = (ArrayList)t;
         else
-            return "";
+            return "";*/
 
         StringBuilder sql_build = new StringBuilder(100);
         sql_build.append("DELETE FROM ").append(this.tableName)
                 .append(" WHERE ").append(pkName).append(" IN ( 0 ");
         int len = ids.size(), i = 0;
         for (; i < len; i++) {
-            Object id = ids.get(i);
-            sql_build.append(",").append(id);
+            sql_build.append(",").append(ids.get(i));
             /*if (i > 0 && i % (AssConstant.DELETE_CRITICAL_VAL - 1) == 0) {
                 sql_build.append(")").append(" OR ").append(pkName)
                         .append(" IN ( 0 ");
@@ -498,11 +500,7 @@ public class MySqlGenerator {
      */
     public String sql_findBatchOfIds(Object t, Object... ps) {
 
-        List<Object> ids;
-        if(t instanceof List)
-            ids = (ArrayList)t;
-        else
-            return "";
+        List<Object> ids = t instanceof List ? (ArrayList)t : new ArrayList<>();
 
         String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect((Object[])ps[0], currentFieldColumnNameMap);
 
