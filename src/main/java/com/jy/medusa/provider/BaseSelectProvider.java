@@ -17,7 +17,7 @@ public class BaseSelectProvider {
      * 可根据ids条件查询出记录
      * @return
      */
-    public String selectByIds(Map<String, Object> m) {
+    public String selectByPrimaryKeyBatch(Map<String, Object> m) {
 
         if(m.get("pobj") instanceof MapperMethod.ParamMap)
             return MyHelper.getSqlGenerator(m).sql_findBatchOfIds(

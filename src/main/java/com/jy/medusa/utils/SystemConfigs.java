@@ -28,7 +28,7 @@ public class SystemConfigs {
     static {
         MY_ALL_METHOD_NANES_LIST.add("showMedusaGaze");
         MY_ALL_METHOD_NANES_LIST.add("selectAll");
-        MY_ALL_METHOD_NANES_LIST.add("selectByIds");
+        MY_ALL_METHOD_NANES_LIST.add("selectByPrimaryKeyBatch");
         MY_ALL_METHOD_NANES_LIST.add("selectByPrimaryKey");
         MY_ALL_METHOD_NANES_LIST.add("selectCount");
         MY_ALL_METHOD_NANES_LIST.add("select");

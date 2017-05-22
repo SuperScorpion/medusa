@@ -15,5 +15,5 @@ public interface BaseSelectMapper<T> extends
         SelectCountMapper<T>,
         SelectByPrimaryKeyMapper<T>,
         SelectMedusaGazeMapper<T>,
-        SelectByIdsMapper<T>{
+        SelectByPrimaryKeyBatchMapper<T> {
 }
