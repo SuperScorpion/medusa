@@ -253,7 +253,7 @@ public class MySqlGenerator {
 
         if(paramColumn.equals("*")) paramColumn = columnsStr;
 
-        if(paramColumn != columnsStr && (!paramColumn.contains("," + SystemConfigs.PRIMARY_KEY) || !paramColumn.startsWith(SystemConfigs.PRIMARY_KEY + ","))) paramColumn = SystemConfigs.PRIMARY_KEY + "," + paramColumn;/////modify by neo on 2017.04.20
+        if(paramColumn != columnsStr && (!paramColumn.contains("," + pkName) || !paramColumn.startsWith(pkName + ","))) paramColumn = pkName + "," + paramColumn;/////modify by neo on 2017.04.20
 
         String dynamicSqlForBatch = MyHelper.concatUpdateDynamicSqlValuesForBatchPre(tableName, t, paramColumn, currentColumnFieldNameMap);
 
