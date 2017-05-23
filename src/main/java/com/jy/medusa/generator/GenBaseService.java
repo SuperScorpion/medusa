@@ -137,7 +137,7 @@ public class GenBaseService {
                 "\t}\n" +
                 "\n" +
                 "\tpublic List<T> selectByIds(List<Integer> ids, Object... ps) {\n" +
-                "\t\treturn mapper.selectByIds(ids, ps);\n" +
+                "\t\treturn mapper.selectByPrimaryKeyBatch(ids, ps);\n" +
                 "\t}\n" +
                 "\n" +
                 "\tpublic T selectById(Integer id, Object... ps) {\n" +
