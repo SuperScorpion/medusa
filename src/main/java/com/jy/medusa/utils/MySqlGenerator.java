@@ -193,7 +193,7 @@ public class MySqlGenerator {
 
         int l = ids.size(), i = 0;
 
-        int len = 30 + tableName.length() + pkName.length() + l * 10000;
+        int len = 30 + tableName.length() + pkName.length() + l * 9;
 
         StringBuilder sql_build = new StringBuilder(len);
         sql_build.append("DELETE FROM ").append(tableName)
@@ -515,7 +515,7 @@ public class MySqlGenerator {
 
         int l = ids.size(), i = 0;
 
-        int len = 30 + paramColumn.length() + tableName.length() + pkName.length() + l * 10000;
+        int len = 30 + paramColumn.length() + tableName.length() + pkName.length() + l * 9;
 
         StringBuilder sql_build = new StringBuilder(len);
         sql_build.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName).append(" WHERE ")
