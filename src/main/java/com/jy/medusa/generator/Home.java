@@ -46,7 +46,7 @@ public class Home {
     String controlJsonSuffix;
     String controlMortalSuffix;
     String validJsonStr;//参数校验
-    String ignorAssociation;//忽略的不映射的普通数据库字段
+    String associationColumn;//映射的普通数据库字段级联
     String pluralAssociation;//设定映射字段的后罪名
     String baseServiceSwitch;///是否生成基础的service类
 
@@ -105,7 +105,7 @@ public class Home {
 
                 if(MyUtils.isNotBlank(entitySuffix)) {
                     long nanoSs = System.nanoTime();
-                    new GenEntity(entityPath, tabName, jdbcName, tag, colValidArray, ignorAssociation, pluralAssociation).process();//生成 实体类
+                    new GenEntity(entityPath, tabName, jdbcName, tag, colValidArray, associationColumn, pluralAssociation).process();//生成 实体类
                     System.out.println(tabName + " entity文件生成用时:" + (System.nanoTime()-nanoSs) + " ns");
                 }
 
@@ -117,7 +117,7 @@ public class Home {
 
                 if(MyUtils.isNotBlank(xmlSuffix) && MyUtils.isNotBlank(entitySuffix) && MyUtils.isNotBlank(mapperSuffix)) {
                     long nanoSs = System.nanoTime();
-                    new GenXml(mapperPath, xmlPath, entityPath, tabName, jdbcName, tag, ignorAssociation, pluralAssociation).process();//执行生成xml
+                    new GenXml(mapperPath, xmlPath, entityPath, tabName, jdbcName, tag, associationColumn, pluralAssociation).process();//执行生成xml
                     System.out.println(tabName + " xml文件生成用时:" + (System.nanoTime()-nanoSs) + " ns");
                 }
 
@@ -233,7 +233,7 @@ public class Home {
         this.controlMortalSuffix = props.getProperty("medusa.controlMortalSuffix") == null ? "" : props.getProperty("medusa.controlMortalSuffix");
 
         this.validJsonStr = props.getProperty("medusa.validator") == null ? "" : props.getProperty("medusa.validator");
-        this.ignorAssociation = props.getProperty("medusa.ignorAssociation") == null ? "" : props.getProperty("medusa.ignorAssociation");
+        this.associationColumn = props.getProperty("medusa.associationColumn") == null ? "" : props.getProperty("medusa.associationColumn");
         this.pluralAssociation = MyUtils.isBlank(props.getProperty("medusa.pluralAssociation")) ? "" : props.getProperty("medusa.pluralAssociation");
 
         this.author = MyUtils.isBlank(props.getProperty("medusa.author")) ? "administrator" : props.getProperty("medusa.author");

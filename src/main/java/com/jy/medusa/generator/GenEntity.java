@@ -11,8 +11,6 @@ import com.jy.medusa.utils.MyUtils;
 import com.jy.medusa.utils.SystemConfigs;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;
@@ -33,7 +31,7 @@ public class GenEntity {
     private String propertyFilename;
     private String tag;//标记 mark
     private JSONArray colValidArray;//参数校验
-    private List<String> ignorAssociation;//忽略处理的映射关系字段
+    private List<String> associationColumn;//映射的关系字段
     private String pluralAssociation;//映射关系字段的后缀名 一般为s
 
     private List<String> markStrList;//用来存储标记的代码段落
@@ -41,13 +39,13 @@ public class GenEntity {
     private Map<String, String> commentMap = new HashMap<>();//字段名称 和 注注释对应关系
 //    private Map<String, String> foreignMap = new HashMap<>();//字段名称 和 主外间的对应关系
 
-    public GenEntity(String packagePath, String tableName, String propertyFilename, String tag, JSONArray colValidArray, String ignorAssociation, String pluralAssociation) {
+    public GenEntity(String packagePath, String tableName, String propertyFilename, String tag, JSONArray colValidArray, String associationColumn, String pluralAssociation) {
         this.packagePath = packagePath;
         this.tableName = tableName;
         this.propertyFilename = propertyFilename;
         this.tag = tag;
         this.colValidArray = colValidArray;
-        this.ignorAssociation = Arrays.asList(ignorAssociation.split(","));
+        this.associationColumn = Arrays.asList(associationColumn.split(","));
         this.pluralAssociation = pluralAssociation;
         this.markStrList = MyGenUtils.genTagStrList(MyGenUtils.upcaseFirst(tableName) + ".java", packagePath, tag, "java");
     }
@@ -145,7 +143,7 @@ public class GenEntity {
         //外间关联表关系
 
         //for (int i = 0; i < colnames.length; i++) {
-           // if(MyUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !ignorAssociation.contains(colSqlNames[i])) {
+           // if(MyUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !associationColumn.contains(colSqlNames[i])) {
 //         String p = colSqlNames[i].trim().replace("_id", "").trim();
 //        if(MyUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
 //            p = p.concat(pluralAssociation);
@@ -232,7 +230,7 @@ public class GenEntity {
         //字段都生成完了 再生成映射属性
         for (int i = 0; i < colnames.length; i++) {
             //处理外间关联的表字段名称
-            if(MyUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !ignorAssociation.contains(colSqlNames[i])) {
+            if(MyUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
 
                 String p = colSqlNames[i].trim().replace("_id", "").trim();
                 if(MyUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {//modify by neo, on 2016.11.25
@@ -324,7 +322,7 @@ public class GenEntity {
         //字段都生成完了 再生成映射属性
         for (int i = 0; i < colnames.length; i++) {
             //外间关联表关系
-            if(MyUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !ignorAssociation.contains(colSqlNames[i])) {
+            if(MyUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
 
                 String p = colSqlNames[i].trim().replace("_id", "").trim();
                 if(MyUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25

@@ -33,7 +33,7 @@ public class GenXml {
     private List<String> markXmlList;
     private String tag;//标记 mark
 
-    private List<String> ignorArrayAssociation;
+    private List<String> associationColumn;
     private String pluralAssociation;//映射关系字段的后缀名 一般为s
 
 
@@ -46,7 +46,7 @@ public class GenXml {
         this.entityPath = entityPath;
         this.entityName = MyGenUtils.upcaseFirst(tableName);
         this.tag = tag;
-        this.ignorArrayAssociation = Arrays.asList(ignorAssociation.split(","));
+        this.associationColumn = Arrays.asList(ignorAssociation.split(","));
         this.pluralAssociation = pluralAssociation;
         this.markXmlList = MyGenUtils.genTagStrList(entityName + "Mapper.xml", packagePath, tag, "xml");
     }
@@ -158,7 +158,7 @@ public class GenXml {
             }
 
             //外间关联
-            //if(MyUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !ignorArrayAssociation.contains(colSqlNames[i])) {
+            //if(MyUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !associationColumn.contains(colSqlNames[i])) {
 
                 /*
             String p = colSqlNames[i].trim().replace("_id", "").trim();
@@ -186,7 +186,7 @@ public class GenXml {
         for (int i = 0; i < colSqlNames.length; i++) {
 
             //外间关联
-            if(MyUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !ignorArrayAssociation.contains(colSqlNames[i])) {
+            if(MyUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
 
                 String p = colSqlNames[i].trim().replace("_id", "").trim();
                 if(MyUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
@@ -216,7 +216,7 @@ public class GenXml {
         for (int i = 0; i < colSqlNames.length; i++) {
 
             //外间关联sss
-            if(MyUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !ignorArrayAssociation.contains(colSqlNames[i])) {
+            if(MyUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
 
                 String p = colSqlNames[i].trim().replace("_id", "").trim();
                 if(MyUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
