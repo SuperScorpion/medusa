@@ -13,11 +13,6 @@ public class SingleParam extends BaseComplexParam {
         return value;
     }
 
-/*    public SingleParam setValue(String value) {
-        this.value = value;
-        return this;
-    }*/
-
     public void setValue(Object value) {
         this.value = value;
     }

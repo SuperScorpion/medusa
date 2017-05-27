@@ -153,13 +153,6 @@ public class GenControllerMortal {
         sbb.append("\t\t}\r\n");
         sbb.append("\t}\r\n\r\n");
 
-        /*sbb.append("\t\tif(param != null && " + MyGenUtils.lowcaseFirst(entityName) + "Service.updateSelective(param) == 1) {\r\n");
-        sbb.append("\t\t\tmodel.put(\"result\", param);\r\n");
-        sbb.append("\t\t\treturn \"" + MyGenUtils.lowcaseFirst(entityName) + "/success\";\r\n");
-        sbb.append("\t\t}\r\n\r\n");
-        sbb.append("\t\treturn \"" + MyGenUtils.lowcaseFirst(entityName) +"/fail\";\r\n");
-        sbb.append("\t}\r\n\r\n");*/
-
         //delete.do
         sbb.append("\t@RequestMapping(value = \"/delete.do\", method = RequestMethod.GET)\r\n");
         sbb.append("\tpublic String delete(@RequestParam Integer id, ModelMap model, HttpServletRequest request) {\r\n\r\n");

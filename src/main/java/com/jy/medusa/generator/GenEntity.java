@@ -28,7 +28,7 @@ public class GenEntity {
 
     private String packagePath;
     private String tableName;
-    private String propertyFilename;
+//    private String propertyFilename;
     private String tag;//标记 mark
     private JSONArray colValidArray;//参数校验
     private List<String> associationColumn;//映射的关系字段
@@ -39,10 +39,10 @@ public class GenEntity {
     private Map<String, String> commentMap = new HashMap<>();//字段名称 和 注注释对应关系
 //    private Map<String, String> foreignMap = new HashMap<>();//字段名称 和 主外间的对应关系
 
-    public GenEntity(String packagePath, String tableName, String propertyFilename, String tag, JSONArray colValidArray, String associationColumn, String pluralAssociation) {
+    public GenEntity(String packagePath, String tableName, String tag, JSONArray colValidArray, String associationColumn, String pluralAssociation) {
         this.packagePath = packagePath;
         this.tableName = tableName;
-        this.propertyFilename = propertyFilename;
+//        this.propertyFilename = propertyFilename;
         this.tag = tag;
         this.colValidArray = colValidArray;
         this.associationColumn = Arrays.asList(associationColumn.split(","));
@@ -56,7 +56,7 @@ public class GenEntity {
 
     public void process() {
 
-        DataBaseTools dataBaseTools = new DataBaseTools(propertyFilename);
+        DataBaseTools dataBaseTools = new DataBaseTools();
 
         Connection conn = dataBaseTools.openConnection(); // 得到数据库连接
         PreparedStatement pstmt = null;
@@ -402,11 +402,13 @@ public class DataBaseTools{
 
     private Connection conn;
 
-    public DataBaseTools(String fileName) {
-        loadProperties(fileName);
+    public DataBaseTools() {
+        loadProperties();
+//        loadProperties(fileName);
     }
 
-    private void loadProperties(String fileName) {
+    private void loadProperties() {
+//    private void loadProperties(String fileName) {
 
 /*        String resPaths = System.getProperty("user.dir") + Home.getProperPath() + fileName;
 

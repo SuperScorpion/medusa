@@ -139,10 +139,6 @@ import java.util.*;
         String[] p = new String[]{"mappedStatements", "caches", "resultMaps", "parameterMaps", "keyGenerators", "sqlFragments"};
 
         clearMaps(configuration, p);
-
-        /*String[] v = new String[]{"loadedResources"};
-
-        clearSets(configuration, v);*/
     }
 
     @SuppressWarnings("rawtypes")

@@ -20,11 +20,6 @@ public class MyReflectionUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(MyReflectionUtils.class);
 
-    /**
-     * 缓存方法
-     */
-   // private static final Map<Class<?>, Method[]> METHODS_CACHEMAP = new HashMap<>();///缓存methods
-  ///  private static final Map<Class<?>, Field[]> FIELDS_CACHEMAP = new HashMap<>();/////缓存fields
 
     /**
      * 调用Getter方法

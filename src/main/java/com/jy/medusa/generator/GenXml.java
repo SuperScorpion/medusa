@@ -26,7 +26,7 @@ public class GenXml {
     private String packagePath;//mapper
     private String mapperPath;//xml
     private String tableName;
-    private String propertyFilename;
+//    private String propertyFilename;
     private String entityPath;//entity
     private String entityName;
 
@@ -38,11 +38,11 @@ public class GenXml {
 
 
 
-    public GenXml(String mapperPath, String packagePath, String entityPath, String tableName, String propertyFilename, String tag, String ignorAssociation, String pluralAssociation) {
+    public GenXml(String mapperPath, String packagePath, String entityPath, String tableName, String tag, String ignorAssociation, String pluralAssociation) {
         this.packagePath = packagePath;
         this.mapperPath = mapperPath;
         this.tableName = tableName;
-        this.propertyFilename = propertyFilename;
+//        this.propertyFilename = propertyFilename;
         this.entityPath = entityPath;
         this.entityName = MyGenUtils.upcaseFirst(tableName);
         this.tag = tag;
@@ -96,7 +96,7 @@ public class GenXml {
         String[] colSqlNames = null,colNames = null,colTypes = null,colTypesSql = null;
         Integer[] colSizes = null;
 
-        GenEntity.DataBaseTools dataBaseTools = new GenEntity().new DataBaseTools(propertyFilename);
+        GenEntity.DataBaseTools dataBaseTools = new GenEntity().new DataBaseTools();
 
         Connection conn = dataBaseTools.openConnection(); // 得到数据库连接
         PreparedStatement pstmt = null;

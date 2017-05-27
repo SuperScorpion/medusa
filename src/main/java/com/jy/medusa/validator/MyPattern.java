@@ -43,20 +43,13 @@ public class MyPattern {
 
     /**
      *
-     *
      */
     public static final String REGX_ALPHANUM = "^[0-9a-zA-Z]*$";
 
     /**
      *
-     *
      */
     public static final String REGX_NUM = "^[0-9]*$";
-
-    /**
-     * email
-     */
-    public static final String REGX_EMAIL = "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*";
 
     /**
      * url
@@ -67,21 +60,5 @@ public class MyPattern {
      * mobile num
      */
     public static final String REGX_MOBILE = "^1[3|4|5|7|8][0-9]{9}$";
-
-    /**
-     * id card
-     */
-    public static final String REGX_ID_CARD1 = "^[1-9]\\d{7}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}$";
-
-    /**
-     * id card
-     */
-    public static final String REGX_ID_CARD2 = "^[1-9]\\d{5}[1-9]\\d{3}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}([0-9]|X)$";
-
-/*    public static void main(String[] args) {
-        String u = "420822198909236150";
-        Boolean k = u.matches(REGX_ID_CARD2);
-        System.out.println(k);
-    }*/
 
 }

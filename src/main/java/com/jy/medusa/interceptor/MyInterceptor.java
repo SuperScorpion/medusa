@@ -43,9 +43,6 @@ public class MyInterceptor implements Interceptor {
 
             if (MyHelper.checkMortalMethds(medusaMethodName)) {//Modify by neo on 2016.10.25
 
-            /*mt.getConfiguration().setAggressiveLazyLoading(false);//TODO
-            mt.getConfiguration().setLazyLoadingEnabled(true);//TODO*/
-
                 Map<String, Object> p = new HashMap<>();
 
                 p.put("pobj", invocation.getArgs()[1]);
@@ -61,7 +58,6 @@ public class MyInterceptor implements Interceptor {
 
                     if (MyHelper.checkMedusaMethod(medusaMethodName)) {//若是多条件查询 medusas
 
-//                    Object[] x = (Object[]) ((MapperMethod.ParamMap) p.get("pobj")).get("param2");
                         Object[] x = (Object[]) ((DefaultSqlSession.StrictMap) p.get("pobj")).get("array");//modify by neo on 2016.12.23
 
                         Pager z = null;
@@ -74,20 +70,11 @@ public class MyInterceptor implements Interceptor {
                         }
 
                         if (z != null && result != null) {//modify by neo on 2016.10.11
-//                        MyHelper.myThreadLocal.set(1);
                             z.setList((List) result);//若结果集不为空则 给原有的pager参数注入list属性值
                             z.setTotalCount(MyHelper.caculatePagerTotalCount(((Executor) invocation.getTarget()).getTransaction().getConnection(), mt, p));/////通过invocation参数获得connection连接 并且通过这个连接查询出totalCount
                             z.setPageCount(z.getPageCount());
                         }
 
-                        /*for (Object m : x) {
-                            if(m instanceof MyRestrictions) {
-                                ((MyRestrictions) m).clear();//自动帮使用者删除了 条件list modify by neo on 2017.04.26
-                            }
-                        }*/
-
-
-                        //MyReflectionUtils.invokeSetterMethod(z, "list", result, List.class);//参数注入属性的值
                     } else if (MyHelper.checkInsertMethod(medusaMethodName)) {//如果是insert方法相关的则修改传入对象的id 回执其
 
                         //returns generator id key change return values
@@ -164,7 +151,6 @@ public class MyInterceptor implements Interceptor {
     public void setProperties(Properties properties) {
 /*        String prop1 = properties.getProperty("prop1");
         String prop2 = properties.getProperty("prop2");*/
-        /*System.out.println(prop1 + "------" + prop2);*/
     }
 
 }

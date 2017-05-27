@@ -33,7 +33,7 @@ public class Home {
 
     String packagePath;
     String tableName;
-    String jdbcName;///////该字段已弃用了
+//    String jdbcName;///////该字段已弃用了
 
     String tag;
     String medusaProName;
@@ -58,14 +58,11 @@ public class Home {
         return devflag ? medusaPropPath : medusaPropPathDev;
     }
 
-/*    public static void main(String[] args) {
-
-        new Home("medusa.properties").process();
-    }*/
 
     public void process() {
 
-        System.out.println("**^_^**   有问题或者建议请联系 XBinya ");
+        System.out.println("Strike down upon the with great venganceandfury!Xbinya");
+        System.out.println("Loading...");
 
         loadProperties(medusaProName);
 
@@ -105,7 +102,7 @@ public class Home {
 
                 if(MyUtils.isNotBlank(entitySuffix)) {
                     long nanoSs = System.nanoTime();
-                    new GenEntity(entityPath, tabName, jdbcName, tag, colValidArray, associationColumn, pluralAssociation).process();//生成 实体类
+                    new GenEntity(entityPath, tabName, tag, colValidArray, associationColumn, pluralAssociation).process();//生成 实体类
                     System.out.println(tabName + " entity文件生成用时:" + (System.nanoTime()-nanoSs) + " ns");
                 }
 
@@ -117,7 +114,7 @@ public class Home {
 
                 if(MyUtils.isNotBlank(xmlSuffix) && MyUtils.isNotBlank(entitySuffix) && MyUtils.isNotBlank(mapperSuffix)) {
                     long nanoSs = System.nanoTime();
-                    new GenXml(mapperPath, xmlPath, entityPath, tabName, jdbcName, tag, associationColumn, pluralAssociation).process();//执行生成xml
+                    new GenXml(mapperPath, xmlPath, entityPath, tabName, tag, associationColumn, pluralAssociation).process();//执行生成xml
                     System.out.println(tabName + " xml文件生成用时:" + (System.nanoTime()-nanoSs) + " ns");
                 }
 
@@ -155,10 +152,6 @@ public class Home {
             System.out.println("大兄弟你的tableName没填写!");
             result = false;
         }
-/*        if(MyUtils.isBlank(jdbcName)) {
-            System.out.println("大兄弟你的jdbcName没填写!");
-            result = false;
-        }*/
         if(MyUtils.isBlank(tag)) {
             System.out.println("大兄弟你的tag没填写!");
             result = false;
@@ -179,30 +172,6 @@ public class Home {
             result = false;
         }
 
-        /*if(MyUtils.isBlank(serviceSuffix)) {
-            System.out.println("大兄弟你的serviceSuffix没填写!");
-            result = false;
-        }
-        if(MyUtils.isBlank(mapperSuffix)) {
-            System.out.println("大兄弟你的mapperSuffix没填写!");
-            result = false;
-        }
-        if(MyUtils.isBlank(controlSuffix)) {
-            System.out.println("大兄弟你的controlSuffix没填写!");
-            result = false;
-        }*/
-/*        if(MyUtils.isBlank(author)) {
-            System.out.println("大兄弟你的author没有填写完!");
-            result = false;
-        }*/
-/*        if(MyUtils.isBlank(basePoPath)) {
-            System.out.println("大兄弟你的basePoPath没填写!");
-            result = false;
-        }*/
-        /*if(MyUtils.isBlank(baseMapperPath)) {
-            System.out.println("大兄弟你的mapperImplPath没填写!");
-            result = false;
-        }*/
         return result;
     }
 
@@ -221,7 +190,6 @@ public class Home {
         }
         this.packagePath = props.getProperty("medusa.packagePath") == null ? "" : props.getProperty("medusa.packagePath");
         this.tableName = props.getProperty("medusa.tableName") == null ? "" : props.getProperty("medusa.tableName");
-        this.jdbcName = props.getProperty("medusa.jdbcName") == null ? "" : props.getProperty("medusa.jdbcName");
         this.tag = props.getProperty("medusa.tag") == null ? "" : props.getProperty("medusa.tag");
 
         this.entitySuffix = props.getProperty("medusa.entitySuffix") == null ? "" : props.getProperty("medusa.entitySuffix");

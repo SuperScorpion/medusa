@@ -7,11 +7,6 @@ public class GreatThanParam extends BaseGeLeParam {
         this.setValue(value);
     }
 
-    /*public GreatThanParam setValue(Object value) {
-        this.value = value;
-        return this;
-    }*/
-
     public void setValue(Object value) {
         this.value = value;
     }

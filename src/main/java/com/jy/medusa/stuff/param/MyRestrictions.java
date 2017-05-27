@@ -15,19 +15,6 @@ import java.util.List;
  */
 public class MyRestrictions {
 
-    /*public static BaseParam build(ParamEnums enums) {
-
-        switch (enums) {
-            case LIKE: return new LikeParam();
-            case BETWEEN: return new BetweenParam();
-            case GE: return new GreatEqualParam();
-            case GT: return new GreatThanParam();
-            case LE: return new LessEqualParam();
-            case LT: return new LessThanParam();
-            default: throw new RuntimeException("Query condition input for this type is not supported");
-        }
-    }*/
-
     MyRestrictions() {
         this.paramList = new ArrayList<>();
     }

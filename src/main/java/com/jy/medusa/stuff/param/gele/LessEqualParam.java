@@ -7,11 +7,6 @@ public class LessEqualParam extends BaseGeLeParam {
         this.setValue(value);
     }
 
-    /*public LessEqualParam setValue(Object value) {
-        this.value = value;
-        return this;
-    }*/
-
     public void setValue(Object value) {
         this.value = value;
     }

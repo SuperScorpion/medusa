@@ -7,11 +7,6 @@ public class GreatEqualParam extends BaseGeLeParam {
         this.setValue(value);
     }
 
-    /*public GreatEqualParam setValue(Object value) {
-        this.value = value;
-        return this;
-    }*/
-
     public void setValue(Object value) {
         this.value = value;
     }

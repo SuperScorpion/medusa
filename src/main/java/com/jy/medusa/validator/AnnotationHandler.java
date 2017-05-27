@@ -24,7 +24,7 @@ import java.util.List;
  */
 @Aspect
 public class AnnotationHandler {//TODO
-	
+
     private String concatErrorStr(List<ErrorInfo> errorInfos){
 
         StringBuilder sb = new StringBuilder(100);
@@ -38,22 +38,14 @@ public class AnnotationHandler {//TODO
         return sb.toString();
     }
 
-/*    private final String validatorPath = SystemConfigs.VALID_VALIDATOR_PATH;
-
-    private final String lengthPath = SystemConfigs.VALID_LENGTH_PATH;
-
-    private final String notNullPath = SystemConfigs.VALID_NOTNULL_PATH;*/
 
     /**
      * 所有校验标注的处理
      * 	<aop:aspectj-autoproxy proxy-target-class="true"/>
      *  <bean class="com.jy.medusa.validator.AnnotationHandler"/>
      * */
-//    @Pointcut(value= "execution(* *.*ServiceImpl.*(..)) and @annotation(parameter))")
     @Before(value = "execution(public * *(..)) and @annotation(parameter))")
     public void paramHandler(JoinPoint joinPoint, ConParamValidator parameter) throws IllegalArgumentException, IllegalAccessException{
-
-//        if(!errorInfoList.isEmpty()) errorInfoList.clear();
 
         List<ErrorInfo> errorInfoList = new ArrayList<>();
 
@@ -109,11 +101,8 @@ public class AnnotationHandler {//TODO
      * */
   public List<ErrorInfo> entityHandler(Object obj) throws IllegalArgumentException, IllegalAccessException{
 
-      //if(!errorInfoList.isEmpty()) clearErrorInfoList();
-
     List<ErrorInfo> errors = new ArrayList<>();
 
-//    Object obj = joinPoint.getThis();
     Class cla = obj.getClass();
     Field[] fields = cla.getDeclaredFields();
     Class superClass = cla.getSuperclass();
@@ -227,12 +216,6 @@ public class AnnotationHandler {//TODO
     String regExp = valid.regExp();
 
     String[] selects = valid.selects();
-
-    /*if(fieldValue == null) {
-	      ErrorInfo errorInfo = new ErrorInfo();
-	      errorInfo.setMessage(fieldName + "不能为空值");
-	      errors.add(errorInfo);
-    } else {*/
 
       if(fieldValue != null) {
 

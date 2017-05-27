@@ -13,11 +13,6 @@ public class LikeParam extends BaseComplexParam {
         return value;
     }
 
-/*    public LikeParam setValue(String value) {
-        this.value = value;
-        return this;
-    }*/
-
     public void setValue(String value) {
         this.value = value;
     }
