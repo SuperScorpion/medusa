@@ -6,7 +6,7 @@ import com.jy.medusa.stuff.param.BaseParam;
  * >= <= < >
  * 的操作基类
  */
-public class BaseGeLeParam extends BaseParam {
+public abstract class BaseGeLeParam extends BaseParam {
 
     Object value;
 

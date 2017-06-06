@@ -3,7 +3,7 @@ package com.jy.medusa.stuff.param;
 /**
  * 最父类的多条件参数基类
  */
-public class BaseParam {
+public abstract class BaseParam {
     String column;
 
     public String getColumn() {
