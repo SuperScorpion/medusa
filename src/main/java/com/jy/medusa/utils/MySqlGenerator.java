@@ -298,14 +298,11 @@ public class MySqlGenerator {
      * @param t
      * @return
      */
-    public String sql_modify_null(Object t) throws MedusaException {
+    public String sql_modify_null(Object t, Object... ps) throws MedusaException {
 
-        List<String> values = obtainColumnValsForModifyNull(t);
-        //Object id = MyReflectionUtils.obtainFieldValue(t, currentColumnFieldNameMap.get(pkName));
+        String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect((Object[])ps[0], currentFieldColumnNameMap);
 
-        //if(id == null) throw new MedusaException("Medusa:  Update method incoming primary key value is null (selectall)");//modify by neo on 2016.11.04
-
-        //id = handleValue(id);///这是为了处理id不为 int 变成 string 时 modify by neo on 2016.11.2
+        List<String> values = obtainColumnValsForModifyNull(Arrays.asList(paramColumn.split(",")));
 
         if(values == null || values.isEmpty()) return "";
 
@@ -314,7 +311,7 @@ public class MySqlGenerator {
         StringBuilder sql_build = new StringBuilder(len);
         sql_build.append("UPDATE ").append(tableName).append(" SET ")
                 .append(MyUtils.join(values, ",")).append(" WHERE ")
-                .append(pkName).append(" = ").append("#{pobj." + pkName + "}");
+                .append(pkName).append(" = ").append("#{pobj.param1." + pkName + "}");
 
         String sql = sql_build.toString();
 
@@ -326,17 +323,16 @@ public class MySqlGenerator {
     /**
      * 提供给生成更新SQL使用
      * 允许为空
-     * @param t
      * @return
      */
-    private List<String> obtainColumnValsForModifyNull(Object t) {
+    private List<String> obtainColumnValsForModifyNull(List<Object> parList) {
         List<String> colVals = new ArrayList<>();
         for (String column : columns) {
-            String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
 //            Object value = MyReflectionUtils.obtainFieldValue(t, fieldName);
-            if (!column.equalsIgnoreCase(pkName)) {
+            if (!column.equalsIgnoreCase(pkName) && parList.contains(column)) {
+                String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
 //                colVals.add(column + "=" + handleValue(value));
-                colVals.add(column + "=" + "#{pobj." + fieldName +"}");
+                colVals.add(column + "=" + "#{pobj.param1." + fieldName +"}");
             }
         }
         return colVals;

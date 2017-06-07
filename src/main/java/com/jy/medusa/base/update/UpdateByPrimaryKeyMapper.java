@@ -16,5 +16,5 @@ public interface UpdateByPrimaryKeyMapper<T> {
      * @return
      */
     @UpdateProvider(type = BaseUpdateProvider.class, method = "updateByPrimaryKey")
-    int updateByPrimaryKey(T record);
+    int updateByPrimaryKey(T record, Object... ps);
 }
