@@ -325,7 +325,7 @@ public class MySqlGenerator {
      * 允许为空
      * @return
      */
-    private List<String> obtainColumnValsForModifyNull(List<Object> parList) {
+    private List<String> obtainColumnValsForModifyNull(List<Object> parList) throws MedusaException {
         List<String> colVals = new ArrayList<>();
         for (String column : columns) {
 //            Object value = MyReflectionUtils.obtainFieldValue(t, fieldName);
@@ -335,6 +335,9 @@ public class MySqlGenerator {
                 colVals.add(column + "=" + "#{pobj.param1." + fieldName +"}");
             }
         }
+
+        if(parList.size() != colVals.size()) throw new MedusaException("Medusa: The update method failed. It might be a field spelling error!");
+
         return colVals;
     }
 
