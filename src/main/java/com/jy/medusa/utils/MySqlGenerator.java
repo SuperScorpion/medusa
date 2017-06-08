@@ -336,7 +336,7 @@ public class MySqlGenerator {
             }
         }
 
-        if(parList.size() != colVals.size()) throw new MedusaException("Medusa: The update method failed. It might be a field spelling error!");
+        if(parList.size() != columns.size() && parList.size() != colVals.size()) throw new MedusaException("Medusa: The update method failed. It might be a field spelling error!");
 
         return colVals;
     }
