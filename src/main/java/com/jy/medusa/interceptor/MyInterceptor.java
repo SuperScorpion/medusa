@@ -119,7 +119,7 @@ public class MyInterceptor implements Interceptor {
 
                 if (c instanceof Map) {//过滤掉普通插入
 
-                    List<Object> paramList = (List) ((Map) c).get("list");
+                    List<Object> paramList = (List) ((Map) c).get("param1");
 
                     if (paramList != null && !paramList.isEmpty()) {
 

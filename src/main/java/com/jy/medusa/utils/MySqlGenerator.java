@@ -25,8 +25,6 @@ public class MySqlGenerator {
     private Map<String, String> currentColumnFieldNameMap;
     private Map<String, String> currentFieldColumnNameMap;
     private Map<String, String> currentFieldTypeNameMap;
-    private String insertColumn;
-    private String insertDynamicSql;
     private Class<?> entityClass;
 
     public MySqlGenerator(Map<String, String> cfMap, Map<String, String> ftMap, String tableName, String pkName, Class<?> entityClass) {
@@ -36,33 +34,33 @@ public class MySqlGenerator {
         this.columnsStr = MyUtils.join(this.columns, ",");
         this.currentColumnFieldNameMap = cfMap;
         this.currentFieldColumnNameMap = MyHelper.exchangeKeyValues(cfMap);
-
-        String[] parArra = MyHelper.concatInsertDynamicSql(ftMap, currentFieldColumnNameMap, null);
-        insertColumn = parArra[1];
-        insertDynamicSql = parArra[0];
-
         this.currentFieldTypeNameMap = ftMap;///modify by neo on 2016.12.15
 
         this.entityClass = entityClass;
     }
 
     /**
-     * 生成根据IDs批量删除的SQL not selective
+     * 生成根据IDs批量新增的SQL not selective
      * @param t
      * @return
      */
-    public String sql_insertOfBatch(Object t) throws MedusaException {
+    public String sql_insertOfBatch(Object t, Object... ps) throws MedusaException {
 
-        String dynamicSqlForBatch = MyHelper.concatInsertDynamicSqlForBatch(currentFieldTypeNameMap, t);
+        String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect((Object[])ps[0], currentFieldColumnNameMap);
 
-        if(MyUtils.isBlank(dynamicSqlForBatch)) throw new MedusaException("insertBatch method parameter is null or empty");
+        if(paramColumn.equals("*")) paramColumn = columnsStr;
 
-        int sbbLength = insertColumn.length() + tableName.length() + dynamicSqlForBatch.length() + 33;
+
+        String dynamicSqlForBatch = MyHelper.concatInsertDynamicSqlForBatch(currentColumnFieldNameMap, currentFieldTypeNameMap, t, paramColumn);
+
+        if(MyUtils.isBlank(dynamicSqlForBatch)) throw new MedusaException("Medusa: insertBatch method parameter is null or empty!");
+
+        int sbbLength = paramColumn.length() + tableName.length() + dynamicSqlForBatch.length() + 33;
 
         StringBuilder sql_build = new StringBuilder(sbbLength);
 
         sql_build.append("INSERT INTO ").append(tableName).append("(")
-                .append(insertColumn).append(") values ")
+                .append(paramColumn).append(") values ")
                 .append(dynamicSqlForBatch);//modify by neo on2016.11.13
 
         String sql = sql_build.toString();
@@ -73,11 +71,14 @@ public class MySqlGenerator {
     }
 
     /**
-     * 生成新增的SQL
+     * 生成新增的SQL not selective
      * @return
      */
     public String sql_create() {//modify by neo on 2016.11.12 Object t
 //        List<Object> values = obtainFieldValues(t);// modify by neo on 2016.11.15
+
+        String[] parArra = MyHelper.concatInsertDynamicSql(currentFieldTypeNameMap, currentFieldColumnNameMap, null);
+        String insertColumn = parArra[1], insertDynamicSql = parArra[0];
 
         int sbbLength = insertColumn.length() + tableName.length() + insertDynamicSql.length() + 33;
 

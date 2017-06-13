@@ -3,6 +3,7 @@ package com.jy.medusa.provider;
 
 import com.jy.medusa.stuff.MyHelper;
 import com.jy.medusa.stuff.exception.MedusaException;
+import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.session.defaults.DefaultSqlSession;
 
 import java.util.List;
@@ -25,8 +26,11 @@ public class BaseInsertProvider {
 
     public String insertBatch(Map<String, Object> m) throws MedusaException {
 
-        List<Object> p = (List<Object>) ((DefaultSqlSession.StrictMap) m.get("pobj")).get("list");
+        if(m.get("pobj") instanceof MapperMethod.ParamMap)
+            return MyHelper.getSqlGenerator(m).sql_insertOfBatch(
+                    ((MapperMethod.ParamMap) m.get("pobj")).get("param1"),
+                    ((MapperMethod.ParamMap) m.get("pobj")).get("param2"));
 
-        return MyHelper.getSqlGenerator(m).sql_insertOfBatch(p);
+        throw new RuntimeException("Medusa: insertBatch MapperMethod.ParamMap Exception");
     }
 }

@@ -6,6 +6,7 @@ import com.jy.medusa.stuff.annotation.Id;
 import com.jy.medusa.stuff.annotation.Table;
 import com.jy.medusa.stuff.cache.MyHelperCacheManager;
 import com.jy.medusa.stuff.cache.MyReflectCacheManager;
+import com.jy.medusa.stuff.exception.MedusaException;
 import com.jy.medusa.utils.MyReflectionUtils;
 import com.jy.medusa.utils.MySqlGenerator;
 import com.jy.medusa.utils.MyUtils;
@@ -221,7 +222,7 @@ public class MyHelper {
             if (field.isAnnotationPresent(Id.class)) pkName = tableColumn.name();
 
             // 如果未标识特殊的列名，默认取字段名
-            columnName = MyUtils.isBlank(columnName) ? MyGenUtils.camelToUnderline(fieldName) : columnName;
+            columnName = MyUtils.isBlank(columnName) ? MyGenUtils.camelToUnderline(fieldName) : columnName.trim();
 
             currentFieldTypeNameMap.put(fieldName, field.getType().getSimpleName());
             currentColumnFieldNameMap.put(columnName, fieldName);
@@ -497,7 +498,7 @@ public class MyHelper {
 
 
     /**
-     * 生成插入的sql语句时 要把动态部分缓存起
+     * 生成插入的sql语句时 not selective
      * @return
      */
     public static String[] concatInsertDynamicSql(Map<String, String> currentFieldTypeNameMap, Map<String, String> currentFieldColumnNameMap, Object t) {
@@ -545,17 +546,15 @@ public class MyHelper {
      * 生成插入的sql语句时 要把动态部分缓存起 批量
      * @return
      */
-    public static String concatInsertDynamicSqlForBatch(Map<String, String> currentFieldTypeNameMap, Object t) {
+    public static String concatInsertDynamicSqlForBatch(Map<String, String> currentColumnFieldNameMap, Map<String, String> currentFieldTypeNameMap, Object t, String paramColumn) throws MedusaException {
 
-        List<Object> obs;
-        if(t instanceof List)
-            obs = (ArrayList)t;
-        else
-            return "";
+        List<Object> obs = t instanceof List ? (ArrayList)t : new ArrayList<>();
 
         if(obs.size() == 0) return "";
 
-        int contentLength = obs.size() * currentFieldTypeNameMap.keySet().size() * 50;
+        String[] columnArr = paramColumn.split(",");
+
+        int contentLength = obs.size() * columnArr.length * 50;
 
         StringBuilder sbb = new StringBuilder(contentLength);
 
@@ -564,17 +563,20 @@ public class MyHelper {
 
             sbb.append("(");
 
-            for(String fieName : currentFieldTypeNameMap.keySet()) {//同一个hashset 遍历的元素顺序是否一样的
+            for(String col : columnArr) {//同一个hashset 遍历的元素顺序是否一样的
+
+                String fieName = currentColumnFieldNameMap.get(col);
+
+                if(MyUtils.isBlank(fieName)) throw new MedusaException("Medusa: The insertBatch method failed. It might be a field spelling error!");
 
                 if(fieName.trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY)) {
 
-//                sbb.append("#{id, jdbcType=" + javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)) + "},");
-                    sbb.append("#{pobj.list[" + i + "]." + SystemConfigs.PRIMARY_KEY + ", jdbcType=" + javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)) + "},");
+                    sbb.append("#{pobj.param1[").append(i).append("].").append(SystemConfigs.PRIMARY_KEY).append(", jdbcType=").append(javaType2SqlTypes(currentFieldTypeNameMap.get(fieName))).append("},");
 
                     continue;
                 }
 
-                sbb.append("#{pobj.list[");
+                sbb.append("#{pobj.param1[");
                 sbb.append(i);
                 sbb.append("].");
                 sbb.append(fieName);
@@ -605,11 +607,7 @@ public class MyHelper {
      */
     public static String concatUpdateDynamicSqlValuesForBatch(Object t, String paramColumn, Map<String, String> currentColumnFieldNameMap) {
 
-        List<Object> obs;
-        if(t instanceof List)
-            obs = (ArrayList)t;
-        else
-            return "";
+        List<Object> obs = t instanceof List ? (ArrayList)t : new ArrayList<>();
 
         if(obs.size() == 0) return "";
 
@@ -689,11 +687,7 @@ public class MyHelper {
         END
         WHERE id IN (7,8,9)*/
 
-        List<Object> obs;
-        if(t instanceof List)
-            obs = (ArrayList)t;
-        else
-            return "";
+        List<Object> obs = t instanceof List ? (ArrayList)t : new ArrayList<>();
 
         if(obs.size() == 0) return "";
 

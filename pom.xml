@@ -6,7 +6,7 @@
 
     <groupId>jy</groupId>
     <artifactId>medusa</artifactId>
-    <version>1.9.3</version>
+    <version>1.9.6</version>
     <packaging>jar</packaging>
 
     <properties>
