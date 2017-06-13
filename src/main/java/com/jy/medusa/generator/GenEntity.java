@@ -19,16 +19,16 @@ import java.util.Date;
 public class GenEntity {
 
     private String[] colSqlNames;//数据库列名数组
-    private String[] colnames; // 列名数组
+    private String[] colNames; // 列名数组
     private String[] colTypes; // mybatis 列名类型数组
     private int[] colSizes; // 列名大小数组
-    private boolean f_util = false; // 是否需要导入包java.util.*
+    private boolean f_date_my_util = false; // 是否需要导入包 myDateUtils
+    private boolean f_date = false; // 是否需要导入包java.util.Date
     private boolean f_sql = false; // 是否需要导入包java.sql.*
-    private boolean f_money = false; // 是否需要导入包java.math.*
+    private boolean f_money = false; // 是否需要导入包java.math.BigDecimal
 
     private String packagePath;
     private String tableName;
-//    private String propertyFilename;
     private String tag;//标记 mark
     private JSONArray colValidArray;//参数校验
     private List<String> associationColumn;//映射的关系字段
@@ -36,13 +36,12 @@ public class GenEntity {
 
     private List<String> markStrList;//用来存储标记的代码段落
 
+    private Map<String, String> defaultMap = new HashMap<>();//字段名称 和 默认值关系
     private Map<String, String> commentMap = new HashMap<>();//字段名称 和 注注释对应关系
-//    private Map<String, String> foreignMap = new HashMap<>();//字段名称 和 主外间的对应关系
 
     public GenEntity(String packagePath, String tableName, String tag, JSONArray colValidArray, String associationColumn, String pluralAssociation) {
         this.packagePath = packagePath;
         this.tableName = tableName;
-//        this.propertyFilename = propertyFilename;
         this.tag = tag;
         this.colValidArray = colValidArray;
         this.associationColumn = Arrays.asList(associationColumn.split(","));
@@ -68,8 +67,8 @@ public class GenEntity {
             ResultSet rs = pstmt.executeQuery();
             if (rs != null) {
                 while (rs.next()) {
+                    defaultMap.put(MyGenUtils.getCamelStr(rs.getString("Field")), rs.getString("Default"));
                     commentMap.put(MyGenUtils.getCamelStr(rs.getString("Field")), rs.getString("Comment"));
-//                    foreignMap.put(MyGenUtils.getCamelStr(rs.getString("Field")), rs.getString("Key"));
                 }
             }
 
@@ -77,17 +76,18 @@ public class GenEntity {
             ResultSetMetaData rsmd = pstmt.getMetaData();
             int size = rsmd.getColumnCount(); // 共有多少列
             colSqlNames = new String[size];
-            colnames = new String[size];
+            colNames = new String[size];
             colTypes = new String[size];
             colSizes = new int[size];
 
             for (int i = 0; i < rsmd.getColumnCount(); i++) {
 
                 colSqlNames[i] = rsmd.getColumnName(i + 1);
-                colnames[i] = MyGenUtils.getCamelStr(rsmd.getColumnName(i + 1));
+                colNames[i] = MyGenUtils.getCamelStr(rsmd.getColumnName(i + 1));
                 colTypes[i] = rsmd.getColumnTypeName(i + 1);
                 if (colTypes[i].equalsIgnoreCase("datetime") || colTypes[i].equalsIgnoreCase("date") || colTypes[i].equalsIgnoreCase("TIMESTAMP")) {
-                    f_util = true;
+                    if(MyUtils.isNotBlank(defaultMap.get(colNames[i]))) f_date_my_util = true;
+                    f_date = true;
                 }
                 if (colTypes[i].equalsIgnoreCase("image") || colTypes[i].equalsIgnoreCase("text")) {
                     f_sql = true;
@@ -99,7 +99,7 @@ public class GenEntity {
             }
 
             try {
-                String content = parse(colnames, colTypes, colSizes, packagePath, tableName);
+                String content = parse(colNames, colTypes, colSizes, packagePath, tableName);
                 String path = System.getProperty("user.dir") + "/src/main/java/" + packagePath.replaceAll("\\.", "/");
                 File file = new File(path);
                 if(!file.exists()){
@@ -142,7 +142,7 @@ public class GenEntity {
 
         //外间关联表关系
 
-        //for (int i = 0; i < colnames.length; i++) {
+        //for (int i = 0; i < colNames.length; i++) {
            // if(MyUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !associationColumn.contains(colSqlNames[i])) {
 //         String p = colSqlNames[i].trim().replace("_id", "").trim();
 //        if(MyUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
@@ -153,7 +153,11 @@ public class GenEntity {
            // }
         //}
 
-        if (f_util) {
+
+        if (f_date_my_util) {
+            sb.append("import com.jy.medusa.utils.MyDateUtils;\r\n\r\n");
+        }
+        if (f_date) {
             sb.append("import java.util.Date;\r\n\r\n");
         }
         if (f_sql) {
@@ -195,11 +199,11 @@ public class GenEntity {
      * @param sb
      */
     private void processAllMethod(StringBuilder sb) {
-        for (int i = 0; i < colnames.length; i++) {
+        for (int i = 0; i < colNames.length; i++) {
 
-            //if(colnames[i].trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY)) continue;//去除生成Id get set 方法
+            //if(colNames[i].trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY)) continue;//去除生成Id get set 方法
 
-            String p1 = "\tpublic void set" + MyGenUtils.upcaseFirst(colnames[i]) + "(" + sqlType2JavaType(colTypes[i]) + " " + colnames[i] + ") {\r\n";
+            String p1 = "\tpublic void set" + MyGenUtils.upcaseFirst(colNames[i]) + "(" + sqlType2JavaType(colTypes[i]) + " " + colNames[i] + ") {\r\n";
             String paramStr1 = MyGenUtils.genMarkStr(markStrList, p1, "{");
             if(paramStr1 != null) {
                 sb.append("\t//以下为上次注释需要保存下来的代码" + "\r\n");
@@ -207,12 +211,12 @@ public class GenEntity {
                 sb.append("\r\n");
             } else {
                 sb.append(p1);
-                sb.append("\t\tthis." + colnames[i] + "=" + colnames[i] + ";\r\n");
+                sb.append("\t\tthis." + colNames[i] + "=" + colNames[i] + ";\r\n");
                 sb.append("\t}\r\n\r\n");
             }
 
 
-            String p2 = "\tpublic " + sqlType2JavaType(colTypes[i]) + " get" + MyGenUtils.upcaseFirst(colnames[i]) + "() {\r\n";
+            String p2 = "\tpublic " + sqlType2JavaType(colTypes[i]) + " get" + MyGenUtils.upcaseFirst(colNames[i]) + "() {\r\n";
             String paramStr2 = MyGenUtils.genMarkStr(markStrList, p2, "{");
             if(paramStr2 != null) {
                 sb.append("\t//以下为上次注释需要保存下来的代码" + "\r\n");
@@ -220,7 +224,7 @@ public class GenEntity {
                 sb.append("\r\n");
             } else {
                 sb.append(p2);
-                sb.append("\t\treturn " + colnames[i] + ";\r\n");
+                sb.append("\t\treturn " + colNames[i] + ";\r\n");
                 sb.append("\t}\r\n\r\n");
             }
         }
@@ -228,7 +232,7 @@ public class GenEntity {
 
 
         //字段都生成完了 再生成映射属性
-        for (int i = 0; i < colnames.length; i++) {
+        for (int i = 0; i < colNames.length; i++) {
             //处理外间关联的表字段名称
             if(MyUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
 
@@ -275,14 +279,14 @@ public class GenEntity {
      * @return
      */
     private void processAllAttrs(StringBuilder sb) {
-        for (int i = 0; i < colnames.length; i++) {
+        for (int i = 0; i < colNames.length; i++) {
 
-            //if(colnames[i].trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY)) continue;//去除生成ID属性
+            //if(colNames[i].trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY)) continue;//去除生成ID属性
 
             //添加注释
-            if(MyUtils.isNotBlank(commentMap.get(colnames[i]))) {
+            if(MyUtils.isNotBlank(commentMap.get(colNames[i]))) {
                 sb.append("\t/*");
-                sb.append(commentMap.get(colnames[i]));
+                sb.append(commentMap.get(colNames[i]));
                 sb.append("*/\r\n");
             }
 
@@ -290,8 +294,8 @@ public class GenEntity {
             if(colValidArray != null && !colValidArray.isEmpty()) {
                 String[] validStrArray = null;
                 for (Object n : colValidArray) {
-                    if (MyUtils.isNotBlank(((JSONObject) n).getString(colnames[i])))
-                        validStrArray = ((JSONObject) n).getString(colnames[i]).split("&");
+                    if (MyUtils.isNotBlank(((JSONObject) n).getString(colNames[i])))
+                        validStrArray = ((JSONObject) n).getString(colNames[i]).split("&");
                 }
 
                 if (validStrArray != null && validStrArray.length != 0) {
@@ -303,9 +307,12 @@ public class GenEntity {
                 }
             }
 
-            String primaryAnnotationTxt = colnames[i].trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY) ? "\t@Id\r\n" : "";
+            String primaryAnnotationTxt = colNames[i].trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY) ? "\t@Id\r\n" : "";
 
-            String wellStr = primaryAnnotationTxt + "\t@Column(name = \"" + colSqlNames[i] + "\")\r\n\tprivate " + sqlType2JavaType(colTypes[i]) + " " + colnames[i] + ";\r\n\r\n";
+            //添加默认值
+            String defaultStr = MyUtils.isNotBlank(defaultMap.get(colNames[i])) ? " = " + sqlType2JavaTypeForDefault(colTypes[i], defaultMap.get(colNames[i])) : "";
+
+            String wellStr = primaryAnnotationTxt + "\t@Column(name = \"" + colSqlNames[i] + "\")\r\n\tprivate " + sqlType2JavaType(colTypes[i]) + " " + colNames[i] + defaultStr + ";\r\n\r\n";
 
             String paramStr = MyGenUtils.genMarkStr(markStrList, wellStr, ";");
 
@@ -316,11 +323,10 @@ public class GenEntity {
             } else {
                 sb.append(wellStr);
             }
-
         }
 
         //字段都生成完了 再生成映射属性
-        for (int i = 0; i < colnames.length; i++) {
+        for (int i = 0; i < colNames.length; i++) {
             //外间关联表关系
             if(MyUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
 
@@ -346,6 +352,43 @@ public class GenEntity {
         }
     }
 
+
+    private String sqlType2JavaTypeForDefault(String sqlType, String def) {
+        if (sqlType.equalsIgnoreCase("bit")) {
+            if(def.equals("0")) {
+                return "false";
+            } else if(def.equals("1")) {
+                return "true";
+            } else {
+                return def;
+            }
+        } else if (sqlType.equalsIgnoreCase("bigint")) {
+            return def + "l";
+        } else if (sqlType.equalsIgnoreCase("float")) {
+            return def + "f";
+        } else if (sqlType.equalsIgnoreCase("double")) {
+            return def + "d";
+        } else if (sqlType.equalsIgnoreCase("decimal")
+                || sqlType.equalsIgnoreCase("numeric")
+                || sqlType.equalsIgnoreCase("real")
+                || sqlType.equalsIgnoreCase("money")
+                || sqlType.equalsIgnoreCase("smallmoney")) {
+            return "new BigDecimal(" + def + ")";
+        } else if (sqlType.equalsIgnoreCase("varchar")
+                || sqlType.equalsIgnoreCase("char")
+                || sqlType.equalsIgnoreCase("nvarchar")
+                || sqlType.equalsIgnoreCase("nchar")) {
+            return "\"" + def + "\"";
+        } else if (sqlType.equalsIgnoreCase("datetime") || sqlType.equalsIgnoreCase("date") || sqlType.equalsIgnoreCase("timestamp")) {
+            if(def.equals("CURRENT_TIMESTAMP")) {
+                return "new Date()";
+            } else {
+                return "MyDateUtils.convertStrToDate(\"" + def + "\")";
+            }
+        }
+
+        return def;
+    }
 
     private String sqlType2JavaType(String sqlType) {
         if (sqlType.equalsIgnoreCase("bit")) {

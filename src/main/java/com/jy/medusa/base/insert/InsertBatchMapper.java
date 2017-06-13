@@ -17,11 +17,11 @@ public interface InsertBatchMapper<T> {
 
     /**
      * 保存一个实体，null的属性不会保存，会使用数据库默认值
-     * @param record
+     * @param records
      * @return
      */
     @InsertProvider(type = BaseInsertProvider.class, method = "insertBatch")
 //    @SelectKey(statement = "select last_insert_id() as id", keyProperty = "id", keyColumn = "id", before = true, resultType = int.class)
     @Options(useGeneratedKeys = true, keyColumn = SystemConfigs.PRIMARY_KEY, keyProperty = SystemConfigs.PRIMARY_KEY)
-    int insertBatch(List<T> record, Object... ps);
+    int insertBatch(List<T> records, Object... ps);
 }

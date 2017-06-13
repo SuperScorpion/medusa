@@ -64,9 +64,9 @@ public class GenBaseService {
                 "\n" +
                 "\tT selectOne(T entity, Object... ps);\n" +
                 "\n" +
-                "\tList<T> selectByIds(List<Integer> ids, Object... ps);\n" +
+                "\tList<T> selectByIds(List<Object> ids, Object... ps);\n" +
                 "\n" +
-                "\tT selectById(Integer id, Object... ps);\n" +
+                "\tT selectById(Object id, Object... ps);\n" +
                 "\n" +
                 "\tList<T> selectListBy(T entity, Object... ps);\n" +
                 "\n" +
@@ -84,9 +84,9 @@ public class GenBaseService {
                 "\n" +
                 "\tint updateBatch(List<T> obs, Object... ps);\n" +
                 "\n" +
-                "\tint deleteById(Integer id);\n" +
+                "\tint deleteById(Object id);\n" +
                 "\n" +
-                "\tint deleteBatch(List<Integer> ids);\n" +
+                "\tint deleteBatch(List<Object> ids);\n" +
                 "\n" +
                 "\tint deleteBy(T entity);\n" +
                 "\n" +
@@ -136,11 +136,11 @@ public class GenBaseService {
                 "\t\treturn mapper.selectOne(entity, ps);\n" +
                 "\t}\n" +
                 "\n" +
-                "\tpublic List<T> selectByIds(List<Integer> ids, Object... ps) {\n" +
+                "\tpublic List<T> selectByIds(List<Object> ids, Object... ps) {\n" +
                 "\t\treturn mapper.selectByPrimaryKeyBatch(ids, ps);\n" +
                 "\t}\n" +
                 "\n" +
-                "\tpublic T selectById(Integer id, Object... ps) {\n" +
+                "\tpublic T selectById(Object id, Object... ps) {\n" +
                 "\t\treturn mapper.selectByPrimaryKey(id, ps);\n" +
                 "\t}\n" +
                 "\n" +
@@ -176,11 +176,11 @@ public class GenBaseService {
                 "\t\treturn mapper.updateByPrimaryKeyBatch(obs, ps);\n" +
                 "\t}\n" +
                 "\n" +
-                "\tpublic int deleteById(Integer id) {\n" +
+                "\tpublic int deleteById(Object id) {\n" +
                 "\t\treturn mapper.deleteByPrimaryKey(id);\n" +
                 "\t}\n" +
                 "\n" +
-                "\tpublic int deleteBatch(List<Integer> ids) {\n" +
+                "\tpublic int deleteBatch(List<Object> ids) {\n" +
                 "\t\treturn mapper.deleteBatch(ids);\n" +
                 "\t}\n" +
                 "\n" +

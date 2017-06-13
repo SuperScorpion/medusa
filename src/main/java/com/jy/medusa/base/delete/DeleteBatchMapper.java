@@ -18,5 +18,5 @@ public interface DeleteBatchMapper<T> {
      * @return
      */
     @DeleteProvider(type = BaseDeleteProvider.class, method = "deleteBatch")
-    int deleteBatch(List<Integer> ds);
+    int deleteBatch(List<Object> ids);
 }
