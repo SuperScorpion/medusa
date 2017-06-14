@@ -546,7 +546,7 @@ public class MyHelper {
      * 生成插入的sql语句时 要把动态部分缓存起 批量
      * @return
      */
-    public static String concatInsertDynamicSqlForBatch(Map<String, String> currentColumnFieldNameMap, Map<String, String> currentFieldTypeNameMap, Object t, String paramColumn) throws MedusaException {
+    public static String concatInsertDynamicSqlForBatch(Map<String, String> currentColumnFieldNameMap, Map<String, String> currentFieldTypeNameMap, Object t, String paramColumn) {
 
         List<Object> obs = t instanceof List ? (ArrayList)t : new ArrayList<>();
 

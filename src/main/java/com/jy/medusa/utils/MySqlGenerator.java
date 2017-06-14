@@ -44,7 +44,7 @@ public class MySqlGenerator {
      * @param t
      * @return
      */
-    public String sql_insertOfBatch(Object t, Object... ps) throws MedusaException {
+    public String sql_insertOfBatch(Object t, Object... ps) {
 
         String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect((Object[])ps[0], currentFieldColumnNameMap);
 
@@ -248,7 +248,7 @@ public class MySqlGenerator {
      * @param t
      * @return
      */
-    public String sql_modifyOfBatch(Object t, Object... ps) throws MedusaException {
+    public String sql_modifyOfBatch(Object t, Object... ps) {
 
         String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect((Object[])ps[0], currentFieldColumnNameMap);
 
@@ -269,7 +269,7 @@ public class MySqlGenerator {
      * @param t
      * @return
      */
-    public String sql_modify(Object t) throws MedusaException {
+    public String sql_modify(Object t) {
 
         List<String> values = obtainColumnValusForModify(t);
         //Object id = MyReflectionUtils.obtainFieldValue(t, currentColumnFieldNameMap.get(pkName));
@@ -299,7 +299,7 @@ public class MySqlGenerator {
      * @param t
      * @return
      */
-    public String sql_modify_null(Object t, Object... ps) throws MedusaException {
+    public String sql_modify_null(Object t, Object... ps) {
 
         String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect((Object[])ps[0], currentFieldColumnNameMap);
 
@@ -326,7 +326,7 @@ public class MySqlGenerator {
      * 允许为空
      * @return
      */
-    private List<String> obtainColumnValsForModifyNull(List<Object> parList) throws MedusaException {
+    private List<String> obtainColumnValsForModifyNull(List<Object> parList) {
         List<String> colVals = new ArrayList<>();
         for (String column : columns) {
 //            Object value = MyReflectionUtils.obtainFieldValue(t, fieldName);

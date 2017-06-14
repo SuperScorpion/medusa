@@ -4,9 +4,7 @@ package com.jy.medusa.provider;
 import com.jy.medusa.stuff.MyHelper;
 import com.jy.medusa.stuff.exception.MedusaException;
 import org.apache.ibatis.binding.MapperMethod;
-import org.apache.ibatis.session.defaults.DefaultSqlSession;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,13 +22,13 @@ public class BaseInsertProvider {
         return MyHelper.getSqlGenerator(m).sql_create_selective(m.get("pobj"));//modify by neo on 2016/11/12 m.get("pobj")
     }
 
-    public String insertBatch(Map<String, Object> m) throws MedusaException {
+    public String insertBatch(Map<String, Object> m) {
 
         if(m.get("pobj") instanceof MapperMethod.ParamMap)
             return MyHelper.getSqlGenerator(m).sql_insertOfBatch(
                     ((MapperMethod.ParamMap) m.get("pobj")).get("param1"),
                     ((MapperMethod.ParamMap) m.get("pobj")).get("param2"));
 
-        throw new RuntimeException("Medusa: insertBatch MapperMethod.ParamMap Exception");
+        throw new MedusaException("Medusa: insertBatch MapperMethod.ParamMap Exception");
     }
 }
