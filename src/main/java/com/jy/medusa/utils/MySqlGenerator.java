@@ -46,7 +46,7 @@ public class MySqlGenerator {
      */
     public String sql_insertOfBatch(Object t, Object... ps) {
 
-        String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect((Object[])ps[0], currentFieldColumnNameMap);
+        String paramColumn = reSolveColumn(ps);
 
         if(paramColumn.equals("*")) paramColumn = columnsStr;
 
@@ -250,7 +250,7 @@ public class MySqlGenerator {
      */
     public String sql_modifyOfBatch(Object t, Object... ps) {
 
-        String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect((Object[])ps[0], currentFieldColumnNameMap);
+        String paramColumn = reSolveColumn(ps);
 
         if(paramColumn.equals("*")) paramColumn = columnsStr;
 
@@ -295,13 +295,22 @@ public class MySqlGenerator {
     }
 
     /**
+     * 处理传入的字段字符
+     * @param ps
+     * @return
+     */
+    private String reSolveColumn(Object... ps){
+        return (ps == null || ps.length != 1 || ps[0] == null || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect((Object[])ps[0], currentFieldColumnNameMap);
+    }
+    
+    /**
      * 生成更新的SQL
      * @param t
      * @return
      */
     public String sql_modify_null(Object t, Object... ps) {
 
-        String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect((Object[])ps[0], currentFieldColumnNameMap);
+        String paramColumn = reSolveColumn(ps);
 
         List<String> values = obtainColumnValsForModifyNull(Arrays.asList(paramColumn.split(",")));
 
@@ -376,7 +385,7 @@ public class MySqlGenerator {
      */
     private List<String> obtainColumnValusForSelectList(Object t) {
 
-        if(t == null) return null;
+        if(t == null || t instanceof Object[]) return null;//modify by neo on 2017.07.02 解决protostuff 序列化数组问题
 
         List<String> colVals = new ArrayList<>();
         for (String column : columns) {
@@ -454,7 +463,7 @@ public class MySqlGenerator {
 //    return "SELECT * FROM  users WHERE NAME = #{pobj.param1.name} limit 0,1";
     public String sql_findOne(Object t, Object... ps) {
 
-        String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect((Object[])ps[0], currentFieldColumnNameMap);
+        String paramColumn = reSolveColumn(ps);
 
         List<String> values = obtainColumnValusForSelectList(t);
 
@@ -488,7 +497,7 @@ public class MySqlGenerator {
      */
     public String sql_findOneById(Object id, Object... ps) {///modify by neo on 2016.11.21 Object id,这个 id 不能去掉的
 
-        String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect((Object[])ps[0], currentFieldColumnNameMap);
+        String paramColumn = reSolveColumn(ps);
 
         int len = 39 + tableName.length() + pkName.length() + paramColumn.length();
 
@@ -511,7 +520,7 @@ public class MySqlGenerator {
 
         List<Object> ids = t instanceof List ? (ArrayList)t : new ArrayList<>();
 
-        String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect((Object[])ps[0], currentFieldColumnNameMap);
+        String paramColumn = reSolveColumn(ps);
 
         int l = ids.size(), i = 0;
 
@@ -538,7 +547,7 @@ public class MySqlGenerator {
 
     public String sql_findListBy(Object t, Object... ps) {
 
-        String paramColumn = (ps == null || ps.length != 1 || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect((Object[])ps[0], currentFieldColumnNameMap);
+        String paramColumn = reSolveColumn(ps);
 
         List<String> values = obtainColumnValusForSelectList(t);
 //        if(values == null || valudes.isEmpty()) return null;
