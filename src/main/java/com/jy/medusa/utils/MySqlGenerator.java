@@ -791,6 +791,28 @@ public class MySqlGenerator {
                             .append(" AND ")
                             .append("#{pobj.array[" + isd + "].paramList[" + ind + "].end}");
                 }
+            } else if (z instanceof NotInParam) {
+
+                List p = ((NotInParam) z).getValue();
+                Boolean f = ((NotInParam) z).getNotIn();
+
+                if(p != null && p.size() > 0) {
+                    sbb.append(" AND ").append(column);
+
+                    if(f)
+                        sbb.append(" NOT IN (");
+                     else
+                        sbb.append(" IN (");
+
+                    int k = 0;
+                    while(k < p.size()) {
+                        sbb.append("#{pobj.array[" + isd + "].paramList[" + ind + "].value[" + k + "]},");
+                        k++;
+                    }
+
+                    if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
+                    sbb.append(")");
+                }
             } else if (z instanceof LikeParam) {
 
                 Object p = ((LikeParam) z).getValue();

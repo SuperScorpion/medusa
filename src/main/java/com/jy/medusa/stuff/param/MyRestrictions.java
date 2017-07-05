@@ -25,6 +25,12 @@ public class MyRestrictions {
         return paramList;
     }
 
+    public MyRestrictions notInParam(String c, List v, Boolean p) {
+
+        paramList.add(new NotInParam(c, v, p));
+        return this;
+    }
+
     public MyRestrictions likeParam(String c, String v) {
 
         paramList.add(new LikeParam(c, v));
