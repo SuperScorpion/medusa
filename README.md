@@ -28,25 +28,25 @@ mybatis mapper
 通用mapper 使用说明文档<br/>
 <br/>
 <br/>
-一. 基本功能<br/>
-新建一个空项目<br/>
+一. 使用步骤<br/>
+1.1 新建一个空项目<br/>
 <br/>
-先将medusa的jar包添加至项目路径下<br/>
+1.2 先将medusa的jar包添加至项目路径下<br/>
 <br/>
-medusa.properties 添加至resource文件夹下<br/>
+1.3 medusa.properties 添加至resource文件夹下<br/>
 <br/>
-执行方法 new Home("medusa.properties").process();<br/>
+1.4 执行方法 new Home("medusa.properties").process();<br/>
 <br/>
-基础crud各层次代码便已经生成好了<br/>
+1.5 基础crud各层次代码便已经生成好了<br/>
 <br/>
-com.jy.medusa.interceptor.MyInterceptor需要添加到org.mybatis.spring.SqlSessionFactoryBean的plugins里<br/>
+1.6 com.jy.medusa.interceptor.MyInterceptor需要添加到org.mybatis.spring.SqlSessionFactoryBean的plugins里<br/>
 <br/>
 <br/>
-至此 基本的crud功能便能使用。<br/>
+1.7 至此 基本的crud功能便能使用。<br/>
 <br/>
 二. 如果需要参数校验功能则需要加入下列两行代码至xml<br/>
 <aop:aspectj-autoproxy proxy-target-class="true"/><br/>
-<bean class="com.jy.medusa.validator.AnnotationHandler"/><br/>
+< bean class="com.jy.medusa.validator.AnnotationHandler" /><br/>
 <br/>
 然后 controller 或者是 service 方法上 添加 注解 @ConParamValidator<br/>
 exp:       @ConParamValidator(entityClass = Users.class)<br/>
