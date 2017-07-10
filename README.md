@@ -74,118 +74,78 @@ Users类 属性记得加入@Length等标签.
    <constructor-arg index="0" ref="sqlSessionFactory"/>
    <constructor-arg index="1" value="com.xxx.xxxx.persistence.xml"/>
    <constructor-arg index="2" value="3600"/>
-</bean>
-<br/>
-第一个参数为 sessionfactory
-第二个参数为 xml的包路径所在位
-第三个参数为 刷新间隔时间秒
-<br/>
-
-Tips
-再次生成的时候java、文件需要用//mark //mark保存你自己需要保存下来的代码 xml文件会自动地保留变动过的内容段
-entity是必须生成的包 如果其他包不想生成可以不填写
-
+</bean><br/>
+第一个参数为 sessionfactory<br/>
+第二个参数为 xml的包路径所在位<br/>
+第三个参数为 刷新间隔时间秒<br/>
+Tips<br/>
+再次生成的时候java、文件需要用//mark //mark保存你自己需要保存下来的代码 xml文件会自动地保留变动过的内容段<br/>
+entity是必须生成的包 如果其他包不想生成可以不填写<br/>
 <br/>
 <br/>
-
-新功能
-<br/>
-1.复合条件查询
-exp:
-<br/>
-Users s = new Users();
-s.setName("刚刚股份大股东");
-<br/>
-MyRestrictions mr = MyRestrictions.getMyRestrctions()
-      .betweenParam("created_at", MyDateUtils.convertStrToDate("2016-07-01 12:12:13"), null)
-      .betweenParam("updated_at", MyDateUtils.convertStrToDate("2016-07-01 12:12:13"), null)
-      .likeParam("name", "xxx")
-      .greatEqualParam("home_area", 70);
-<br/>
-Pager<Users> p = MyRestrictions.getPager().setPageSize(7);
-<br/>
-List<Users> z = bbbService.selectByCondition(s, "id, name, homeArea", p, mr);
-<br/>
-Tips:       betweenParam 后的参数不填写的话 默认为 new date();
-<br/>
-2.通过实体的某一字段来查询的
-<br/>
-Pager<Users> p = MyRestrictions.getPager().setPageSize(7);
-<br/>
-MyRestrictions mrp = MyRestrictions.getMyRestrctions()
-      .singleParam("name", "xxx");
-<br/>
-List<Users> z = bbbService.selectByCondition("id, name, homeArea", p, mrp);
-<br/>
-...
-<br/>
-批量删除功能
-List o = new ArrayList();
-o.add(58);
-o.add(62);
-o.add(61);
-int i4 = bbbService.deleteMulti(o);
-<br/>
-tips: 所有方法都可以只查询部分字段 可以用数据库字段名或者是属性的名称
-其它的普通方法则跟现用的通用mapper一致 拥有原生的级联
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-medusa.properties参数参考
-<br/>
-#生成的根包路径
-medusa.packagePath = com.jy.herms 
-###需要生成的表名称 用逗号分隔
-medusa.tableName = xx,xxx,xxxx 
-###java文件中需要在下次生成时保留的代码段的起末标记 //mark … //mark
-medusa.tag = mark
-<br/>
-###根路径下的实体包名
-medusa.entitySuffix = entity 
-###生成service的路径包名
-medusa.serviceSuffix = service
-###生成serviceImpl的路径包名
-medusa.serviceImplSuffix = service.impl 
-###生成的mapper的路径包名
-medusa.mapperSuffix = persistence 
-###生成的xml路径包名
-medusa.xmlSuffix = persistence.xml 
-<br/>
-###controlJsonSuffix和controlMortalSuffix二选一即可 区别在于一个是json类型一个是页面跳转的类型
-<br/>
-###controller包的名称(二选一)
-medusa.controlJsonSuffix = controller 
-<br/>
-###controller包的名称(二选一)
-medusa.controlMortalSuffix = controller 
-<br/>
-<br/>
-###文件生成时添加的作者名称
-medusa.author = admins 
-<br/>
-###是否需要延迟加载级联属性的 为空则不启用它(一般不写)
-medusa.lazyLoad = y 
-<br/>
-###是否生成基础的 不写则不启用它(只在第一次生成时写)
-medusa.baseServiceSwitch = y 
-<br/>
-###是否在entity类上继承序列化接口 不写则不启用它(一般不写)
-medusa.entitySerializable =  
-<br/>
-###生成关系关联属性字段(在需要级联功能才写)
-medusa.associationColumn= user_id 
-<br/>
-###生成的关系关联属性表 是否需要添加复数后缀s(表名是复数命名则写s)
-medusa.pluralAssociation = s
-<br/>
+新功能<br/>
+1.复合条件查询<br/>
+exp:<br/>
+Users s = new Users();<br/>
+s.setName("刚刚股份大股东");<br/>
+MyRestrictions mr = MyRestrictions.getMyRestrctions()<br/>
+      .betweenParam("created_at", MyDateUtils.convertStrToDate("2016-07-01 12:12:13"), null)<br/>
+      .betweenParam("updated_at", MyDateUtils.convertStrToDate("2016-07-01 12:12:13"), null)<br/>
+      .likeParam("name", "xxx").greatEqualParam("home_area", 70);<br/>
+Pager<Users> p = MyRestrictions.getPager().setPageSize(7);<br/>
+List<Users> z = bbbService.selectByCondition(s, "id, name, homeArea", p, mr);<br/>
+Tips:       betweenParam 后的参数不填写的话 默认为 new date();<br/>
+2.通过实体的某一字段来查询的<br/>
+Pager<Users> p = MyRestrictions.getPager().setPageSize(7);<br/>
+MyRestrictions mrp = MyRestrictions.getMyRestrctions().singleParam("name", "xxx");<br/>
+List<Users> z = bbbService.selectByCondition("id, name, homeArea", p, mrp);<br/>
+...<br/>
+批量删除功能<br/>
+List o = new ArrayList();<br/>
+o.add(58);<br/>
+o.add(62);<br/>
+o.add(61);<br/>
+int i4 = bbbService.deleteMulti(o);<br/>
+tips: 所有方法都可以只查询部分字段 可以用数据库字段名或者是属性的名称<br/>
+其它的普通方法则跟现用的通用mapper一致 拥有原生的级联<br/>
+medusa.properties参数参考<br/>
+#生成的根包路径<br/>
+medusa.packagePath = com.jy.herms <br/>
+###需要生成的表名称 用逗号分隔<br/>
+medusa.tableName = xx,xxx,xxxx <br/>
+###java文件中需要在下次生成时保留的代码段的起末标记 //mark … //mark<br/>
+medusa.tag = mark<br/>
+###根路径下的实体包名<br/>
+medusa.entitySuffix = entity <br/>
+###生成service的路径包名<br/>
+medusa.serviceSuffix = service<br/>
+###生成serviceImpl的路径包名<br/>
+medusa.serviceImplSuffix = service.impl <br/>
+###生成的mapper的路径包名<br/>
+medusa.mapperSuffix = persistence <br/>
+###生成的xml路径包名<br/>
+medusa.xmlSuffix = persistence.xml <br/>
+###controlJsonSuffix和controlMortalSuffix二选一即可 区别在于一个是json类型一个是页面跳转的类型<br/>
+###controller包的名称(二选一)<br/>
+medusa.controlJsonSuffix = controller <br/>
+###controller包的名称(二选一)<br/>
+medusa.controlMortalSuffix = controller <br/>
+###文件生成时添加的作者名称<br/>
+medusa.author = admins <br/>
+###是否需要延迟加载级联属性的 为空则不启用它(一般不写)<br/>
+medusa.lazyLoad = y <br/>
+###是否生成基础的 不写则不启用它(只在第一次生成时写)<br/>
+medusa.baseServiceSwitch = y <br/>
+###是否在entity类上继承序列化接口 不写则不启用它(一般不写)<br/>
+medusa.entitySerializable =  <br/>
+###生成关系关联属性字段(在需要级联功能才写)<br/>
+medusa.associationColumn= user_id <br/>
+###生成的关系关联属性表 是否需要添加复数后缀s(表名是复数命名则写s)<br/>
+medusa.pluralAssociation = s <br/>
 ###生成实体文件的后缀名 (一般不写)
-medusa.entityNameSuffix =  
-<br/>
-###数据库四项配置
-jdbc.driver=com.mysql.jdbc.Driver
-jdbc.url=jdbc:mysql://localhost:3306/cms?useUnicode=true&characterEncoding=UTF-8
-jdbc.username=root
+<br/>medusa.entityNameSuffix =
+###数据库四项配置<br/>
+jdbc.driver=com.mysql.jdbc.Driver<br/>
+jdbc.url=jdbc:mysql://localhost:3306/cms?useUnicode=true&characterEncoding=UTF-8<br/>
+jdbc.username=root<br/>
 jdbc.password=
