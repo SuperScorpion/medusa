@@ -1,6 +1,7 @@
 # medusa
 mybatis mapper
 <br/>
+<br/>
 程序结合使用拦截器实现具体的执行Sql,完全使用原生的Mybatis进行操作.没有一个Mapper的xml配置文件,但是却可以做到每个Mapper对应上百行xml才能完成的诸多功能.<br/>
 <br/>
 一.代码生成模块<br/>
@@ -33,7 +34,7 @@ mybatis mapper
 <br/>
 1.2 先将medusa的jar包添加至项目路径下<br/>
 <br/>
-1.3 medusa.properties 添加至resource文件夹下<br/>
+1.3 medusa.properties 添加至resource文件夹下（源码resource目录中有exp）<br/>
 <br/>
 1.4 执行方法 new Home("medusa.properties").process();<br/>
 <br/>
