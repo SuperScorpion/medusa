@@ -28,7 +28,7 @@ mybatis mapper
 
 
 通用mapper 使用说明文档
-<br/>
+<br/><br/>
 一. 基本功能
 新建一个空项目
 <br/>
@@ -59,15 +59,17 @@ exp:
    </property>
 </bean>
 <br/>
-至此 基本的crud功能便能使用。
 <br/>
-二. 如果需要参数校验功能则需要加入下列两行代码至xml
-<aop:aspectj-autoproxy proxy-target-class="true"/>
-<bean class="com.jy.medusa.validator.AnnotationHandler"/>
+至此 基本的crud功能便能使用。<br/>
 <br/>
-然后 controller 或者是 service 方法上 添加 注解 @ConParamValidator
-exp:       @ConParamValidator(entityClass = Users.class)
+二. 如果需要参数校验功能则需要加入下列两行代码至xml<br/>
+<aop:aspectj-autoproxy proxy-target-class="true"/><br/>
+<bean class="com.jy.medusa.validator.AnnotationHandler"/><br/>
+<br/>
+然后 controller 或者是 service 方法上 添加 注解 @ConParamValidator<br/>
+exp:       @ConParamValidator(entityClass = Users.class)<br/>
 Users类 属性记得加入@Length等标签.
+<br/>
 <br/>
 三. 在spring配置文件里添加 可使用热加载 mybatis xml 功能
 <bean id="hotspotReloader" class="com.jy.medusa.stuff.hotload.MyMapperRefresh">
@@ -83,67 +85,96 @@ Tips<br/>
 entity是必须生成的包 如果其他包不想生成可以不填写<br/>
 <br/>
 <br/>
-新功能<br/>
+多条件功能<br/>
 1.复合条件查询<br/>
 exp:<br/>
 Users s = new Users();<br/>
 s.setName("刚刚股份大股东");<br/>
+<br/>
 MyRestrictions mr = MyRestrictions.getMyRestrctions()<br/>
       .betweenParam("created_at", MyDateUtils.convertStrToDate("2016-07-01 12:12:13"), null)<br/>
       .betweenParam("updated_at", MyDateUtils.convertStrToDate("2016-07-01 12:12:13"), null)<br/>
       .likeParam("name", "xxx").greatEqualParam("home_area", 70);<br/>
+      <br/>
 Pager<Users> p = MyRestrictions.getPager().setPageSize(7);<br/>
+<br/>
 List<Users> z = bbbService.selectByCondition(s, "id, name, homeArea", p, mr);<br/>
+<br/>
 Tips:       betweenParam 后的参数不填写的话 默认为 new date();<br/>
+<br/>
 2.通过实体的某一字段来查询的<br/>
 Pager<Users> p = MyRestrictions.getPager().setPageSize(7);<br/>
 MyRestrictions mrp = MyRestrictions.getMyRestrctions().singleParam("name", "xxx");<br/>
 List<Users> z = bbbService.selectByCondition("id, name, homeArea", p, mrp);<br/>
+<br/>
 ...<br/>
+<br/>
 批量删除功能<br/>
 List o = new ArrayList();<br/>
 o.add(58);<br/>
 o.add(62);<br/>
 o.add(61);<br/>
 int i4 = bbbService.deleteMulti(o);<br/>
+<br/>
 tips: 所有方法都可以只查询部分字段 可以用数据库字段名或者是属性的名称<br/>
+<br/>
 其它的普通方法则跟现用的通用mapper一致 拥有原生的级联<br/>
+<br/>
+<br/>
 medusa.properties参数参考<br/>
 #生成的根包路径<br/>
 medusa.packagePath = com.jy.herms <br/>
+<br/>
 ###需要生成的表名称 用逗号分隔<br/>
 medusa.tableName = xx,xxx,xxxx <br/>
+<br/>
 ###java文件中需要在下次生成时保留的代码段的起末标记 //mark … //mark<br/>
 medusa.tag = mark<br/>
+<br/>
 ###根路径下的实体包名<br/>
 medusa.entitySuffix = entity <br/>
+<br/>
 ###生成service的路径包名<br/>
 medusa.serviceSuffix = service<br/>
+<br/>
 ###生成serviceImpl的路径包名<br/>
 medusa.serviceImplSuffix = service.impl <br/>
+<br/>
 ###生成的mapper的路径包名<br/>
 medusa.mapperSuffix = persistence <br/>
+<br/>
 ###生成的xml路径包名<br/>
 medusa.xmlSuffix = persistence.xml <br/>
+<br/>
 ###controlJsonSuffix和controlMortalSuffix二选一即可 区别在于一个是json类型一个是页面跳转的类型<br/>
+<br/>
 ###controller包的名称(二选一)<br/>
 medusa.controlJsonSuffix = controller <br/>
+<br/>
 ###controller包的名称(二选一)<br/>
 medusa.controlMortalSuffix = controller <br/>
+<br/>
 ###文件生成时添加的作者名称<br/>
 medusa.author = admins <br/>
+<br/>
 ###是否需要延迟加载级联属性的 为空则不启用它(一般不写)<br/>
 medusa.lazyLoad = y <br/>
+<br/>
 ###是否生成基础的 不写则不启用它(只在第一次生成时写)<br/>
 medusa.baseServiceSwitch = y <br/>
+<br/>
 ###是否在entity类上继承序列化接口 不写则不启用它(一般不写)<br/>
 medusa.entitySerializable =  <br/>
+<br/>
 ###生成关系关联属性字段(在需要级联功能才写)<br/>
 medusa.associationColumn= user_id <br/>
+<br/>
 ###生成的关系关联属性表 是否需要添加复数后缀s(表名是复数命名则写s)<br/>
 medusa.pluralAssociation = s <br/>
-###生成实体文件的后缀名 (一般不写)
-<br/>medusa.entityNameSuffix =
+<br/>
+###生成实体文件的后缀名 (一般不写)<br/>
+medusa.entityNameSuffix = <br/>
+<br/>
 ###数据库四项配置<br/>
 jdbc.driver=com.mysql.jdbc.Driver<br/>
 jdbc.url=jdbc:mysql://localhost:3306/cms?useUnicode=true&characterEncoding=UTF-8<br/>
