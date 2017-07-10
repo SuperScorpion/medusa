@@ -1,63 +1,45 @@
 # medusa
 mybatis mapper
-
-程序结合使用拦截器实现具体的执行Sql,完全使用原生的Mybatis进行操作.没有一个Mapper的xml配置文件,但是却可以做到每个Mapper对应上百行xml才能完成的诸多功能.
-
-一.代码生成模块
-1.1 能够生成entity mapper xml service controller层 不需要再手动编写基础代码.
-1.2 重新生成代码时可自动保留上次标记代码及智能替换相应代码的功能.
-1.3 (自定义模版功能待完善)
-
-二.通用mapper模块
-只需要继承通用mapper即可拥有基础的crud功能.
-2.1 支持原生mybatis 支持级联查询association.
-2.2 除了普通的条件查询还新增了 like、 between、 is null、single、not in等字段复合查询.
-2.3 增加每个查询功能的可选字段功能.
-2.4 使用了concurrentHashmap作缓存.
-2.5 内置page分页功能 解决现有pagehelper不支持最新版本mybatis jar版本.
-2.6 增加批量insert以及批量update.
-2.7 纯血统 只依赖mybatis一个jar.
-2.8 支持mybatis xml热部署.
-
-三.参数校验框架
-3.1 aspectj jar完成aop对controller层的参数校验值.
-
-
+<br/>
+程序结合使用拦截器实现具体的执行Sql,完全使用原生的Mybatis进行操作.没有一个Mapper的xml配置文件,但是却可以做到每个Mapper对应上百行xml才能完成的诸多功能.<br/>
+<br/>
+一.代码生成模块<br/>
+1.1 能够生成entity mapper xml service controller层 不需要再手动编写基础代码.<br/>
+1.2 重新生成代码时可自动保留上次标记代码及智能替换相应代码的功能.<br/>
+1.3 (自定义模版功能待完善)<br/>
+<br/>
+二.通用mapper模块<br/>
+只需要继承通用mapper即可拥有基础的crud功能.<br/>
+2.1 支持原生mybatis 支持级联查询association.<br/>
+2.2 除了普通的条件查询还新增了 like、 between、 is null、single、not in等字段复合查询.<br/>
+2.3 增加每个查询功能的可选字段功能.<br/>
+2.4 使用了concurrentHashmap作缓存.<br/>
+2.5 内置page分页功能 解决现有pagehelper不支持最新版本mybatis jar版本.<br/>
+2.6 增加批量insert以及批量update.<br/>
+2.7 纯血统 只依赖mybatis一个jar.<br/>
+2.8 支持mybatis xml热部署.<br/>
+<br/>
+三.参数校验框架<br/>
+3.1 aspectj jar完成aop对controller层的参数校验值.<br/>
 <br/>
 <br/>
-
-
-通用mapper 使用说明文档
-<br/><br/>
-一. 基本功能
-新建一个空项目
 <br/>
-先将medusa的jar包添加至项目路径下
 <br/>
-medusa.properties 添加至resource文件夹下
+通用mapper 使用说明文档<br/>
 <br/>
-执行方法 new Home("medusa.properties").process();
 <br/>
-基础crud各层次代码便已经生成好了
+一. 基本功能<br/>
+新建一个空项目<br/>
 <br/>
-com.jy.medusa.interceptor.MyInterceptor需要添加到org.mybatis.spring.SqlSessionFactoryBean
+先将medusa的jar包添加至项目路径下<br/>
 <br/>
-exp:
+medusa.properties 添加至resource文件夹下<br/>
 <br/>
-<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-       <property name="typeAliasesPackage" value="com.jy.herms.entity" />
-       <property name="dataSource" ref="dataSource" />
-   <property name="mapperLocations">
-      <array>
-         <value>classpath:com/x/xx/xxx/xml/*.xml</value>
-      </array>
-   </property>
-   <property name="plugins">
-      <array>
-         <bean class="com.jy.medusa.interceptor.MyInterceptor"/>
-      </array>
-   </property>
-</bean>
+执行方法 new Home("medusa.properties").process();<br/>
+<br/>
+基础crud各层次代码便已经生成好了<br/>
+<br/>
+com.jy.medusa.interceptor.MyInterceptor需要添加到org.mybatis.spring.SqlSessionFactoryBean的plugins里<br/>
 <br/>
 <br/>
 至此 基本的crud功能便能使用。<br/>
@@ -89,7 +71,7 @@ entity是必须生成的包 如果其他包不想生成可以不填写<br/>
 1.复合条件查询<br/>
 exp:<br/>
 Users s = new Users();<br/>
-s.setName("刚刚股份大股东");<br/>
+s.setName("xxx");<br/>
 <br/>
 MyRestrictions mr = MyRestrictions.getMyRestrctions()<br/>
       .betweenParam("created_at", MyDateUtils.convertStrToDate("2016-07-01 12:12:13"), null)<br/>
@@ -117,6 +99,8 @@ o.add(61);<br/>
 int i4 = bbbService.deleteMulti(o);<br/>
 <br/>
 tips: 所有方法都可以只查询部分字段 可以用数据库字段名或者是属性的名称<br/>
+<br/>
+批量新增和批量更新可指定字段 并且批量新增可回写所有id<br/>
 <br/>
 其它的普通方法则跟现用的通用mapper一致 拥有原生的级联<br/>
 <br/>
