@@ -6,7 +6,7 @@
 
     <groupId>jy</groupId>
     <artifactId>medusa</artifactId>
-    <version>2.0.1</version>
+    <version>2.1.0</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -15,7 +15,7 @@
         <!-- log4j日志文件管理包版本 -->
         <slf4j.version>1.7.25</slf4j.version>
         <log4j.version>1.2.17</log4j.version>
-        <org.aspectj>1.8.1</org.aspectj>
+        <org.aspectj>1.8.10</org.aspectj>
         <com.alibaba.fastjson>1.2.29</com.alibaba.fastjson>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -26,6 +26,7 @@
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis</artifactId>
             <version>${mybatis.version}</version>
+            <optional>true</optional><!--让用户显示写-->
         </dependency>
 
         <dependency>
@@ -51,8 +52,9 @@
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjrt</artifactId>
             <version>${org.aspectj}</version>
+            <optional>true</optional><!--让用户显示写-->
         </dependency>
-<!--        <dependency>
+        <!--<dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
             <version>${org.aspectj}</version>
