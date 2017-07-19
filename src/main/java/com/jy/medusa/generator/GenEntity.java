@@ -201,8 +201,6 @@ public class GenEntity {
     private void processAllMethod(StringBuilder sb) {
         for (int i = 0; i < colNames.length; i++) {
 
-            //if(colNames[i].trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY)) continue;//去除生成Id get set 方法
-
             String p1 = "\tpublic void set" + MyGenUtils.upcaseFirst(colNames[i]) + "(" + sqlType2JavaType(colTypes[i]) + " " + colNames[i] + ") {\r\n";
             String paramStr1 = MyGenUtils.genMarkStr(markStrList, p1, "{");
             if(paramStr1 != null) {
@@ -280,8 +278,6 @@ public class GenEntity {
      */
     private void processAllAttrs(StringBuilder sb) {
         for (int i = 0; i < colNames.length; i++) {
-
-            //if(colNames[i].trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY)) continue;//去除生成ID属性
 
             //添加注释
             if(MyUtils.isNotBlank(commentMap.get(colNames[i]))) {

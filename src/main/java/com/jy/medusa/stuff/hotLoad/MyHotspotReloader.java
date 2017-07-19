@@ -4,6 +4,7 @@ package com.jy.medusa.stuff.hotload;
  * Created by neo on 2016/12/10.
  */
 
+import com.jy.medusa.stuff.exception.MedusaException;
 import com.jy.medusa.utils.MyReflectionUtils;
 import com.jy.medusa.utils.MyUtils;
 import com.jy.medusa.utils.SystemConfigs;
@@ -87,7 +88,6 @@ import java.util.*;
                         xmlMapperBuilder.parse();
                     } catch (IOException e) {
                         e.printStackTrace();
-                        continue;
                     }
                 }
 
@@ -108,7 +108,7 @@ import java.util.*;
      */
     private void scanMapperXml(String xmlAbsolutelyPath) throws IOException {
 
-        if(MyUtils.isBlank(xmlPath)) throw new RuntimeException("Mybatis xmlPath is null!");
+        if(MyUtils.isBlank(xmlPath)) throw new MedusaException("Medusa: Your mybatis xmlPath is null!");
 
         File xmlDirs = new File(xmlAbsolutelyPath);
 
@@ -134,7 +134,7 @@ import java.util.*;
      */
     private void removeConfig(Configuration configuration) throws Exception {
 
-        if(configuration == null) throw new RuntimeException("removeConfig - configuration is null!");
+        if(configuration == null) throw new MedusaException("Medusa: The configuration param is null!");
 
         String[] p = new String[]{"mappedStatements", "caches", "resultMaps", "parameterMaps", "keyGenerators", "sqlFragments"};
 
@@ -147,24 +147,25 @@ import java.util.*;
 
         for(String f : fieldName) {
 
-            if(MyUtils.isBlank(f)) continue;
+            if (MyUtils.isNotBlank(f)) {
 
-            Field field = MyReflectionUtils.obtainAccessibleField(configuration, f);
-            Map<Object, Object> configMap = (Map) field.get(configuration);
+                Field field = MyReflectionUtils.obtainAccessibleField(configuration, f);
+                Map<Object, Object> configMap = (Map) field.get(configuration);
 
-            if(f.equals("mappedStatements")) {
+                if (f.equals("mappedStatements")) {
 
-                List<String> paramList = new ArrayList<>();///////标记为非框架的 内部方法名
+                    List<String> paramList = new ArrayList<>();///////标记为非框架的 内部方法名
 
-                for(Object v : configMap.keySet()) {
-                    if(!mappedStatementCacheKeyList.contains(v.toString())) paramList.add(v.toString());
+                    for (Object v : configMap.keySet()) {
+                        if (!mappedStatementCacheKeyList.contains(v.toString())) paramList.add(v.toString());
+                    }
+
+                    for (String z : paramList) {
+                        configMap.remove(z);
+                    }
+                } else {
+                    configMap.clear();
                 }
-
-                for(String z : paramList) {
-                    configMap.remove(z);
-                }
-            } else {
-                configMap.clear();
             }
         }
     }
@@ -173,10 +174,11 @@ import java.util.*;
     private void clearSets(Configuration configuration, String[] fieldName) throws Exception {
 
         for(String f : fieldName) {
-            if(MyUtils.isBlank(f)) continue;
-            Field field = MyReflectionUtils.obtainAccessibleField(configuration, f);
-            Set setConfig = (Set) field.get(configuration);
-            setConfig.clear();
+            if(MyUtils.isNotBlank(f)) {
+                Field field = MyReflectionUtils.obtainAccessibleField(configuration, f);
+                Set setConfig = (Set) field.get(configuration);
+                setConfig.clear();
+            }
         }
     }
 

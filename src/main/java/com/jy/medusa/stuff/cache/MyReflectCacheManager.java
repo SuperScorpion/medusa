@@ -1,5 +1,6 @@
 package com.jy.medusa.stuff.cache;
 
+import com.jy.medusa.stuff.exception.MedusaException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +31,7 @@ public class MyReflectCacheManager {
      */
     public static Method[] getCacheMethodArray(Class<?> c) {
 
-        if(c == null) return null;
+        if(c == null) throw new MedusaException("Medusa: The class param is null");
 
         if(METHODS_CACHEMAP.containsKey(c)) {
             return METHODS_CACHEMAP.get(c);
@@ -46,7 +47,7 @@ public class MyReflectCacheManager {
 
     public static Field[] getCacheFieldArray(Class<?> c) {
 
-        if(c == null) return null;
+        if(c == null) throw new MedusaException("Medusa: The class param is null");
 
         if(FIELDS_CACHEMAP.containsKey(c)) {
             return FIELDS_CACHEMAP.get(c);

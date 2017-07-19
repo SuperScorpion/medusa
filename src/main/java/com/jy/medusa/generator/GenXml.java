@@ -52,13 +52,20 @@ public class GenXml {
     }
 
     private void changeTypes(String[] colTypes, String[] colTypesSql){//TODO
-        for(int i=0; i < colTypesSql.length ;i++){
-            if(MyUtils.isBlank(colTypesSql[i])) continue;
 
-            switch (colTypesSql[i]) {
-                case "INT" : colTypes[i] = "INTEGER"; break;
-                case "DATETIME" : colTypes[i] = "TIMESTAMP"; break;
-                default: colTypes[i] = colTypesSql[i]; break;
+        for(int i=0; i < colTypesSql.length ;i++) {
+            if (MyUtils.isNotBlank(colTypesSql[i])) {
+                switch (colTypesSql[i]) {
+                    case "INT":
+                        colTypes[i] = "INTEGER";
+                        break;
+                    case "DATETIME":
+                        colTypes[i] = "TIMESTAMP";
+                        break;
+                    default:
+                        colTypes[i] = colTypesSql[i];
+                        break;
+                }
             }
         }
     }
@@ -219,6 +226,7 @@ public class GenXml {
             if(MyUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
 
                 String p = colSqlNames[i].trim().replace("_id", "").trim();
+
                 if(MyUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
                     p = p.concat(pluralAssociation);
                 }
@@ -227,7 +235,7 @@ public class GenXml {
 
                 String[] colSqlNames = (String[]) resultMap.get("colSqlNames");
                 String[] colNames = (String[]) resultMap.get("colNames");
-                
+
                 StringBuilder sbb = new StringBuilder();
 
                 for (int j = 0; j < colSqlNames.length; j++) {
@@ -235,12 +243,11 @@ public class GenXml {
                     if(colSqlNames[j].equals(colNames[j])) {
                         sbb.append(colSqlNames[j]);
                         sbb.append(",");
-                        continue;
+                    } else {
+                        sbb.append(colSqlNames[j] + " ");
+                        sbb.append(colNames[j]);
+                        sbb.append(",");
                     }
-
-                    sbb.append(colSqlNames[j] + " ");
-                    sbb.append(colNames[j]);
-                    sbb.append(",");
                 }
 
                 if(sbb.indexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));//去掉最后一个,

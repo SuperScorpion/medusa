@@ -11,6 +11,10 @@ import java.util.List;
  */
 public class GenBaseService {
 
+    private List<String> markServiceList;
+    private List<String> markServiceImplList;
+    private String tag;//标记 mark
+
     private String servicePath;
     private String serviceImplPath;
 
@@ -197,9 +201,5 @@ public class GenBaseService {
 
         return sbb.toString();
     }
-
-    private List<String> markServiceList;
-    private List<String> markServiceImplList;
-    private String tag;//标记 mark
 
 }

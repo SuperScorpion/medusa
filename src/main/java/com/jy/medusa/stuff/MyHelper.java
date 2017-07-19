@@ -77,7 +77,7 @@ public class MyHelper {
                 }
             }
 //        }
-        throw new RuntimeException("Medusa: Can't get Mapper<T> generic type: " + sn);
+        throw new MedusaException("Medusa: Can't get Mapper<T> generic type: " + sn);
     }
 
     /**
@@ -192,7 +192,7 @@ public class MyHelper {
     private static MySqlGenerator initSqlGenerator(Class<?> entityClass) {
 
         if(entityClass == null) {
-            throw new RuntimeException("Medusa: initSqlGenerator No entity type introduced!");
+            throw new MedusaException("Medusa: initSqlGenerator No entity type introduced!");
         }
 
         String pkName = SystemConfigs.PRIMARY_KEY;//实体类主键名称
@@ -209,27 +209,29 @@ public class MyHelper {
         String columnName;
         for (Field field : fields) {
 
-            if(field == null) continue;
+            if (field != null) {
 
-            fieldName = field.getName();
+                fieldName = field.getName();
 
-            Column tableColumn = field.getAnnotation(Column.class);
+                Column tableColumn = field.getAnnotation(Column.class);
 
-            if (tableColumn == null) continue;
+                if (tableColumn != null) {
 
-            columnName = tableColumn.name();
+                    columnName = tableColumn.name();
 
-            if (field.isAnnotationPresent(Id.class)) pkName = tableColumn.name();
+                    if (field.isAnnotationPresent(Id.class)) pkName = tableColumn.name();
 
-            // 如果未标识特殊的列名，默认取字段名
-            columnName = MyUtils.isBlank(columnName) ? MyGenUtils.camelToUnderline(fieldName) : columnName.trim();
+                    // 如果未标识特殊的列名，默认取字段名
+                    columnName = MyUtils.isBlank(columnName) ? MyGenUtils.camelToUnderline(fieldName) : columnName.trim();
 
-            currentFieldTypeNameMap.put(fieldName, field.getType().getSimpleName());
-            currentColumnFieldNameMap.put(columnName, fieldName);
+                    currentFieldTypeNameMap.put(fieldName, field.getType().getSimpleName());
+                    currentColumnFieldNameMap.put(columnName, fieldName);
+                }
+            }
         }
 
         Table table = entityClass.getAnnotation(Table.class);
-        if (table == null) throw new RuntimeException("Medusa: class - " + entityClass + " Not using @Table annotation identification!");
+        if (table == null) throw new MedusaException("Medusa: class - " + entityClass + " Not using @Table annotation identification!");
         tableName = table.name();
 
         return new MySqlGenerator(currentColumnFieldNameMap, currentFieldTypeNameMap, tableName, pkName, entityClass);
@@ -275,24 +277,23 @@ public class MyHelper {
         if(psArray != null && psArray.length != 0) {
             for (Object z : psArray) {//["a,b,b,n,m","a"] 可选的字段有可能是分开写入的 多参数传入的值
 
-                if (z instanceof String) {
-
-                    if (MyUtils.isBlank(z.toString())) continue;
+                if (z instanceof String && MyUtils.isNotBlank(z.toString())) {
 
                     String[] p = z.toString().split(",");//modify by neo on 2016.12.04
 
                     for (String m : p) {
 
-                        if (MyUtils.isBlank(m)) continue;
+                        if (MyUtils.isNotBlank(m)) {
 
 //                    if(m.contains("_"))//让用户用的可选字段 属性名字和数据库表字段名称容错
 //                        sbb.append(m.trim());
-                        if (currentFieldColumnNameMap.containsKey(m.trim()))//modify by neo on 2016.11.19
-                            sbb.append(currentFieldColumnNameMap.get(m.trim()));
-                        else
-                            sbb.append(m.trim());//都取不到时候则
+                            if (currentFieldColumnNameMap.containsKey(m.trim()))//modify by neo on 2016.11.19
+                                sbb.append(currentFieldColumnNameMap.get(m.trim()));
+                            else
+                                sbb.append(m.trim());//都取不到时候则
 
-                        sbb.append(",");
+                            sbb.append(",");
+                        }
                     }
                 }
             }
@@ -312,7 +313,7 @@ public class MyHelper {
      */
     public static String buildColumnNameForMedusaGaze(String ori, Map<String, String> currentFieldColumnNameMap) {
 
-        if(MyUtils.isBlank(ori)) return "";
+        if(MyUtils.isBlank(ori)) throw new MedusaException("Medusa: The column string is blank");
 
         String result;
 //        if (ori.contains("_"))//让用户用的可选字段 属性名字和数据库表字段名称容错
@@ -509,27 +510,27 @@ public class MyHelper {
 
         for(String fieName : currentFieldTypeNameMap.keySet()) {//同一个hashset 遍历的元素顺序是否一样的
 
-            if(t != null && MyReflectionUtils.obtainFieldValue(t, fieName) == null) continue;///modify by neo on 20170117 selective
+            if (t == null || (t != null && MyReflectionUtils.obtainFieldValue(t, fieName) != null)) {///modify by neo on 20170117 selective
 
-            if(fieName.trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY)) {
+                if (fieName.trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY)) {
 
 //                sbb.append("#{id, jdbcType=" + javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)) + "},");
-                sbb.append("#{pobj." + SystemConfigs.PRIMARY_KEY + ", jdbcType=" + javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)) + "},");
+                    sbb.append("#{pobj." + SystemConfigs.PRIMARY_KEY + ", jdbcType=" + javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)) + "},");
 
-                sbs.append(currentFieldColumnNameMap.get(fieName));
-                sbs.append(",");
+                    sbs.append(currentFieldColumnNameMap.get(fieName));
+                    sbs.append(",");
+                } else {
 
-                continue;
+                    sbb.append("#{pobj.");
+                    sbb.append(fieName);
+                    sbb.append(", jdbcType=");
+                    sbb.append(javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)));
+                    sbb.append("},");
+
+                    sbs.append(currentFieldColumnNameMap.get(fieName));
+                    sbs.append(",");
+                }
             }
-
-            sbb.append("#{pobj.");
-            sbb.append(fieName);
-            sbb.append(", jdbcType=");
-            sbb.append(javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)));
-            sbb.append("},");
-
-            sbs.append(currentFieldColumnNameMap.get(fieName));
-            sbs.append(",");
         }
 
         if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
@@ -550,7 +551,7 @@ public class MyHelper {
 
         List<Object> obs = t instanceof List ? (ArrayList)t : new ArrayList<>();
 
-        if(obs.size() == 0) return "";
+        if(obs.size() == 0) throw new MedusaException("Medusa: insertBatch method parameter is null or empty!");
 
         String[] columnArr = paramColumn.split(",");
 
@@ -573,16 +574,16 @@ public class MyHelper {
 
                     sbb.append("#{pobj.param1[").append(i).append("].").append(SystemConfigs.PRIMARY_KEY).append(", jdbcType=").append(javaType2SqlTypes(currentFieldTypeNameMap.get(fieName))).append("},");
 
-                    continue;
-                }
+                } else {
 
-                sbb.append("#{pobj.param1[");
-                sbb.append(i);
-                sbb.append("].");
-                sbb.append(fieName);
-                sbb.append(", jdbcType=");
-                sbb.append(MyHelper.javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)));
-                sbb.append("},");
+                    sbb.append("#{pobj.param1[");
+                    sbb.append(i);
+                    sbb.append("].");
+                    sbb.append(fieName);
+                    sbb.append(", jdbcType=");
+                    sbb.append(MyHelper.javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)));
+                    sbb.append("},");
+                }
             }
 
             if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
@@ -609,7 +610,7 @@ public class MyHelper {
 
         List<Object> obs = t instanceof List ? (ArrayList)t : new ArrayList<>();
 
-        if(obs.size() == 0) return "";
+        if(obs.size() == 0) throw new MedusaException("Medusa: updateBatch method parameter is null or empty!");
 
         String[] columnArr = paramColumn.split(",");
 
@@ -619,12 +620,6 @@ public class MyHelper {
         for (; i < len; i++) {
             sbb.append("(");
             for(String columns : columnArr) {
-
-                /*if(columns.equals(SystemConfigs.PRIMARY_KEY)) {
-                    int v = sbb.lastIndexOf("(");
-                    sbb.insert(v + 1, "#{pobj.param1[" + i + "]." + SystemConfigs.PRIMARY_KEY + "},");
-                    continue;
-                }*/
 
                 sbb.append("#{pobj.param1[");
                 sbb.append(i);
@@ -655,8 +650,9 @@ public class MyHelper {
         StringBuilder sbb = new StringBuilder(512);
 
         for(String columns : columnArr) {
-            if(columns.equals(SystemConfigs.PRIMARY_KEY)) continue;
-            sbb.append(columns + "=values(" + columns + "),");
+            if(!columns.equals(SystemConfigs.PRIMARY_KEY)) {
+                sbb.append(columns + "=values(" + columns + "),");
+            }
         }
 
         if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
@@ -689,7 +685,7 @@ public class MyHelper {
 
         List<Object> obs = t instanceof List ? (ArrayList)t : new ArrayList<>();
 
-        if(obs.size() == 0) return "";
+        if(obs.size() == 0) throw new MedusaException("Medusa: The list param is null or empty");
 
         String[] columnArr = paramColumn.split(",");
 
@@ -704,25 +700,28 @@ public class MyHelper {
         int len = obs.size();
         for( String columns : columnArr) {
 
-            if(columns.equals(SystemConfigs.PRIMARY_KEY)) continue;
+            if(!columns.equals(SystemConfigs.PRIMARY_KEY)) {
 
-            sbb.append(columns).append(" = CASE ").append(SystemConfigs.PRIMARY_KEY);
+                sbb.append(columns).append(" = CASE ").append(SystemConfigs.PRIMARY_KEY);
 
-            for (int i = 0 ; i < len; i++) {
+                for (int i = 0; i < len; i++) {
 
-                if(flag) sbbIdd.append("#{pobj.param1[").append(i).append("].").append(SystemConfigs.PRIMARY_KEY).append("},");
+                    if (flag) {
+                        sbbIdd.append("#{pobj.param1[").append(i).append("].").append(SystemConfigs.PRIMARY_KEY).append("},");
+                    }
 
-                sbb.append(" WHEN ")
-                    .append("#{pobj.param1[").append(i).append("].").append(SystemConfigs.PRIMARY_KEY).append("}")
-                    .append(" THEN ")
-                    .append("#{pobj.param1[").append(i).append("].").append(currentColumnFieldNameMap.get(columns)).append("}");
+                    sbb.append(" WHEN ")
+                            .append("#{pobj.param1[").append(i).append("].").append(SystemConfigs.PRIMARY_KEY).append("}")
+                            .append(" THEN ")
+                            .append("#{pobj.param1[").append(i).append("].").append(currentColumnFieldNameMap.get(columns)).append("}");
+                }
+
+                if (flag && sbbIdd.lastIndexOf(",") != -1) sbbIdd.deleteCharAt(sbbIdd.lastIndexOf(","));
+
+                flag = false;
+
+                sbb.append(" END, ");
             }
-
-            if(flag && sbbIdd.lastIndexOf(",") != -1) sbbIdd.deleteCharAt(sbbIdd.lastIndexOf(","));
-
-            flag = false;
-
-            sbb.append(" END, ");
         }
 
         if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
@@ -758,7 +757,8 @@ public class MyHelper {
             return "IMAGE";
         } else if (javaType.equals("Clob")) {
             return "TEXT";
+        } else {
+            throw new MedusaException("Medusa: The java type no one can match");
         }
-        return null;
     }
 }

@@ -1,6 +1,7 @@
 package com.jy.medusa.provider;
 
 import com.jy.medusa.stuff.MyHelper;
+import com.jy.medusa.stuff.exception.MedusaException;
 import org.apache.ibatis.binding.MapperMethod;
 
 import java.util.Map;
@@ -17,12 +18,13 @@ public class BaseUpdateProvider {
      */
     public String updateByPrimaryKey(Map<String, Object> m) {
 
-        if(m.get("pobj") instanceof MapperMethod.ParamMap)
+        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
             return MyHelper.getSqlGenerator(m).sql_modify_null(
                     ((MapperMethod.ParamMap) m.get("pobj")).get("param1"),
                     ((MapperMethod.ParamMap) m.get("pobj")).get("param2"));
-
-        throw new RuntimeException("Medusa: updateByPrimaryKey MapperMethod.ParamMap Exception");
+        } else {
+            throw new MedusaException("Medusa: updateByPrimaryKey MapperMethod.ParamMap Exception");
+        }
     }
 
     /**
@@ -41,11 +43,12 @@ public class BaseUpdateProvider {
      */
     public String updateByPrimaryKeyBatch(Map<String, Object> m) {
 
-        if(m.get("pobj") instanceof MapperMethod.ParamMap)
+        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
             return MyHelper.getSqlGenerator(m).sql_modifyOfBatch(
                     ((MapperMethod.ParamMap) m.get("pobj")).get("param1"),
                     ((MapperMethod.ParamMap) m.get("pobj")).get("param2"));
-
-        throw new RuntimeException("Medusa: updateByPrimaryKeyBatch MapperMethod.ParamMap Exception");
+        } else {
+            throw new MedusaException("Medusa: updateByPrimaryKeyBatch MapperMethod.ParamMap Exception");
+        }
     }
 }

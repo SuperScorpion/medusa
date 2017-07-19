@@ -1,5 +1,6 @@
 package com.jy.medusa.stuff.cache;
 
+import com.jy.medusa.stuff.exception.MedusaException;
 import com.jy.medusa.utils.MySqlGenerator;
 
 import java.util.Map;
@@ -21,13 +22,13 @@ public class MyHelperCacheManager {
 
     public static Class<?> getCacheClass(String p) {
 
-        if(p == null) return null;
+        if(p == null) throw new MedusaException("Medusa: The param key is null");
 
         if(entityClassMap.containsKey(p)) {
             return entityClassMap.get(p);
+        } else {
+            return null;
         }
-
-        return null;
     }
 
     public static void putCacheClass(String p, Class<?> t) {
@@ -37,13 +38,13 @@ public class MyHelperCacheManager {
 
     public static MySqlGenerator getCacheGenerator(String p) {
 
-        if(p == null) return null;
+        if(p == null) throw new MedusaException("Medusa: The param key is null");
 
         if(generatorMap.containsKey(p)) {
             return generatorMap.get(p);
+        } else {
+            return null;
         }
-
-        return null;
     }
 
     public static void putCacheGenerator(String p, MySqlGenerator t) {

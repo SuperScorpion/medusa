@@ -1,5 +1,7 @@
 package com.jy.medusa.utils;
 
+import com.jy.medusa.stuff.exception.MedusaException;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -20,7 +22,7 @@ public class MyDateUtils {
      */
     public static String convertDateToStr(Date date, String regx){
 
-        if(date == null) return "";
+        if(date == null) throw new MedusaException("Medusa: The date param is null");
 
         if(MyUtils.isBlank(regx)) regx = DATE_FULL_STR;
 
@@ -35,7 +37,7 @@ public class MyDateUtils {
      */
     public static Date convertStrToDate(String dateStr){
 
-        if(MyUtils.isBlank(dateStr)) return null;
+        if(MyUtils.isBlank(dateStr)) throw new MedusaException("Medusa: The date string param is null");
         dateStr = dateStr.split("\\.")[0];//处理末尾的.0
         SimpleDateFormat sdf;
 
@@ -52,7 +54,7 @@ public class MyDateUtils {
         } else if(Pattern.compile(SystemConfigs.REGX_TIME_YYYY0mm0dd_SIMPLE_6).matcher(dateStr).matches()){
             sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
         } else {
-            return null;
+            throw new MedusaException("Medusa: The date string no one can match, please check it");
         }
 
         Date result = null;

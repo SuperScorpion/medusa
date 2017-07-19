@@ -160,14 +160,15 @@ public class Home {
             System.out.println("大兄弟你的entitySuffix没填写!");
             result = false;
         }
-
         if(MyUtils.isBlank(jdbcDriver)) {
             System.out.println("大兄弟你的jdbcDriver没填写!");
             result = false;
-        }if(MyUtils.isBlank(jdbcUrl)) {
+        }
+        if(MyUtils.isBlank(jdbcUrl)) {
             System.out.println("大兄弟你的jdbcUrl没填写!");
             result = false;
-        }if(MyUtils.isBlank(jdbcUsername)) {
+        }
+        if(MyUtils.isBlank(jdbcUsername)) {
             System.out.println("大兄弟你的jdbcUsername没填写!");
             result = false;
         }

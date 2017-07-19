@@ -101,6 +101,8 @@ public class MyInterceptor implements Interceptor {
 
                             MyReflectionUtils.invokeSetterMethod(p.get("pobj"), SystemConfigs.PRIMARY_KEY, m);//注入属性id值
                         }
+                    } else {
+//                        do nothing
                     }
                 }
             } else {///如果为普通方法 自定义

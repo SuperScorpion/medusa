@@ -27,6 +27,7 @@ public class MySqlGenerator {
     private Map<String, String> currentFieldTypeNameMap;
     private Class<?> entityClass;
 
+
     public MySqlGenerator(Map<String, String> cfMap, Map<String, String> ftMap, String tableName, String pkName, Class<?> entityClass) {
         this.columns = cfMap.keySet();
         this.tableName = tableName;
@@ -50,10 +51,7 @@ public class MySqlGenerator {
 
         if(paramColumn.equals("*")) paramColumn = columnsStr;
 
-
         String dynamicSqlForBatch = MyHelper.concatInsertDynamicSqlForBatch(currentColumnFieldNameMap, currentFieldTypeNameMap, t, paramColumn);
-
-        if(MyUtils.isBlank(dynamicSqlForBatch)) throw new MedusaException("Medusa: insertBatch method parameter is null or empty!");
 
         int sbbLength = paramColumn.length() + tableName.length() + dynamicSqlForBatch.length() + 33;
 
@@ -77,8 +75,8 @@ public class MySqlGenerator {
     public String sql_create() {//modify by neo on 2016.11.12 Object t
 //        List<Object> values = obtainFieldValues(t);// modify by neo on 2016.11.15
 
-        String[] parArra = MyHelper.concatInsertDynamicSql(currentFieldTypeNameMap, currentFieldColumnNameMap, null);
-        String insertColumn = parArra[1], insertDynamicSql = parArra[0];
+        String[] paraArray = MyHelper.concatInsertDynamicSql(currentFieldTypeNameMap, currentFieldColumnNameMap, null);
+        String insertColumn = paraArray[1], insertDynamicSql = paraArray[0];
 
         int sbbLength = insertColumn.length() + tableName.length() + insertDynamicSql.length() + 33;
 
@@ -100,6 +98,8 @@ public class MySqlGenerator {
      * @param t
      */
     public String sql_create_selective(Object t) {//modify by neo on 20170117
+
+        if(t == null) throw new MedusaException("Medusa: The entity param is null");
 
         String[] dynamicSqlForSelective = MyHelper.concatInsertDynamicSql(currentFieldTypeNameMap, currentFieldColumnNameMap, t);
         String insertColumn = dynamicSqlForSelective[1], insertDynamicSql = dynamicSqlForSelective[0];
@@ -225,17 +225,18 @@ public class MySqlGenerator {
 
         List<String> values = obtainColumnValuesForDeleteByCondition(t);
 
-        int valuesLen = values == null || values.isEmpty() ? 0 : values.size();
+        int valuesLen = (values == null || values.isEmpty()) ? 0 : values.size();
 
         int len = 30 + tableName.length() + (valuesLen * 36);
 
         StringBuilder sql_build = new StringBuilder(len);
         sql_build.append("DELETE FROM ").append(tableName).append(" WHERE ");
 
-        if(values == null || values.isEmpty())
-            sql_build.append("1=1");
-        else
+        if (values == null || values.isEmpty()) {
+            sql_build.append("1!=1");//modify by neo on 2017 07
+        } else {
             sql_build.append(MyUtils.join(values, " AND "));
+        }
 
         String sql = sql_build.toString();
         logger.debug("Medusa: Generated SQL ^_^ " + sql);
@@ -254,7 +255,9 @@ public class MySqlGenerator {
 
         if(paramColumn.equals("*")) paramColumn = columnsStr;
 
-        if(paramColumn != columnsStr && (!paramColumn.contains("," + pkName) || !paramColumn.startsWith(pkName + ","))) paramColumn = pkName + "," + paramColumn;/////modify by neo on 2017.04.20
+        boolean notContainPkName = !paramColumn.contains("," + pkName) || !paramColumn.startsWith(pkName + ",");
+
+        if(paramColumn != columnsStr && notContainPkName) paramColumn = pkName + "," + paramColumn;/////modify by neo on 2017.04.20
 
         String dynamicSqlForBatch = MyHelper.concatUpdateDynamicSqlValuesForBatchPre(tableName, t, paramColumn, currentColumnFieldNameMap);
 
@@ -274,11 +277,11 @@ public class MySqlGenerator {
         List<String> values = obtainColumnValusForModify(t);
         //Object id = MyReflectionUtils.obtainFieldValue(t, currentColumnFieldNameMap.get(pkName));
 
-        //if(id == null) throw new MedusaException("Medusa:  Update method incoming primary key value is null (selective)");//modify by neo on 2016.11.04
+        //if(id == null) throw new MedusaException("Medusa: Update method incoming primary key value is null (selective)");//modify by neo on 2016.11.04
 
         //id = handleValue(id);///这是为了处理id不为 int 变成 string 时 modify by neo on 2016.11.2
 
-        if(values == null || values.isEmpty()) return "";
+        if(values == null || values.isEmpty()) throw new MedusaException("Medusa: There is nothing to update");
 
         int len = 30 + tableName.length() + (pkName.length() << 1) + (values.size() * 30);
 
@@ -300,9 +303,13 @@ public class MySqlGenerator {
      * @return
      */
     private String reSolveColumn(Object... ps){
-        return (ps == null || ps.length != 1 || ps[0] == null || ((Object[])ps[0]).length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect((Object[])ps[0], currentFieldColumnNameMap);
+
+        boolean isValidColumn = (ps == null || ps.length != 1 || ps[0] == null || ((Object[])ps[0]).length == 0);
+
+        return isValidColumn ? columnsStr : MyHelper.buildColumnNameForSelect((Object[])ps[0], currentFieldColumnNameMap);
     }
-    
+
+
     /**
      * 生成更新的SQL
      * @param t
@@ -356,7 +363,7 @@ public class MySqlGenerator {
      * @param t
      * @return
      */
-    private List<String> obtainColumnValusForModify(Object t) {
+    private List<String>  obtainColumnValusForModify(Object t) {
 
         if(t == null) return null;
 
@@ -426,9 +433,11 @@ public class MySqlGenerator {
 
                 i++;
             }
-        }
 
-        return null;
+            return null;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -439,7 +448,7 @@ public class MySqlGenerator {
      */
     private List<String> obtainColumnValuesForDeleteByCondition(Object t) {
 
-        if(t == null) return null;
+        if(t == null) throw new MedusaException("Medusa: The entity param is null");
 
         List<String> colVals = new ArrayList<>();
         for (String column : columns) {
@@ -475,10 +484,11 @@ public class MySqlGenerator {
 
         sql_build.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName).append(" WHERE ");
 
-        if(values == null || values.isEmpty())
+        if (values == null || values.isEmpty()) {
             sql_build.append("1=1");
-        else
+        } else {
             sql_build.append(MyUtils.join(values, " AND "));
+        }
 
         sql_build.append(" limit 0,1");
 
@@ -559,10 +569,11 @@ public class MySqlGenerator {
         StringBuilder sql_build = new StringBuilder(len);
         sql_build.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName).append(" WHERE ");
 
-        if(values == null || values.isEmpty())
+        if (values == null || values.isEmpty()) {
             sql_build.append("1=1");
-        else
+        } else {
             sql_build.append(MyUtils.join(values, " AND "));
+        }
 
         String sql = sql_build.toString();
 
@@ -598,11 +609,11 @@ public class MySqlGenerator {
 
         // 从缓存里拿到分页查询语句 必须清理掉缓存
         String cacheSq = MyHelper.myThreadLocal.get();
-        if(MyUtils.isNotBlank(cacheSq)) {
+        if (MyUtils.isNotBlank(cacheSq)) {
             MyHelper.myThreadLocal.remove();
-            logger.debug("Medusa:  Successfully cleared the query page in the cache");
+            logger.debug("Medusa: Successfully cleared the query page in the cache");
             String countSq = cacheSq.replaceAll("SELECT\\b.*\\bFROM", "SELECT COUNT(1) FROM").replaceAll("\\border by\\b.*", "");
-            logger.debug("Medusa:  Successfully returns the count sql of pages in the cache ^_^ " + countSq);
+            logger.debug("Medusa: Successfully returns the count sql of pages in the cache ^_^ " + countSq);
             return countSq;
         }
 
@@ -616,10 +627,11 @@ public class MySqlGenerator {
         StringBuilder sbb = new StringBuilder(len);
         sbb.append("SELECT COUNT(1) ").append(" FROM ").append(tableName).append(" WHERE ");
 
-        if(values == null || values.isEmpty())
+        if (values == null || values.isEmpty()) {
             sbb.append("1=1");
-        else
+        } else {
             sbb.append(MyUtils.join(values, " AND "));
+        }
 
         //多条件查询
         if(objParams != null && objParams.length > 0) {
@@ -666,8 +678,8 @@ public class MySqlGenerator {
         //获取到缓存中的分页查询语句 modify by neo on 2016.11.16
         ///分页时先执行查询分页再执行查询分页 再执行总计数句 boundsql(因为)
         String cacheSq = MyHelper.myThreadLocal.get();
-        if(MyUtils.isNotBlank(cacheSq)) {
-            logger.debug("Medusa:  Successfully returns the query page in the cache ^_^ " + cacheSq);
+        if (MyUtils.isNotBlank(cacheSq)) {
+            logger.debug("Medusa: Successfully returns the query page in the cache ^_^ " + cacheSq);
             return cacheSq;
         }
 
@@ -683,10 +695,11 @@ public class MySqlGenerator {
         sbb.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName).append(" WHERE ");
 
 
-        if(values == null || values.isEmpty())
+        if (values == null || values.isEmpty()) {
             sbb.append("1=1");
-        else
+        } else {
             sbb.append(MyUtils.join(values, " AND "));
+        }
 
 
         if(objParams != null && objParams.length > 0) {
@@ -745,7 +758,7 @@ public class MySqlGenerator {
 
                 //缓存了分页的查询语句
                 MyHelper.myThreadLocal.set(sbb.toString());
-                logger.debug("Medusa:  Successfully saved the page query statement to the cache ^_^ " + sbb.toString());
+                logger.debug("Medusa: Successfully saved the page query statement to the cache ^_^ " + sbb.toString());
             }
         }
 
@@ -799,15 +812,16 @@ public class MySqlGenerator {
                 if(p != null && p.size() > 0) {
                     sbb.append(" AND ").append(column);
 
-                    if(f)
+                    if (f) {
                         sbb.append(" NOT IN (");
-                     else
+                    } else {
                         sbb.append(" IN (");
+                    }
 
                     int k = 0;
                     while(k < p.size()) {
                         sbb.append("#{pobj.array[" + isd + "].paramList[" + ind + "].value[" + k + "]},");
-                        k++;
+                        k += 1;
                     }
 
                     if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
@@ -825,10 +839,11 @@ public class MySqlGenerator {
                 Boolean p = ((NotNullParam) z).getValue();
 
                 if(p != null) {
-                    if(p)
+                    if (p) {
                         sbb.append(" AND ").append(column).append(" IS NOT NULL ");
-                    else
+                    } else {
                         sbb.append(" AND ").append(column).append(" IS NULL ");
+                    }
                 }
             }
         } else if (z instanceof BaseGeLeParam) {

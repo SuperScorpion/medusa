@@ -2,6 +2,7 @@ package com.jy.medusa.utils;
 
 import com.jy.medusa.generator.MyGenUtils;
 import com.jy.medusa.stuff.cache.MyReflectCacheManager;
+import com.jy.medusa.stuff.exception.MedusaException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,6 +89,8 @@ public class MyReflectionUtils {
             value = Integer.valueOf(value.toString());
         } else if(returnType == Byte.class){
             value = Byte.valueOf(value.toString());
+        } else {
+//            do nothing
         }
 
         return value;
@@ -129,41 +132,34 @@ public class MyReflectionUtils {
      */
     public static Method obtainAccessibleMethod(final Object obj, final String methodName, final Class<?>... parameterTypes) {
 
-        Class<?> superClass = obj.getClass();
+        Class<?> realClass = obj.getClass();
         Class<Object> objClass = Object.class;
 
         Method method = null;
 
-        try {
-            for (; superClass != objClass; superClass = superClass.getSuperclass()) {
+        for (; realClass != objClass; realClass = realClass.getSuperclass()) {
 
-                if(superClass == null) continue;
+            if (realClass != null) {
 
-                    Method[] methods = MyReflectCacheManager.getCacheMethodArray(superClass);
+                Method[] methods = MyReflectCacheManager.getCacheMethodArray(realClass);
 
-                    if(methods != null && methods.length != 0) {
-                        for(Method med : methods) {
-                            if(med.getName().equals(methodName)) {
-                                method = med;
-                                break;
-                            }
+                if (methods != null && methods.length != 0) {
+                    for (Method med : methods) {
+                        if (med.getName().equals(methodName)) {
+                            method = med;
+                            break;
                         }
-                    } //else {
-                        //METHODS_CACHEMAP.put(superClass, superClass.getDeclaredMethods());
-                      //  method = superClass.getDeclaredMethod(methodName, parameterTypes);
-                    //}
-
-                    if(method != null) {
-                        method.setAccessible(true);
-                        return method;
                     }
+                }
+
+                if (method != null) {
+                    method.setAccessible(true);
+                    return method;
+                }
             }
-        } catch (Exception e) {
-            logger.error("Medusa: There was an exception in the reflection " + superClass.getName() + " get the Method " + methodName);
-            e.printStackTrace();
         }
 
-        return null;
+        throw new MedusaException("Medusa: Cant find [" + methodName + "] on " + realClass.getName());
     }
 
     /**
@@ -220,39 +216,31 @@ public class MyReflectionUtils {
      */
     public static Field obtainAccessibleField(final Object obj, final String fieldName) {
 
-        Class<?> superClass = obj.getClass();
+        Class<?> realClass = obj.getClass();
         Class<Object> objClass = Object.class;
 
         Field field = null;
 
-        try {
-            for (; superClass != objClass; superClass = superClass.getSuperclass()) {
+        for (; realClass != objClass; realClass = realClass.getSuperclass()) {
 
-                if(superClass == null) continue;
+            if (realClass != null) {
 
-                    Field[] cacheFields = MyReflectCacheManager.getCacheFieldArray(superClass);////从缓存读取
+                Field[] cacheFields = MyReflectCacheManager.getCacheFieldArray(realClass);////从缓存读取
 
-                    if(cacheFields != null && cacheFields.length != 0) {
-                        for(Field field2 : cacheFields) {
-                            if(field2.getName().equals(fieldName)) {
-                                field = field2;
-                                break;
-                            }
+                if (cacheFields != null && cacheFields.length != 0) {
+                    for (Field field2 : cacheFields) {
+                        if (field2.getName().equals(fieldName)) {
+                            field = field2;
+                            break;
                         }
                     }
-                    //} else {
-                    //    FIELDS_CACHEMAP.put(superClass, superClass.getDeclaredFields());///加入到类的缓存 参数域
-                    //    field = superClass.getDeclaredField(fieldName);
-                    //}
+                }
 
-                    if(field != null) {
-                        field.setAccessible(true);
-                        return field;
-                    }
+                if (field != null) {
+                    field.setAccessible(true);
+                    return field;
+                }
             }
-        } catch (Exception e) {
-            logger.error("Medusa: There was an exception in the reflection " + superClass.getName() + " get the Field " + fieldName);
-            e.printStackTrace();
         }
 
         return null;

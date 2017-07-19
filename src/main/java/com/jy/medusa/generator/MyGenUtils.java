@@ -180,19 +180,19 @@ public class MyGenUtils {
             while ((str1 = br.readLine()) != null) {
 
                 if(str1.trim().contains("association")) {//xml
+
                     resultList.add(str1  + "\n");
-                    continue;
-                }
+                } else {
+                    String str2, str3 = "";
+                    if (str1.trim().contains(startTag)) {
 
-                String str2, str3 = "";
-                if (str1.trim().contains(startTag)) {
-
-                    while ((str2 = br.readLine()) != null) {
-                        if (str2.trim().contains(endTag)) {
-                            resultList.add(str3);
-                            break;
-                        } else {
-                            str3 += str2 + "\n";// 当读取的一行不为空时,把读到的str的值赋给str1
+                        while ((str2 = br.readLine()) != null) {
+                            if (str2.trim().contains(endTag)) {
+                                resultList.add(str3);
+                                break;
+                            } else {
+                                str3 += str2 + "\n";// 当读取的一行不为空时,把读到的str的值赋给str1
+                            }
                         }
                     }
                 }
