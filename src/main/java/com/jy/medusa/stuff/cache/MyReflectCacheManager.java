@@ -31,34 +31,42 @@ public class MyReflectCacheManager {
      */
     public static Method[] getCacheMethodArray(Class<?> c) {
 
-        if(c == null) throw new MedusaException("Medusa: The class param is null");
+        if(c == null) throw new MedusaException("Medusa: The class param is null in MyReflectCacheManager");
 
         if(METHODS_CACHEMAP.containsKey(c)) {
             return METHODS_CACHEMAP.get(c);
+        } else {
+
+            Method[] paramMethods = c.getDeclaredMethods();
+            Method[] medArr = METHODS_CACHEMAP.putIfAbsent(c, paramMethods);
+
+            if(medArr != null) {
+                return medArr;
+            } else {
+                logger.debug("Medusa: " + c.getName() + " DeclaredMethods Caches all initialized");
+                return paramMethods;
+            }
         }
-
-        Method[] paramMethods = c.getDeclaredMethods();
-        METHODS_CACHEMAP.put(c, paramMethods);
-
-        logger.debug("Medusa: " + c.getName() + " DeclaredMethods Caches all initialized");
-
-        return paramMethods;
     }
 
     public static Field[] getCacheFieldArray(Class<?> c) {
 
-        if(c == null) throw new MedusaException("Medusa: The class param is null");
+        if(c == null) throw new MedusaException("Medusa: The class param is null in MyReflectCacheManager");
 
         if(FIELDS_CACHEMAP.containsKey(c)) {
             return FIELDS_CACHEMAP.get(c);
+        } else {
+
+            Field[] paramFields = c.getDeclaredFields();
+            Field[] fieArr = FIELDS_CACHEMAP.putIfAbsent(c, paramFields);
+
+            if(fieArr != null) {
+                return fieArr;
+            } else {
+                logger.debug("Medusa: " + c.getName() + " DeclaredFields Caches all initialized");
+                return paramFields;
+            }
         }
-
-        Field[] paramFields = c.getDeclaredFields();
-        FIELDS_CACHEMAP.put(c, paramFields);
-
-        logger.debug("Medusa: " + c.getName() + " DeclaredFields Caches all initialized");
-
-        return paramFields;
     }
 
 }

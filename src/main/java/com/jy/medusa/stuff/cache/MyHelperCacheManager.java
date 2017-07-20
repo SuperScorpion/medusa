@@ -32,7 +32,7 @@ public class MyHelperCacheManager {
     }
 
     public static void putCacheClass(String p, Class<?> t) {
-        if(p != null && t != null) entityClassMap.put(p, t);
+        if(p != null && t != null) entityClassMap.putIfAbsent(p, t);
     }
 
 
@@ -47,8 +47,12 @@ public class MyHelperCacheManager {
         }
     }
 
-    public static void putCacheGenerator(String p, MySqlGenerator t) {
-        if(p != null && t != null) generatorMap.put(p, t);
+    public static MySqlGenerator putCacheGenerator(String p, MySqlGenerator t) {
+        if(p != null && t != null) {
+            return generatorMap.putIfAbsent(p, t);
+        } else {
+            throw new MedusaException("Medusa: The class info is null");
+        }
     }
 
 }

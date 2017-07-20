@@ -170,7 +170,7 @@ public class MyHelper {
         return methodName.equals("insertSelectiveUUID") ? true : false;
     }
 
-//    private static Map<String, MySqlGenerator> generatorMap = new HashMap<>();//缓存下来数据
+
 
     public static MySqlGenerator getSqlGenerator(Map<String, Object> m) {
 
@@ -183,11 +183,29 @@ public class MyHelper {
         } else {
             Class<?> c = getEntityClass(p);
             MySqlGenerator q = initSqlGenerator(c);
-            MyHelperCacheManager.putCacheGenerator(p, q);
-            logger.debug("Medusa: Successfully initialize the " + c.getSimpleName() + " Basic information of MySqlGenerator!");
-            return q;
+            MySqlGenerator msr = MyHelperCacheManager.putCacheGenerator(p, q);
+
+            if(msr != null) {
+                return msr;
+            } else {
+                logger.debug("Medusa: Successfully initialize the " + c.getSimpleName() + " Basic information of MySqlGenerator!");
+                return q;
+            }
         }
     }
+
+    ////Solving high concurrency problems modify by neo on 2017.07.19
+    /*private static synchronized MySqlGenerator initAndCacheGenerator(String p) {
+
+        MySqlGenerator por = MyHelperCacheManager.getCacheGenerator(p);
+        if(por != null) return por;
+
+        Class<?> c = getEntityClass(p);
+        MySqlGenerator q = initSqlGenerator(c);
+        MyHelperCacheManager.putCacheGenerator(p, q);
+        logger.debug("Medusa: Successfully initialize the " + c.getSimpleName() + " Basic information of MySqlGenerator!");
+        return q;
+    }*/
 
     private static MySqlGenerator initSqlGenerator(Class<?> entityClass) {
 

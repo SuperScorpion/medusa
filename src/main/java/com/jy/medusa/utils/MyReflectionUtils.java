@@ -46,18 +46,18 @@ public class MyReflectionUtils {
     /**
      * 调用Setter方法,指定参数的类型
      * @param obj
-     * @param propertyName  字段名
+     * @param propertyName 字段名
      * @param value
      * @param propertyType
      */
     public static void invokeSetterMethod(Object obj, String propertyName, Object value, Class<?> propertyType) throws ParseException {
 
-        value = handleValueType(obj,propertyName,value);
-        if(value == null) return;
+        value = handleValueType(obj, propertyName, value);
+        if (value == null) return;
 
         propertyType = propertyType != null ? propertyType : value.getClass();
         String setterMethodName = "set" + MyGenUtils.upcaseFirst(propertyName);
-        invokeMethod(obj, setterMethodName, new Class<?>[] { propertyType }, new Object[] { value });
+        invokeMethod(obj, setterMethodName, new Class<?>[]{propertyType}, new Object[]{value});
     }
 
     private static Object handleValueType(Object obj, String propertyName, Object value) throws ParseException {
@@ -66,7 +66,7 @@ public class MyReflectionUtils {
         Class<?> argsType = value.getClass();
         Class<?> returnType = obtainAccessibleMethod(obj, getterMethodName).getReturnType();
 
-        if(argsType == returnType) {
+        if (argsType == returnType) {
             return value;
         }
 
@@ -75,7 +75,7 @@ public class MyReflectionUtils {
             value = (MyUtils.isNotBlank(temp) && Long.valueOf(temp) > 0) ? true : false;
         } else if (returnType == Long.class) {
             value = Long.valueOf(value.toString());
-        }else if(returnType == Date.class){
+        } else if (returnType == Date.class) {
             value = MyDateUtils.convertStrToDate(value.toString());//TODO
         } else if (returnType == Short.class) {
             value = Short.valueOf(value.toString());
@@ -83,11 +83,11 @@ public class MyReflectionUtils {
             value = BigDecimal.valueOf(Long.valueOf(value.toString()));
         } else if (returnType == BigInteger.class) {
             value = BigInteger.valueOf(Long.valueOf(value.toString()));
-        } else if(returnType == String.class){
+        } else if (returnType == String.class) {
             value = String.valueOf(value);
-        }else if(returnType == Integer.class){
+        } else if (returnType == Integer.class) {
             value = Integer.valueOf(value.toString());
-        } else if(returnType == Byte.class){
+        } else if (returnType == Byte.class) {
             value = Byte.valueOf(value.toString());
         } else {
 //            do nothing
@@ -126,7 +126,7 @@ public class MyReflectionUtils {
      * 循环向上转型，获取对象的DeclaredMethod,并强制设置为可访问 如向上转型到Object仍无法找到，返回null
      * 用于方法需要被多次调用的情况，先使用本函数先取得Method,然后调用Method.invoke(Object obj,Object...args)
      * @param obj
-     * @param methodName
+     * @param methodNameø
      * @param parameterTypes
      * @return
      */
@@ -134,8 +134,6 @@ public class MyReflectionUtils {
 
         Class<?> realClass = obj.getClass();
         Class<Object> objClass = Object.class;
-
-        Method method = null;
 
         for (; realClass != objClass; realClass = realClass.getSuperclass()) {
 
@@ -145,16 +143,11 @@ public class MyReflectionUtils {
 
                 if (methods != null && methods.length != 0) {
                     for (Method med : methods) {
-                        if (med.getName().equals(methodName)) {
-                            method = med;
-                            break;
+                        if (med != null && med.getName().equals(methodName)) {
+                            med.setAccessible(true);
+                            return med;
                         }
                     }
-                }
-
-                if (method != null) {
-                    method.setAccessible(true);
-                    return method;
                 }
             }
         }
@@ -208,6 +201,7 @@ public class MyReflectionUtils {
         }
     }
 
+
     /**
      * 循环向上转型，获取对象的DeclaredField,并强制设为可访问 如向上转型Object仍无法找到，返回null
      * @param obj
@@ -219,8 +213,6 @@ public class MyReflectionUtils {
         Class<?> realClass = obj.getClass();
         Class<Object> objClass = Object.class;
 
-        Field field = null;
-
         for (; realClass != objClass; realClass = realClass.getSuperclass()) {
 
             if (realClass != null) {
@@ -228,21 +220,16 @@ public class MyReflectionUtils {
                 Field[] cacheFields = MyReflectCacheManager.getCacheFieldArray(realClass);////从缓存读取
 
                 if (cacheFields != null && cacheFields.length != 0) {
-                    for (Field field2 : cacheFields) {
-                        if (field2.getName().equals(fieldName)) {
-                            field = field2;
-                            break;
+                    for (Field field : cacheFields) {
+                        if (field != null && field.getName().equals(fieldName)) {
+                            field.setAccessible(true);
+                            return field;
                         }
                     }
-                }
-
-                if (field != null) {
-                    field.setAccessible(true);
-                    return field;
                 }
             }
         }
 
-        return null;
+        throw new MedusaException("Medusa: Cant find [" + fieldName + "] on " + realClass.getName());
     }
 }
