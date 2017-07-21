@@ -55,7 +55,7 @@ exp:       @ConParamValidator(entityClass = Users.class)<br/>
 实体类属性记得加入@Length等标签.<br/>
 <br/>
 三. 在spring配置文件里添加 可使用热加载 mybatis xml 功能<br/>
-< bean id="hotspotReloader" class="com.jy.medusa.stuff.hotload.MyMapperRefresh">
+< bean id="hotspotReloader" class="com.jy.medusa.stuff.reload.MyMapperRefresh">
    <constructor-arg index="0" ref="sqlSessionFactory"/>
    <constructor-arg index="1" value="com.xxx.xxxx.persistence.xml"/>
    <constructor-arg index="2" value="3600"/>

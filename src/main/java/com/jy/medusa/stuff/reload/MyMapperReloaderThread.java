@@ -1,4 +1,4 @@
-package com.jy.medusa.stuff.hotload;
+package com.jy.medusa.stuff.reload;
 
 import com.jy.medusa.stuff.exception.MedusaException;
 import com.jy.medusa.utils.MyUtils;
