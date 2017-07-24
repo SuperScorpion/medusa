@@ -522,9 +522,11 @@ public class MyHelper {
      */
     public static String[] concatInsertDynamicSql(Map<String, String> currentFieldTypeNameMap, Map<String, String> currentFieldColumnNameMap, Object t) {
 
-        StringBuilder sbb = new StringBuilder(512);
+        int dataSizeAll = currentFieldTypeNameMap.keySet().size();
 
-        StringBuilder sbs = new StringBuilder(256);
+
+        StringBuilder sbb = new StringBuilder(39 * dataSizeAll);
+        StringBuilder sbs = new StringBuilder(15 * dataSizeAll);
 
         for(String fieName : currentFieldTypeNameMap.keySet()) {//同一个hashset 遍历的元素顺序是否一样的
 

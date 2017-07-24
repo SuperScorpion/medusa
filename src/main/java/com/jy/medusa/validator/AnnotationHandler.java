@@ -1,6 +1,5 @@
 package com.jy.medusa.validator;
 
-
 import com.jy.medusa.utils.MyUtils;
 import com.jy.medusa.validator.annotation.ConParamValidator;
 import com.jy.medusa.validator.annotation.Length;
@@ -27,15 +26,19 @@ public class AnnotationHandler {//TODO
 
     private String concatErrorStr(List<ErrorInfo> errorInfos){
 
-        StringBuilder sb = new StringBuilder(100);
+        StringBuilder sb ;
 
         if(!errorInfos.isEmpty()){
+            sb = new StringBuilder((6 + 27) * errorInfos.size());
             for(ErrorInfo errorInfo : errorInfos){
                 sb.append("**^_^*" + errorInfo.getMessage());
             }
-        }
 
-        return sb.toString();
+            return sb.toString();
+        } else {
+
+            return "";
+        }
     }
 
 
