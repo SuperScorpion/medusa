@@ -24,7 +24,7 @@ import java.util.List;
 @Aspect
 public class AnnotationHandler {//TODO
 
-    private String concatErrorStr(List<ErrorInfo> errorInfos){
+    /*private String concatErrorStr(List<ErrorInfo> errorInfos){
 
         StringBuilder sb ;
 
@@ -39,18 +39,19 @@ public class AnnotationHandler {//TODO
 
             return "";
         }
-    }
+    }*/
 
 
     /**
      * 所有校验标注的处理
-     * 	<aop:aspectj-autoproxy proxy-target-class="true"/>
+     * 	<aop:aspectj-autoproxy />
+     * 	proxy-target-class="true" 设置为cglib代理 但是spring会根据代理类是否有接口 去选择jdk或cglib代理
      *  <bean class="com.jy.medusa.validator.AnnotationHandler"/>
      * */
     @Before(value = "execution(public * *(..)) and @annotation(parameter))")
-    public void paramHandler(JoinPoint joinPoint, ConParamValidator parameter) throws IllegalArgumentException, IllegalAccessException{
+    public void paramHandler(JoinPoint joinPoint, ConParamValidator parameter) throws IllegalAccessException {
 
-        List<ErrorInfo> errorInfoList = new ArrayList<>();
+        List<String> messageList = new ArrayList<>();
 
         String[] regArray = parameter.regExp();
 
@@ -74,24 +75,20 @@ public class AnnotationHandler {//TODO
 
                         if (MyUtils.isNotBlank(object.toString()) && MyUtils.isNotBlank(regArray[i]) && !object.toString().matches(regArray[i])) {
 
-                            ErrorInfo errorInfo = new ErrorInfo();
-
                             if (message != null && message.length > i) {
 
-                                errorInfo.setMessage(message[i]);
+                                messageList.add(message[i]);
                             } else {
 
-                                errorInfo.setMessage("第" + (i + 1) + "个普通参数" + object.toString() + "校验失败请重试");
+                                messageList.add("第" + (i + 1) + "个普通参数" + object.toString() + "校验失败请重试");
                             }
-
-                            errorInfoList.add(errorInfo);
                         }
 
                         i++;
                     }
 
                 } else if (object.getClass() == entityClass) {//entity 实体的参数判断
-                    errorInfoList.addAll(entityHandler(object));
+                    messageList.addAll(entityHandler(object));
                 } else if (object.getClass() == ErrorInfo.class) {//赋值给方法参数 的回执封装消息
                     k = ((ErrorInfo) object);
                 } else {
@@ -100,15 +97,16 @@ public class AnnotationHandler {//TODO
             }
         }
 
-        if(k != null) k.setMessage(concatErrorStr(errorInfoList));//等待循环完成后 方法里的参数都校验完 再给结果参数赋值去
+        //modify by neo on 2017.09.03
+        if(k != null) k.setMessageList(messageList);//等待循环完成后 方法里的参数都校验完 再给结果参数赋值去
     }
 
     /**
      * 所有校验标注的处理
      * */
-    public List<ErrorInfo> entityHandler(Object obj) throws IllegalArgumentException, IllegalAccessException{
+    public List<String> entityHandler(Object obj) throws IllegalArgumentException, IllegalAccessException{
 
-        List<ErrorInfo> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         Class cla = obj.getClass();
         Field[] fields = cla.getDeclaredFields();
@@ -141,9 +139,9 @@ public class AnnotationHandler {//TODO
     /**
      * 处理NotNull
      * */
-    private List<ErrorInfo> handlerNotNull(Object source, Field field, Annotation anno) throws IllegalArgumentException, IllegalAccessException{
+    private List<String> handlerNotNull(Object source, Field field, Annotation anno) throws IllegalArgumentException, IllegalAccessException{
 
-        List<ErrorInfo> errors = new ArrayList<>();
+        List<String> messageList = new ArrayList<>();
 
         String fieldName = field.getName();
         Object fieldValue = field.get(source);
@@ -152,21 +150,19 @@ public class AnnotationHandler {//TODO
         String message = notNull.message();
 
         if(fieldValue == null) {
-            ErrorInfo errorInfo = new ErrorInfo();
             message = MyUtils.isNotBlank(message) ? message : "参数" + fieldName + "不能为空值";
-            errorInfo.setMessage(message);
-            errors.add(errorInfo);
+            messageList.add(message);
         }
 
-        return errors;
+        return messageList;
     }
   
     /**
     * 处理Validator标注
     * */
-    private List<ErrorInfo> handleValidator(Object source, Field field, Annotation anno) throws IllegalArgumentException, IllegalAccessException{
+    private List<String> handleValidator(Object source, Field field, Annotation anno) throws IllegalArgumentException, IllegalAccessException{
 
-        List<ErrorInfo> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         String fieldName = field.getName();
         Object fieldValue = field.get(source);
@@ -183,9 +179,9 @@ public class AnnotationHandler {//TODO
   /**
    * 处理 Length标注
    * */
-    private List<ErrorInfo> handleLength(Object source, Field field, Annotation anno) throws IllegalArgumentException, IllegalAccessException{
+    private List<String> handleLength(Object source, Field field, Annotation anno) throws IllegalArgumentException, IllegalAccessException{
 
-        List<ErrorInfo> errors = new ArrayList<>();
+        List<String> messageList = new ArrayList<>();
 
         Length len = (Length)anno;
 
@@ -202,18 +198,17 @@ public class AnnotationHandler {//TODO
             String value = String.valueOf(fieldValue);
 
             if(value.length() > maxLength || value.length() < minLength){
-                ErrorInfo errorInfo = new ErrorInfo();
                 message = MyUtils.isNotBlank(message) ? message : "参数" + fieldName + "长度控制在" + minLength + "与" + maxLength + "之间";
-                errorInfo.setMessage(message);
-                errors.add(errorInfo);
+                messageList.add(message);
             }
         }
-        return errors;
-    }
-  
-    private List<ErrorInfo> handleParams(Object fieldValue, String fieldName, Validator valid){
 
-        List<ErrorInfo> errors = new ArrayList<>();
+        return messageList;
+    }
+
+    private List<String> handleParams(Object fieldValue, String fieldName, Validator valid){
+
+        List<String> messageList = new ArrayList<>();
 
         String message = valid.message();
         String regExp = valid.regExp();
@@ -227,21 +222,17 @@ public class AnnotationHandler {//TODO
                 if(selects != null && selects.length > 0) {
                     List<String> paramList = Arrays.asList(selects);
                     if(!paramList.contains(value)){
-                        ErrorInfo errorInfo = new ErrorInfo();
                         message = MyUtils.isNotBlank(message) ? message : fieldName + "不在设定选定的值内";
-                        errorInfo.setMessage(message);
-                        errors.add(errorInfo);
+                        messageList.add(message);
                     }
                 } else {
                     if(MyUtils.isNotBlank(regExp) && !value.matches(regExp)) {
-                        ErrorInfo errorInfo = new ErrorInfo();
                         message = MyUtils.isNotBlank(message) ? message : fieldName + "不符合表达式的校验";
-                        errorInfo.setMessage(message);
-                        errors.add(errorInfo);
+                        messageList.add(message);
                     }
                 }
             }
 
-        return errors;
+        return messageList;
     }
 }
