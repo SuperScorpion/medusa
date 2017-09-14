@@ -2,7 +2,7 @@
 mybatis mapper
 <br/>
 <br/>
-程序结合使用拦截器实现具体的执行Sql,完全使用原生的Mybatis进行操作.没有一个Mapper的xml配置文件,但是却可以做到每个Mapper对应上百行xml才能完成的诸多功能.<br/>
+程序结合使用拦截器实现具体的执行Sql,完全使用原生的Mybatis进行操作,在基础上只做增强.没有一个Mapper的xml配置文件,但是却可以做到每个Mapper对应上百行xml才能完成的诸多功能,核心在于提高开发人员的效率.<br/>
 <br/>
 一.代码生成模块<br/>
 1.1 能够生成entity mapper xml service controller层 不需要再手动编写基础代码.<br/>
@@ -46,7 +46,7 @@ mybatis mapper
 <br/>
 <br/>
 二. 如果需要参数校验功能则需要加入下列两行代码至xml<br/>
-<aop:aspectj-autoproxy/><br/>
+< aop:aspectj-autoproxy /><br/>
 < bean class="com.jy.medusa.validator.AnnotationHandler" /><br/>
 <br/>
 然后 controller 或者是 service 方法上 添加 注解 @ConParamValidator<br/>
