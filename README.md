@@ -7,7 +7,6 @@ mybatis mapper
 一.代码生成模块<br/>
 1.1 能够生成entity mapper xml service controller层 不需要再手动编写基础代码.<br/>
 1.2 重新生成代码时可自动保留上次标记代码及智能替换相应代码的功能.<br/>
-1.3 (自定义模版功能待完善)<br/>
 <br/>
 二.通用mapper模块<br/>
 只需要继承通用mapper即可拥有基础的crud功能.<br/>
@@ -47,7 +46,7 @@ mybatis mapper
 <br/>
 <br/>
 二. 如果需要参数校验功能则需要加入下列两行代码至xml<br/>
-<aop:aspectj-autoproxy proxy-target-class="true"/><br/>
+<aop:aspectj-autoproxy/><br/>
 < bean class="com.jy.medusa.validator.AnnotationHandler" /><br/>
 <br/>
 然后 controller 或者是 service 方法上 添加 注解 @ConParamValidator<br/>
@@ -135,6 +134,7 @@ Pager类为内部分页实现 可插拔式<br/>
 <br/>
 <br/>
 medusa.properties参数参考<br/>
+<br>
 #生成的根包路径<br/>
 medusa.packagePath = com.jy.herms <br/>
 <br/>
