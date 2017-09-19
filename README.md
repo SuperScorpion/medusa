@@ -49,9 +49,13 @@ mybatis mapper
 < aop:aspectj-autoproxy /><br/>
 < bean class="com.jy.medusa.validator.AnnotationHandler" /><br/>
 <br/>
-然后 controller 或者是 service 方法上 添加 注解 @ConParamValidator<br/>
-exp:       @ConParamValidator(entityClass = Users.class)<br/>
-实体类属性记得加入@Length等标签.<br/>
+然后 controller 或者是 service 方法上 添加 注解 @ConParamValidator 方法参数添加相应的校验注解<br/>
+exp:<br/>
+   @ConParamValidator
+	@RequestMapping(value = "/index.json", method = RequestMethod.GET)
+	@ResponseBody
+	public JSONObject index(@RequestParam @Length(max=1, message = "wtfuck") Integer uid, @Valid Users us, ErrorInfo info){...}<br/>
+实体类属性参数记得加入@Valid标签.<br/>
 <br/>
 三. 在spring配置文件里添加 可使用热加载 mybatis xml 功能<br/>
 < bean id="hotspotReloader" class="com.jy.medusa.stuff.reload.MyMapperRefresh">
