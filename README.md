@@ -51,10 +51,10 @@ mybatis mapper
 <br/>
 然后 controller 或者是 service 方法上 添加 注解 @ConParamValidator 方法参数添加相应的校验注解<br/>
 exp:<br/>
-   @ConParamValidator
-	@RequestMapping(value = "/index.json", method = RequestMethod.GET)
-	@ResponseBody
-	public JSONObject index(@RequestParam @Length(max=1, message = "wtfuck") Integer uid, @Valid Users us, ErrorInfo info){...}<br/>
+@ConParamValidator<br/>
+@RequestMapping(value = "/index.json", method = RequestMethod.GET)<br/>
+@ResponseBody<br/>
+public JSONObject index(@RequestParam @Length(max=1, message = "wtfuck") Integer uid, @Valid Users users, ErrorInfo info){...}<br/>
 实体类属性参数记得加入@Valid标签.<br/>
 <br/>
 三. 在spring配置文件里添加 可使用热加载 mybatis xml 功能<br/>
