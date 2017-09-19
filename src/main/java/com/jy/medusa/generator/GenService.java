@@ -20,8 +20,12 @@ public class GenService {
 
     private String entityName;
 
-    private final String mixMapper = "com.jy.medusa.commons.Mapper";
+    private String mixMapper = "com.jy.medusa.commons.Mapper";
 
+    private List<String> markServiceList;
+    private List<String> markServiceImplList;
+    private List<String> markMapperList;
+    private String tag;//标记 mark
 
     public GenService(String tableName, String entityPath, String servicePath, String serviceImplPath, String mapperPath, String tag){
         this.entityPath = entityPath;
@@ -188,13 +192,4 @@ public class GenService {
 
         return sbb.toString();
     }
-
-
-
-    private List<String> markServiceList;
-    private List<String> markServiceImplList;
-    private List<String> markMapperList;
-    private String tag;//标记 mark
-
-
 }

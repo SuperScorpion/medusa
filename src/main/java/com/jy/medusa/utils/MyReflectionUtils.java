@@ -3,8 +3,6 @@ package com.jy.medusa.utils;
 import com.jy.medusa.generator.MyGenUtils;
 import com.jy.medusa.stuff.cache.MyReflectCacheManager;
 import com.jy.medusa.stuff.exception.MedusaException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -18,9 +16,6 @@ import java.util.Date;
  * Created by neo on 16/7/27.
  */
 public class MyReflectionUtils {
-
-    private static final Logger logger = LoggerFactory.getLogger(MyReflectionUtils.class);
-
 
     /**
      * 调用Getter方法
@@ -103,7 +98,7 @@ public class MyReflectionUtils {
      * @param parameterTypes
      * @return
      */
-    public static Object invokeMethod(final Object obj, final String methodName, final Class<?>[] parameterTypes, final Object[] args) {
+    public static Object invokeMethod(Object obj, String methodName, Class<?>[] parameterTypes, Object[] args) {
 
         Method method = obtainAccessibleMethod(obj, methodName, parameterTypes);
 
@@ -126,11 +121,11 @@ public class MyReflectionUtils {
      * 循环向上转型，获取对象的DeclaredMethod,并强制设置为可访问 如向上转型到Object仍无法找到，返回null
      * 用于方法需要被多次调用的情况，先使用本函数先取得Method,然后调用Method.invoke(Object obj,Object...args)
      * @param obj
-     * @param methodNameø
+     * @param methodName
      * @param parameterTypes
      * @return
      */
-    public static Method obtainAccessibleMethod(final Object obj, final String methodName, final Class<?>... parameterTypes) {
+    public static Method obtainAccessibleMethod(Object obj, String methodName, Class<?>... parameterTypes) {
 
         Class<?> realClass = obj.getClass();
         Class<Object> objClass = Object.class;
@@ -161,7 +156,7 @@ public class MyReflectionUtils {
      * @param fieldName
      * @return
      */
-    public static Object obtainFieldValue(final Object obj, final String fieldName) {
+    public static Object obtainFieldValue(Object obj, String fieldName) {
 
         Field field = obtainAccessibleField(obj, fieldName);
 
@@ -186,7 +181,7 @@ public class MyReflectionUtils {
      * @param fieldName
      * @param value
      */
-    public static void setFieldValue(final Object obj, final String fieldName, final Object value) {
+    public static void setFieldValue(Object obj, String fieldName, Object value) {
 
         Field field = obtainAccessibleField(obj, fieldName);
 
@@ -208,7 +203,7 @@ public class MyReflectionUtils {
      * @param fieldName
      * @return
      */
-    public static Field obtainAccessibleField(final Object obj, final String fieldName) {
+    public static Field obtainAccessibleField(Object obj, String fieldName) {
 
         Class<?> realClass = obj.getClass();
         Class<Object> objClass = Object.class;

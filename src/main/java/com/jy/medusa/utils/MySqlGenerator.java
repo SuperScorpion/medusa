@@ -143,7 +143,7 @@ public class MySqlGenerator {
             value = "\'" + value + "\'";
         } else if (value instanceof Date) {
             Date date = (Date) value;
-            value = "\'" + MyDateUtils.convertDateToStr(date, MyDateUtils.DATE_FULL_STR) + "\'";
+            value = "\'" + MyDateUtils.convertDateToStr(date, SystemConfigs.DATE_FULL_STR) + "\'";
             //value = "TO_TIMESTAMP('" + dateStr + "','YYYY-MM-DD HH24:MI:SS.FF3')";
         } else if (value instanceof Boolean) {
             Boolean v = (Boolean) value;
@@ -854,22 +854,14 @@ public class MySqlGenerator {
 
                 if (z instanceof GreatThanParam) {
 
-                    //                            GreatThanParam p = (GreatThanParam) z;
-
                     sbb.append(" AND ").append(column).append(" > ").append("#{pobj.array[" + isd + "].paramList[" + ind + "].value}");
                 } else if (z instanceof GreatEqualParam) {
-
-                    //                            GreatEqualParam p = (GreatEqualParam) z;
 
                     sbb.append(" AND ").append(column).append(" >= ").append("#{pobj.array[" + isd + "].paramList[" + ind + "].value}");
                 } else if (z instanceof LessThanParam) {
 
-                    //                            LessThanParam p = (LessThanParam) z;
-
                     sbb.append(" AND ").append(column).append(" < ").append("#{pobj.array[" + isd + "].paramList[" + ind + "].value}");
                 } else if (z instanceof LessEqualParam) {
-
-                    //                            LessEqualParam p = (LessEqualParam) z;
 
                     sbb.append(" AND ").append(column).append(" <= ").append("#{pobj.array[" + isd + "].paramList[" + ind + "].value");
                 }

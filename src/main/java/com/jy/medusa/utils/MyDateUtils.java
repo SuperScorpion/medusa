@@ -12,9 +12,6 @@ import java.util.regex.Pattern;
  */
 public class MyDateUtils {
 
-    /**定义常量**/
-    public static final String DATE_FULL_STR = "yyyy-MM-dd HH:mm:ss";
-
     /**
      * @param date
      * @param regx
@@ -24,7 +21,7 @@ public class MyDateUtils {
 
         if(date == null) throw new MedusaException("Medusa: The date param is null");
 
-        if(MyUtils.isBlank(regx)) regx = DATE_FULL_STR;
+        if(MyUtils.isBlank(regx)) regx = SystemConfigs.DATE_FULL_STR;
 
         SimpleDateFormat sdf = new SimpleDateFormat(regx);
         return sdf.format(date);

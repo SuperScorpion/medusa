@@ -22,7 +22,7 @@ import java.util.*;
 
  class MyHotspotReloader {
      
-     private static Logger log = LoggerFactory.getLogger(MyHotspotReloader.class);
+    private static final Logger logger = LoggerFactory.getLogger(MyHotspotReloader.class);
 
     private SqlSessionFactory sqlSessionFactory;
     private String xmlPath;//用户配置的属性
@@ -91,7 +91,7 @@ import java.util.*;
                     }
                 }
 
-                log.debug("Because of xml file {} changed - all xml has been overloaded.", xmlParamName);
+                logger.debug("Because of xml file {} changed - all xml has been overloaded.", xmlParamName);
             }
 
             if(mapperXmlFileList.size() != 0) mapperXmlFileList.clear();//modify by neo on 2016.12.15

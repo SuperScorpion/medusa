@@ -5,12 +5,11 @@ import java.lang.annotation.*;
 /**
  * @Author neo 2016.07.12
  */
-@Target({ElementType.FIELD, ElementType.PARAMETER})
+@Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface NotNull {
+public @interface Valid {
 
-  /** 验证失败提示语 */
-  String message() default "";
+    Class<? extends Object> entityClass() default Object.class;
 }
 

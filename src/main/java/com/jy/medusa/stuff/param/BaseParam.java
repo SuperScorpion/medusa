@@ -1,9 +1,11 @@
 package com.jy.medusa.stuff.param;
 
 /**
+ * @Author neo
  * 最父类的多条件参数基类
  */
 public abstract class BaseParam {
+
     String column;
 
     public String getColumn() {

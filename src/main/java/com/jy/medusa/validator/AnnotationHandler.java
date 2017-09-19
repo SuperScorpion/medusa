@@ -1,17 +1,16 @@
 package com.jy.medusa.validator;
 
 import com.jy.medusa.utils.MyUtils;
-import com.jy.medusa.validator.annotation.ConParamValidator;
-import com.jy.medusa.validator.annotation.Length;
-import com.jy.medusa.validator.annotation.NotNull;
-import com.jy.medusa.validator.annotation.Validator;
+import com.jy.medusa.validator.annotation.*;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.math.BigDecimal;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,28 +18,11 @@ import java.util.List;
 
 /**
  * 2016.07.11
+ * @Author neo refactor on 2017.9.1
  * 参数校验主要类
  */
 @Aspect
-public class AnnotationHandler {//TODO
-
-    /*private String concatErrorStr(List<ErrorInfo> errorInfos){
-
-        StringBuilder sb ;
-
-        if(!errorInfos.isEmpty()){
-            sb = new StringBuilder((6 + 27) * errorInfos.size());
-            for(ErrorInfo errorInfo : errorInfos){
-                sb.append("**^_^*" + errorInfo.getMessage());
-            }
-
-            return sb.toString();
-        } else {
-
-            return "";
-        }
-    }*/
-
+public class AnnotationHandler {
 
     /**
      * 所有校验标注的处理
@@ -53,46 +35,40 @@ public class AnnotationHandler {//TODO
 
         List<String> messageList = new ArrayList<>();
 
-        String[] regArray = parameter.regExp();
-
-        String[] message = parameter.message();
-
-        Class<?> entityClass = parameter.entityClass();
-
         int i = 0;
 
         ErrorInfo k = null;
 
-        for(Object object : joinPoint.getArgs()) {
+        Signature sig = joinPoint.getSignature();
+        Class sigCls = sig.getDeclaringType();
 
-            if (object != null) {
+        List<Object> paramValueList = Arrays.asList(joinPoint.getArgs());
 
-                if (object instanceof Long || object instanceof Integer || object instanceof String
-                        || object instanceof Double || object instanceof Float || object instanceof BigDecimal
-                        || object instanceof Byte || object instanceof Short) {//TODO 普通参数判断
+        Method[] medArray = sigCls.getDeclaredMethods();
 
-                    if (i != regArray.length) {
+        for(Method method : medArray) {
+            List<Annotation> methodList = Arrays.asList(method.getDeclaredAnnotations());
+            if(methodList.contains(parameter)) {
+                Parameter[] params = method.getParameters();
+                for(Parameter p : params) {
 
-                        if (MyUtils.isNotBlank(object.toString()) && MyUtils.isNotBlank(regArray[i]) && !object.toString().matches(regArray[i])) {
+                    Length length = p.getDeclaredAnnotation(Length.class);
+                    NotNull notNull = p.getDeclaredAnnotation(NotNull.class);
+                    Vertifi vertifi = p.getDeclaredAnnotation(Vertifi.class);
+                    Valid valid = p.getDeclaredAnnotation(Valid.class);
 
-                            if (message != null && message.length > i) {
+                    Object paramVal = paramValueList.get(i);
 
-                                messageList.add(message[i]);
-                            } else {
+                    if(length != null) {messageList.addAll(processLength(length, p.getName(), paramVal));}
+                    if(notNull != null) {messageList.addAll(processNotNull(notNull, p.getName(), paramVal));}
+                    if(vertifi != null) {messageList.addAll(processVertifi(vertifi, p.getName(), paramVal));}
+                    if(valid != null) {messageList.addAll(processValid(paramVal));}
 
-                                messageList.add("第" + (i + 1) + "个普通参数" + object.toString() + "校验失败请重试");
-                            }
-                        }
-
-                        i++;
+                    if(p.getType() == ErrorInfo.class) {
+                        k = ((ErrorInfo) paramVal);
                     }
 
-                } else if (object.getClass() == entityClass) {//entity 实体的参数判断
-                    messageList.addAll(entityHandler(object));
-                } else if (object.getClass() == ErrorInfo.class) {//赋值给方法参数 的回执封装消息
-                    k = ((ErrorInfo) object);
-                } else {
-                    //do nothing
+                    i=i+1;
                 }
             }
         }
@@ -101,10 +77,112 @@ public class AnnotationHandler {//TODO
         if(k != null) k.setMessageList(messageList);//等待循环完成后 方法里的参数都校验完 再给结果参数赋值去
     }
 
+
     /**
-     * 所有校验标注的处理
-     * */
-    public List<String> entityHandler(Object obj) throws IllegalArgumentException, IllegalAccessException{
+     * 处理length标签
+     * @param len
+     * @param fieldName
+     * @param fieldValue
+     * @return
+     */
+    private List<String> processLength(Length len, String fieldName, Object fieldValue) {
+
+        List<String> messageList = new ArrayList<>();
+
+        String message = len.message();
+        int maxLength = len.max();
+        int minLength = len.min();
+
+
+        if(fieldValue != null) {
+
+            String value = String.valueOf(fieldValue);
+
+            if(value.length() > maxLength || value.length() < minLength) {
+                message = MyUtils.isNotBlank(message) ? message : "参数" + fieldName + "长度控制在" + minLength + "与" + maxLength + "之间";
+                messageList.add(message);
+            }
+        }
+
+        return messageList;
+    }
+
+    /**
+     * 处理notnull标签
+     * @param notNull
+     * @param fieldName
+     * @param fieldValue
+     * @return
+     */
+    private List<String> processNotNull(NotNull notNull, String fieldName, Object fieldValue) {
+
+        List<String> messageList = new ArrayList<>();
+
+        String message = notNull.message();
+
+        if(fieldValue == null) {
+            message = MyUtils.isNotBlank(message) ? message : "参数" + fieldName + "不能为空值";
+            messageList.add(message);
+        }
+
+        return messageList;
+    }
+
+    /**
+     * 处理vertifi标签
+     * @param valid
+     * @param fieldName
+     * @param fieldValue
+     * @return
+     */
+    private List<String> processVertifi(Vertifi valid, String fieldName, Object fieldValue) {
+
+        List<String> messageList = new ArrayList<>();
+
+        String message = valid.message();
+        String regExp = valid.regExp();
+        String[] selects = valid.selects();
+
+        if(fieldValue != null) {
+
+            String value = String.valueOf(fieldValue);//modify by neo 20160128
+
+            if(selects != null && selects.length > 0) {
+                List<String> paramList = Arrays.asList(selects);
+                if(!paramList.contains(value)) {
+                    message = MyUtils.isNotBlank(message) ? message : fieldName + "不在设定选定的值内";
+                    messageList.add(message);
+                }
+            } else {
+                if(MyUtils.isNotBlank(regExp) && !value.matches(regExp)) {
+                    message = MyUtils.isNotBlank(message) ? message : fieldName + "不符合表达式的校验";
+                    messageList.add(message);
+                }
+            }
+        }
+
+        return messageList;
+    }
+
+    /**
+     * 在param 处理valid标签
+     * @param obj
+     * @return
+     * @throws IllegalAccessException
+     */
+    private List<String> processValid(Object obj) throws IllegalAccessException {
+
+        return entityHandler(obj);
+    }
+
+
+    /**
+     * 处理实体对象内部的校验标签
+     * @param obj
+     * @return
+     * @throws IllegalAccessException
+     */
+    private List<String> entityHandler(Object obj) throws IllegalAccessException {
 
         List<String> errors = new ArrayList<>();
 
@@ -122,117 +200,59 @@ public class AnnotationHandler {//TODO
             field.setAccessible(true);
             Annotation[] annos = field.getAnnotations();
 
-            for(Annotation anno : annos) {
-                if(NotNull.class.isInstance(anno)) {
-                    errors.addAll(handlerNotNull(obj, field, anno));
-                } else if(Validator.class.isInstance(anno)) {
-                    errors.addAll(handleValidator(obj, field, anno));
-                } else if(Length.class.isInstance(anno)) {
-                    errors.addAll(handleLength(obj, field, anno));
+            if(annos != null) {
+                for (Annotation anno : annos) {
+                    if (NotNull.class.isInstance(anno)) {
+                        errors.addAll(handlerNotNull(obj, field, anno));
+                    } else if (Vertifi.class.isInstance(anno)) {
+                        errors.addAll(handleVertifi(obj, field, anno));
+                    } else if (Length.class.isInstance(anno)) {
+                        errors.addAll(handleLength(obj, field, anno));
+                    }
                 }
             }
         }
 
-    return errors;
+        return errors;
     }
 
     /**
      * 处理NotNull
      * */
-    private List<String> handlerNotNull(Object source, Field field, Annotation anno) throws IllegalArgumentException, IllegalAccessException{
-
-        List<String> messageList = new ArrayList<>();
-
-        String fieldName = field.getName();
-        Object fieldValue = field.get(source);
+    private List<String> handlerNotNull(Object source, Field field, Annotation anno) throws IllegalAccessException {
 
         NotNull notNull = (NotNull)anno;
-        String message = notNull.message();
-
-        if(fieldValue == null) {
-            message = MyUtils.isNotBlank(message) ? message : "参数" + fieldName + "不能为空值";
-            messageList.add(message);
-        }
-
-        return messageList;
-    }
-  
-    /**
-    * 处理Validator标注
-    * */
-    private List<String> handleValidator(Object source, Field field, Annotation anno) throws IllegalArgumentException, IllegalAccessException{
-
-        List<String> errors = new ArrayList<>();
 
         String fieldName = field.getName();
         Object fieldValue = field.get(source);
 
-        Validator valid = (Validator)anno;
-        //String message = validator.message();
-        //String regExp = validator.regExp();
-
-        errors.addAll(handleParams(fieldValue, fieldName, valid));
-
-        return errors;
+        return processNotNull(notNull, fieldName, fieldValue);
     }
 
   /**
    * 处理 Length标注
    * */
-    private List<String> handleLength(Object source, Field field, Annotation anno) throws IllegalArgumentException, IllegalAccessException{
-
-        List<String> messageList = new ArrayList<>();
+    private List<String> handleLength(Object source, Field field, Annotation anno) throws IllegalAccessException {
 
         Length len = (Length)anno;
 
         Object fieldValue = field.get(source);
         String fieldName = field.getName();
-        String message = len.message();
 
-        int maxLength = len.max();
-        int minLength = len.min();
-
-
-        if(fieldValue != null){
-
-            String value = String.valueOf(fieldValue);
-
-            if(value.length() > maxLength || value.length() < minLength){
-                message = MyUtils.isNotBlank(message) ? message : "参数" + fieldName + "长度控制在" + minLength + "与" + maxLength + "之间";
-                messageList.add(message);
-            }
-        }
-
-        return messageList;
+        return processLength(len, fieldName, fieldValue);
     }
 
-    private List<String> handleParams(Object fieldValue, String fieldName, Validator valid){
 
-        List<String> messageList = new ArrayList<>();
+    /**
+    * 处理 vertifi标注
+    * */
+    private List<String> handleVertifi(Object source, Field field, Annotation anno) throws IllegalAccessException {
 
-        String message = valid.message();
-        String regExp = valid.regExp();
+        Vertifi valid = (Vertifi)anno;
 
-        String[] selects = valid.selects();
+        String fieldName = field.getName();
+        Object fieldValue = field.get(source);
 
-            if(fieldValue != null) {
-
-            String value = String.valueOf(fieldValue);
-              //modify by neo 20160128
-                if(selects != null && selects.length > 0) {
-                    List<String> paramList = Arrays.asList(selects);
-                    if(!paramList.contains(value)){
-                        message = MyUtils.isNotBlank(message) ? message : fieldName + "不在设定选定的值内";
-                        messageList.add(message);
-                    }
-                } else {
-                    if(MyUtils.isNotBlank(regExp) && !value.matches(regExp)) {
-                        message = MyUtils.isNotBlank(message) ? message : fieldName + "不符合表达式的校验";
-                        messageList.add(message);
-                    }
-                }
-            }
-
-        return messageList;
+        return processVertifi(valid, fieldName, fieldValue);
     }
 }

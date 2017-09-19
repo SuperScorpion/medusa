@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
+ * @Author neo 2016
  * Bean类 - 分页
  */
 
@@ -14,7 +15,7 @@ public class Pager<T> implements Serializable {
 	public final String[] legalColumn = { SystemConfigs.PRIMARY_KEY, "created_at"};
 	public final String[] legalSort = { "desc", "asc" };
 
-	public static final Integer MAX_PAGE_SIZE = 500;// 每页最大记录数限制
+	public final Integer MAX_PAGE_SIZE = 500;// 每页最大记录数限制
 	
 	
 	private Integer pageNumber = 1;// 当前页码

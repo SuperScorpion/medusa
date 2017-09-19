@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
  class MyMapperReloaderThread implements Runnable {
 
-    private static Logger log = LoggerFactory.getLogger(MyMapperReloaderThread.class);
+    private static final Logger logger = LoggerFactory.getLogger(MyMapperReloaderThread.class);
 
     private SqlSessionFactory sqlSessionFactory;
     private String xmlPath;
@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
             try {
 
                 if(sqlSessionFactory == null) {
-                    log.debug("MyMapperReloaderThread wait for sqlSessionFactory and began to sleep {} seconds.", seconds);
+                    logger.debug("MyMapperReloaderThread wait for sqlSessionFactory and began to sleep {} seconds.", seconds);
                     Thread.sleep(seconds * 1000);
                 } else {
 
@@ -37,11 +37,11 @@ import org.slf4j.LoggerFactory;
 
                     mr.refreshMapper();
 
-                    log.debug("MyMapperReloaderThread has completed the hot - loading and began to sleep {} seconds.", seconds);
+                    logger.debug("MyMapperReloaderThread has completed the hot - loading and began to sleep {} seconds.", seconds);
                     Thread.sleep(seconds * 1000);
                 }
             } catch (InterruptedException e) {
-                log.error("{MyMapperReloaderThread catch the InterruptedException}", e);
+                logger.error("{MyMapperReloaderThread catch the InterruptedException}", e);
                 e.printStackTrace();
                 try {
                     Thread.sleep(seconds * 1000);
@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
                     e1.printStackTrace();
                 }
             } catch (Exception e) {
-            	log.error("{MyMapperReloaderThread catch the Exception}", e);
+            	logger.error("{MyMapperReloaderThread catch the Exception}", e);
                 e.printStackTrace();
                 try {
                     Thread.sleep(seconds * 1000);

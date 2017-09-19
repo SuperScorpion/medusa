@@ -3,7 +3,7 @@ package com.jy.medusa.validator.annotation;
 import java.lang.annotation.*;
 
 /**
- *
+ * @Author neo 2016.07.12
  */
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
@@ -11,10 +11,10 @@ import java.lang.annotation.*;
 public @interface Length {
 
   /** 验证失败提示语 */
-  public String message() default "";
+  String message() default "";
 
-  public int max() default Integer.MAX_VALUE;
+  int max() default Integer.MAX_VALUE;
   
-  public int min() default 0;
+  int min() default 0;
 }
 
