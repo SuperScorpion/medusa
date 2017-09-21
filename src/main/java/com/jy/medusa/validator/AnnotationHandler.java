@@ -59,10 +59,10 @@ public class AnnotationHandler {
 
                     Object paramVal = paramValueList.get(i);
 
-                    if(length != null) {messageList.addAll(processLength(length, p.getName(), paramVal));}
-                    if(notNull != null) {messageList.addAll(processNotNull(notNull, p.getName(), paramVal));}
-                    if(vertifi != null) {messageList.addAll(processVertifi(vertifi, p.getName(), paramVal));}
-                    if(valid != null) {messageList.addAll(processValid(paramVal));}
+                    if(length != null) {processLength(length, p.getName(), paramVal, messageList);}
+                    if(notNull != null) {processNotNull(notNull, p.getName(), paramVal, messageList);}
+                    if(vertifi != null) {processVertifi(vertifi, p.getName(), paramVal, messageList);}
+                    if(valid != null) {processValid(paramVal, messageList);}
 
                     if(p.getType() == ErrorInfo.class) {
                         k = ((ErrorInfo) paramVal);
@@ -85,9 +85,7 @@ public class AnnotationHandler {
      * @param fieldValue
      * @return
      */
-    private List<String> processLength(Length len, String fieldName, Object fieldValue) {
-
-        List<String> messageList = new ArrayList<>();
+    private void processLength(Length len, String fieldName, Object fieldValue, List<String> messageList) {
 
         String message = len.message();
         int maxLength = len.max();
@@ -103,8 +101,6 @@ public class AnnotationHandler {
                 messageList.add(message);
             }
         }
-
-        return messageList;
     }
 
     /**
@@ -114,9 +110,7 @@ public class AnnotationHandler {
      * @param fieldValue
      * @return
      */
-    private List<String> processNotNull(NotNull notNull, String fieldName, Object fieldValue) {
-
-        List<String> messageList = new ArrayList<>();
+    private void processNotNull(NotNull notNull, String fieldName, Object fieldValue, List<String> messageList) {
 
         String message = notNull.message();
 
@@ -124,8 +118,6 @@ public class AnnotationHandler {
             message = MyUtils.isNotBlank(message) ? message : "参数" + fieldName + "不能为空值";
             messageList.add(message);
         }
-
-        return messageList;
     }
 
     /**
@@ -135,9 +127,7 @@ public class AnnotationHandler {
      * @param fieldValue
      * @return
      */
-    private List<String> processVertifi(Vertifi valid, String fieldName, Object fieldValue) {
-
-        List<String> messageList = new ArrayList<>();
+    private void processVertifi(Vertifi valid, String fieldName, Object fieldValue, List<String> messageList) {
 
         String message = valid.message();
         String regExp = valid.regExp();
@@ -160,8 +150,6 @@ public class AnnotationHandler {
                 }
             }
         }
-
-        return messageList;
     }
 
     /**
@@ -170,9 +158,9 @@ public class AnnotationHandler {
      * @return
      * @throws IllegalAccessException
      */
-    private List<String> processValid(Object obj) throws IllegalAccessException {
+    private void processValid(Object obj, List<String> messageList) throws IllegalAccessException {
 
-        return entityHandler(obj);
+        entityHandler(obj, messageList);
     }
 
 
@@ -182,9 +170,7 @@ public class AnnotationHandler {
      * @return
      * @throws IllegalAccessException
      */
-    private List<String> entityHandler(Object obj) throws IllegalAccessException {
-
-        List<String> errors = new ArrayList<>();
+    private void entityHandler(Object obj, List<String> messageList) throws IllegalAccessException {
 
         Class cla = obj.getClass();
         Field[] fields = cla.getDeclaredFields();
@@ -203,56 +189,54 @@ public class AnnotationHandler {
             if(annos != null) {
                 for (Annotation anno : annos) {
                     if (NotNull.class.isInstance(anno)) {
-                        errors.addAll(handlerNotNull(obj, field, anno));
+                        handlerNotNull(obj, field, anno, messageList);
                     } else if (Vertifi.class.isInstance(anno)) {
-                        errors.addAll(handleVertifi(obj, field, anno));
+                        handleVertifi(obj, field, anno, messageList);
                     } else if (Length.class.isInstance(anno)) {
-                        errors.addAll(handleLength(obj, field, anno));
+                        handleLength(obj, field, anno, messageList);
                     }
                 }
             }
         }
-
-        return errors;
     }
 
     /**
      * 处理NotNull
      * */
-    private List<String> handlerNotNull(Object source, Field field, Annotation anno) throws IllegalAccessException {
+    private void handlerNotNull(Object source, Field field, Annotation anno, List<String> messageList) throws IllegalAccessException {
 
         NotNull notNull = (NotNull)anno;
 
         String fieldName = field.getName();
         Object fieldValue = field.get(source);
 
-        return processNotNull(notNull, fieldName, fieldValue);
+        processNotNull(notNull, fieldName, fieldValue, messageList);
     }
 
   /**
    * 处理 Length标注
    * */
-    private List<String> handleLength(Object source, Field field, Annotation anno) throws IllegalAccessException {
+    private void handleLength(Object source, Field field, Annotation anno, List<String> messageList) throws IllegalAccessException {
 
         Length len = (Length)anno;
 
         Object fieldValue = field.get(source);
         String fieldName = field.getName();
 
-        return processLength(len, fieldName, fieldValue);
+        processLength(len, fieldName, fieldValue, messageList);
     }
 
 
     /**
     * 处理 vertifi标注
     * */
-    private List<String> handleVertifi(Object source, Field field, Annotation anno) throws IllegalAccessException {
+    private void handleVertifi(Object source, Field field, Annotation anno, List<String> messageList) throws IllegalAccessException {
 
         Vertifi valid = (Vertifi)anno;
 
         String fieldName = field.getName();
         Object fieldValue = field.get(source);
 
-        return processVertifi(valid, fieldName, fieldValue);
+        processVertifi(valid, fieldName, fieldValue, messageList);
     }
 }
