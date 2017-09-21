@@ -11,9 +11,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 
 /**
@@ -59,13 +57,24 @@ public class AnnotationHandler {
 
                     Object paramVal = paramValueList.get(i);
 
-                    if(length != null) {processLength(length, p.getName(), paramVal, messageList);}
-                    if(notNull != null) {processNotNull(notNull, p.getName(), paramVal, messageList);}
-                    if(vertifi != null) {processVertifi(vertifi, p.getName(), paramVal, messageList);}
-                    if(valid != null) {processValid(paramVal, messageList);}
+                    if(paramVal != null) {
 
-                    if(p.getType() == ErrorInfo.class) {
-                        k = ((ErrorInfo) paramVal);
+                        if (length != null) {
+                            processLength(length, p.getName(), paramVal, messageList);
+                        }
+                        if (notNull != null) {
+                            processNotNull(notNull, p.getName(), paramVal, messageList);
+                        }
+                        if (vertifi != null) {
+                            processVertifi(vertifi, p.getName(), paramVal, messageList);
+                        }
+                        if (valid != null) {
+                            processValid(paramVal, messageList);
+                        }
+
+                        if(p.getType() == ErrorInfo.class) {
+                            k = ((ErrorInfo) paramVal);
+                        }
                     }
 
                     i=i+1;
@@ -160,7 +169,15 @@ public class AnnotationHandler {
      */
     private void processValid(Object obj, List<String> messageList) throws IllegalAccessException {
 
-        entityHandler(obj, messageList);
+        if(obj instanceof Collection<?>) {
+            Iterator ir = ((Collection) obj).iterator();
+            while(ir.hasNext()) {
+                Object childEntity = ir.next();
+                entityHandler(childEntity, messageList);
+            }
+        } else {
+            entityHandler(obj, messageList);
+        }
     }
 
 
@@ -194,6 +211,9 @@ public class AnnotationHandler {
                         handleVertifi(obj, field, anno, messageList);
                     } else if (Length.class.isInstance(anno)) {
                         handleLength(obj, field, anno, messageList);
+                    } else if (Valid.class.isInstance(anno)) {//实体类的内部的List<Entity>或者Entity
+                        Object o = field.get(obj);
+                        if(o != null) processValid(o, messageList);
                     }
                 }
             }

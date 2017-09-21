@@ -5,7 +5,7 @@ import java.lang.annotation.*;
 /**
  * @Author neo 2016.07.12
  */
-@Target({ElementType.PARAMETER})
+@Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Valid {
