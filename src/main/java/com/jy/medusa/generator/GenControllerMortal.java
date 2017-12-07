@@ -33,7 +33,7 @@ public class GenControllerMortal {
         this.markServiceList = MyGenUtils.genTagStrList(entityName + "Controller.java", packagePath, tag, "java");
     }
 
-    public void process(){
+    public void process() {
 
         try {
             String path = System.getProperty("user.dir") + "/src/main/java/" + packagePath.replaceAll("\\.", "/");

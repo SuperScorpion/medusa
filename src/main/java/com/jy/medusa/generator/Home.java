@@ -2,8 +2,14 @@ package com.jy.medusa.generator;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.jy.medusa.generator.ftl.GenControllerFtl;
+import com.jy.medusa.generator.ftl.GenEntityFtl;
+import com.jy.medusa.generator.ftl.GenServiceFtl;
+import com.jy.medusa.generator.ftl.GenXmlFtl;
 import com.jy.medusa.utils.MyUtils;
+import freemarker.template.TemplateException;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -23,6 +29,8 @@ public class Home {
     public static String entityNameSuffix;//实体文件后缀名
     public static String lazyLoad;
     public static String entitySerializable;
+    public static String unitModel;
+    public static String ftlDirPath;
 
     public static String jdbcDriver;
     public static String jdbcUrl;
@@ -59,7 +67,7 @@ public class Home {
     }
 
 
-    public void process() {
+    public void process() throws IOException, TemplateException {
 
         System.out.println("Strike down upon the with great venganceandfury!Xbinya");
         System.out.println("Loading...");
@@ -102,32 +110,51 @@ public class Home {
 
                 if(MyUtils.isNotBlank(entitySuffix)) {
                     long nanoSs = System.nanoTime();
-                    new GenEntity(entityPath, tabName, tag, colValidArray, associationColumn, pluralAssociation).process();//生成 实体类
-                    System.out.println(tabName + " entity文件生成用时:" + (System.nanoTime()-nanoSs) + " ns");
+                    if(checkIsFtl()) {
+                        new GenEntityFtl(entityPath, tabName, tag, colValidArray, associationColumn, pluralAssociation).process();
+                    } else {
+                        new GenEntity(entityPath, tabName, tag, colValidArray, associationColumn, pluralAssociation).process();//生成 实体类
+                    }
+                    System.out.println(tabName + " entity文件生成用时:" + (System.nanoTime() - nanoSs) + " ns");
                 }
 
                 if(MyUtils.isNotBlank(serviceImplSuffix) && MyUtils.isNotBlank(serviceSuffix) && MyUtils.isNotBlank(entitySuffix) && MyUtils.isNotBlank(mapperSuffix)) {
                     long nanoSs = System.nanoTime();
-                    new GenService(tabName, entityPath, servicePath, serviceImplPath, mapperPath, tag).process();//执行生成service serviceimpl mapper
-                    System.out.println(tabName + " service文件 mapper文件生成用时:" + (System.nanoTime()-nanoSs) + " ns");
+                    if(checkIsFtl()) {
+                        new GenServiceFtl(tabName, entityPath, servicePath, serviceImplPath, mapperPath, tag).process();
+                    } else {
+                        new GenService(tabName, entityPath, servicePath, serviceImplPath, mapperPath, tag).process();//执行生成service serviceimpl mapper
+                    }
+                    System.out.println(tabName + " service文件 mapper文件生成用时:" + (System.nanoTime() - nanoSs) + " ns");
                 }
 
                 if(MyUtils.isNotBlank(xmlSuffix) && MyUtils.isNotBlank(entitySuffix) && MyUtils.isNotBlank(mapperSuffix)) {
                     long nanoSs = System.nanoTime();
-                    new GenXml(mapperPath, xmlPath, entityPath, tabName, tag, associationColumn, pluralAssociation).process();//执行生成xml
-                    System.out.println(tabName + " xml文件生成用时:" + (System.nanoTime()-nanoSs) + " ns");
+                    if(checkIsFtl()) {
+                        new GenXmlFtl(mapperPath, xmlPath, entityPath, tabName, tag, associationColumn, pluralAssociation).process();
+                    } else {
+                        new GenXml(mapperPath, xmlPath, entityPath, tabName, tag, associationColumn, pluralAssociation).process();//执行生成xml
+                    }
+                    System.out.println(tabName + " xml文件生成用时:" + (System.nanoTime() - nanoSs) + " ns");
                 }
 
-                if(MyUtils.isNotBlank(controlJsonSuffix) && MyUtils.isNotBlank(entitySuffix) && MyUtils.isNotBlank(serviceSuffix)) {
-                    long nanoSs = System.nanoTime();
-                    new GenControllerJson(tabName, controlPathJson, entityPath, servicePath, tag).process();//生成controller
-                    System.out.println(tabName + " controllerJson文件生成用时:" + (System.nanoTime()-nanoSs) + " ns");
-                }
 
-                if(MyUtils.isNotBlank(controlMortalSuffix) && MyUtils.isNotBlank(entitySuffix) && MyUtils.isNotBlank(serviceSuffix)) {
+                if(checkIsFtl()) {
                     long nanoSs = System.nanoTime();
-                    new GenControllerMortal(tabName, controlPathMortal, entityPath, servicePath, tag).process();//生成controller
-                    System.out.println(tabName + " controllerMortal文件生成用时:" + (System.nanoTime()-nanoSs) + " ns");
+                    new GenControllerFtl(tabName, controlPathJson, entityPath, servicePath, tag).process();
+                    System.out.println(tabName + " controller 文件生成用时:" + (System.nanoTime() - nanoSs) + " ns");
+                } else {
+                    if(MyUtils.isNotBlank(controlJsonSuffix) && MyUtils.isNotBlank(entitySuffix) && MyUtils.isNotBlank(serviceSuffix)) {
+                        long nanoSs = System.nanoTime();
+                        new GenControllerJson(tabName, controlPathJson, entityPath, servicePath, tag).process();//生成controller
+                        System.out.println(tabName + " controllerJson文件生成用时:" + (System.nanoTime() - nanoSs) + " ns");
+                    }
+
+                    if(MyUtils.isNotBlank(controlMortalSuffix) && MyUtils.isNotBlank(entitySuffix) && MyUtils.isNotBlank(serviceSuffix)) {
+                        long nanoSs = System.nanoTime();
+                        new GenControllerMortal(tabName, controlPathMortal, entityPath, servicePath, tag).process();//生成controller
+                        System.out.println(tabName + " controllerMortal文件生成用时:" + (System.nanoTime() - nanoSs) + " ns");
+                    }
                 }
 
             }
@@ -216,5 +243,24 @@ public class Home {
         this.jdbcUrl = props.getProperty("jdbc.url") == null ? "" : props.getProperty("jdbc.url");
         this.jdbcUsername = props.getProperty("jdbc.username") == null ? "" : props.getProperty("jdbc.username");
         this.jdbcPassword = props.getProperty("jdbc.password") == null ? "" : props.getProperty("jdbc.password");
+
+        this.unitModel = MyUtils.isBlank(props.getProperty("medusa.unitModel")) ? "" : props.getProperty("medusa.unitModel");
+        this.ftlDirPath = MyUtils.isBlank(props.getProperty("medusa.ftlDirPath")) ? "" : props.getProperty("medusa.ftlDirPath");
+    }
+
+    public static boolean checkIsFtl() {
+        boolean result = false;
+        if(MyUtils.isNotBlank(ftlDirPath)) result = true;
+        return result;
+    }
+
+    public static boolean checkIsFtlAvailable() {
+        boolean result = false;
+
+        if(checkIsFtl()) {
+            File p = new File(ftlDirPath);
+            if(p.exists()) return true;
+        }
+        return result;
     }
 }

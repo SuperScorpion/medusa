@@ -33,7 +33,7 @@ public class GenControllerJson {
         this.markServiceList = MyGenUtils.genTagStrList(entityName + "Controller.java", packagePath, tag, "java");
     }
 
-    public void process(){
+    public void process() {
 
         try {
             String path = System.getProperty("user.dir") + "/src/main/java/" + packagePath.replaceAll("\\.", "/");
@@ -155,17 +155,20 @@ public class GenControllerJson {
         sb.append(sbbb);
 
         if(sbbb.contains("pager"))
-            sb.append("\t\t\tjson.put(\"data\", pager);\r\n");
+            sb.append("\t\t\t" + MyGenUtils.lowcaseFirst(entityName) + "Service.resultSuccess(pager, \"ok\");\r\n");
+//            sb.append("\t\t\tjson.put(\"data\", pager);\r\n");
         else
-            sb.append("\t\t\tjson.put(\"data\", param);\r\n");
+            sb.append("\t\t\t" + MyGenUtils.lowcaseFirst(entityName) + "Service.resultSuccess(param, \"ok\");\r\n");
+//            sb.append("\t\t\tjson.put(\"data\", param);\r\n");
 
-        sb.append("\t\t\tjson.put(\"result\",0);\r\n");
-        sb.append("\t\t\tjson.put(\"msg\",\"ok\");\r\n");
+        /*sb.append("\t\t\tjson.put(\"result\",0);\r\n");
+        sb.append("\t\t\tjson.put(\"msg\",\"ok\");\r\n");*/
 
         sb.append("\t\t} catch (Exception e) {\r\n");
-        sb.append("\t\t\tjson.put(\"result\",1);\r\n");
-        sb.append("\t\t\tjson.put(\"msg\",\"服务器异常：\" + e.getMessage());\r\n");
-        sb.append("\t\t\tjson.put(\"data\", null);\r\n");
+//        sb.append("\t\t\tjson.put(\"result\",1);\r\n");
+//        sb.append("\t\t\tjson.put(\"msg\",\"服务器异常：\" + e.getMessage());\r\n");
+//        sb.append("\t\t\tjson.put(\"data\", null);\r\n");
+        sb.append("\t\t\t" + MyGenUtils.lowcaseFirst(entityName) + "Service.resultError(null, \"服务器异常：\" + e.getMessage());\r\n");
         sb.append("\t\t\te.printStackTrace();\r\n");
         sb.append("\t\t\tlogger.error(e.getMessage());\r\n");
         sb.append("\t\t}\r\n");

@@ -60,6 +60,8 @@ public class GenBaseService {
 
         sbb.append("import java.util.List;\n" +
                 "\n" +
+                "import com.alibaba.fastjson.JSONObject;\n" +
+                "\n" +
                 "public interface BaseService<T> {\n" +
                 "\n" +
                 "\tint selectCount(Object... ps);\n" +
@@ -95,6 +97,10 @@ public class GenBaseService {
                 "\tint deleteBy(T entity);\n" +
                 "\n" +
                 "\tList<T> selectByGaze(Object... ps);\n" +
+                "\n" +
+                "\tJSONObject resultSuccess(Object result, String msg);\n" +
+                "\n" +
+                "\tJSONObject resultError(Object result, String msg);\n" +
                 "}");
 
         MyGenUtils.processAllRemains(markServiceList, sbb, tag, "service");
@@ -114,6 +120,7 @@ public class GenBaseService {
 
         sbb.append("import " + Home.mixMapper + ";\n" +
                 "import " + servicePath + ".BaseService;\n" +
+                "import com.alibaba.fastjson.JSONObject;\n" +
                 "import org.slf4j.Logger;\n" +
                 "import org.slf4j.LoggerFactory;\n" +
                 "import org.springframework.beans.factory.annotation.Autowired;\n" +
@@ -195,6 +202,23 @@ public class GenBaseService {
                 "\tpublic List<T> selectByGaze(Object... ps) {\n" +
                 "\t\treturn mapper.showMedusaGaze(ps);\n" +
                 "\t}\n" +
+                "\n");
+
+        sbb.append("\tpublic JSONObject resultSuccess(Object result, String msg) {\n" +
+                "\t\tJSONObject json = new JSONObject();\n" +
+                "\t\tjson.put(\"data\", result);\n" +
+                "\t\tjson.put(\"result\",0);\n" +
+                "\t\tjson.put(\"msg\", msg);\n" +
+                "\t\treturn json;\n" +
+                "\t}\n" +
+                "\n" +
+                "\tpublic JSONObject resultError(Object result, String msg) {\n" +
+                "\t\tJSONObject json = new JSONObject();\n" +
+                "\t\tjson.put(\"data\", result);\n" +
+                "\t\tjson.put(\"result\",1);\n" +
+                "\t\tjson.put(\"msg\", msg);\n" +
+                "\t\treturn json;\n" +
+                "\t}" +
                 "}");
 
         MyGenUtils.processAllRemains(markServiceImplList, sbb, tag, "serviceImpl");

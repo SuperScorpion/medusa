@@ -41,23 +41,29 @@ public class GenService {
         this.markMapperList = MyGenUtils.genTagStrList(entityName + "Mapper.java", mapperPath, tag, "mapper");
     }
 
-    public void process(){
+    public void process() {
 
         try {
             //写入service 和 impl
+
+            File file;
+
             String path = System.getProperty("user.dir") + "/src/main/java/" + servicePath.replaceAll("\\.", "/");
-            String pathImp = System.getProperty("user.dir") + "/src/main/java/" + serviceImplPath.replaceAll("\\.", "/");
-            File file = new File(path);
-            if(!file.exists()){
-                file.mkdirs();
-            }
+            file = new File(path);
+            if(!file.exists()){file.mkdirs();}
             String resPath1 = path + "/" + entityName + "Service.java";
-            String resPath2 = pathImp + "/" + entityName + "ServiceImpl.java";
             MyUtils.writeString2File(new File(resPath1), process1(), "UTF-8");
+
+            String pathImp = System.getProperty("user.dir") + "/src/main/java/" + serviceImplPath.replaceAll("\\.", "/");
+            file = new File(pathImp);
+            if(!file.exists()){file.mkdirs();}
+            String resPath2 = pathImp + "/" + entityName + "ServiceImpl.java";
             MyUtils.writeString2File(new File(resPath2), process2(), "UTF-8");
 
             //mapper
             String pathmm = System.getProperty("user.dir") + "/src/main/java/" + mapperPath.replaceAll("\\.", "/");
+            file = new File(pathmm);
+            if(!file.exists()){file.mkdirs();}
             String resPath3 = pathmm + "/" + entityName + "Mapper.java";
             MyUtils.writeString2File(new File(resPath3), process3(), "UTF-8");
 
