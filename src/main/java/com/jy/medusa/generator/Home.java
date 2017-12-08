@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.*;
 import java.util.Properties;
 
 /**
@@ -84,6 +85,7 @@ public class Home {
         String controlPathJson = packagePath.concat(".").concat(controlJsonSuffix);
         String controlPathMortal = packagePath.concat(".").concat(controlMortalSuffix);
 
+        tableName = MyUtils.isBlank(tableName) ? getAllTableName() : tableName;//如果不写表明则生成所有的表相关
         String[] tableNameArray = tableName.split(",");
         if(tableNameArray == null || tableNameArray.length == 0) return;
 
@@ -175,14 +177,14 @@ public class Home {
             System.out.println("大兄弟你的packagePath没填写!");
             result = false;
         }
-        if(MyUtils.isBlank(tableName)) {
+        /*if(MyUtils.isBlank(tableName)) {
             System.out.println("大兄弟你的tableName没填写!");
             result = false;
-        }
-        if(MyUtils.isBlank(tag)) {
+        }*/
+        /*if(MyUtils.isBlank(tag)) {
             System.out.println("大兄弟你的tag没填写!");
             result = false;
-        }
+        }*/
         if(MyUtils.isBlank(entitySuffix)) {
             System.out.println("大兄弟你的entitySuffix没填写!");
             result = false;
@@ -216,33 +218,33 @@ public class Home {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        this.packagePath = props.getProperty("medusa.packagePath") == null ? "" : props.getProperty("medusa.packagePath");
-        this.tableName = props.getProperty("medusa.tableName") == null ? "" : props.getProperty("medusa.tableName");
-        this.tag = props.getProperty("medusa.tag") == null ? "" : props.getProperty("medusa.tag");
+        this.packagePath = MyUtils.isBlank(props.getProperty("medusa.packagePath")) ? "" : props.getProperty("medusa.packagePath");
+        this.tableName = MyUtils.isBlank(props.getProperty("medusa.tableName")) ? "" : props.getProperty("medusa.tableName");
+        this.tag = MyUtils.isBlank(props.getProperty("medusa.tag")) ? "" : props.getProperty("medusa.tag");
 
-        this.entitySuffix = props.getProperty("medusa.entitySuffix") == null ? "" : props.getProperty("medusa.entitySuffix");
-        this.serviceSuffix = props.getProperty("medusa.serviceSuffix") == null ? "" : props.getProperty("medusa.serviceSuffix");
-        this.serviceImplSuffix = props.getProperty("medusa.serviceImplSuffix") == null ? "" : props.getProperty("medusa.serviceImplSuffix");
-        this.mapperSuffix = props.getProperty("medusa.mapperSuffix") == null ? "" : props.getProperty("medusa.mapperSuffix");
-        this.xmlSuffix = props.getProperty("medusa.xmlSuffix") == null ? "" : props.getProperty("medusa.xmlSuffix");
-        this.controlJsonSuffix = props.getProperty("medusa.controlJsonSuffix") == null ? "" : props.getProperty("medusa.controlJsonSuffix");
-        this.controlMortalSuffix = props.getProperty("medusa.controlMortalSuffix") == null ? "" : props.getProperty("medusa.controlMortalSuffix");
+        this.entitySuffix = MyUtils.isBlank(props.getProperty("medusa.entitySuffix")) ? "" : props.getProperty("medusa.entitySuffix");
+        this.serviceSuffix = MyUtils.isBlank(props.getProperty("medusa.serviceSuffix")) ? "" : props.getProperty("medusa.serviceSuffix");
+        this.serviceImplSuffix = MyUtils.isBlank(props.getProperty("medusa.serviceImplSuffix")) ? "" : props.getProperty("medusa.serviceImplSuffix");
+        this.mapperSuffix = MyUtils.isBlank(props.getProperty("medusa.mapperSuffix")) ? "" : props.getProperty("medusa.mapperSuffix");
+        this.xmlSuffix = MyUtils.isBlank(props.getProperty("medusa.xmlSuffix")) ? "" : props.getProperty("medusa.xmlSuffix");
+        this.controlJsonSuffix = MyUtils.isBlank(props.getProperty("medusa.controlJsonSuffix")) ? "" : props.getProperty("medusa.controlJsonSuffix");
+        this.controlMortalSuffix = MyUtils.isBlank(props.getProperty("medusa.controlMortalSuffix")) ? "" : props.getProperty("medusa.controlMortalSuffix");
 
-        this.validJsonStr = props.getProperty("medusa.validator") == null ? "" : props.getProperty("medusa.validator");
-        this.associationColumn = props.getProperty("medusa.associationColumn") == null ? "" : props.getProperty("medusa.associationColumn");
+        this.validJsonStr = MyUtils.isBlank(props.getProperty("medusa.validator")) ? "" : props.getProperty("medusa.validator");
+        this.associationColumn = MyUtils.isBlank(props.getProperty("medusa.associationColumn")) ? "" : props.getProperty("medusa.associationColumn");
         this.pluralAssociation = MyUtils.isBlank(props.getProperty("medusa.pluralAssociation")) ? "" : props.getProperty("medusa.pluralAssociation");
 
         this.author = MyUtils.isBlank(props.getProperty("medusa.author")) ? "administrator" : props.getProperty("medusa.author");
         this.entityNameSuffix = MyUtils.isBlank(props.getProperty("medusa.entityNameSuffix")) ? "" : props.getProperty("medusa.entityNameSuffix");
-        this.lazyLoad = MyUtils.isBlank(props.getProperty("medusa.lazyLoad"))  ? "" : "fetchType=\"lazy\"";
-        this.entitySerializable = MyUtils.isBlank(props.getProperty("medusa.entitySerializable"))  ? "" : props.getProperty("medusa.entitySerializable");
-        this.baseServiceSwitch = MyUtils.isBlank(props.getProperty("medusa.baseServiceSwitch"))  ? "" : "gen";
+        this.lazyLoad = MyUtils.isBlank(props.getProperty("medusa.lazyLoad")) ? "" : "fetchType=\"lazy\"";
+        this.entitySerializable = MyUtils.isBlank(props.getProperty("medusa.entitySerializable")) ? "" : props.getProperty("medusa.entitySerializable");
+        this.baseServiceSwitch = MyUtils.isBlank(props.getProperty("medusa.baseServiceSwitch")) ? "" : "gen";
 
 
-        this.jdbcDriver = props.getProperty("jdbc.driver") == null ? "" : props.getProperty("jdbc.driver");
-        this.jdbcUrl = props.getProperty("jdbc.url") == null ? "" : props.getProperty("jdbc.url");
-        this.jdbcUsername = props.getProperty("jdbc.username") == null ? "" : props.getProperty("jdbc.username");
-        this.jdbcPassword = props.getProperty("jdbc.password") == null ? "" : props.getProperty("jdbc.password");
+        this.jdbcDriver = MyUtils.isBlank(props.getProperty("jdbc.driver")) ? "" : props.getProperty("jdbc.driver");
+        this.jdbcUrl = MyUtils.isBlank(props.getProperty("jdbc.url")) ? "" : props.getProperty("jdbc.url");
+        this.jdbcUsername = MyUtils.isBlank(props.getProperty("jdbc.username")) ? "" : props.getProperty("jdbc.username");
+        this.jdbcPassword = MyUtils.isBlank(props.getProperty("jdbc.password")) ? "" : props.getProperty("jdbc.password");
 
         this.unitModel = MyUtils.isBlank(props.getProperty("medusa.unitModel")) ? "" : props.getProperty("medusa.unitModel");
         this.ftlDirPath = MyUtils.isBlank(props.getProperty("medusa.ftlDirPath")) ? "" : props.getProperty("medusa.ftlDirPath");
@@ -261,6 +263,34 @@ public class Home {
             File p = new File(ftlDirPath);
             if(p.exists()) return true;
         }
+        return result;
+    }
+
+
+    /**
+     * 获取数据库的表所有名称
+     * @return
+     */
+    public String getAllTableName() {
+
+        String result = "";
+
+        GenEntity.DataBaseTools dataBaseTools = new GenEntity().new DataBaseTools();
+
+        Connection conn = dataBaseTools.openConnection(); // 得到数据库连接
+        PreparedStatement pstmt = null;
+        try {
+            DatabaseMetaData meta = conn.getMetaData();
+            ResultSet rs = meta.getTables(null, null, null, new String[] { "TABLE" });
+            while (rs.next()) {
+                result = result + rs.getString(3) + ",";
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            dataBaseTools.closeConnection(conn, pstmt);
+        }
+
         return result;
     }
 }
