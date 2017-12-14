@@ -39,9 +39,9 @@ public class ${entityName}Controller {
             Pager<${entityName}> pager = MyRestrictions.getPager().setPageSize(10).setPageNumber(pageNum);
             ${lowcaseFirstEntityName}Service.selectByGaze(pager);
 
-            ${lowcaseFirstEntityName}Service.resultSuccess(pager, "ok");
+            ${lowcaseFirstEntityName}Service.resultSuccess(pager, "ok", json);
         } catch (Exception e) {
-            ${lowcaseFirstEntityName}Service.resultError(null, "服务器异常：" + e.getMessage());
+            ${lowcaseFirstEntityName}Service.resultError(null, "服务器异常：" + e.getMessage(), json);
             e.printStackTrace();
             logger.error(e.getMessage());
         }

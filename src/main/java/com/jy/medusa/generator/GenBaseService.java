@@ -98,9 +98,9 @@ public class GenBaseService {
                 "\n" +
                 "\tList<T> selectByGaze(Object... ps);\n" +
                 "\n" +
-                "\tJSONObject resultSuccess(Object result, String msg);\n" +
+                "\tJSONObject resultSuccess(Object result, String msg, JSONObject json);\n" +
                 "\n" +
-                "\tJSONObject resultError(Object result, String msg);\n" +
+                "\tJSONObject resultError(Object result, String msg, JSONObject json);\n" +
                 "}");
 
         MyGenUtils.processAllRemains(markServiceList, sbb, tag, "service");
@@ -204,16 +204,16 @@ public class GenBaseService {
                 "\t}\n" +
                 "\n");
 
-        sbb.append("\tpublic JSONObject resultSuccess(Object result, String msg) {\n" +
-                "\t\tJSONObject json = new JSONObject();\n" +
+        sbb.append("\tpublic JSONObject resultSuccess(Object result, String msg, JSONObject json) {\n" +
+                "\t\tjson = json == null ? new JSONObject() : json;\n" +
                 "\t\tjson.put(\"data\", result);\n" +
                 "\t\tjson.put(\"result\",0);\n" +
                 "\t\tjson.put(\"msg\", msg);\n" +
                 "\t\treturn json;\n" +
                 "\t}\n" +
                 "\n" +
-                "\tpublic JSONObject resultError(Object result, String msg) {\n" +
-                "\t\tJSONObject json = new JSONObject();\n" +
+                "\tpublic JSONObject resultError(Object result, String msg, JSONObject json) {\n" +
+                "\t\tjson = json == null ? new JSONObject() : json;\n" +
                 "\t\tjson.put(\"data\", result);\n" +
                 "\t\tjson.put(\"result\",1);\n" +
                 "\t\tjson.put(\"msg\", msg);\n" +

@@ -142,11 +142,8 @@ medusa.properties参数参考<br/>
 #生成的根包路径<br/>
 medusa.packagePath = com.jy.herms <br/>
 <br/>
-###需要生成的表名称 用逗号分隔<br/>
+###需要生成的表名称 用逗号分隔 不填则生成所有标<br/>
 medusa.tableName = xx,xxx,xxxx <br/>
-<br/>
-###java文件中需要在下次生成时保留的代码段的起末标记 //mark … //mark<br/>
-medusa.tag = mark<br/>
 <br/>
 ###根路径下的实体包名<br/>
 medusa.entitySuffix = entity <br/>
@@ -162,14 +159,6 @@ medusa.mapperSuffix = persistence <br/>
 <br/>
 ###生成的xml路径包名<br/>
 medusa.xmlSuffix = persistence.xml <br/>
-<br/>
-###controlJsonSuffix和controlMortalSuffix二选一即可 区别在于一个是json类型一个是页面跳转的类型<br/>
-<br/>
-###controller包的名称(二选一)<br/>
-medusa.controlJsonSuffix = controller <br/>
-<br/>
-###controller包的名称(二选一)<br/>
-medusa.controlMortalSuffix = controller <br/>
 <br/>
 ###文件生成时添加的作者名称<br/>
 medusa.author = admins <br/>
@@ -191,6 +180,22 @@ medusa.pluralAssociation = s <br/>
 <br/>
 ###生成实体文件的后缀名 (一般不写)<br/>
 medusa.entityNameSuffix = <br/>
+<br/>
+###是否根据模版来生成 如果不为空则使用模版 如果找不到路径则使用默认模版<br/>
+medusa.ftlDirPath = xxx<br/>
+<br/>
+###如果使用模版则不使用下面三个配置###<br/>
+<br/>
+###controlJsonSuffix和controlMortalSuffix二选一即可 区别在于一个是json类型一个是页面跳转的类型<br/>
+<br/>
+###controller包的名称(二选一)<br/>
+medusa.controlJsonSuffix = controller <br/>
+<br/>
+###controller包的名称(二选一)<br/>
+medusa.controlMortalSuffix = controller <br/>
+<br/>
+###java文件中需要在下次生成时保留的代码段的起末标记 //mark … //mark<br/>
+medusa.tag = mark<br/>
 <br/>
 ###数据库四项配置<br/>
 jdbc.driver=com.mysql.jdbc.Driver<br/>

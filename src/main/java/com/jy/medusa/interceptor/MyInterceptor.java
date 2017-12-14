@@ -147,25 +147,30 @@ public class MyInterceptor implements Interceptor {
 
         StatementHandler sh = (StatementHandler) invocation.getTarget();
 
-        if(sh.getBoundSql().getSql().contains("INSERT INTO") && !sh.getBoundSql().getSql().contains("on duplicate key update")) {//过滤掉delete update 批量更新之类的 非insert方法
+        if(sh.getBoundSql().getSql().contains("INSERT INTO") && !sh.getBoundSql().getSql().toLowerCase().contains("on duplicate key update")) {//过滤掉delete update 批量更新之类的 非insert方法
 
-            Object c = ((Map) sh.getBoundSql().getParameterObject()).containsKey("pobj") ? ((Map) sh.getBoundSql().getParameterObject()).get("pobj") : null;//过滤掉用户自定义的方法
+            Object s = sh.getBoundSql().getParameterObject();
 
-            if (c instanceof Map) {//过滤掉普通插入
+            if (s instanceof Map) {//过滤掉用户自定义的insert方法 modify by neo on 2017.12.13
 
-                List<Object> paramList = (List) ((Map) c).get("param1");
+                Object c = ((Map) sh.getBoundSql().getParameterObject()).containsKey("pobj") ? ((Map) sh.getBoundSql().getParameterObject()).get("pobj") : null;
 
-                if (paramList != null && !paramList.isEmpty()) {
+                if (c instanceof Map) {//过滤medusa普通insert插入
 
-                    Statement st = (Statement) invocation.getArgs()[0];
+                    List<Object> paramList = (List) ((Map) c).get("param1");
 
-                    ResultSet rs = st.getGeneratedKeys();
+                    if (paramList != null && !paramList.isEmpty()) {
 
-                    for (Object ot : paramList) {
+                        Statement st = (Statement) invocation.getArgs()[0];
 
-                        if (!rs.next()) break;
+                        ResultSet rs = st.getGeneratedKeys();
 
-                        MyReflectionUtils.invokeSetterMethod(ot, SystemConfigs.PRIMARY_KEY, rs.getInt(1));//注入属性id值 rs.getInt(1) 每次执行都取到不同 id 很神奇 (一行多列的原因是吗)
+                        for (Object ot : paramList) {
+
+                            if (!rs.next()) break;
+
+                            MyReflectionUtils.invokeSetterMethod(ot, SystemConfigs.PRIMARY_KEY, rs.getInt(1));//注入属性id值 rs.getInt(1) 每次执行都取到不同 id 很神奇 (一行多列的原因是吗)
+                        }
                     }
                 }
             }
