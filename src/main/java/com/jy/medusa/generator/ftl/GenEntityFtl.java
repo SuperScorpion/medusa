@@ -57,7 +57,7 @@ public class GenEntityFtl {
 //        this.markStrList = MyGenUtils.genTagStrList(MyGenUtils.upcaseFirst(tableName) + ".java", packagePath, tag, "java");
     }
 
-    public void process() throws IOException, TemplateException {
+    public void process() {
 
         DataBaseTools dataBaseTools = new DataBaseTools();
 
@@ -128,27 +128,34 @@ public class GenEntityFtl {
 
             Configuration cfg = new Configuration(Configuration.VERSION_2_3_22);
 
-            if(!Home.checkIsFtlAvailable()) {
+            try {
+                if(!Home.checkIsFtlAvailable()) {
 
-                cfg.setClassLoaderForTemplateLoading(this.getClass().getClassLoader(), "/template");
-            } else {
+                    cfg.setClassLoaderForTemplateLoading(this.getClass().getClassLoader(), "/template");
+                } else {
 
-                cfg.setDirectoryForTemplateLoading(new File(Home.ftlDirPath));
+                    cfg.setDirectoryForTemplateLoading(new File(Home.ftlDirPath));
+                }
+
+
+                Template temp = cfg.getTemplate("entity.ftl");//TODO
+
+                FileOutputStream fos = new FileOutputStream(new File(resPath));
+
+                Writer out = new BufferedWriter(new OutputStreamWriter(fos, "utf-8"), 10240);
+
+                /*Map<String, Object> map = new HashMap<>();
+                map.put("projectName", "lisi");
+                map.put("packageName", "wangwu");
+                map.put("wt", true);*/
+
+                if(temp != null) temp.process(map, out);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (TemplateException e) {
+                e.printStackTrace();
             }
-
-
-            Template temp = cfg.getTemplate("entity.ftl");//TODO
-
-            FileOutputStream fos = new FileOutputStream(new File(resPath));
-
-            Writer out = new BufferedWriter(new OutputStreamWriter(fos, "utf-8"), 10240);
-
-            /*Map<String, Object> map = new HashMap<>();
-            map.put("projectName", "lisi");
-            map.put("packageName", "wangwu");
-            map.put("wt", true);*/
-
-            if(temp != null) temp.process(map, out);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -160,7 +167,7 @@ public class GenEntityFtl {
     /**
      * 解析处理(生成实体类主体代码)
      */
-    private Map<String, Object> parse() throws IOException, TemplateException {
+    private Map<String, Object> parse() {
 
         boolean lazyLoad = false;
         boolean entitySerializable = false;

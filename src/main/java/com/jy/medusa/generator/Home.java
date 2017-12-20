@@ -68,7 +68,7 @@ public class Home {
     }
 
 
-    public void process() throws IOException, TemplateException {
+    public void process() {
 
         System.out.println("Strike down upon the with great venganceandfury!Xbinya");
         System.out.println("Loading...");

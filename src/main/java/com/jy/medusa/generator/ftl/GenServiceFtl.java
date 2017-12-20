@@ -49,7 +49,7 @@ public class GenServiceFtl {
 //        this.markMapperList = MyGenUtils.genTagStrList(entityName + "Mapper.java", mapperPath, tag, "mapper");
     }
 
-    public void process() throws TemplateException {
+    public void process() {
 
         try {
             //写入service 和 impl
@@ -104,6 +104,7 @@ public class GenServiceFtl {
 
             if(temp1 != null) temp1.process(map1, out1);
 
+
             //serviceImpl
             Map<String, Object> map2 = process2();
 
@@ -127,6 +128,8 @@ public class GenServiceFtl {
             if(temp3 != null) temp3.process(map3, out3);
 
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (TemplateException e) {
             e.printStackTrace();
         }
     }

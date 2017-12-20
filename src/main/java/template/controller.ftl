@@ -57,9 +57,9 @@ public class ${entityName}Controller {
         try {
             if(param != null) ${lowcaseFirstEntityName}Service.save(param);
 
-            ${lowcaseFirstEntityName}Service.resultSuccess(param, "ok");
+            ${lowcaseFirstEntityName}Service.resultSuccess(param, "ok", json);
         } catch (Exception e) {
-            ${lowcaseFirstEntityName}Service.resultError(null, "服务器异常：" + e.getMessage());
+            ${lowcaseFirstEntityName}Service.resultError(null, "服务器异常：" + e.getMessage(), json);
             e.printStackTrace();
             logger.error(e.getMessage());
         }
@@ -75,9 +75,9 @@ public class ${entityName}Controller {
         try {
             if(param != null) ${lowcaseFirstEntityName}Service.updateSelective(param);
 
-            ${lowcaseFirstEntityName}Service.resultSuccess(param, "ok");
+            ${lowcaseFirstEntityName}Service.resultSuccess(param, "ok", json);
         } catch (Exception e) {
-            ${lowcaseFirstEntityName}Service.resultError(null, "服务器异常：" + e.getMessage());
+            ${lowcaseFirstEntityName}Service.resultError(null, "服务器异常：" + e.getMessage(), json);
             e.printStackTrace();
             logger.error(e.getMessage());
         }
@@ -93,9 +93,9 @@ public class ${entityName}Controller {
         try {
             int param = ${lowcaseFirstEntityName}Service.deleteById(id);
 
-            ${lowcaseFirstEntityName}Service.resultSuccess(param, "ok");
+            ${lowcaseFirstEntityName}Service.resultSuccess(param, "ok", json);
         } catch (Exception e) {
-            ${lowcaseFirstEntityName}Service.resultError(null, "服务器异常：" + e.getMessage());
+            ${lowcaseFirstEntityName}Service.resultError(null, "服务器异常：" + e.getMessage(), json);
             e.printStackTrace();
             logger.error(e.getMessage());
         }

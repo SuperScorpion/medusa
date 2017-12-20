@@ -3,7 +3,6 @@ package com.jy.medusa.generator.ftl;
 import com.jy.medusa.generator.Home;
 import com.jy.medusa.generator.MyGenUtils;
 import com.jy.medusa.utils.MyDateUtils;
-import com.jy.medusa.utils.MyUtils;
 import com.jy.medusa.utils.SystemConfigs;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -39,7 +38,7 @@ public class GenControllerFtl {
 //        this.markServiceList = MyGenUtils.genTagStrList(entityName + "Controller.java", packagePath, tag, "java");
     }
 
-    public void process() throws TemplateException {
+    public void process() {
 
         try {
             String path = System.getProperty("user.dir") + "/src/main/java/" + packagePath.replaceAll("\\.", "/");
@@ -69,7 +68,13 @@ public class GenControllerFtl {
 
             Writer out = new BufferedWriter(new OutputStreamWriter(fos, "utf-8"), 10240);
 
-            if(temp != null) temp.process(map, out);
+            if(temp != null) {
+                try {
+                    temp.process(map, out);
+                } catch (TemplateException e) {
+                    e.printStackTrace();
+                }
+            }
 
         } catch (IOException e) {
             e.printStackTrace();

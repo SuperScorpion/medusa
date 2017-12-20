@@ -75,7 +75,7 @@ public class GenXmlFtl {
         }
     }
 
-    public void process() throws TemplateException {
+    public void process() {
 
         Map<String, Object[]> resultMap = genAllKindTypes(tableName);
 
@@ -115,6 +115,8 @@ public class GenXmlFtl {
             if(temp != null) temp.process(map, out);
 
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (TemplateException e) {
             e.printStackTrace();
         }
     }
