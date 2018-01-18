@@ -218,7 +218,7 @@ public class GenBaseService {
                 "\t\tjson.put(\"result\",1);\n" +
                 "\t\tjson.put(\"msg\", msg);\n" +
                 "\t\treturn json;\n" +
-                "\t}" +
+                "\t}\n" +
                 "}");
 
         MyGenUtils.processAllRemains(markServiceImplList, sbb, tag, "serviceImpl");

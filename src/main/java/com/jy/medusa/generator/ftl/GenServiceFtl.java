@@ -100,7 +100,7 @@ public class GenServiceFtl {
 
             FileOutputStream fos1 = new FileOutputStream(new File(resPath1));
 
-            Writer out1 = new BufferedWriter(new OutputStreamWriter(fos1, "utf-8"), 10240);
+            Writer out1 = new BufferedWriter(new OutputStreamWriter(fos1, "utf-8"), 9999);
 
             if(temp1 != null) temp1.process(map1, out1);
 
@@ -112,9 +112,10 @@ public class GenServiceFtl {
 
             FileOutputStream fos2 = new FileOutputStream(new File(resPath2));
 
-            Writer out2 = new BufferedWriter(new OutputStreamWriter(fos2, "utf-8"), 20240);
+            Writer out2 = new BufferedWriter(new OutputStreamWriter(fos2, "utf-8"), 9999);
 
             if(temp2 != null) temp2.process(map2, out2);
+
 
             //mapper
             Map<String, Object> map3 = process3();
@@ -123,7 +124,7 @@ public class GenServiceFtl {
 
             FileOutputStream fos3 = new FileOutputStream(new File(resPath3));
 
-            Writer out3 = new BufferedWriter(new OutputStreamWriter(fos3, "utf-8"), 30240);
+            Writer out3 = new BufferedWriter(new OutputStreamWriter(fos3, "utf-8"), 9999);
 
             if(temp3 != null) temp3.process(map3, out3);
 
