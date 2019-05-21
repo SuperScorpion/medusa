@@ -45,7 +45,7 @@ public class MySqlGenerator {
      * @param t
      * @return
      */
-    public String sql_insertOfBatch(Object t, Object... ps) {
+    public String sql2InsertOfBatch(Object t, Object... ps) {
 
         String paramColumn = reSolveColumn(ps);
 
@@ -55,13 +55,13 @@ public class MySqlGenerator {
 
         int sbbLength = paramColumn.length() + tableName.length() + dynamicSqlForBatch.length() + 33;
 
-        StringBuilder sql_build = new StringBuilder(sbbLength);
+        StringBuilder sqlBuild = new StringBuilder(sbbLength);
 
-        sql_build.append("INSERT INTO ").append(tableName).append("(")
+        sqlBuild.append("INSERT INTO ").append(tableName).append("(")
                 .append(paramColumn).append(") values ")
                 .append(dynamicSqlForBatch);//modify by neo on2016.11.13
 
-        String sql = sql_build.toString();
+        String sql = sqlBuild.toString();
 
         logger.debug("Medusa: Generated SQL ^_^ " + sql);
 
@@ -72,7 +72,7 @@ public class MySqlGenerator {
      * 生成新增的SQL not selective
      * @return
      */
-    public String sql_create() {//modify by neo on 2016.11.12 Object t
+    public String sql2Create() {//modify by neo on 2016.11.12 Object t
 //        List<Object> values = obtainFieldValues(t);// modify by neo on 2016.11.15
 
         String[] paraArray = MyHelper.concatInsertDynamicSql(currentFieldTypeNameMap, currentFieldColumnNameMap, null);
@@ -80,11 +80,11 @@ public class MySqlGenerator {
 
         int sbbLength = insertColumn.length() + tableName.length() + insertDynamicSql.length() + 33;
 
-        StringBuilder sql_build = new StringBuilder(sbbLength);
-        sql_build.append("INSERT INTO ").append(tableName).append("(")
+        StringBuilder sqlBuild = new StringBuilder(sbbLength);
+        sqlBuild.append("INSERT INTO ").append(tableName).append("(")
                 .append(insertColumn).append(") values (")
                 .append(insertDynamicSql).append(")");//modify by neo on2016.11.12
-        String sql = sql_build.toString();
+        String sql = sqlBuild.toString();
 
         logger.debug("Medusa: Generated SQL ^_^ " + sql);
 
@@ -97,7 +97,7 @@ public class MySqlGenerator {
      * @return
      * @param t
      */
-    public String sql_create_selective(Object t) {//modify by neo on 20170117
+    public String sql2CreateSelective(Object t) {//modify by neo on 20170117
 
         if(t == null) throw new MedusaException("Medusa: The entity param is null");
 
@@ -106,11 +106,11 @@ public class MySqlGenerator {
 
         int sbbLength = insertColumn.length() + tableName.length() + insertDynamicSql.length() + 33;
 
-        StringBuilder sql_build = new StringBuilder(sbbLength);
-        sql_build.append("INSERT INTO ").append(tableName).append("(")
+        StringBuilder sqlBuild = new StringBuilder(sbbLength);
+        sqlBuild.append("INSERT INTO ").append(tableName).append("(")
                 .append(insertColumn).append(") values (")
                 .append(insertDynamicSql).append(")");//modify by neo on2016.11.12
-        String sql = sql_build.toString();
+        String sql = sqlBuild.toString();
 
         logger.debug("Medusa: Generated SQL ^_^ " + sql);
 
@@ -158,17 +158,17 @@ public class MySqlGenerator {
      * 生成根据ID删除的SQL
      * @return
      */
-    public String sql_removeById() {//modify by neo on 2016.11.13 Object id
+    public String sql2RemoveById() {//modify by neo on 2016.11.13 Object id
 
         //if(id == null) id = 0;//modify by neo on 2016.11.04
 
         int len = 30 + tableName.length() + pkName.length();
 
-        StringBuilder sql_build = new StringBuilder(len);
-        sql_build.append("DELETE FROM ").append(tableName)
+        StringBuilder sqlBuild = new StringBuilder(len);
+        sqlBuild.append("DELETE FROM ").append(tableName)
                 .append(" WHERE ").append(pkName).append(" = ").append("#{pobj}");//modify by neo on 2016.11.12
 
-        String sql = sql_build.toString();
+        String sql = sqlBuild.toString();
 
         logger.debug("Medusa: Generated SQL ^_^ " + sql);
 
@@ -180,7 +180,7 @@ public class MySqlGenerator {
      * @param t
      * @return
      */
-    public String sql_removeOfBatch(Object t) {
+    public String sql2RemoveOfBatch(Object t) {
 
 //        Boolean b = List.class.isAssignableFrom(t.getClass());
 
@@ -196,20 +196,20 @@ public class MySqlGenerator {
 
         int len = 30 + tableName.length() + pkName.length() + l * 9;
 
-        StringBuilder sql_build = new StringBuilder(len);
-        sql_build.append("DELETE FROM ").append(tableName)
+        StringBuilder sqlBuild = new StringBuilder(len);
+        sqlBuild.append("DELETE FROM ").append(tableName)
                 .append(" WHERE ").append(pkName).append(" IN ( 0 ");
 
         for (; i < l; i++) {
-            sql_build.append(",").append(ids.get(i));
+            sqlBuild.append(",").append(ids.get(i));
             /*if (i > 0 && i % (AssConstant.DELETE_CRITICAL_VAL - 1) == 0) {
-                sql_build.append(")").append(" OR ").append(pkName)
+                sqlBuild.append(")").append(" OR ").append(pkName)
                         .append(" IN ( 0 ");
             }*/
         }
-        sql_build.append(")");
+        sqlBuild.append(")");
 
-        String sql = sql_build.toString();
+        String sql = sqlBuild.toString();
 
         logger.debug("Medusa: Generated SQL ^_^ " + sql);
 
@@ -221,7 +221,7 @@ public class MySqlGenerator {
      * @param t
      * @return
      */
-    public String sql_removeByCondition(Object t) {
+    public String sql2RemoveByCondition(Object t) {
 
         List<String> values = obtainColumnValuesForDeleteByCondition(t);
 
@@ -229,16 +229,16 @@ public class MySqlGenerator {
 
         int len = 30 + tableName.length() + (valuesLen * 36);
 
-        StringBuilder sql_build = new StringBuilder(len);
-        sql_build.append("DELETE FROM ").append(tableName).append(" WHERE ");
+        StringBuilder sqlBuild = new StringBuilder(len);
+        sqlBuild.append("DELETE FROM ").append(tableName).append(" WHERE ");
 
         if (values == null || values.isEmpty()) {
-            sql_build.append("1!=1");//modify by neo on 2017 07
+            sqlBuild.append("1!=1");//modify by neo on 2017 07
         } else {
-            sql_build.append(MyUtils.join(values, " AND "));
+            sqlBuild.append(MyUtils.join(values, " AND "));
         }
 
-        String sql = sql_build.toString();
+        String sql = sqlBuild.toString();
         logger.debug("Medusa: Generated SQL ^_^ " + sql);
         return sql;
     }
@@ -249,7 +249,7 @@ public class MySqlGenerator {
      * @param t
      * @return
      */
-    public String sql_modifyOfBatch(Object t, Object... ps) {
+    public String sql2ModifyOfBatch(Object t, Object... ps) {
 
         String paramColumn = reSolveColumn(ps);
 
@@ -272,7 +272,7 @@ public class MySqlGenerator {
      * @param t
      * @return
      */
-    public String sql_modify(Object t) {
+    public String sql2Modify(Object t) {
 
         List<String> values = obtainColumnValusForModify(t);
         //Object id = MyReflectionUtils.obtainFieldValue(t, currentColumnFieldNameMap.get(pkName));
@@ -285,12 +285,12 @@ public class MySqlGenerator {
 
         int len = 30 + tableName.length() + (pkName.length() << 1) + (values.size() * 30);
 
-        StringBuilder sql_build = new StringBuilder(len);
-        sql_build.append("UPDATE ").append(tableName).append(" SET ")
+        StringBuilder sqlBuild = new StringBuilder(len);
+        sqlBuild.append("UPDATE ").append(tableName).append(" SET ")
                 .append(MyUtils.join(values, ",")).append(" WHERE ")
                 .append(pkName).append(" = ").append("#{pobj." + pkName + "}");
 
-        String sql = sql_build.toString();
+        String sql = sqlBuild.toString();
 
         logger.debug("Medusa: Generated SQL ^_^ " + sql);
 
@@ -315,7 +315,7 @@ public class MySqlGenerator {
      * @param t
      * @return
      */
-    public String sql_modify_null(Object t, Object... ps) {
+    public String sql2ModifyNull(Object t, Object... ps) {
 
         String paramColumn = reSolveColumn(ps);
 
@@ -325,12 +325,12 @@ public class MySqlGenerator {
 
         int len = 39 + tableName.length() + (pkName.length() << 1) + (values.size() * 30);
 
-        StringBuilder sql_build = new StringBuilder(len);
-        sql_build.append("UPDATE ").append(tableName).append(" SET ")
+        StringBuilder sqlBuild = new StringBuilder(len);
+        sqlBuild.append("UPDATE ").append(tableName).append(" SET ")
                 .append(MyUtils.join(values, ",")).append(" WHERE ")
                 .append(pkName).append(" = ").append("#{pobj.param1." + pkName + "}");
 
-        String sql = sql_build.toString();
+        String sql = sqlBuild.toString();
 
         logger.debug("Medusa: Generated SQL ^_^ " + sql);
 
@@ -442,7 +442,7 @@ public class MySqlGenerator {
 
     /**
      * 提供给
-     * sql_removeByCondition
+     * sql2RemoveByCondition
      * @param t
      * @return
      */
@@ -470,7 +470,7 @@ public class MySqlGenerator {
      * @return
      */
 //    return "SELECT * FROM  users WHERE NAME = #{pobj.param1.name} limit 0,1";
-    public String sql_findOne(Object t, Object... ps) {
+    public String sql2FindOne(Object t, Object... ps) {
 
         String paramColumn = reSolveColumn(ps);
 
@@ -480,19 +480,19 @@ public class MySqlGenerator {
 
         int len = 39 + tableName.length() + paramColumn.length() + (valuesLen * 39);
 
-        StringBuilder sql_build = new StringBuilder(len);
+        StringBuilder sqlBuild = new StringBuilder(len);
 
-        sql_build.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName).append(" WHERE ");
+        sqlBuild.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName).append(" WHERE ");
 
         if (values == null || values.isEmpty()) {
-            sql_build.append("1=1");
+            sqlBuild.append("1=1");
         } else {
-            sql_build.append(MyUtils.join(values, " AND "));
+            sqlBuild.append(MyUtils.join(values, " AND "));
         }
 
-        sql_build.append(" limit 0,1");
+        sqlBuild.append(" limit 0,1");
 
-        String sql = sql_build.toString();
+        String sql = sqlBuild.toString();
 
         logger.debug("Medusa: Generated SQL ^_^ " + sql);
 
@@ -505,16 +505,16 @@ public class MySqlGenerator {
      * 生成根据ID查询的SQL
      * @return
      */
-    public String sql_findOneById(Object id, Object... ps) {///modify by neo on 2016.11.21 Object id,这个 id 不能去掉的
+    public String sql2FindOneById(Object id, Object... ps) {///modify by neo on 2016.11.21 Object id,这个 id 不能去掉的
 
         String paramColumn = reSolveColumn(ps);
 
         int len = 39 + tableName.length() + pkName.length() + paramColumn.length();
 
-        StringBuilder sql_build = new StringBuilder(len);
-        sql_build.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName).append(" WHERE " + pkName + " = " + "#{pobj.param1}");
+        StringBuilder sqlBuild = new StringBuilder(len);
+        sqlBuild.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName).append(" WHERE " + pkName + " = " + "#{pobj.param1}");
 
-        String sql = sql_build.toString();
+        String sql = sqlBuild.toString();
 
         logger.debug("Medusa: Generated SQL ^_^ " + sql);
 
@@ -526,7 +526,7 @@ public class MySqlGenerator {
      * @param t
      * @return
      */
-    public String sql_findBatchOfIds(Object t, Object... ps) {
+    public String sql2FindBatchOfIds(Object t, Object... ps) {
 
         List<Object> ids = t instanceof List ? (ArrayList)t : new ArrayList<>();
 
@@ -536,26 +536,26 @@ public class MySqlGenerator {
 
         int len = 30 + paramColumn.length() + tableName.length() + pkName.length() + l * 9;
 
-        StringBuilder sql_build = new StringBuilder(len);
-        sql_build.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName).append(" WHERE ")
+        StringBuilder sqlBuild = new StringBuilder(len);
+        sqlBuild.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName).append(" WHERE ")
                 .append(pkName).append(" in (");
 
         for (; i < l; i++) {
-            sql_build.append(ids.get(i)).append(",");
+            sqlBuild.append(ids.get(i)).append(",");
         }
 
-        sql_build.append(")");
+        sqlBuild.append(")");
 
-        if(sql_build.lastIndexOf(",") != -1) sql_build.deleteCharAt(sql_build.lastIndexOf(","));
+        if(sqlBuild.lastIndexOf(",") != -1) sqlBuild.deleteCharAt(sqlBuild.lastIndexOf(","));
 
-        String sql = sql_build.toString();
+        String sql = sqlBuild.toString();
 
         logger.debug("Medusa: Generated SQL ^_^ " + sql);
 
         return sql;
     }
 
-    public String sql_findListBy(Object t, Object... ps) {
+    public String sql2FindListBy(Object t, Object... ps) {
 
         String paramColumn = reSolveColumn(ps);
 
@@ -566,16 +566,16 @@ public class MySqlGenerator {
 
         int len = 30 + tableName.length() + paramColumn.length() + (valuesLen * 39);
 
-        StringBuilder sql_build = new StringBuilder(len);
-        sql_build.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName).append(" WHERE ");
+        StringBuilder sqlBuild = new StringBuilder(len);
+        sqlBuild.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName).append(" WHERE ");
 
         if (values == null || values.isEmpty()) {
-            sql_build.append("1=1");
+            sqlBuild.append("1=1");
         } else {
-            sql_build.append(MyUtils.join(values, " AND "));
+            sqlBuild.append(MyUtils.join(values, " AND "));
         }
 
-        String sql = sql_build.toString();
+        String sql = sqlBuild.toString();
 
         logger.debug("Medusa: Generated SQL ^_^ " + sql);
 
@@ -586,15 +586,15 @@ public class MySqlGenerator {
      * 生成查询所有的SQL
      * @return
      */
-    public String sql_findAll(Object[] objParams) {
+    public String sql2FindAll(Object[] objParams) {
 
         String paramColumn = (objParams == null || objParams.length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect(objParams, currentFieldColumnNameMap);
 
         int len = 20 + tableName.length() + paramColumn.length();
 
-        StringBuilder sql_build = new StringBuilder(len);
-        sql_build.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName);
-        String sql = sql_build.toString();
+        StringBuilder sqlBuild = new StringBuilder(len);
+        sqlBuild.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName);
+        String sql = sqlBuild.toString();
 
         logger.debug("Medusa: Generated SQL ^_^ " + sql);
 
@@ -605,7 +605,7 @@ public class MySqlGenerator {
      * 生成查询数量的SQL
      * @return
      */
-    public String sql_findAllCount(Object[] objParams) {
+    public String sql2FindAllCount(Object[] objParams) {
 
         // 从缓存里拿到分页查询语句 必须清理掉缓存
         String cacheSq = MyHelper.myThreadLocal.get();
@@ -673,7 +673,7 @@ public class MySqlGenerator {
      * find sql to build a multifunctional method
      * 通过多条件查询 like between 用and连接 查询出交集
      */
-    public String sql_findMedusaGaze(Object[] objParams) {//modify by neo on 2016.12.23
+    public String sql2FindMedusaGaze(Object[] objParams) {//modify by neo on 2016.12.23
 
         //获取到缓存中的分页查询语句 modify by neo on 2016.11.16
         ///分页时先执行查询分页再执行查询分页 再执行总计数句 boundsql(因为)

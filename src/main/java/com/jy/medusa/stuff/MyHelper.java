@@ -380,7 +380,7 @@ public class MyHelper {
         ResultSet rs = null;
 
 //        String countSql = getSqlGenerator(p).sql_findAllCount(((MapperMethod.ParamMap) p.get("pobj")).get("param1"));
-        String countSql = getSqlGenerator(p).sql_findAllCount((Object[]) ((DefaultSqlSession.StrictMap) p.get("pobj")).get("array"));
+        String countSql = getSqlGenerator(p).sql2FindAllCount((Object[]) ((DefaultSqlSession.StrictMap) p.get("pobj")).get("array"));
 
         int totalCount = 0;
 
@@ -429,7 +429,7 @@ public class MyHelper {
 
 /*            String countSql = getSqlGenerator(p).sql_findAllCount(((MapperMethod.ParamMap) p.get("pobj")).get("param1"),
                     ((MapperMethod.ParamMap) p.get("pobj")).get("param2"));*/
-            String countSql = getSqlGenerator(p).sql_findAllCount((Object[]) ((DefaultSqlSession.StrictMap) p.get("pobj")).get("array"));
+            String countSql = getSqlGenerator(p).sql2FindAllCount((Object[]) ((DefaultSqlSession.StrictMap) p.get("pobj")).get("array"));
 
 //            BoundSql countBS = new BoundSql(mst.getConfiguration(), countSql, boundSql.getParameterMappings(),p);
 

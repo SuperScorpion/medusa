@@ -18,14 +18,14 @@ public class BaseDeleteProvider {
      * @return
      */
     public String delete(Map<String, Object> m) {
-        return MyHelper.getSqlGenerator(m).sql_removeByCondition(m.get("pobj"));
+        return MyHelper.getSqlGenerator(m).sql2RemoveByCondition(m.get("pobj"));
     }
 
     /**
      * 通过主键删除
      */
     public String deleteByPrimaryKey(Map<String, Object> m) {
-        return MyHelper.getSqlGenerator(m).sql_removeById();//modify by neo on 2016.11.13 m.get("pobj")
+        return MyHelper.getSqlGenerator(m).sql2RemoveById();//modify by neo on 2016.11.13 m.get("pobj")
     }
 
     /**
@@ -35,6 +35,6 @@ public class BaseDeleteProvider {
 
         List<Object> p = (List<Object>) ((DefaultSqlSession.StrictMap) m.get("pobj")).get("list");
 
-        return MyHelper.getSqlGenerator(m).sql_removeOfBatch(p);
+        return MyHelper.getSqlGenerator(m).sql2RemoveOfBatch(p);
     }
 }

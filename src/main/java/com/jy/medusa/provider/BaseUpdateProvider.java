@@ -19,7 +19,7 @@ public class BaseUpdateProvider {
     public String updateByPrimaryKey(Map<String, Object> m) {
 
         if(m.get("pobj") instanceof MapperMethod.ParamMap) {
-            return MyHelper.getSqlGenerator(m).sql_modify_null(
+            return MyHelper.getSqlGenerator(m).sql2ModifyNull(
                     ((MapperMethod.ParamMap) m.get("pobj")).get("param1"),
                     ((MapperMethod.ParamMap) m.get("pobj")).get("param2"));
         } else {
@@ -33,7 +33,7 @@ public class BaseUpdateProvider {
      * @return
      */
     public String updateByPrimaryKeySelective(Map<String, Object> m) {
-        return MyHelper.getSqlGenerator(m).sql_modify(m.get("pobj"));
+        return MyHelper.getSqlGenerator(m).sql2Modify(m.get("pobj"));
     }
 
     /**
@@ -44,7 +44,7 @@ public class BaseUpdateProvider {
     public String updateByPrimaryKeyBatch(Map<String, Object> m) {
 
         if(m.get("pobj") instanceof MapperMethod.ParamMap) {
-            return MyHelper.getSqlGenerator(m).sql_modifyOfBatch(
+            return MyHelper.getSqlGenerator(m).sql2ModifyOfBatch(
                     ((MapperMethod.ParamMap) m.get("pobj")).get("param1"),
                     ((MapperMethod.ParamMap) m.get("pobj")).get("param2"));
         } else {
