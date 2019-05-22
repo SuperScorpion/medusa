@@ -5,8 +5,8 @@ import com.jy.medusa.base.select.*;
 
 /**
  * 通用Mapper接口,基础查询
- * @param <T> 不能为空
- * @author neo
+ * @param<T> 不能为空
+ * Author neo
  */
 public interface BaseSelectMapper<T> extends
         SelectOneMapper<T>,

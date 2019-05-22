@@ -83,7 +83,7 @@ public class GenControllerFtl {
 
     /**
      * controller
-     * @return
+     * @return 返回值类型
      */
     private Map<String, Object> home() {
 

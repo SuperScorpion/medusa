@@ -13,9 +13,9 @@ import java.util.regex.Pattern;
 public class MyDateUtils {
 
     /**
-     * @param date
-     * @param regx
-     * @return
+     * @param date 参数
+     * @param regx 参数
+     * @return 返回值类型
      */
     public static String convertDateToStr(Date date, String regx){
 
@@ -29,8 +29,8 @@ public class MyDateUtils {
 
     /**
      * 正则匹配日期时间并返回date对象格式化
-     * @param dateStr
-     * @return
+     * @param dateStr 参数
+     * @return 返回值类型
      */
     public static Date convertStrToDate(String dateStr){
 

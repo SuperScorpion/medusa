@@ -26,8 +26,8 @@ public class MyReflectCacheManager {
 
     /**
      * 反射调用setter方法时会触发
-     * @param c
-     * @return
+     * @param c 参数
+     * @return 返回值类型
      */
     public static Method[] getCacheMethodArray(Class<?> c) {
 

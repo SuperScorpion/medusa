@@ -9,7 +9,7 @@ import com.jy.medusa.base.insert.InsertSelectiveUUIDMapper;
 /**
  * 通用Mapper接口,基础查询
  * @param <T> 不能为空
- * @author neo
+ * Author neo
  */
 public interface BaseInsertMapper<T> extends
         InsertSelectiveMapper<T>,

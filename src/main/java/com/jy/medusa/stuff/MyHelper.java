@@ -51,7 +51,8 @@ public class MyHelper {
 
     /**
      * 获取返回值类型 - 实体类型
-     * @return
+     * @param msid 参数
+     * @return 返回值类型
      */
     public static Class<?> getEntityClass(String msid) {
 
@@ -82,8 +83,8 @@ public class MyHelper {
 
     /**
      * construct class by classpath
-     * @param classPath
-     * @return
+     * @param classPath        参数
+     * @return 返回值类型
      */
     public static Class<?> buildClassByPath(String classPath) {
         if(classPath != null) {
@@ -101,7 +102,8 @@ public class MyHelper {
      * com.jy.koubei.persistence.UserMapper.SelectOne
      * remove .SelectOne
      * then you can get the UserMapper path to build entity class
-     * @return
+     * @param msid 参数
+     * @return 返回值类型
      */
     public static String removeLastWord(String msid) {
 
@@ -122,7 +124,8 @@ public class MyHelper {
     /**
      * com.jy.koubei.persistence.UserMapper.SelectOne
      * remove com.jy.koubei.persistence.UserMapper.
-     * @return
+     * @param msid 参数
+     * @return 返回值类型
      */
     public static String getLastWord(String msid) {
 
@@ -131,7 +134,11 @@ public class MyHelper {
     }
 
 
-    //在interceptori 里面判断方法是不是用户自定义方法
+    /**
+     * 在interceptori 里面判断方法是不是用户自定义方法
+     * @param msidWho 参数
+     * @return 返回值类型
+     */
     public static boolean checkMortalMethds(String msidWho) {//modify by neo on 2016.10.25 sq
 
         return SystemConfigs.MY_ALL_METHOD_NANES_LIST.contains(msidWho) ? true : false;
@@ -139,7 +146,8 @@ public class MyHelper {
 
     /**
      * check end with-insertSelective
-     * @return
+     * @param methodName 参数
+     * @return 返回值类型
      */
     public static boolean checkInsertMethod(String methodName) {
         return methodName.equals("insertSelective") || methodName.equals("insert") ? true : false;
@@ -147,7 +155,8 @@ public class MyHelper {
 
     /**
      * check end with updateByPrimaryKey or  updateByPrimaryKeySelective
-     * @return
+     * @param methodName 参数
+     * @return 返回值类型
      */
     public static boolean checkUpdateMethod(String methodName) {
         return (methodName.equals("updateByPrimaryKeySelective") || methodName.equals("updateByPrimaryKey")) ? true : false;
@@ -155,7 +164,8 @@ public class MyHelper {
 
     /**
      * check medusas method
-     * @return
+     * @param methodName  参数
+     * @return 返回值类型
      */
     public static boolean checkMedusaMethod(String methodName) {
         return methodName.equals("showMedusaGaze") ? true : false;
@@ -163,15 +173,19 @@ public class MyHelper {
 
     /**
      * check insertUUID method
-     * @param methodName
-     * @return
+     * @param methodName     参数
+     * @return 返回值类型
      */
     public static boolean checkInsertUUIDMethod(String methodName) {
         return methodName.equals("insertSelectiveUUID") ? true : false;
     }
 
 
-
+    /**
+     *
+     * @param m 参数
+     * @return 返回值类型
+     */
     public static MySqlGenerator getSqlGenerator(Map<String, Object> m) {
 
         String p = m.get("msid").toString();
@@ -207,6 +221,11 @@ public class MyHelper {
         return q;
     }*/
 
+    /**
+     *
+     * @param entityClass 参数
+     * @return 返回值类型
+     */
     private static MySqlGenerator initSqlGenerator(Class<?> entityClass) {
 
         if(entityClass == null) {
@@ -257,10 +276,10 @@ public class MyHelper {
 
     /**
      * reverse map - value
-     * @param map
-     * @param <K>
-     * @param <T>
-     * @return
+     * @param map      参数
+     * @param <K>      参数
+     * @param <T>      参数
+     * @return 返回值类型
      */
     public static <K, T> Map<T, K> exchangeKeyValues(Map<K, T> map) {
 
@@ -286,7 +305,9 @@ public class MyHelper {
      * 若用户没有给字段的参数则用 *
      * 把实体字段名称改为数据库字段名称
      * 改进后的方法用map缓存直接取
-     * @return
+     * @param psArray 参数
+     * @param currentFieldColumnNameMap 参数
+     * @return 返回值类型
      */
     public static String buildColumnNameForSelect(Object[] psArray, Map<String, String> currentFieldColumnNameMap) {
 
@@ -325,9 +346,9 @@ public class MyHelper {
 
     /**
      * 用于给medusa gaze使用让对方能够 输入 列名或者属性名字都能转化为列名 容错机制
-     * @param ori
-     * @param currentFieldColumnNameMap
-     * @return
+     * @param ori     参数
+     * @param currentFieldColumnNameMap 参数
+     * @return 返回值类型
      */
     public static String buildColumnNameForMedusaGaze(String ori, Map<String, String> currentFieldColumnNameMap) {
 
@@ -346,8 +367,8 @@ public class MyHelper {
 
     /**
      * @deprecated
-     * @param pss
-     * @return
+     * @param pss             参数
+     * @return 返回值类型
      * buildColumnNameForSelect replace
      */
     public static String convertEntityName2SqlName(String pss) {
@@ -371,8 +392,9 @@ public class MyHelper {
      * @deprecated
      * generate the get totalPageCount sql for pager and work it
      * use the jdbc to get data for page
-     * @param conne
-     * @return
+     * @param conne 参数
+     * @param p 参数
+     * @return 返回值类型
      */
     public static int caculatePagerTotalCount(Connection conne, Map<String, Object> p){
 
@@ -412,10 +434,10 @@ public class MyHelper {
 
     /**
      * 预编译执行 分页的操作 总数
-     * @param conne
-     * @param mst
-     * @param p
-     * @return
+     * @param conne                  参数
+     * @param mst                        参数
+     * @param p                              参数
+     * @return 返回值类型
      */
     public static int caculatePagerTotalCount(Connection conne, MappedStatement mst, Map<String, Object> p) {
 
@@ -466,10 +488,10 @@ public class MyHelper {
 
     /**
      * 对SQL参数(?)设值,参考org.apache.ibatis.executor.parameter.DefaultParameterHandler
-     * @param ps
-     * @param mappedStatement
-     * @param boundSql
-     * @param parameterObject
+     * @param ps               参数
+     * @param mappedStatement      参数
+     * @param boundSql                 参数
+     * @param parameterObject              参数
      * @throws SQLException
      */
     private static void setParameters(PreparedStatement ps,MappedStatement mappedStatement,BoundSql boundSql,Object parameterObject) throws SQLException {
@@ -518,7 +540,10 @@ public class MyHelper {
 
     /**
      * 生成插入的sql语句时 not selective
-     * @return
+     * @param currentFieldTypeNameMap 参数
+     * @param currentFieldColumnNameMap 参数
+     * @param t
+     * @return 返回值类型
      */
     public static String[] concatInsertDynamicSql(Map<String, String> currentFieldTypeNameMap, Map<String, String> currentFieldColumnNameMap, Object t) {
 
@@ -565,7 +590,11 @@ public class MyHelper {
 
     /**
      * 生成插入的sql语句时 要把动态部分缓存起 批量
-     * @return
+     * @param currentColumnFieldNameMap 参数
+     * @param currentFieldTypeNameMap 参数
+     * @param t 参数
+     * @param paramColumn 参数
+     * @return 返回值类型
      */
     public static String concatInsertDynamicSqlForBatch(Map<String, String> currentColumnFieldNameMap, Map<String, String> currentFieldTypeNameMap, Object t, String paramColumn) {
 
@@ -621,10 +650,10 @@ public class MyHelper {
      * @deprecated
      * 提供给批量更新使用
      * 前一部分sql
-     * @param t
-     * @param paramColumn
-     * @param currentColumnFieldNameMap
-     * @return
+     * @param t 参数
+     * @param paramColumn 参数
+     * @param currentColumnFieldNameMap 参数
+     * @return 返回值类型
      */
     public static String concatUpdateDynamicSqlValuesForBatch(Object t, String paramColumn, Map<String, String> currentColumnFieldNameMap) {
 
@@ -660,8 +689,8 @@ public class MyHelper {
      * @deprecated
      * 提供给批量更新使用
      * 后一部分sql
-     * @param paramColumn
-     * @return
+     * @param paramColumn     参数
+     * @return 返回值类型
      */
     public static String concatUpdateDynamicSqlValuesStrForBatch(String paramColumn) {
 
@@ -684,9 +713,11 @@ public class MyHelper {
      * 提供给批量更新使用
      * 使用update方式批量更新
      * 为解决insert into ... on duplicate key update引起的not null列需要default values
-     * @param tableName
-     * @param paramColumn
-     * @return
+     * @param tableName 参数
+     * @param t 参数
+     * @param paramColumn 参数
+     * @param currentColumnFieldNameMap 参数
+     * @return 返回值类型
      */
     public static String concatUpdateDynamicSqlValuesForBatchPre(String tableName, Object t, String paramColumn, Map<String, String> currentColumnFieldNameMap) {
 

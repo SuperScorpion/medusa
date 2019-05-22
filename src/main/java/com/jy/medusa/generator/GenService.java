@@ -74,7 +74,7 @@ public class GenService {
 
     /**
      * service
-     * @return
+     * @return 返回值类型
      */
     private String process1() {
 
@@ -109,7 +109,7 @@ public class GenService {
 
     /**
      * serviceImpl
-     * @return
+     * @return 返回值类型
      */
     private String process2() {
 
@@ -174,7 +174,7 @@ public class GenService {
 
     /**
      * mapper
-     * @return
+     * @return 返回值类型
      */
     private String process3() {
 

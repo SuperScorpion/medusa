@@ -3,7 +3,7 @@ package com.jy.medusa.validator;
 import java.util.List;
 
 /**
- * @desc 参数校验错误信息封装类
+ * 参数校验错误信息封装类
  */
 public class ErrorInfo implements java.io.Serializable{
   

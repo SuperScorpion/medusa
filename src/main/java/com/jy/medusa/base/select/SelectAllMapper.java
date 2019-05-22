@@ -9,13 +9,14 @@ import java.util.List;
 
 /**
  *
- * @author neo
+ * Author neo
  */
 public interface SelectAllMapper<T> {
 
     /**
      * 查询全部结果
-     * @return
+     * @param params 参数
+     * @return 返回值类型
      */
     @SelectProvider(type = BaseSelectProvider.class, method = "selectAll")
     @ResultMap("BaseResultMap")

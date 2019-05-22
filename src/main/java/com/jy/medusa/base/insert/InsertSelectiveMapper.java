@@ -9,15 +9,14 @@ import org.apache.ibatis.annotations.Options;
 /**
  * 通用Mapper接口,插入
  * @param <T> 不能为空
- * @author neo
+ * Author neo
  */
 public interface InsertSelectiveMapper<T> {
 
     /**
      * 保存一个实体，null的属性不会保存，会使用数据库默认值
-     *
-     * @param record
-     * @return
+     * @param record        参数
+     * @return 返回值类型
      */
     @InsertProvider(type = BaseInsertProvider.class, method = "insertSelective")
     @Options(useGeneratedKeys = true, keyColumn = SystemConfigs.PRIMARY_KEY, keyProperty = SystemConfigs.PRIMARY_KEY)

@@ -19,9 +19,9 @@ public class MyReflectionUtils {
 
     /**
      * 调用Getter方法
-     * @param obj
-     * @param propertyName
-     * @return
+     * @param obj 参数
+     * @param propertyName 字段名
+     * @return 返回值类型
      */
     public static Object invokeGetterMethod(Object obj, String propertyName) {
         String getterMethodName = "get" + MyGenUtils.upcaseFirst(propertyName);
@@ -30,9 +30,10 @@ public class MyReflectionUtils {
 
     /**
      * 调用Setter方法,不指定参数的类型
-     * @param obj
-     * @param propertyName
-     * @param value
+     * @param obj 参数
+     * @param propertyName 字段名
+     * @param value 参数
+     * @throws ParseException
      */
     public static void invokeSetterMethod(Object obj, String propertyName, Object value) throws ParseException {
         invokeSetterMethod(obj, propertyName, value, null);
@@ -40,10 +41,11 @@ public class MyReflectionUtils {
 
     /**
      * 调用Setter方法,指定参数的类型
-     * @param obj
+     * @param obj 参数
      * @param propertyName 字段名
-     * @param value
-     * @param propertyType
+     * @param value 参数
+     * @param propertyType 参数
+     * @throws ParseException
      */
     public static void invokeSetterMethod(Object obj, String propertyName, Object value, Class<?> propertyType) throws ParseException {
 
@@ -93,10 +95,11 @@ public class MyReflectionUtils {
 
     /**
      * 直接调用对象方法，忽视private/protected修饰符
-     * @param obj
-     * @param methodName
-     * @param parameterTypes
-     * @return
+     * @param obj 参数
+     * @param methodName 参数
+     * @param parameterTypes 参数
+     * @param args 参数
+     * @return 返回值类型
      */
     public static Object invokeMethod(Object obj, String methodName, Class<?>[] parameterTypes, Object[] args) {
 
@@ -120,10 +123,10 @@ public class MyReflectionUtils {
     /**
      * 循环向上转型，获取对象的DeclaredMethod,并强制设置为可访问 如向上转型到Object仍无法找到，返回null
      * 用于方法需要被多次调用的情况，先使用本函数先取得Method,然后调用Method.invoke(Object obj,Object...args)
-     * @param obj
-     * @param methodName
-     * @param parameterTypes
-     * @return
+     * @param obj 参数
+     * @param methodName 参数
+     * @param parameterTypes 参数
+     * @return 返回值类型
      */
     public static Method obtainAccessibleMethod(Object obj, String methodName, Class<?>... parameterTypes) {
 
@@ -152,9 +155,9 @@ public class MyReflectionUtils {
 
     /**
      * 直接读取对象属性值 忽视private/protected修饰符，不经过getter函数
-     * @param obj
-     * @param fieldName
-     * @return
+     * @param obj 参数
+     * @param fieldName 参数
+     * @return 返回值类型
      */
     public static Object obtainFieldValue(Object obj, String fieldName) {
 
@@ -177,9 +180,9 @@ public class MyReflectionUtils {
 
     /**
      * 直接设置对象属性值 忽视private/protected修饰符，不经过setter函数
-     * @param obj
-     * @param fieldName
-     * @param value
+     * @param obj 参数
+     * @param fieldName 参数
+     * @param value 参数
      */
     public static void setFieldValue(Object obj, String fieldName, Object value) {
 
@@ -199,9 +202,9 @@ public class MyReflectionUtils {
 
     /**
      * 循环向上转型，获取对象的DeclaredField,并强制设为可访问 如向上转型Object仍无法找到，返回null
-     * @param obj
-     * @param fieldName
-     * @return
+     * @param obj 参数
+     * @param fieldName 参数
+     * @return 返回值类型
      */
     public static Field obtainAccessibleField(Object obj, String fieldName) {
 

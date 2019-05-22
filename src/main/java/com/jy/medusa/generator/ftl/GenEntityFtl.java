@@ -225,7 +225,7 @@ public class GenEntityFtl {
 
     /**
      * 解析输出属性
-     * @return
+     * @return 返回值类型
      */
     private void processAllColumn(EntityColumnVo cv, int i) {
 

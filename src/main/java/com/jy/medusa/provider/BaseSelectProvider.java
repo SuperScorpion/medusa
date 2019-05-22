@@ -9,13 +9,14 @@ import java.util.Map;
 
 /**
  * BaseSelectProvider实现类，基础方法实现类
- * @author neo
+ * Author neo
  */
 public class BaseSelectProvider {
 
     /**
      * 可根据ids条件查询出记录
-     * @return
+     * @param m 参数
+     * @return 返回值类型
      */
     public String selectByPrimaryKeyBatch(Map<String, Object> m) {
 
@@ -30,7 +31,8 @@ public class BaseSelectProvider {
 
     /**
      * 可根据条件查询出一个记录
-     * @return
+     * @param m 参数
+     * @return 返回值类型
      */
     public String selectOne(Map<String, Object> m) {
 
@@ -46,7 +48,8 @@ public class BaseSelectProvider {
 
     /**
      * 查询
-     * @return
+     * @param m 参数
+     * @return 返回值类型
      */
     public String select(Map<String, Object> m) {
 
@@ -62,6 +65,8 @@ public class BaseSelectProvider {
 
     /**
      * 根据主键进行查询
+     * @param m 参数
+     * @return 返回值类型
      */
     public String selectByPrimaryKey(Map<String, Object> m) {
 
@@ -78,7 +83,8 @@ public class BaseSelectProvider {
 
     /**
      * 查询全部结果
-     * @return
+     * @param m 参数
+     * @return 返回值类型
      */
     public String selectAll(Map<String, Object> m) {
 
@@ -93,7 +99,8 @@ public class BaseSelectProvider {
 
     /**
      * 查询总数
-     * @return
+     * @param m 参数
+     * @return 返回值类型
      */
     public String selectCount(Map<String, Object> m) {
 
@@ -108,7 +115,8 @@ public class BaseSelectProvider {
 
     /**
      * 根据多条件查询数据
-     * @return
+     * @param m 参数
+     * @return 返回值类型
      */
     public String selectMedusaGaze(Map<String, Object> m) {
 

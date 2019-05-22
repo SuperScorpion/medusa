@@ -12,7 +12,9 @@ import java.util.List;
 public class MyGenUtils {
 
     /**
-     * 驼峰命名-->改为下划线 如  updatedAT -->updated_at
+     * 驼峰命名---改为下划线 如  updatedAT ---updated_at
+     * @param param 参数
+     * @return 返回值类型
      */
     public static String camelToUnderline(String param) {
 
@@ -38,8 +40,8 @@ public class MyGenUtils {
 
     /**
      * 把输入字符串的首字母改成小写
-     * @param str
-     * @return
+     * @param str 参数
+     * @return 返回值类型
      */
     public static String lowcaseFirst(String str) {
         return getCamelStr(str.substring(0, 1).toLowerCase() + str.substring(1));
@@ -47,8 +49,8 @@ public class MyGenUtils {
 
     /**colSqlNames[i]
      * 把输入字符串的首字母改成大写 并且变成驼峰
-     * @param str
-     * @return
+     * @param str 参数
+     * @return 返回值类型
      */
     public static String upcaseFirst(String str) {
         char[] ch = str.toCharArray();
@@ -58,7 +60,12 @@ public class MyGenUtils {
         return getCamelStr(new String(ch));
     }
 
-    //例：user_name --> userName
+
+    /**
+     * 例：user_name --- userName
+     * @param s 参数
+     * @return 返回值类型
+     */
     public static String getCamelStr(String s){
         while(s.indexOf("_")>0){
             int index = s.indexOf("_");
@@ -71,7 +78,10 @@ public class MyGenUtils {
     /**
      * 添加剩余的标记段落 (方法名被修改了匹配不到  但是新文件继续保留下来)
      * 如果第一行位\n 并且只有这么一行 则不保留下来到新文件
-     * @param sbb
+     * @param markStrList 参数
+     * @param sbb 参数
+     * @param tag 参数
+     * @param flag 参数
      */
     public static void processAllRemains(List<String> markStrList, StringBuilder sbb, String tag, String flag) {
 
@@ -108,10 +118,10 @@ public class MyGenUtils {
     /**
      * 判断出老的行 和 新生成的行 有相同的时 使用老的行内容替代了新的行内容
      * 注意老的行记录中list 元素不能重复 也就是说 不能有老的重复的行
-     * @param markStrList
-     * @param freshLineStr
-     * @param endChar
-     * @return
+     * @param markStrList    参数
+     * @param freshLineStr     参数
+     * @param endChar 参数
+     * @return 返回值类型
      */
     public static String genMarkStr(List<String> markStrList, String freshLineStr, String endChar){
 

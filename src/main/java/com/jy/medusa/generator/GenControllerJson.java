@@ -51,7 +51,7 @@ public class GenControllerJson {
 
     /**
      * controller
-     * @return
+     * @return 返回值类型
      */
     private String home() {
 

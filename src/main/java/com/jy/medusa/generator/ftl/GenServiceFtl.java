@@ -138,7 +138,7 @@ public class GenServiceFtl {
 
     /**
      * service
-     * @return
+     * @return 返回值类型
      */
     private Map<String, Object> process1() {
 
@@ -157,7 +157,7 @@ public class GenServiceFtl {
 
     /**
      * serviceImpl
-     * @return
+     * @return 返回值类型
      */
     private Map<String, Object> process2() {
 
@@ -181,7 +181,7 @@ public class GenServiceFtl {
 
     /**
      * mapper
-     * @return
+     * @return 返回值类型
      */
     private Map<String, Object> process3() {
 

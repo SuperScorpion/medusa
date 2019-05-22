@@ -112,7 +112,7 @@ public class MyUtils {
 
     /**
      * 为测试性能方面 从类中取出属性值来 实验证明出jdk1.8 反射的速度最快
-     * @param args
+     * @param args   参数
      */
     //public static void main(String[] args) throws OgnlException, NoSuchFieldException, IllegalAccessException {
 

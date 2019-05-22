@@ -9,16 +9,16 @@ import java.util.List;
 
 /**
  * 通用Mapper接口,查询
- *
  * @param <T> 不能为空
- * @author neo
+ * Author neo
  */
 public interface SelectMapper<T> {
 
     /**
      * 根据实体中的属性值进行查询，查询条件使用等号
-     * @param record
-     * @return
+     * @param record      参数
+     * @param paramColumn 参数
+     * @return 返回值类型
      */
     @SelectProvider(type = BaseSelectProvider.class, method = "select")
     @ResultMap("BaseResultMap")

@@ -42,8 +42,9 @@ public class MySqlGenerator {
 
     /**
      * 生成根据IDs批量新增的SQL not selective
-     * @param t
-     * @return
+     * @param t 参数
+     * @param ps 参数
+     * @return 返回值类型
      */
     public String sql2InsertOfBatch(Object t, Object... ps) {
 
@@ -70,7 +71,7 @@ public class MySqlGenerator {
 
     /**
      * 生成新增的SQL not selective
-     * @return
+     * @return 返回值类型
      */
     public String sql2Create() {//modify by neo on 2016.11.12 Object t
 //        List<Object> values = obtainFieldValues(t);// modify by neo on 2016.11.15
@@ -94,8 +95,8 @@ public class MySqlGenerator {
 
     /**
      * 生成新增的SQL
-     * @return
-     * @param t
+     * @return 返回值类型
+     * @param t 参数
      */
     public String sql2CreateSelective(Object t) {//modify by neo on 20170117
 
@@ -120,7 +121,7 @@ public class MySqlGenerator {
     /**
      * @deprecated
      * 提供给生成新增SQL 使用
-     * @return
+     * @return 返回值类型
      */
     private List<Object> obtainFieldValues(Object t) {
         List<Object> values = new ArrayList<>();
@@ -136,7 +137,7 @@ public class MySqlGenerator {
      * @deprecated
      * 处理value
      * @param value
-     * @return
+     * @return 返回值类型
      */
     private Object handleValue(Object value) {
         if (value instanceof String) {
@@ -156,7 +157,7 @@ public class MySqlGenerator {
 
     /**
      * 生成根据ID删除的SQL
-     * @return
+     * @return 返回值类型
      */
     public String sql2RemoveById() {//modify by neo on 2016.11.13 Object id
 
@@ -177,8 +178,8 @@ public class MySqlGenerator {
 
     /**
      * 生成根据IDs批量删除的SQL
-     * @param t
-     * @return
+     * @param t 参数
+     * @return 返回值类型
      */
     public String sql2RemoveOfBatch(Object t) {
 
@@ -218,8 +219,8 @@ public class MySqlGenerator {
 
     /**
      * 根据条件来删除
-     * @param t
-     * @return
+     * @param t 参数
+     * @return 返回值类型
      */
     public String sql2RemoveByCondition(Object t) {
 
@@ -246,8 +247,9 @@ public class MySqlGenerator {
 
     /**
      * 生成根据条件批量更新的语句
-     * @param t
-     * @return
+     * @param t 参数
+     * @param ps 参数
+     * @return 返回值类型
      */
     public String sql2ModifyOfBatch(Object t, Object... ps) {
 
@@ -269,8 +271,8 @@ public class MySqlGenerator {
     /**
      * 生成更新的SQL
      * 不允许空置
-     * @param t
-     * @return
+     * @param t 参数
+     * @return 返回值类型
      */
     public String sql2Modify(Object t) {
 
@@ -299,8 +301,8 @@ public class MySqlGenerator {
 
     /**
      * 处理传入的字段字符
-     * @param ps
-     * @return
+     * @param ps        参数
+     * @return 返回值类型
      */
     private String reSolveColumn(Object... ps){
 
@@ -312,8 +314,9 @@ public class MySqlGenerator {
 
     /**
      * 生成更新的SQL
-     * @param t
-     * @return
+     * @param t 参数
+     * @param ps 参数
+     * @return 返回值类型
      */
     public String sql2ModifyNull(Object t, Object... ps) {
 
@@ -340,7 +343,7 @@ public class MySqlGenerator {
     /**
      * 提供给生成更新SQL使用
      * 允许为空
-     * @return
+     * @return 返回值类型
      */
     private List<String> obtainColumnValsForModifyNull(List<Object> parList) {
         List<String> colVals = new ArrayList<>();
@@ -360,8 +363,8 @@ public class MySqlGenerator {
 
     /**
      * 提供给生成更新SQL使用 不能为空值
-     * @param t
-     * @return
+     * @param t 参数
+     * @return 返回值类型
      */
     private List<String>  obtainColumnValusForModify(Object t) {
 
@@ -387,8 +390,8 @@ public class MySqlGenerator {
 
     /**
      * 提供给selectList使用的
-     * @param t
-     * @return
+     * @param t 参数
+     * @return 返回值类型
      */
     private List<String> obtainColumnValusForSelectList(Object t) {
 
@@ -409,7 +412,7 @@ public class MySqlGenerator {
 
     /**
      * 提供给selectMedusaGaze使用的
-     * @return
+     * @return 返回值类型
      */
     private List<String> obtainMedusaGazeS(Object[] psArray) {
 
@@ -443,8 +446,8 @@ public class MySqlGenerator {
     /**
      * 提供给
      * sql2RemoveByCondition
-     * @param t
-     * @return
+     * @param t 参数
+     * @return 返回值类型
      */
     private List<String> obtainColumnValuesForDeleteByCondition(Object t) {
 
@@ -465,9 +468,9 @@ public class MySqlGenerator {
 
     /**
      * 根据条件只查出一条符合的数据
-     * @param t
-     * @param ps
-     * @return
+     * @param t 参数
+     * @param ps  参数
+     * @return 返回值类型
      */
 //    return "SELECT * FROM  users WHERE NAME = #{pobj.param1.name} limit 0,1";
     public String sql2FindOne(Object t, Object... ps) {
@@ -503,7 +506,9 @@ public class MySqlGenerator {
 
     /**
      * 生成根据ID查询的SQL
-     * @return
+     * @param id 参数
+     * @param ps 参数
+     * @return 返回值类型
      */
     public String sql2FindOneById(Object id, Object... ps) {///modify by neo on 2016.11.21 Object id,这个 id 不能去掉的
 
@@ -523,8 +528,9 @@ public class MySqlGenerator {
 
     /**
      * 生成根据IDs批量查询的SQL
-     * @param t
-     * @return
+     * @param t 参数
+     * @param ps 参数
+     * @return 返回值类型
      */
     public String sql2FindBatchOfIds(Object t, Object... ps) {
 
@@ -584,7 +590,7 @@ public class MySqlGenerator {
 
     /**
      * 生成查询所有的SQL
-     * @return
+     * @return 返回值类型
      */
     public String sql2FindAll(Object[] objParams) {
 
@@ -603,7 +609,8 @@ public class MySqlGenerator {
 
     /**
      * 生成查询数量的SQL
-     * @return
+     * @param objParams 参数
+     * @return 返回值类型
      */
     public String sql2FindAllCount(Object[] objParams) {
 
@@ -672,7 +679,9 @@ public class MySqlGenerator {
      * super me
      * find sql to build a multifunctional method
      * 通过多条件查询 like between 用and连接 查询出交集
-     */
+     * @param objParams 参数
+     * @return 返回值类型
+     **/
     public String sql2FindMedusaGaze(Object[] objParams) {//modify by neo on 2016.12.23
 
         //获取到缓存中的分页查询语句 modify by neo on 2016.11.16
@@ -771,10 +780,10 @@ public class MySqlGenerator {
      * modify by neo on 2016.12.09 添加 .paramList[index]
      * isd 为(T entity, Object... param) param的index
      * ind 为MyRestrctions里paramList()的index.
-     * @param sbb
-     * @param z
-     * @param isd
-     * @param ind
+     * @param sbb 参数
+     * @param z             参数
+     * @param isd           参数
+     * @param ind           参数
      */
     public void baseParamHandler(StringBuilder sbb, Object z, short isd, short ind) {
 

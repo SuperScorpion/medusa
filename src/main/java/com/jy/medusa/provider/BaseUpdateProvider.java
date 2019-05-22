@@ -9,12 +9,14 @@ import java.util.Map;
 /**
  * BaseUpdateProvider实现类，基础方法实现类
  *
- * @author neo
+ * Author neo
  */
 public class BaseUpdateProvider {
 
     /**
      * 通过主键更新全部字段
+     * @param m 参数
+     * @return 返回值类型
      */
     public String updateByPrimaryKey(Map<String, Object> m) {
 
@@ -29,8 +31,8 @@ public class BaseUpdateProvider {
 
     /**
      * 通过主键更新不为null的字段
-     *
-     * @return
+     * @param m 参数
+     * @return 返回值类型
      */
     public String updateByPrimaryKeySelective(Map<String, Object> m) {
         return MyHelper.getSqlGenerator(m).sql2Modify(m.get("pobj"));
@@ -38,8 +40,8 @@ public class BaseUpdateProvider {
 
     /**
      * 通过主键更新批量的
-     *
-     * @return
+     * @param m 参数
+     * @return 返回值类型
      */
     public String updateByPrimaryKeyBatch(Map<String, Object> m) {
 

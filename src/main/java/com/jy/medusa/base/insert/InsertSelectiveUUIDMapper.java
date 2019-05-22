@@ -9,14 +9,14 @@ import org.apache.ibatis.annotations.SelectKey;
 /**
  * 通用Mapper接口,插入 UUID 主键
  * @param <T> 不能为空
- * @author neo
+ * Author neo
  */
 public interface InsertSelectiveUUIDMapper<T> {
 
     /**
      * 保存一个实体，null的属性不会保存，会使用数据库默认值
-     * @param record
-     * @return
+     * @param record    参数
+     * @return 返回值类型
      */
     @InsertProvider(type = BaseInsertProvider.class, method = "insertSelective")
     @SelectKey(statement = "SELECT uuid()", keyProperty = SystemConfigs.PRIMARY_KEY, keyColumn = SystemConfigs.PRIMARY_KEY, before = true, resultType = String.class)

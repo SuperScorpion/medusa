@@ -8,14 +8,15 @@ import java.util.List;
 /**
  * 通用Mapper接口,更新批量
  * @param <T> 不能为空
- * @author neo
+ * Author neo
  */
 public interface UpdateByPrimaryKeyBatchMapper<T> {
 
     /**
      * 根据主键更新实体全部字段，null值会被更新
-     * @param
-     * @return
+     * @param records 参数
+     * @param ps 参数
+     * @return 返回值类型
      */
     @UpdateProvider(type = BaseUpdateProvider.class, method = "updateByPrimaryKeyBatch")
     int updateByPrimaryKeyBatch(List<T> records, Object... ps);

@@ -10,14 +10,15 @@ import java.util.List;
 /**
  * 通用Mapper接口,查询
  * @param <T> 不能为空
- * @author neo
+ * Author neo
  */
 public interface SelectByPrimaryKeyBatchMapper<T> {
 
     /**
      * 根据ids查询
-     * @param ids
-     * @return
+     * @param ids        参数
+     * @param paramColumn        参数
+     * @return 返回值类型
      */
     @SelectProvider(type = BaseSelectProvider.class, method = "selectByPrimaryKeyBatch")
     @ResultMap("BaseResultMap")

@@ -8,7 +8,7 @@ import com.jy.medusa.base.delete.DeleteMapper;
 /**
  * 通用Mapper接口,基础删除
  * @param <T> 不能为空
- * @author neo
+ * Author neo
  */
 public interface BaseDeleteMapper<T> extends
         DeleteMapper<T>,

@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * @Author neo 2016
+ * Author neo 2016
  * Bean类 - 分页
  */
 

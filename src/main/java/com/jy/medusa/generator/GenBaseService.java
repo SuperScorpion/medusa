@@ -50,7 +50,7 @@ public class GenBaseService {
 
     /**
      * service
-     * @return
+     * @return 返回值类型
      */
     private String process1() {
 
@@ -110,7 +110,7 @@ public class GenBaseService {
 
     /**
      * serviceImpl
-     * @return
+     * @return 返回值类型
      */
     private String process2() {
 

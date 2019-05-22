@@ -129,7 +129,7 @@ import java.util.*;
 
     /**
      * 清空Configuration中几个重要的缓存
-     * @param configuration
+     * @param configuration 参数
      * @throws Exception
      */
     private void removeConfig(Configuration configuration) throws Exception {
@@ -184,7 +184,7 @@ import java.util.*;
 
     /**
      * 判断文件是否发生了变化
-     * @return
+     * @return 返回值类型
      * @throws IOException
      */
     private boolean isChanged(File resource) throws IOException, IllegalAccessException {
@@ -208,7 +208,7 @@ import java.util.*;
 
      /**
       * 判断是否是第一次初始化容器
-      * @return
+      * @return 返回值类型
       */
      private boolean isFirst() {
          return fileChangeMap.isEmpty() ? true : false;
@@ -217,7 +217,7 @@ import java.util.*;
 
      /**
       * 把属于框架方法 medusa里的方法名 对应 mapperstatement 的 key 缓存下来待使用
-      * @param configuration
+      * @param configuration      参数
       * @throws IllegalAccessException
       */
      private void initCacheMapperStatement(Configuration configuration) throws IllegalAccessException {

@@ -16,18 +16,21 @@ import java.util.*;
 
 /**
  * 2016.07.11
- * @Author neo refactor on 2017.9.1
+ * Author neo refactor on 2017.9.1
  * 参数校验主要类
  */
 @Aspect
 public class AnnotationHandler {
 
     /**
-     * 所有校验标注的处理
-     * 	<aop:aspectj-autoproxy />
+     *  所有校验标注的处理
+     * 	aop:aspectj-autoproxy
      * 	proxy-target-class="true" 设置为cglib代理 但是spring会根据代理类是否有接口 去选择jdk或cglib代理
-     *  <bean class="com.jy.medusa.validator.AnnotationHandler"/>
-     * */
+     *  bean class="com.jy.medusa.validator.AnnotationHandler"
+     * @param joinPoint 参数
+     * @param parameter 参数
+     * @throws IllegalAccessException
+     */
     @Before(value = "execution(public * *(..)) and @annotation(parameter))")
     public void paramHandler(JoinPoint joinPoint, ConParamValidator parameter) throws IllegalAccessException {
 
@@ -89,10 +92,10 @@ public class AnnotationHandler {
 
     /**
      * 处理length标签
-     * @param len
-     * @param fieldName
-     * @param fieldValue
-     * @return
+     * @param len 参数
+     * @param fieldName 参数
+     * @param fieldValue    参数
+     * @return 返回值类型
      */
     private void processLength(Length len, String fieldName, Object fieldValue, List<String> messageList) {
 
@@ -114,10 +117,10 @@ public class AnnotationHandler {
 
     /**
      * 处理notnull标签
-     * @param notNull
-     * @param fieldName
-     * @param fieldValue
-     * @return
+     * @param notNull   参数
+     * @param fieldName    参数
+     * @param fieldValue       参数
+     * @return 返回值类型
      */
     private void processNotNull(NotNull notNull, String fieldName, Object fieldValue, List<String> messageList) {
 
@@ -131,10 +134,10 @@ public class AnnotationHandler {
 
     /**
      * 处理vertifi标签
-     * @param valid
-     * @param fieldName
-     * @param fieldValue
-     * @return
+     * @param valid       参数
+     * @param fieldName       参数
+     * @param fieldValue          参数
+     * @return 返回值类型
      */
     private void processVertifi(Vertifi valid, String fieldName, Object fieldValue, List<String> messageList) {
 
@@ -163,8 +166,8 @@ public class AnnotationHandler {
 
     /**
      * 在param 处理valid标签
-     * @param obj
-     * @return
+     * @param obj            参数
+     * @return 返回值类型
      * @throws IllegalAccessException
      */
     private void processValid(Object obj, List<String> messageList) throws IllegalAccessException {
@@ -183,8 +186,8 @@ public class AnnotationHandler {
 
     /**
      * 处理实体对象内部的校验标签
-     * @param obj
-     * @return
+     * @param obj        参数
+     * @return 返回值类型
      * @throws IllegalAccessException
      */
     private void entityHandler(Object obj, List<String> messageList) throws IllegalAccessException {

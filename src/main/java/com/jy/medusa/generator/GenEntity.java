@@ -180,7 +180,7 @@ public class GenEntity {
 
     /**
      * 生成所有的方法
-     * @param sb
+     * @param sb       参数
      */
     private void processAllMethod(StringBuilder sb) {
 
@@ -258,7 +258,7 @@ public class GenEntity {
 
     /**
      * 解析输出属性
-     * @return
+     * @return 返回值类型
      */
     private void processAllAttrs(StringBuilder sb) {
         for (int i = 0; i < colNames.length; i++) {
