@@ -4,13 +4,12 @@ package com.jy.medusa.generator.ftl;
  * Created by neo on 16/7/19.
  */
 
-import com.alibaba.fastjson.JSONArray;
 import com.jy.medusa.generator.Home;
 import com.jy.medusa.generator.MyGenUtils;
 import com.jy.medusa.generator.ftl.vo.EntityColumnVo;
-import com.jy.medusa.utils.MyDateUtils;
-import com.jy.medusa.utils.MyUtils;
-import com.jy.medusa.utils.SystemConfigs;
+import com.jy.medusa.gaze.utils.MyDateUtils;
+import com.jy.medusa.gaze.utils.MyCommonUtils;
+import com.jy.medusa.gaze.utils.SystemConfigs;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -33,8 +32,8 @@ public class GenEntityFtl {
 
     private String packagePath;
     private String tableName;
-    private String tag;//标记 mark
-    private JSONArray colValidArray;//参数校验
+//    private String tag;//标记 mark
+//    private JSONArray colValidArray;//参数校验
     private List<String> associationColumn;//映射的关系字段
     private String pluralAssociation;//映射关系字段的后缀名 一般为s
 
@@ -47,13 +46,13 @@ public class GenEntityFtl {
 
     }
 
-    public GenEntityFtl(String packagePath, String tableName, String tag, JSONArray colValidArray, String associationColumn, String pluralAssociation) {
+    public GenEntityFtl(String packagePath, String tableName, Object colValidArray) {
         this.packagePath = packagePath;
         this.tableName = tableName;
-        this.tag = tag;
-        this.colValidArray = colValidArray;
-        this.associationColumn = Arrays.asList(associationColumn.split(","));
-        this.pluralAssociation = pluralAssociation;
+//        this.tag = tag;
+//        this.colValidArray = colValidArray;
+        this.associationColumn = Arrays.asList(Home.associationColumn.split(","));
+        this.pluralAssociation = Home.pluralAssociation;
 //        this.markStrList = MyGenUtils.genTagStrList(MyGenUtils.upcaseFirst(tableName) + ".java", packagePath, tag, "java");
     }
 
@@ -90,7 +89,7 @@ public class GenEntityFtl {
                 colNames[i] = MyGenUtils.getCamelStr(rsmd.getColumnName(i + 1));
                 colTypes[i] = rsmd.getColumnTypeName(i + 1);
                 if (colTypes[i].equalsIgnoreCase("datetime") || colTypes[i].equalsIgnoreCase("date") || colTypes[i].equalsIgnoreCase("TIMESTAMP")) {
-                    if(MyUtils.isNotBlank(defaultMap.get(colNames[i]))) isMyDateUtils = true;
+                    if(MyCommonUtils.isNotBlank(defaultMap.get(colNames[i]))) isMyDateUtils = true;
                     isDate = true;
                 }
                 if (colTypes[i].equalsIgnoreCase("image") || colTypes[i].equalsIgnoreCase("text")) {
@@ -106,18 +105,18 @@ public class GenEntityFtl {
 
             /*try {
                 String content = parse();
-                String path = System.getProperty("user.dir") + "/src/main/java/" + packagePath.replaceAll("\\.", "/");
+                String path = Home.proPath + packagePath.replaceAll("\\.", "/");
                 File file = new File(path);
                 if(!file.exists()){
                     file.mkdirs();
                 }
                 String resPath = path + "/" + MyGenUtils.upcaseFirst(tableName) + Home.entityNameSuffix + ".java";
-                MyUtils.writeString2File(new File(resPath), content, "UTF-8");
+                MyCommonUtils.writeString2File(new File(resPath), content, "UTF-8");
             } catch (IOException e) {
                 e.printStackTrace();
             }*/
 
-            String path = System.getProperty("user.dir") + "/src/main/java/" + packagePath.replaceAll("\\.", "/");
+            String path = Home.proPath + packagePath.replaceAll("\\.", "/");
             File file = new File(path);
             if(!file.exists()){
                 file.mkdirs();
@@ -173,13 +172,13 @@ public class GenEntityFtl {
         boolean entitySerializable = false;
         boolean useValid = false;
 
-        if(MyUtils.isNotBlank(Home.lazyLoad)) lazyLoad = true;
-        if(MyUtils.isNotBlank(Home.entitySerializable)) entitySerializable = true;
+        if(MyCommonUtils.isNotBlank(Home.lazyLoad)) lazyLoad = true;
+        if(MyCommonUtils.isNotBlank(Home.entitySerializable)) entitySerializable = true;
 
         //参数校验
-        if(colValidArray != null && !colValidArray.isEmpty()) {
+        /*if(colValidArray != null && !colValidArray.isEmpty()) {
             useValid = true;
-        }
+        }*/
 
 
         Map<String, Object> map = new HashMap<>();
@@ -235,7 +234,7 @@ public class GenEntityFtl {
         cv.setLowwerName(colNames[i]);
 
         //添加注释
-        if(MyUtils.isNotBlank(commentMap.get(colNames[i]))) {
+        if(MyCommonUtils.isNotBlank(commentMap.get(colNames[i]))) {
             cv.setComment(commentMap.get(colNames[i]));
         }
 
@@ -244,19 +243,19 @@ public class GenEntityFtl {
         }
 
         //添加默认值
-        String defaultStr = MyUtils.isNotBlank(defaultMap.get(colNames[i])) ? " = " + sqlType2JavaTypeForDefault(colTypes[i], defaultMap.get(colNames[i])) : "";
+        String defaultStr = MyCommonUtils.isNotBlank(defaultMap.get(colNames[i])) ? " = " + sqlType2JavaTypeForDefault(colTypes[i], defaultMap.get(colNames[i])) : "";
         cv.setDefaultStr(defaultStr);
 
         //字段都生成完了 再生成映射属性
         //外间关联表关系
-        if(MyUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
+        if(MyCommonUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
 
             cv.setNotOnlyColumnFlag(true);
 
 
             String p = colSqlNames[i].trim().replace("_id", "").trim();
 
-            if(MyUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
+            if(MyCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
                 p = p.concat(pluralAssociation);
             }
 

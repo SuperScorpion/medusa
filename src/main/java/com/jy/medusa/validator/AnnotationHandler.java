@@ -1,6 +1,6 @@
 package com.jy.medusa.validator;
 
-import com.jy.medusa.utils.MyUtils;
+import com.jy.medusa.gaze.utils.MyCommonUtils;
 import com.jy.medusa.validator.annotation.*;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
@@ -109,7 +109,7 @@ public class AnnotationHandler {
             String value = String.valueOf(fieldValue);
 
             if(value.length() > maxLength || value.length() < minLength) {
-                message = MyUtils.isNotBlank(message) ? message : "参数" + fieldName + "长度控制在" + minLength + "与" + maxLength + "之间";
+                message = MyCommonUtils.isNotBlank(message) ? message : "参数" + fieldName + "长度控制在" + minLength + "与" + maxLength + "之间";
                 messageList.add(message);
             }
         }
@@ -127,7 +127,7 @@ public class AnnotationHandler {
         String message = notNull.message();
 
         if(fieldValue == null) {
-            message = MyUtils.isNotBlank(message) ? message : "参数" + fieldName + "不能为空值";
+            message = MyCommonUtils.isNotBlank(message) ? message : "参数" + fieldName + "不能为空值";
             messageList.add(message);
         }
     }
@@ -152,12 +152,12 @@ public class AnnotationHandler {
             if(selects != null && selects.length > 0) {
                 List<String> paramList = Arrays.asList(selects);
                 if(!paramList.contains(value)) {
-                    message = MyUtils.isNotBlank(message) ? message : fieldName + "不在设定选定的值内";
+                    message = MyCommonUtils.isNotBlank(message) ? message : fieldName + "不在设定选定的值内";
                     messageList.add(message);
                 }
             } else {
-                if(MyUtils.isNotBlank(regExp) && !value.matches(regExp)) {
-                    message = MyUtils.isNotBlank(message) ? message : fieldName + "不符合表达式的校验";
+                if(MyCommonUtils.isNotBlank(regExp) && !value.matches(regExp)) {
+                    message = MyCommonUtils.isNotBlank(message) ? message : fieldName + "不符合表达式的校验";
                     messageList.add(message);
                 }
             }
@@ -197,7 +197,7 @@ public class AnnotationHandler {
         Class superClass = cla.getSuperclass();
 
         if(superClass != null) {
-          fields = MyUtils.addArrayAll(fields, superClass.getDeclaredFields());
+          fields = MyCommonUtils.addArrayAll(fields, superClass.getDeclaredFields());
         }
 
         //遍历对象属性

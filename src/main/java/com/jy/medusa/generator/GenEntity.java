@@ -4,11 +4,9 @@ package com.jy.medusa.generator;
  * Created by neo on 16/7/19.
  */
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.jy.medusa.utils.MyDateUtils;
-import com.jy.medusa.utils.MyUtils;
-import com.jy.medusa.utils.SystemConfigs;
+import com.jy.medusa.gaze.utils.MyDateUtils;
+import com.jy.medusa.gaze.utils.MyCommonUtils;
+import com.jy.medusa.gaze.utils.SystemConfigs;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +28,7 @@ public class GenEntity {
     private String packagePath;
     private String tableName;
     private String tag;//标记 mark
-    private JSONArray colValidArray;//参数校验
+//    private JSONArray colValidArray;//参数校验
     private List<String> associationColumn;//映射的关系字段
     private String pluralAssociation;//映射关系字段的后缀名 一般为s
 
@@ -39,13 +37,13 @@ public class GenEntity {
     private Map<String, String> defaultMap = new HashMap<>();//字段名称 和 默认值关系
     private Map<String, String> commentMap = new HashMap<>();//字段名称 和 注注释对应关系
 
-    public GenEntity(String packagePath, String tableName, String tag, JSONArray colValidArray, String associationColumn, String pluralAssociation) {
+    public GenEntity(String packagePath, String tableName, Object colValidArray) {
         this.packagePath = packagePath;
         this.tableName = tableName;
-        this.tag = tag;
-        this.colValidArray = colValidArray;
-        this.associationColumn = Arrays.asList(associationColumn.split(","));
-        this.pluralAssociation = pluralAssociation;
+        this.tag = Home.tag;
+//        this.colValidArray = colValidArray;
+        this.associationColumn = Arrays.asList(Home.associationColumn.split(","));
+        this.pluralAssociation = Home.pluralAssociation;
         this.markStrList = MyGenUtils.genTagStrList(MyGenUtils.upcaseFirst(tableName) + ".java", packagePath, tag, "java");
     }
 
@@ -86,7 +84,7 @@ public class GenEntity {
                 colNames[i] = MyGenUtils.getCamelStr(rsmd.getColumnName(i + 1));
                 colTypes[i] = rsmd.getColumnTypeName(i + 1);
                 if (colTypes[i].equalsIgnoreCase("datetime") || colTypes[i].equalsIgnoreCase("date") || colTypes[i].equalsIgnoreCase("TIMESTAMP")) {
-                    if(MyUtils.isNotBlank(defaultMap.get(colNames[i]))) isMyDateUtils = true;
+                    if(MyCommonUtils.isNotBlank(defaultMap.get(colNames[i]))) isMyDateUtils = true;
                     isDate = true;
                 }
                 if (colTypes[i].equalsIgnoreCase("image") || colTypes[i].equalsIgnoreCase("text")) {
@@ -100,13 +98,13 @@ public class GenEntity {
 
             try {
                 String content = parse();
-                String path = System.getProperty("user.dir") + "/src/main/java/" + packagePath.replaceAll("\\.", "/");
+                String path = Home.proPath + packagePath.replaceAll("\\.", "/");
                 File file = new File(path);
                 if(!file.exists()){
                     file.mkdirs();
                 }
                 String resPath = path + "/" + MyGenUtils.upcaseFirst(tableName) + Home.entityNameSuffix + ".java";
-                MyUtils.writeString2File(new File(resPath), content, "UTF-8");
+                MyCommonUtils.writeString2File(new File(resPath), content, "UTF-8");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -125,22 +123,22 @@ public class GenEntity {
         sb.append("package " + packagePath + ";\r\n\r\n");
 
 //        sb.append("import " + basePoPath + ";\r\n");//TODO
-        if(MyUtils.isNotBlank(Home.lazyLoad)) sb.append("import com.fasterxml.jackson.annotation.JsonIgnoreProperties;\r\n");
-        if(MyUtils.isNotBlank(Home.entitySerializable)) sb.append("import java.io.Serializable;\r\n");
+        if(MyCommonUtils.isNotBlank(Home.lazyLoad)) sb.append("import com.fasterxml.jackson.annotation.JsonIgnoreProperties;\r\n");
+        if(MyCommonUtils.isNotBlank(Home.entitySerializable)) sb.append("import java.io.Serializable;\r\n");
 
-        sb.append("import com.jy.medusa.stuff.annotation.Column;\r\n");
-        sb.append("import com.jy.medusa.stuff.annotation.Table;\r\n");
-        sb.append("import com.jy.medusa.stuff.annotation.Id;\r\n\r\n");
+        sb.append("import com.jy.medusa.gaze.stuff.annotation.Column;\r\n");
+        sb.append("import com.jy.medusa.gaze.stuff.annotation.Table;\r\n");
+        sb.append("import com.jy.medusa.gaze.stuff.annotation.Id;\r\n\r\n");
 
         //参数校验
-        if(colValidArray != null && !colValidArray.isEmpty()) {
+        /*if(colValidArray != null && !colValidArray.isEmpty()) {
             sb.append("import "+ SystemConfigs.VALID_PATTERN_PATH +";\r\n");
             sb.append("import "+ SystemConfigs.VALID_LENGTH_PATH +";\r\n");
             sb.append("import "+ SystemConfigs.VALID_VALIDATOR_PATH  +";\r\n\r\n");
-        }
+        }*/
 
         if (isMyDateUtils) {
-            sb.append("import com.jy.medusa.utils.MyDateUtils;\r\n\r\n");
+            sb.append("import com.jy.medusa.gaze.utils.MyDateUtils;\r\n\r\n");
         }
         if (isDate) {
             sb.append("import java.util.Date;\r\n\r\n");
@@ -159,10 +157,10 @@ public class GenEntity {
 
         sb.append("@Table(name = \""+ tableName +"\")\r\n");
 
-        if(MyUtils.isNotBlank(Home.lazyLoad)) sb.append("@JsonIgnoreProperties(value={\"handler\"})\r\n");
+        if(MyCommonUtils.isNotBlank(Home.lazyLoad)) sb.append("@JsonIgnoreProperties(value={\"handler\"})\r\n");
 
         sb.append("public class " + MyGenUtils.upcaseFirst(tableName) + Home.entityNameSuffix);
-        if(MyUtils.isNotBlank(Home.entitySerializable)) sb.append(" implements Serializable");
+        if(MyCommonUtils.isNotBlank(Home.entitySerializable)) sb.append(" implements Serializable");
         sb.append(" {\r\n\r\n");
 
         processAllAttrs(sb);
@@ -216,10 +214,10 @@ public class GenEntity {
         //字段都生成完了 再生成映射属性
         for (int i = 0; i < colNames.length; i++) {
             //处理外间关联的表字段名称
-            if(MyUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
+            if(MyCommonUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
 
                 String p = colSqlNames[i].trim().replace("_id", "").trim();
-                if(MyUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {//modify by neo, on 2016.11.25
+                if(MyCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {//modify by neo, on 2016.11.25
                     p = p.concat(pluralAssociation);
                 }
 
@@ -264,17 +262,17 @@ public class GenEntity {
         for (int i = 0; i < colNames.length; i++) {
 
             //添加注释
-            if(MyUtils.isNotBlank(commentMap.get(colNames[i]))) {
+            if(MyCommonUtils.isNotBlank(commentMap.get(colNames[i]))) {
                 sb.append("\t/*");
                 sb.append(commentMap.get(colNames[i]));
                 sb.append("*/\r\n");
             }
 
             //参数校验
-            if(colValidArray != null && !colValidArray.isEmpty()) {
+            /*if(colValidArray != null && !colValidArray.isEmpty()) {
                 String[] validStrArray = null;
                 for (Object n : colValidArray) {
-                    if (MyUtils.isNotBlank(((JSONObject) n).getString(colNames[i])))
+                    if (MyCommonUtils.isNotBlank(((JSONObject) n).getString(colNames[i])))
                         validStrArray = ((JSONObject) n).getString(colNames[i]).split("&");
                 }
 
@@ -285,12 +283,12 @@ public class GenEntity {
                         sb.append("\r\n");
                     }
                 }
-            }
+            }*/
 
             String primaryAnnotationTxt = colNames[i].trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY) ? "\t@Id\r\n" : "";
 
             //添加默认值
-            String defaultStr = MyUtils.isNotBlank(defaultMap.get(colNames[i])) ? " = " + sqlType2JavaTypeForDefault(colTypes[i], defaultMap.get(colNames[i])) : "";
+            String defaultStr = MyCommonUtils.isNotBlank(defaultMap.get(colNames[i])) ? " = " + sqlType2JavaTypeForDefault(colTypes[i], defaultMap.get(colNames[i])) : "";
 
             String wellStr = primaryAnnotationTxt + "\t@Column(name = \"" + colSqlNames[i] + "\")\r\n\tprivate " + sqlType2JavaType(colTypes[i]) + " " + colNames[i] + defaultStr + ";\r\n\r\n";
 
@@ -308,10 +306,10 @@ public class GenEntity {
         //字段都生成完了 再生成映射属性
         for (int i = 0; i < colNames.length; i++) {
             //外间关联表关系
-            if(MyUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
+            if(MyCommonUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
 
                 String p = colSqlNames[i].trim().replace("_id", "").trim();
-                if(MyUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
+                if(MyCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
                     p = p.concat(pluralAssociation);
                 }
 

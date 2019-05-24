@@ -6,7 +6,7 @@ mybatis mapper
 <br/>
 一.代码生成模块<br/>
 1.1 能够生成entity mapper xml service controller层 不需要再手动编写基础代码.<br/>
-1.2 重新生成代码时可自动保留上次标记代码及智能替换相应代码的功能.<br/>
+1.2 重新生成代码时可自动保留上次标记代码及智能替换相应代码的功能(非模版生成）.<br/>
 <br/>
 二.通用mapper模块<br/>
 只需要继承通用mapper即可拥有基础的crud功能.<br/>
@@ -31,15 +31,15 @@ mybatis mapper
 一. 使用步骤<br/>
 1.1 新建一个空项目<br/>
 <br/>
-1.2 先将medusa的jar包添加至项目路径下<br/>
+1.2 先将medusa的maven依赖加入pom<br/>
 <br/>
-1.3 medusa.properties 添加至resource文件夹下（源码resource目录中有exp）<br/>
+1.3 需要新增yml文件里相关的medusa配置（源码resource目录中有exp）<br/>
 <br/>
-1.4 执行方法 new Home("medusa.properties").process();<br/>
+1.4 Main方法里执行 new Home().process();<br/>
 <br/>
 1.5 基础crud各层次代码便已经生成好了<br/>
 <br/>
-1.6 com.jy.medusa.interceptor.MyInterceptor需要添加到spring配置文件的org.mybatis.spring.SqlSessionFactoryBean的plugins属性里<br/>
+1.6 com.jy.medusa.gaze.interceptor.MyInterceptor需要添加到spring配置文件的org.mybatis.spring.SqlSessionFactoryBean的plugins属性里<br/>
 <br/>
 <br/>
 1.7 至此 基本的crud功能便能使用。<br/>
@@ -58,7 +58,7 @@ public JSONObject index(@RequestParam @Length(max=1, message = "wtfuck") Integer
 实体类属性参数记得加入@Valid标签.<br/>
 <br/>
 三. 在spring配置文件里添加 可使用热加载 mybatis xml 功能<br/>
-< bean id="hotspotReloader" class="com.jy.medusa.stuff.reload.MyMapperRefresh">
+< bean id="hotspotReloader" class="com.jy.medusa.gaze.stuff.reload.MyMapperRefresh">
    <constructor-arg index="0" ref="sqlSessionFactory"/>
    <constructor-arg index="1" value="com.xxx.xxxx.persistence.xml"/>
    <constructor-arg index="2" value="3600"/>
@@ -68,8 +68,8 @@ public JSONObject index(@RequestParam @Length(max=1, message = "wtfuck") Integer
 第三个参数为 刷新间隔时间秒<br/>
 <br/>
 Tips<br/>
-再次生成的时候java、文件需要用//mark //mark保存你自己需要保存下来的代码 xml文件会自动地保留变动过的内容段<br/>
-entity是必须生成的包 如果其他包不想生成可以不填写<br/>
+再次生成的时候java、文件需要用//mark //mark保存你自己需要保存下来的代码 xml文件会自动地保留变动过的内容段(使用非模版生成模式)<br/>
+配置属性都有默认值 需要根据自己需要变更<br/>
 <br/>
 <br/>
 <br/>
@@ -137,12 +137,12 @@ Pager类为内部分页实现 可插拔式<br/>
 <br/>
 <br/>
 <br/>
-medusa.properties参数参考<br/>
+medusa生成代码配置参数参考及说明<br/>
 <br>
 #生成的根包路径<br/>
-medusa.packagePath = com.jy.herms <br/>
+medusa.packagePath = com.jy.xxx <br/>
 <br/>
-###需要生成的表名称 用逗号分隔 不填则生成所有标<br/>
+###需要生成的表名称 用逗号分隔 不填则生成所有表<br/>
 medusa.tableName = xx,xxx,xxxx <br/>
 <br/>
 ###根路径下的实体包名<br/>
@@ -172,7 +172,7 @@ medusa.baseServiceSwitch = y <br/>
 ###是否在entity类上继承序列化接口 不写则不启用它(一般不写)<br/>
 medusa.entitySerializable =  <br/>
 <br/>
-###生成关系关联属性字段(在需要级联功能才写)<br/>
+###在xml里生成关系关联属性字段(在需要级联查询功能才写)<br/>
 medusa.associationColumn= user_id <br/>
 <br/>
 ###生成的关系关联属性表 是否需要添加复数后缀s(表名是复数命名则写s)<br/>
@@ -188,17 +188,18 @@ medusa.ftlDirPath = xxx<br/>
 <br/>
 ###controlJsonSuffix和controlMortalSuffix二选一即可 区别在于一个是json类型一个是页面跳转的类型<br/>
 <br/>
-###controller包的名称(二选一)<br/>
+###controller包的名称(生成的是返回json形式 一般选这个)不写则不生成<br/>
 medusa.controlJsonSuffix = controller <br/>
 <br/>
-###controller包的名称(二选一)<br/>
+###controller包的名称(生成的是返回页面形式)不写则不生成<br/>
 medusa.controlMortalSuffix = controller <br/>
 <br/>
-###java文件中需要在下次生成时保留的代码段的起末标记 //mark … //mark<br/>
+###java文件中需要在下次生成时保留的代码段的起末标记 //mark … //mark(程序以//tag开头做匹配的)<br/>
 medusa.tag = mark<br/>
 <br/>
 ###数据库四项配置<br/>
 jdbc.driver=com.mysql.jdbc.Driver<br/>
 jdbc.url=jdbc:mysql://localhost:3306/cms?useUnicode=true&characterEncoding=UTF-8<br/>
 jdbc.username=root<br/>
-jdbc.password=
+jdbc.password=<br/>
+###源码包里有exp示例

@@ -1,7 +1,7 @@
 package com.jy.medusa.generator;
 
-import com.jy.medusa.utils.MyDateUtils;
-import com.jy.medusa.utils.MyUtils;
+import com.jy.medusa.gaze.utils.MyDateUtils;
+import com.jy.medusa.gaze.utils.MyCommonUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,21 +20,21 @@ public class GenService {
 
     private String entityName;
 
-    private String mixMapper = "com.jy.medusa.commons.Mapper";
+    private String mixMapper = "com.jy.medusa.gaze.commons.Mapper";
 
     private List<String> markServiceList;
     private List<String> markServiceImplList;
     private List<String> markMapperList;
     private String tag;//标记 mark
 
-    public GenService(String tableName, String entityPath, String servicePath, String serviceImplPath, String mapperPath, String tag){
+    public GenService(String tableName, String entityPath, String servicePath, String serviceImplPath, String mapperPath){
         this.entityPath = entityPath;
         this.servicePath = servicePath;
         this.serviceImplPath = serviceImplPath;
         this.mapperPath = mapperPath;
         this.entityName = MyGenUtils.upcaseFirst(tableName);
 
-        this.tag = tag;
+        this.tag = Home.tag;
 
         this.markServiceList = MyGenUtils.genTagStrList(entityName + "Service.java", servicePath, tag, "service");
         this.markServiceImplList = MyGenUtils.genTagStrList(entityName + "ServiceImpl.java", serviceImplPath, tag, "serviceImpl");
@@ -48,24 +48,24 @@ public class GenService {
 
             File file;
 
-            String path = System.getProperty("user.dir") + "/src/main/java/" + servicePath.replaceAll("\\.", "/");
+            String path = Home.proPath + servicePath.replaceAll("\\.", "/");
             file = new File(path);
             if(!file.exists()){file.mkdirs();}
             String resPath1 = path + "/" + entityName + "Service.java";
-            MyUtils.writeString2File(new File(resPath1), process1(), "UTF-8");
+            MyCommonUtils.writeString2File(new File(resPath1), process1(), "UTF-8");
 
-            String pathImp = System.getProperty("user.dir") + "/src/main/java/" + serviceImplPath.replaceAll("\\.", "/");
+            String pathImp = Home.proPath + serviceImplPath.replaceAll("\\.", "/");
             file = new File(pathImp);
             if(!file.exists()){file.mkdirs();}
             String resPath2 = pathImp + "/" + entityName + "ServiceImpl.java";
-            MyUtils.writeString2File(new File(resPath2), process2(), "UTF-8");
+            MyCommonUtils.writeString2File(new File(resPath2), process2(), "UTF-8");
 
             //mapper
-            String pathmm = System.getProperty("user.dir") + "/src/main/java/" + mapperPath.replaceAll("\\.", "/");
+            String pathmm = Home.proPath + mapperPath.replaceAll("\\.", "/");
             file = new File(pathmm);
             if(!file.exists()){file.mkdirs();}
             String resPath3 = pathmm + "/" + entityName + "Mapper.java";
-            MyUtils.writeString2File(new File(resPath3), process3(), "UTF-8");
+            MyCommonUtils.writeString2File(new File(resPath3), process3(), "UTF-8");
 
         } catch (IOException e) {
             e.printStackTrace();

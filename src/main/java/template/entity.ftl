@@ -1,8 +1,8 @@
 package ${entityPath};
 
-import com.jy.medusa.stuff.annotation.Column;
-import com.jy.medusa.stuff.annotation.Id;
-import com.jy.medusa.stuff.annotation.Table;
+import com.jy.medusa.gaze.stuff.annotation.Column;
+import com.jy.medusa.gaze.stuff.annotation.Id;
+import com.jy.medusa.gaze.stuff.annotation.Table;
 
 <#if lazyLoad?? && lazyLoad==true>
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 </#if>
 <#if isMyDateUtils?? && isMyDateUtils==true>
-import com.jy.medusa.utils.MyDateUtils;
+import com.jy.medusa.gaze.utils.MyDateUtils;
 </#if>
 <#if isDate?? && isDate==true>
 import java.util.Date;

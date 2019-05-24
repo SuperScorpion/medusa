@@ -3,9 +3,9 @@ package com.jy.medusa.generator.ftl;
 import com.jy.medusa.generator.Home;
 import com.jy.medusa.generator.MyGenUtils;
 import com.jy.medusa.generator.ftl.vo.XmlAssociVo;
-import com.jy.medusa.utils.MyDateUtils;
-import com.jy.medusa.utils.MyUtils;
-import com.jy.medusa.utils.SystemConfigs;
+import com.jy.medusa.gaze.utils.MyDateUtils;
+import com.jy.medusa.gaze.utils.MyCommonUtils;
+import com.jy.medusa.gaze.utils.SystemConfigs;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -43,23 +43,23 @@ public class GenXmlFtl {
 
 
 
-    public GenXmlFtl(String mapperPath, String packagePath, String entityPath, String tableName, String tag, String ignorAssociation, String pluralAssociation) {
+    public GenXmlFtl(String mapperPath, String packagePath, String entityPath, String tableName) {
         this.packagePath = packagePath;
         this.mapperPath = mapperPath;
         this.tableName = tableName;
 //        this.propertyFilename = propertyFilename;
         this.entityPath = entityPath;
         this.entityName = MyGenUtils.upcaseFirst(tableName);
-        this.tag = tag;
-        this.associationColumn = Arrays.asList(ignorAssociation.split(","));
-        this.pluralAssociation = pluralAssociation;
+        this.tag = Home.tag;
+        this.associationColumn = Arrays.asList(Home.associationColumn.split(","));
+        this.pluralAssociation = Home.pluralAssociation;
 //        this.markXmlList = MyGenUtils.genTagStrList(entityName + "Mapper.xml", packagePath, tag, "xml");
     }
 
     private void changeTypes(String[] colTypes, String[] colTypesSql){//TODO
 
         for(int i=0; i < colTypesSql.length ;i++) {
-            if (MyUtils.isNotBlank(colTypesSql[i])) {
+            if (MyCommonUtils.isNotBlank(colTypesSql[i])) {
                 switch (colTypesSql[i]) {
                     case "INT":
                         colTypes[i] = "INTEGER";
@@ -87,7 +87,7 @@ public class GenXmlFtl {
 
         try {
             Map<String, Object> map = parse();
-            String path = System.getProperty("user.dir") + "/src/main/java/" + packagePath.replaceAll("\\.", "/");
+            String path = Home.proPath + packagePath.replaceAll("\\.", "/");
             File file = new File(path);
             if(!file.exists()){
                 file.mkdirs();
@@ -191,10 +191,10 @@ public class GenXmlFtl {
         for (int i = 0; i < colSqlNames.length; i++) {
 
             //外间关联
-            if(MyUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
+            if(MyCommonUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
 
                 String p = colSqlNames[i].trim().replace("_id", "").trim();
-                if(MyUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
+                if(MyCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
                     p = p.concat(pluralAssociation);
                 }
 
@@ -213,11 +213,11 @@ public class GenXmlFtl {
         for (int i = 0; i < colSqlNames.length; i++) {
 
             //外间关联sss
-            if(MyUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
+            if(MyCommonUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
 
                 String p = colSqlNames[i].trim().replace("_id", "").trim();
 
-                if(MyUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
+                if(MyCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
                     p = p.concat(pluralAssociation);
                 }
 

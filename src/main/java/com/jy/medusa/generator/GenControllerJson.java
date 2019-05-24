@@ -1,8 +1,8 @@
 package com.jy.medusa.generator;
 
-import com.jy.medusa.utils.MyDateUtils;
-import com.jy.medusa.utils.MyUtils;
-import com.jy.medusa.utils.SystemConfigs;
+import com.jy.medusa.gaze.utils.MyDateUtils;
+import com.jy.medusa.gaze.utils.MyCommonUtils;
+import com.jy.medusa.gaze.utils.SystemConfigs;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,25 +24,25 @@ public class GenControllerJson {
     private String tag;//标记 mark
 
 
-    public GenControllerJson(String tableName, String packagePath, String entityPath, String servicePath, String tag){
+    public GenControllerJson(String tableName, String packagePath, String entityPath, String servicePath){
         this.entityPath = entityPath;
         this.servicePath = servicePath;
         this.entityName = MyGenUtils.upcaseFirst(tableName);
         this.packagePath = packagePath;
-        this.tag = tag;
+        this.tag = Home.tag;
         this.markServiceList = MyGenUtils.genTagStrList(entityName + "Controller.java", packagePath, tag, "java");
     }
 
     public void process() {
 
         try {
-            String path = System.getProperty("user.dir") + "/src/main/java/" + packagePath.replaceAll("\\.", "/");
+            String path = Home.proPath + packagePath.replaceAll("\\.", "/");
             File file = new File(path);
             if(!file.exists()){
                 file.mkdirs();
             }
             String resPath = path + "/" + entityName + "Controller.java";
-            MyUtils.writeString2File(new File(resPath), home(), "UTF-8");
+            MyCommonUtils.writeString2File(new File(resPath), home(), "UTF-8");
 
         } catch (IOException e) {
             e.printStackTrace();

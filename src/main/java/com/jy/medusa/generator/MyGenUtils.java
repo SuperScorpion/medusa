@@ -1,6 +1,6 @@
 package com.jy.medusa.generator;
 
-import com.jy.medusa.utils.MyUtils;
+import com.jy.medusa.gaze.utils.MyCommonUtils;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ public class MyGenUtils {
      */
     public static String camelToUnderline(String param) {
 
-        if (MyUtils.isBlank(param)) return "";
+        if (MyCommonUtils.isBlank(param)) return "";
 
         int i = 0, len = param.length();
 
@@ -67,7 +67,7 @@ public class MyGenUtils {
      * @return 返回值类型
      */
     public static String getCamelStr(String s){
-        while(s.indexOf("_")>0){
+        while(s.indexOf("_") > 0) {
             int index = s.indexOf("_");
             s = s.substring(0, index) + s.substring(index+1, index+2).toUpperCase() + s.substring(index+2);
         }
@@ -133,7 +133,7 @@ public class MyGenUtils {
         p = p.substring(0, p.indexOf(endChar));
 
         for(String markStr: markStrList){
-            if(MyUtils.isNotBlank(markStr)){
+            if(MyCommonUtils.isNotBlank(markStr)){
 
                 int x = markStr.trim().indexOf(endChar);
 
@@ -149,14 +149,14 @@ public class MyGenUtils {
 
     public static List<String> genTagStrList(String fileName, String path, String tag, String flag) {
 
-        String paths = System.getProperty("user.dir") + "/src/main/java/" + path.replaceAll("\\.", "/");
+        String paths = Home.proPath + path.replaceAll("\\.", "/");
         File dirsFile = new File(paths);
         if(!dirsFile.exists()) dirsFile.mkdirs();
         String resPath = paths + "/" + fileName;
 
         List<String> resultList = new ArrayList<>();
 
-        if (MyUtils.isBlank(tag) || MyUtils.isBlank(resPath)) return null;
+        if (MyCommonUtils.isBlank(tag) || MyCommonUtils.isBlank(resPath)) return null;
 
 
         String startTag;

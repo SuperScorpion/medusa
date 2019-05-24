@@ -42,12 +42,12 @@ public class MyPattern {
 
 
     /**
-     *
+     * numeral and letter
      */
     public static final String REGX_ALPHANUM = "^[0-9a-zA-Z]*$";
 
     /**
-     *
+     * numeral
      */
     public static final String REGX_NUM = "^[0-9]*$";
 
