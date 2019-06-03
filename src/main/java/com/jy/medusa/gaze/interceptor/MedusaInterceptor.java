@@ -9,6 +9,7 @@ import com.jy.medusa.gaze.stuff.Pager;
 import com.jy.medusa.gaze.stuff.exception.MedusaException;
 import com.jy.medusa.gaze.utils.MyReflectionUtils;
 import com.jy.medusa.gaze.utils.SystemConfigs;
+import org.apache.ibatis.builder.annotation.ProviderSqlSource;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -32,7 +33,7 @@ import java.util.Properties;
         @Signature(method = "query", type = Executor.class, args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class}),
         @Signature(method = "update", type = Executor.class, args = {MappedStatement.class, Object.class})
 })
-public class MyInterceptor implements Interceptor {
+public class MedusaInterceptor implements Interceptor {
 
     public Object intercept(Invocation invocation) throws Throwable {
 
@@ -63,7 +64,8 @@ public class MyInterceptor implements Interceptor {
 
         String medusaMethodName = MyHelper.getLastWord(mt.getId()).trim();
 
-        if (MyHelper.checkMortalMethds(medusaMethodName)) {//Modify by neo on 2016.10.25
+        if (mt.getSqlSource() instanceof ProviderSqlSource//Modify by neo on 2019.05.31
+                && MyHelper.checkMortalMethds(medusaMethodName)) {//Modify by neo on 2016.10.25
 
             Map<String, Object> p = new HashMap<>();
 
@@ -149,28 +151,23 @@ public class MyInterceptor implements Interceptor {
 
         if(sh.getBoundSql().getSql().contains("INSERT INTO") && !sh.getBoundSql().getSql().toLowerCase().contains("on duplicate key update")) {//过滤掉delete update 批量更新之类的 非insert方法
 
-            Object s = sh.getBoundSql().getParameterObject();
+            Object c = ((Map) sh.getBoundSql().getParameterObject()).containsKey("pobj") ? ((Map) sh.getBoundSql().getParameterObject()).get("pobj") : null;
 
-            if (s instanceof Map) {//过滤掉用户自定义的insert方法 modify by neo on 2017.12.13
+            if (c instanceof Map) {//过滤medusa普通insert插入 //c == null过滤掉用户自定义的insert方法 modify by neo on 2017.12.13
 
-                Object c = ((Map) sh.getBoundSql().getParameterObject()).containsKey("pobj") ? ((Map) sh.getBoundSql().getParameterObject()).get("pobj") : null;
+                List<Object> paramList = (List) ((Map) c).get("param1");
 
-                if (c instanceof Map) {//过滤medusa普通insert插入
+                if (paramList != null && !paramList.isEmpty()) {
 
-                    List<Object> paramList = (List) ((Map) c).get("param1");
+                    Statement st = (Statement) invocation.getArgs()[0];
 
-                    if (paramList != null && !paramList.isEmpty()) {
+                    ResultSet rs = st.getGeneratedKeys();
 
-                        Statement st = (Statement) invocation.getArgs()[0];
+                    for (Object ot : paramList) {
 
-                        ResultSet rs = st.getGeneratedKeys();
+                        if (!rs.next()) break;
 
-                        for (Object ot : paramList) {
-
-                            if (!rs.next()) break;
-
-                            MyReflectionUtils.invokeSetterMethod(ot, SystemConfigs.PRIMARY_KEY, rs.getInt(1));//注入属性id值 rs.getInt(1) 每次执行都取到不同 id 很神奇 (一行多列的原因是吗)
-                        }
+                        MyReflectionUtils.invokeSetterMethod(ot, SystemConfigs.PRIMARY_KEY, rs.getInt(1));//注入属性id值 rs.getInt(1) 每次执行都取到不同 id 很神奇 (一行多列的原因是吗)
                     }
                 }
             }
