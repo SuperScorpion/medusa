@@ -67,7 +67,7 @@ public class MedusaInterceptor implements Interceptor {
         if (mt.getSqlSource() instanceof ProviderSqlSource//Modify by neo on 2019.05.31
                 && MyHelper.checkMortalMethds(medusaMethodName)) {//Modify by neo on 2016.10.25
 
-            Map<String, Object> p = new HashMap<>();
+            Map<String, Object> p = new HashMap<>(1 << 2);
 
             p.put("pobj", invocation.getArgs()[1]);
 
@@ -78,6 +78,8 @@ public class MedusaInterceptor implements Interceptor {
             result = invocation.proceed();//mybatis 的后续还有很多处理
 
             processMedusaMethod(medusaMethodName, result, invocation, p, mt);
+
+            p.clear();//help gc
 
         } else {///如果为普通方法 自定义
 
@@ -151,23 +153,28 @@ public class MedusaInterceptor implements Interceptor {
 
         if(sh.getBoundSql().getSql().contains("INSERT INTO") && !sh.getBoundSql().getSql().toLowerCase().contains("on duplicate key update")) {//过滤掉delete update 批量更新之类的 非insert方法
 
-            Object c = ((Map) sh.getBoundSql().getParameterObject()).containsKey("pobj") ? ((Map) sh.getBoundSql().getParameterObject()).get("pobj") : null;
+            Object parObj = sh.getBoundSql().getParameterObject();
 
-            if (c instanceof Map) {//过滤medusa普通insert插入 //c == null过滤掉用户自定义的insert方法 modify by neo on 2017.12.13
+            if (parObj instanceof Map) {//过滤掉用户自定义的insert方法
 
-                List<Object> paramList = (List) ((Map) c).get("param1");
+                Object pobj = ((Map) parObj).containsKey("pobj") ? ((Map) parObj).get("pobj") : null;
 
-                if (paramList != null && !paramList.isEmpty()) {
+                if (pobj instanceof Map) {//过滤medusa普通insert插入 modify by neo on 2017.12.13
 
-                    Statement st = (Statement) invocation.getArgs()[0];
+                    List<Object> paramList = (List) ((Map) pobj).get("param1");
 
-                    ResultSet rs = st.getGeneratedKeys();
+                    if (paramList != null && !paramList.isEmpty()) {
 
-                    for (Object ot : paramList) {
+                        Statement st = (Statement) invocation.getArgs()[0];
 
-                        if (!rs.next()) break;
+                        ResultSet rs = st.getGeneratedKeys();
 
-                        MyReflectionUtils.invokeSetterMethod(ot, SystemConfigs.PRIMARY_KEY, rs.getInt(1));//注入属性id值 rs.getInt(1) 每次执行都取到不同 id 很神奇 (一行多列的原因是吗)
+                        for (Object ot : paramList) {
+
+                            if (!rs.next()) break;
+
+                            MyReflectionUtils.invokeSetterMethod(ot, SystemConfigs.PRIMARY_KEY, rs.getInt(1));//注入属性id值 rs.getInt(1) 每次执行都取到不同 id 很神奇 (一行多列的原因是吗)
+                        }
                     }
                 }
             }
