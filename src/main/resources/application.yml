@@ -30,7 +30,7 @@ medusa:
   ftlDirPath:
   associationColumn: user_id
   jdbc:
-      url: jdbc:mysql://localhost:3306/cms?autoReconnect=true
-      driver: com.mysql.jdbc.Driver
-      username: root
-      password:
+    url: jdbc:mysql://localhost:3306/cms?autoReconnect=true
+    driver: com.mysql.jdbc.Driver
+    username: root
+    password:

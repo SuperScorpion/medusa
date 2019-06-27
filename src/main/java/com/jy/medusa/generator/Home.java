@@ -74,7 +74,7 @@ public class Home {
 
     public void process() {
 
-        System.out.println("Is this it, mortals? Is this all the fury you can muster? XBinYa");
+        System.out.println("Sometimes your whole life boils down to one insane move. XBinYa");
         System.out.println("Loading...");
 
 //        loadProperties(medusaProName);
@@ -167,10 +167,10 @@ public class Home {
             }
         }
 
-        if(MyCommonUtils.isNotBlank(baseServiceSwitch)) new GenBaseServiceAndImpl(servicePath, serviceImplPath).process();//处理生成基础的 service
+        if(MyCommonUtils.isNotBlank(baseServiceSwitch) && baseServiceSwitch.trim().equalsIgnoreCase("yes")) new GenBaseServiceAndImpl(servicePath, serviceImplPath).process();//处理生成基础的 service
 
         System.out.println("Complete...");
-        System.out.println("Since 2016 in Jy&Compass - Hangzhou");
+        System.out.println("Since 2016 in Jy - Hangzhou");
     }
 
     /*private JSONObject parseValidJson(String validJsonStr) {
