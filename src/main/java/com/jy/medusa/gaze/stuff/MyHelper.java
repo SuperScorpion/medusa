@@ -1,15 +1,15 @@
 package com.jy.medusa.gaze.stuff;
 
-import com.jy.medusa.generator.MyGenUtils;
 import com.jy.medusa.gaze.stuff.annotation.Column;
 import com.jy.medusa.gaze.stuff.annotation.Id;
 import com.jy.medusa.gaze.stuff.annotation.Table;
 import com.jy.medusa.gaze.stuff.cache.MyHelperCacheManager;
 import com.jy.medusa.gaze.stuff.cache.MyReflectCacheManager;
 import com.jy.medusa.gaze.stuff.exception.MedusaException;
-import com.jy.medusa.gaze.utils.MyReflectionUtils;
 import com.jy.medusa.gaze.utils.MyCommonUtils;
+import com.jy.medusa.gaze.utils.MyReflectionUtils;
 import com.jy.medusa.gaze.utils.SystemConfigs;
+import com.jy.medusa.generator.MyGenUtils;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -733,6 +733,7 @@ public class MyHelper {
         END
         WHERE id IN (7,8,9)*/
 
+
         List<Object> obs = t instanceof List ? (ArrayList)t : new ArrayList<>();
 
         if(obs.size() == 0) throw new MedusaException("Medusa: The list param is null or empty");
@@ -741,44 +742,76 @@ public class MyHelper {
 
         int contentLength = columnArr.length * (30 + obs.size() * 70), iddLength = obs.size() * 30;
 
-        StringBuilder sbb = new StringBuilder(contentLength),sbbIdd = new StringBuilder(iddLength);
+        StringBuilder sbb = new StringBuilder(contentLength), sbbIdd = new StringBuilder(iddLength);
 
         sbb.append("UPDATE ").append(tableName).append(" SET ");
 
         boolean flag = true;///只让sbbIdd 记录一次循环id值
 
         int len = obs.size();
-        for( String columns : columnArr) {
+        for(String columns : columnArr) {
 
             if(!columns.equals(SystemConfigs.PRIMARY_KEY)) {
 
-                sbb.append(columns).append(" = CASE ").append(SystemConfigs.PRIMARY_KEY);
+                if (!checkIsAllNullColumn(obs, columns, currentColumnFieldNameMap)) {//modify by neo on 2019.07.05
 
-                for (int i = 0; i < len; i++) {
+                    sbb.append(columns).append(" = CASE ").append(SystemConfigs.PRIMARY_KEY);
 
-                    if (flag) {
-                        sbbIdd.append("#{pobj.param1[").append(i).append("].").append(SystemConfigs.PRIMARY_KEY).append("},");
+                    for (int i = 0; i < len; i++) {
+
+                        if (flag) {
+                            sbbIdd.append("#{pobj.param1[").append(i).append("].").append(SystemConfigs.PRIMARY_KEY).append("},");
+                        }
+
+                        sbb.append(" WHEN ")
+                                .append("#{pobj.param1[").append(i).append("].").append(SystemConfigs.PRIMARY_KEY).append("}")
+                                .append(" THEN ")
+                                .append("#{pobj.param1[").append(i).append("].").append(currentColumnFieldNameMap.get(columns)).append("}");
                     }
 
-                    sbb.append(" WHEN ")
-                            .append("#{pobj.param1[").append(i).append("].").append(SystemConfigs.PRIMARY_KEY).append("}")
-                            .append(" THEN ")
-                            .append("#{pobj.param1[").append(i).append("].").append(currentColumnFieldNameMap.get(columns)).append("}");
+                    if (flag && sbbIdd.lastIndexOf(",") != -1) sbbIdd.deleteCharAt(sbbIdd.lastIndexOf(","));
+
+                    flag = false;
+
+                    sbb.append(" END, ");
                 }
-
-                if (flag && sbbIdd.lastIndexOf(",") != -1) sbbIdd.deleteCharAt(sbbIdd.lastIndexOf(","));
-
-                flag = false;
-
-                sbb.append(" END, ");
             }
         }
+
+        if(sbb.indexOf("pobj.param1") == -1) throw new MedusaException("The entity attribute values are all null!");///modify by neo on 2019.07.05
 
         if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
 
         sbb.append(" WHERE ").append(SystemConfigs.PRIMARY_KEY).append(" IN (").append(sbbIdd).append(")");
 
         return sbb.toString();
+    }
+
+    /**
+     * 这种批量更新的方法不能完全解决各实体类里各个字段空时不更新
+     * 只能做到所有实体类的某属性值全都为null才会不更新
+     * 因为sql语句的限制
+     * @param obs 参数
+     * @param columns 参数
+     * @param currentColumnFieldNameMap 参数
+     * @return 返回值类型
+     */
+    private static boolean checkIsAllNullColumn(List<Object> obs, String columns, Map<String, String> currentColumnFieldNameMap) {
+        boolean result = true;
+        int i = 0;
+        for(Object s : obs) {
+            Object k = MyReflectionUtils.obtainFieldValue(s, currentColumnFieldNameMap.get(columns));
+            if(k != null) i++;
+        }
+
+        if(i == obs.size()) {
+            return false;
+        } else if(i < obs.size() && i > 0) {
+            logger.warn("Because of the column [{}] attribute values are not uniform in batch updates, some column attributes are updated to null.", columns);
+            return false;
+        } else {
+          return result;
+        }
     }
 
 
