@@ -7,6 +7,7 @@ package com.jy.medusa.gaze.interceptor;
 import com.jy.medusa.gaze.stuff.MyHelper;
 import com.jy.medusa.gaze.stuff.Pager;
 import com.jy.medusa.gaze.stuff.exception.MedusaException;
+import com.jy.medusa.gaze.stuff.param.MyRestrictions;
 import com.jy.medusa.gaze.utils.MyReflectionUtils;
 import com.jy.medusa.gaze.utils.SystemConfigs;
 import org.apache.ibatis.builder.annotation.ProviderSqlSource;
@@ -101,9 +102,10 @@ public class MedusaInterceptor implements Interceptor {
                 Pager z = null;
 
                 for (Object m : x) {
-                    if (m instanceof Pager) {
-                        z = (Pager) m;
-                        break;//只要第一个对象 pager
+                    if (m instanceof Pager) {//处理pager对象 装入查询结果
+                        z = (Pager) m;//保留最后一个对象 pager
+                    } else if (m instanceof MyRestrictions) {//让MyRestrictions清空掉 modify by neo on 2019.07.11
+                        ((MyRestrictions) m).clear();
                     }
                 }
 

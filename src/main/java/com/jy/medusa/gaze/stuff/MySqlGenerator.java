@@ -737,7 +737,7 @@ public class MySqlGenerator {
                     }
                 } else if (z instanceof Pager) {
 
-                    if(pa == null) pa = (Pager) z;//只要第一个对象 pager
+                    pa = (Pager) z;//只要最后一个对象 pager
                 }
 
                 isd++;
