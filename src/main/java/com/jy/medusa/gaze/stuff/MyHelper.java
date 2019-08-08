@@ -546,7 +546,7 @@ public class MyHelper {
      */
     public static String[] concatInsertDynamicSql(Map<String, String> currentFieldTypeNameMap, Map<String, String> currentFieldColumnNameMap, Object t) {
 
-        int dataSizeAll = currentFieldTypeNameMap.keySet().size();
+        int dataSizeAll = currentFieldTypeNameMap.size();
 
 
         StringBuilder sbb = new StringBuilder(39 * dataSizeAll);
@@ -595,7 +595,7 @@ public class MyHelper {
      * @param paramColumn 参数
      * @return 返回值类型
      */
-    public static String concatInsertDynamicSqlForBatch(Map<String, String> currentColumnFieldNameMap, Map<String, String> currentFieldTypeNameMap, Object t, String paramColumn) {
+    public static String concatInsertDynamicSqlForBatch(Map<String, String> currentColumnFieldNameMap, Map<String, String> currentFieldTypeNameMap, Object t, String paramColumn, String mycatSeq) {
 
         List<Object> obs = t instanceof List ? (ArrayList)t : new ArrayList<>();
 
@@ -620,8 +620,11 @@ public class MyHelper {
 
                 if(fieName.trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY)) {
 
-                    sbb.append("#{pobj.param1[").append(i).append("].").append(SystemConfigs.PRIMARY_KEY).append(", jdbcType=").append(javaType2SqlTypes(currentFieldTypeNameMap.get(fieName))).append("},");
-
+                    if (MyCommonUtils.isNotBlank(mycatSeq)) {//modify by neo on 2019.08.07 for mycat
+                        sbb.append("next value for ").append(mycatSeq).append(",");
+                    } else {
+                        sbb.append("#{pobj.param1[").append(i).append("].").append(SystemConfigs.PRIMARY_KEY).append(", jdbcType=").append(javaType2SqlTypes(currentFieldTypeNameMap.get(fieName))).append("},");
+                    }
                 } else {
 
                     sbb.append("#{pobj.param1[");

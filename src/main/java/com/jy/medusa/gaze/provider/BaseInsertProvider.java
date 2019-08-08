@@ -46,4 +46,21 @@ public class BaseInsertProvider {
             throw new MedusaException("Medusa: insertBatch MapperMethod.ParamMap Exception");
         }
     }
+
+    /**
+     * 批量插入mycat
+     * @param m 参数
+     * @return 返回值类型
+     */
+    public String insertBatchOfMyCat(Map<String, Object> m) {
+
+        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
+            return MyHelper.getSqlGenerator(m).insertBatchOfMyCat(
+                    ((MapperMethod.ParamMap) m.get("pobj")).get("param1"),
+                    ((MapperMethod.ParamMap) m.get("pobj")).get("param2"),
+                    ((MapperMethod.ParamMap) m.get("pobj")).get("param3"));
+        } else {
+            throw new MedusaException("Medusa: insertBatchOfMyCat MapperMethod.ParamMap Exception");
+        }
+    }
 }

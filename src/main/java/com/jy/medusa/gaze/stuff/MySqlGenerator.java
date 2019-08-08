@@ -43,6 +43,36 @@ public class MySqlGenerator {
     }
 
     /**
+     * for mycat
+     * 生成根据IDs批量新增的SQL not selective
+     * @param t 参数
+     * @param ps 参数
+     * @return 返回值类型
+     */
+    public String insertBatchOfMyCat(Object t, Object mycatSeq, Object... ps) {
+
+        String paramColumn = reSolveColumn(ps);
+
+        if(paramColumn.equals("*")) paramColumn = columnsStr;
+
+        String dynamicSqlForBatch = MyHelper.concatInsertDynamicSqlForBatch(currentColumnFieldNameMap, currentFieldTypeNameMap, t, paramColumn, String.valueOf(mycatSeq));
+
+        int sbbLength = paramColumn.length() + tableName.length() + dynamicSqlForBatch.length() + 33;
+
+        StringBuilder sqlBuild = new StringBuilder(sbbLength);
+
+        sqlBuild.append("INSERT INTO ").append(tableName).append("(")
+                .append(paramColumn).append(") values ")
+                .append(dynamicSqlForBatch);
+
+        String sql = sqlBuild.toString();
+
+        logger.debug("Medusa: Generated SQL ^_^ " + sql);
+
+        return sql;
+    }
+
+    /**
      * 生成根据IDs批量新增的SQL not selective
      * @param t 参数
      * @param ps 参数
@@ -54,7 +84,7 @@ public class MySqlGenerator {
 
         if(paramColumn.equals("*")) paramColumn = columnsStr;
 
-        String dynamicSqlForBatch = MyHelper.concatInsertDynamicSqlForBatch(currentColumnFieldNameMap, currentFieldTypeNameMap, t, paramColumn);
+        String dynamicSqlForBatch = MyHelper.concatInsertDynamicSqlForBatch(currentColumnFieldNameMap, currentFieldTypeNameMap, t, paramColumn, null);
 
         int sbbLength = paramColumn.length() + tableName.length() + dynamicSqlForBatch.length() + 33;
 
@@ -62,7 +92,7 @@ public class MySqlGenerator {
 
         sqlBuild.append("INSERT INTO ").append(tableName).append("(")
                 .append(paramColumn).append(") values ")
-                .append(dynamicSqlForBatch);//modify by neo on2016.11.13
+                .append(dynamicSqlForBatch);//modify by neo on 2016.11.13
 
         String sql = sqlBuild.toString();
 

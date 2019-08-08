@@ -175,7 +175,11 @@ public class MedusaInterceptor implements Interceptor {
 
                             if (!rs.next()) break;
 
-                            MyReflectionUtils.invokeSetterMethod(ot, SystemConfigs.PRIMARY_KEY, rs.getInt(1));//注入属性id值 rs.getInt(1) 每次执行都取到不同 id 很神奇 (一行多列的原因是吗)
+                            if (sh.getBoundSql().getSql().toLowerCase().contains("next value for"))//modify by neo on 2019.08.07 for mycat
+                                MyReflectionUtils.invokeSetterMethod(ot, SystemConfigs.PRIMARY_KEY, rs.getInt(1) - 1);//注入属性id值 mycat 方式取到的都是+1 所以这里-1
+                            else
+                                MyReflectionUtils.invokeSetterMethod(ot, SystemConfigs.PRIMARY_KEY, rs.getInt(1));//注入属性id值 rs.getInt(1) 每次执行都取到不同 id 很神奇 (一行多列的原因是吗)
+
                         }
                     }
                 }
