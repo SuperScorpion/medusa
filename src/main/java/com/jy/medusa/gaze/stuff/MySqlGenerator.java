@@ -49,7 +49,7 @@ public class MySqlGenerator {
      * @param ps 参数
      * @return 返回值类型
      */
-    public String insertBatchOfMyCat(Object t, Object mycatSeq, Object... ps) {
+    public String sqlOfInsertBatchForMyCat(Object t, Object mycatSeq, Object... ps) {
 
         String paramColumn = reSolveColumn(ps);
 
@@ -78,7 +78,7 @@ public class MySqlGenerator {
      * @param ps 参数
      * @return 返回值类型
      */
-    public String sql2InsertOfBatch(Object t, Object... ps) {
+    public String sqlOfInsertBatch(Object t, Object... ps) {
 
         String paramColumn = reSolveColumn(ps);
 
@@ -105,7 +105,7 @@ public class MySqlGenerator {
      * 生成新增的SQL not selective
      * @return 返回值类型
      */
-    public String sql2Create() {//modify by neo on 2016.11.12 Object t
+    public String sqlOfInsert() {//modify by neo on 2016.11.12 Object t
 //        List<Object> values = obtainFieldValues(t);// modify by neo on 2016.11.15
 
         String[] paraArray = MyHelper.concatInsertDynamicSql(currentFieldTypeNameMap, currentFieldColumnNameMap, null);
@@ -130,7 +130,7 @@ public class MySqlGenerator {
      * @return 返回值类型
      * @param t 参数
      */
-    public String sql2CreateSelective(Object t) {//modify by neo on 20170117
+    public String sqlOfInsertSelective(Object t) {//modify by neo on 20170117
 
         if(t == null) throw new MedusaException("Medusa: The entity param is null");
 
@@ -191,7 +191,7 @@ public class MySqlGenerator {
      * 生成根据ID删除的SQL
      * @return 返回值类型
      */
-    public String sql2RemoveById() {//modify by neo on 2016.11.13 Object id
+    public String sqlOfRemoveById() {//modify by neo on 2016.11.13 Object id
 
         //if(id == null) id = 0;//modify by neo on 2016.11.04
 
@@ -213,7 +213,7 @@ public class MySqlGenerator {
      * @param t 参数
      * @return 返回值类型
      */
-    public String sql2RemoveOfBatch(Object t) {
+    public String sqlOfRemoveOfBatch(Object t) {
 
 //        Boolean b = List.class.isAssignableFrom(t.getClass());
 
@@ -254,7 +254,7 @@ public class MySqlGenerator {
      * @param t 参数
      * @return 返回值类型
      */
-    public String sql2RemoveByCondition(Object t) {
+    public String sqlOfRemoveByCondition(Object t) {
 
         List<String> values = obtainColumnValuesForDeleteByCondition(t);
 
@@ -276,6 +276,29 @@ public class MySqlGenerator {
         return sql;
     }
 
+    /**
+     * 提供给
+     * sqlOfRemoveByCondition
+     * @param t 参数
+     * @return 返回值类型
+     */
+    private List<String> obtainColumnValuesForDeleteByCondition(Object t) {
+
+        if(t == null) throw new MedusaException("Medusa: The entity param is null");
+
+        List<String> colVals = new ArrayList<>();
+        for (String column : columns) {
+            String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
+            Object value = MyReflectionUtils.obtainFieldValue(t, fieldName);
+            if (value != null) {
+//                colVals.add(column + "=" + handleValue(value));
+                colVals.add(column + "=" + "#{pobj." + fieldName + "}");///modify by neo on 2016.11.12
+            }
+        }
+        return colVals;
+    }
+
+
 
     /**
      * 生成根据条件批量更新的语句
@@ -283,7 +306,7 @@ public class MySqlGenerator {
      * @param ps 参数
      * @return 返回值类型
      */
-    public String sql2ModifyOfBatch(Object t, Object... ps) {
+    public String sqlOfModifyOfBatch(Object t, Object... ps) {
 
         String paramColumn = reSolveColumn(ps);
 
@@ -301,12 +324,13 @@ public class MySqlGenerator {
     }
 
     /**
+     * Selective
      * 生成更新的SQL
-     * 不允许空置
+     * 不允许空值
      * @param t 参数
      * @return 返回值类型
      */
-    public String sql2Modify(Object t) {
+    public String sqlOfModify(Object t) {
 
         List<String> values = obtainColumnValusForModify(t);
         //Object id = MyReflectionUtils.obtainFieldValue(t, currentColumnFieldNameMap.get(pkName));
@@ -332,25 +356,40 @@ public class MySqlGenerator {
     }
 
     /**
-     * 处理传入的字段字符
-     * @param ps        参数
+     * 提供给生成更新SQL使用 不能为空值
+     * @param t 参数
      * @return 返回值类型
      */
-    private String reSolveColumn(Object... ps){
+    private List<String>  obtainColumnValusForModify(Object t) {
 
-        boolean isValidColumn = (ps == null || ps.length != 1 || ps[0] == null || ((Object[])ps[0]).length == 0);
+        if(t == null) return null;
 
-        return isValidColumn ? columnsStr : MyHelper.buildColumnNameForSelect((Object[])ps[0], currentFieldColumnNameMap);
+        List<String> colVals = new ArrayList<>();
+
+        for (String column : columns) {
+
+            String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
+
+            Object value = MyReflectionUtils.invokeGetterMethod(t, fieldName);/// modify on 2016 11 21 by neo cause:先查询出来对象了 再更新对象的话 会更新到动态代理的 对象类 就会抛出找不到属性的异常问题 改为反射执行get属性方法则可以
+
+//            Object value = MyReflectionUtils.obtainFieldValue(t, fieldName);
+
+            if (value != null && !column.equalsIgnoreCase(pkName)) {
+//                colVals.add(column + "=" + handleValue(value));
+                colVals.add(column + "=" + "#{pobj." + fieldName + "}");///modify by neo on 2016.11.12
+            }
+        }
+        return colVals;
     }
 
-
     /**
+     * not Selective
      * 生成更新的SQL
      * @param t 参数
      * @param ps 参数
      * @return 返回值类型
      */
-    public String sql2ModifyNull(Object t, Object... ps) {
+    public String sqlOfModifyNull(Object t, Object... ps) {
 
         String paramColumn = reSolveColumn(ps);
 
@@ -393,109 +432,6 @@ public class MySqlGenerator {
         return colVals;
     }
 
-    /**
-     * 提供给生成更新SQL使用 不能为空值
-     * @param t 参数
-     * @return 返回值类型
-     */
-    private List<String>  obtainColumnValusForModify(Object t) {
-
-        if(t == null) return null;
-
-        List<String> colVals = new ArrayList<>();
-
-        for (String column : columns) {
-
-            String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
-
-            Object value = MyReflectionUtils.invokeGetterMethod(t, fieldName);/// modify on 2016 11 21 by neo cause:先查询出来对象了 再更新对象的话 会更新到动态代理的 对象类 就会抛出找不到属性的异常问题 改为反射执行get属性方法则可以
-
-//            Object value = MyReflectionUtils.obtainFieldValue(t, fieldName);
-
-            if (value != null && !column.equalsIgnoreCase(pkName)) {
-//                colVals.add(column + "=" + handleValue(value));
-                colVals.add(column + "=" + "#{pobj." + fieldName + "}");///modify by neo on 2016.11.12
-            }
-        }
-        return colVals;
-    }
-
-    /**
-     * 提供给selectList使用的
-     * @param t 参数
-     * @return 返回值类型
-     */
-    private List<String> obtainColumnValusForSelectList(Object t) {
-
-        if(t == null || t instanceof Object[]) return null;//modify by neo on 2017.07.02 解决protostuff 序列化数组问题
-
-        List<String> colVals = new ArrayList<>();
-        for (String column : columns) {
-            String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
-            Object value = MyReflectionUtils.obtainFieldValue(t, fieldName);
-            if (value != null) {
-//                colVals.add(column + "=" + handleValue(value));
-                colVals.add(column + "=" + "#{pobj.param1." + fieldName + "}");///modify by neo on 2016.11.12
-            }
-        }
-        return colVals;
-    }
-
-
-    /**
-     * 提供给selectMedusaGaze使用的
-     * @return 返回值类型
-     */
-    private List<String> obtainMedusaGazeS(Object[] psArray) {
-
-        if(psArray != null && psArray.length != 0) {
-
-            short i = 0;
-            for(Object o : psArray) {
-
-                if(entityClass.isInstance(o)) {
-
-                    List<String> colVals = new ArrayList<>();
-                    for (String column : columns) {
-                        String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
-                        Object value = MyReflectionUtils.obtainFieldValue(o, fieldName);
-                        if (value != null && !value.toString().equals("")) {
-                            colVals.add(column + "=" + "#{pobj.array[" + i + "]." + fieldName + "}");///modify by neo on 2016.11.12
-                        }
-                    }
-                    return colVals;
-                }
-
-                i++;
-            }
-
-            return null;
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * 提供给
-     * sql2RemoveByCondition
-     * @param t 参数
-     * @return 返回值类型
-     */
-    private List<String> obtainColumnValuesForDeleteByCondition(Object t) {
-
-        if(t == null) throw new MedusaException("Medusa: The entity param is null");
-
-        List<String> colVals = new ArrayList<>();
-        for (String column : columns) {
-            String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
-            Object value = MyReflectionUtils.obtainFieldValue(t, fieldName);
-            if (value != null) {
-//                colVals.add(column + "=" + handleValue(value));
-                colVals.add(column + "=" + "#{pobj." + fieldName + "}");///modify by neo on 2016.11.12
-            }
-        }
-        return colVals;
-    }
 
 
     /**
@@ -505,7 +441,7 @@ public class MySqlGenerator {
      * @return 返回值类型
      */
 //    return "SELECT * FROM  users WHERE NAME = #{pobj.param1.name} limit 0,1";
-    public String sql2FindOne(Object t, Object... ps) {
+    public String sqlOfFindOne(Object t, Object... ps) {
 
         String paramColumn = reSolveColumn(ps);
 
@@ -534,15 +470,13 @@ public class MySqlGenerator {
         return sql;
     }
 
-
-
     /**
      * 生成根据ID查询的SQL
      * @param id 参数
      * @param ps 参数
      * @return 返回值类型
      */
-    public String sql2FindOneById(Object id, Object... ps) {///modify by neo on 2016.11.21 Object id,这个 id 不能去掉的
+    public String sqlOfFindOneById(Object id, Object... ps) {///modify by neo on 2016.11.21 Object id,这个 id 不能去掉的
 
         String paramColumn = reSolveColumn(ps);
 
@@ -564,7 +498,7 @@ public class MySqlGenerator {
      * @param ps 参数
      * @return 返回值类型
      */
-    public String sql2FindBatchOfIds(Object t, Object... ps) {
+    public String sqlOfFindBatchOfIds(Object t, Object... ps) {
 
         List<Object> ids = t instanceof List ? (ArrayList)t : new ArrayList<>();
 
@@ -593,7 +527,7 @@ public class MySqlGenerator {
         return sql;
     }
 
-    public String sql2FindListBy(Object t, Object... ps) {
+    public String sqlOfFindListBy(Object t, Object... ps) {
 
         String paramColumn = reSolveColumn(ps);
 
@@ -621,10 +555,43 @@ public class MySqlGenerator {
     }
 
     /**
+     * 提供给selectList使用的
+     * @param t 参数
+     * @return 返回值类型
+     */
+    private List<String> obtainColumnValusForSelectList(Object t) {
+
+        if(t == null || t instanceof Object[]) return null;//modify by neo on 2017.07.02 解决protostuff 序列化数组问题
+
+        List<String> colVals = new ArrayList<>();
+        for (String column : columns) {
+            String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
+            Object value = MyReflectionUtils.obtainFieldValue(t, fieldName);
+            if (value != null) {
+//                colVals.add(column + "=" + handleValue(value));
+                colVals.add(column + "=" + "#{pobj.param1." + fieldName + "}");///modify by neo on 2016.11.12
+            }
+        }
+        return colVals;
+    }
+
+    /**
+     * 处理传入的字段字符
+     * @param ps        参数
+     * @return 返回值类型
+     */
+    private String reSolveColumn(Object... ps){
+
+        boolean isValidColumn = (ps == null || ps.length != 1 || ps[0] == null || ((Object[])ps[0]).length == 0);
+
+        return isValidColumn ? columnsStr : MyHelper.buildColumnNameForSelect((Object[])ps[0], currentFieldColumnNameMap);
+    }
+
+    /**
      * 生成查询所有的SQL
      * @return 返回值类型
      */
-    public String sql2FindAll(Object[] objParams) {
+    public String sqlOfFindAll(Object[] objParams) {
 
         String paramColumn = (objParams == null || objParams.length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect(objParams, currentFieldColumnNameMap);
 
@@ -644,7 +611,7 @@ public class MySqlGenerator {
      * @param objParams 参数
      * @return 返回值类型
      */
-    public String sql2FindAllCount(Object[] objParams) {
+    public String sqlOfFindAllCount(Object[] objParams) {
 
         // 从缓存里拿到分页查询语句 必须清理掉缓存
         String cacheSq = MyHelper.myThreadLocal.get();
@@ -714,7 +681,7 @@ public class MySqlGenerator {
      * @param objParams 参数
      * @return 返回值类型
      **/
-    public String sql2FindMedusaGaze(Object[] objParams) {//modify by neo on 2016.12.23
+    public String sqlOfFindMedusaGaze(Object[] objParams) {//modify by neo on 2016.12.23
 
         //获取到缓存中的分页查询语句 modify by neo on 2016.11.16
         ///分页时先执行查询分页再执行查询分页 再执行总计数句 boundsql(因为)
@@ -806,6 +773,39 @@ public class MySqlGenerator {
         logger.debug("Medusa: Generated SQL ^_^ " + sbb.toString());
 
         return sbb.toString();
+    }
+
+    /**
+     * 提供给selectMedusaGaze使用的
+     * @return 返回值类型
+     */
+    private List<String> obtainMedusaGazeS(Object[] psArray) {
+
+        if(psArray != null && psArray.length != 0) {
+
+            short i = 0;
+            for(Object o : psArray) {
+
+                if(entityClass.isInstance(o)) {
+
+                    List<String> colVals = new ArrayList<>();
+                    for (String column : columns) {
+                        String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
+                        Object value = MyReflectionUtils.obtainFieldValue(o, fieldName);
+                        if (value != null && !value.toString().equals("")) {
+                            colVals.add(column + "=" + "#{pobj.array[" + i + "]." + fieldName + "}");///modify by neo on 2016.11.12
+                        }
+                    }
+                    return colVals;
+                }
+
+                i++;
+            }
+
+            return null;
+        } else {
+            return null;
+        }
     }
 
     /**

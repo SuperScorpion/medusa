@@ -49,55 +49,6 @@ public class MyHelper {
 
 
     /**
-     * 获取返回值类型 - 实体类型
-     * @param msid 参数
-     * @return 返回值类型
-     */
-    public static Class<?> getEntityClass(String msid) {
-
-        Class<?> mapperClass = buildClassByPath(msid);
-
-        String sn = mapperClass.getSimpleName();
-
-        ///Class<?> ps = MyHelperCacheManager.getCacheClass(sn);///modify by neo on 2016.12.1
-
-        //if (ps != null) {
-        //    return ps;
-        //} else {
-            Type[] types = mapperClass.getGenericInterfaces();
-            for (Type type : types) {
-                if (type instanceof ParameterizedType) {
-                    ParameterizedType t = (ParameterizedType) type;
-                    if (t.getRawType() == mapperClass || ((Class<?>) t.getRawType()).isAssignableFrom(mapperClass)) {
-                        Class<?> returnType = (Class<?>) t.getActualTypeArguments()[0];
-//                        MyHelperCacheManager.putCacheClass(sn, returnType);///modify by neo on 2016.12.1
-                        logger.debug("Medusa:Successfully initialize the " + sn + " cache information");
-                        return returnType;
-                    }
-                }
-            }
-//        }
-        throw new MedusaException("Medusa: Can't get Mapper<T> generic type: " + sn);
-    }
-
-    /**
-     * construct class by classpath
-     * @param classPath        参数
-     * @return 返回值类型
-     */
-    public static Class<?> buildClassByPath(String classPath) {
-        if(classPath != null) {
-            try {
-                return Class.forName(classPath);
-            } catch (ClassNotFoundException e) {
-                logger.error("Medusa: According to the path to build Class object " + classPath + " appeared abnormal situation!");
-                e.printStackTrace();
-            }
-        }
-        return null;
-    }
-
-    /**
      * com.jy.koubei.persistence.UserMapper.SelectOne
      * remove .SelectOne
      * then you can get the UserMapper path to build entity class
@@ -205,6 +156,55 @@ public class MyHelper {
                 return q;
             }
         }
+    }
+
+    /**
+     * 获取返回值类型 - 实体类型
+     * @param msid 参数
+     * @return 返回值类型
+     */
+    public static Class<?> getEntityClass(String msid) {
+
+        Class<?> mapperClass = buildClassByPath(msid);
+
+        String sn = mapperClass.getSimpleName();
+
+        ///Class<?> ps = MyHelperCacheManager.getCacheClass(sn);///modify by neo on 2016.12.1
+
+        //if (ps != null) {
+        //    return ps;
+        //} else {
+        Type[] types = mapperClass.getGenericInterfaces();
+        for (Type type : types) {
+            if (type instanceof ParameterizedType) {
+                ParameterizedType t = (ParameterizedType) type;
+                if (t.getRawType() == mapperClass || ((Class<?>) t.getRawType()).isAssignableFrom(mapperClass)) {
+                    Class<?> returnType = (Class<?>) t.getActualTypeArguments()[0];
+//                        MyHelperCacheManager.putCacheClass(sn, returnType);///modify by neo on 2016.12.1
+                    logger.debug("Medusa:Successfully initialize the " + sn + " cache information");
+                    return returnType;
+                }
+            }
+        }
+//        }
+        throw new MedusaException("Medusa: Can't get Mapper<T> generic type: " + sn);
+    }
+
+    /**
+     * construct class by classpath
+     * @param classPath        参数
+     * @return 返回值类型
+     */
+    public static Class<?> buildClassByPath(String classPath) {
+        if(classPath != null) {
+            try {
+                return Class.forName(classPath);
+            } catch (ClassNotFoundException e) {
+                logger.error("Medusa: According to the path to build Class object " + classPath + " appeared abnormal situation!");
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
     ////Solving high concurrency problems modify by neo on 2017.07.19
@@ -401,7 +401,7 @@ public class MyHelper {
         ResultSet rs = null;
 
 //        String countSql = getSqlGenerator(p).sql_findAllCount(((MapperMethod.ParamMap) p.get("pobj")).get("param1"));
-        String countSql = getSqlGenerator(p).sql2FindAllCount((Object[]) ((DefaultSqlSession.StrictMap) p.get("pobj")).get("array"));
+        String countSql = getSqlGenerator(p).sqlOfFindAllCount((Object[]) ((DefaultSqlSession.StrictMap) p.get("pobj")).get("array"));
 
         int totalCount = 0;
 
@@ -450,7 +450,7 @@ public class MyHelper {
 
 /*            String countSql = getSqlGenerator(p).sql_findAllCount(((MapperMethod.ParamMap) p.get("pobj")).get("param1"),
                     ((MapperMethod.ParamMap) p.get("pobj")).get("param2"));*/
-            String countSql = getSqlGenerator(p).sql2FindAllCount((Object[]) ((DefaultSqlSession.StrictMap) p.get("pobj")).get("array"));
+            String countSql = getSqlGenerator(p).sqlOfFindAllCount((Object[]) ((DefaultSqlSession.StrictMap) p.get("pobj")).get("array"));
 
 //            BoundSql countBS = new BoundSql(mst.getConfiguration(), countSql, boundSql.getParameterMappings(),p);
 
@@ -547,7 +547,6 @@ public class MyHelper {
     public static String[] concatInsertDynamicSql(Map<String, String> currentFieldTypeNameMap, Map<String, String> currentFieldColumnNameMap, Object t) {
 
         int dataSizeAll = currentFieldTypeNameMap.size();
-
 
         StringBuilder sbb = new StringBuilder(39 * dataSizeAll);
         StringBuilder sbs = new StringBuilder(15 * dataSizeAll);

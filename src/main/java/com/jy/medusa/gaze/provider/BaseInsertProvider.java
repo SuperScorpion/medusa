@@ -19,7 +19,7 @@ public class BaseInsertProvider {
      * @return 返回值类型
      */
     public String insert(Map<String, Object> m) {
-        return MyHelper.getSqlGenerator(m).sql2Create();//modify by neo on 2016/11/12 m.get("pobj")
+        return MyHelper.getSqlGenerator(m).sqlOfInsert();//modify by neo on 2016/11/12 m.get("pobj")
     }
 
     /**
@@ -28,7 +28,7 @@ public class BaseInsertProvider {
      * @return 返回值类型
      */
     public String insertSelective(Map<String, Object> m) {
-        return MyHelper.getSqlGenerator(m).sql2CreateSelective(m.get("pobj"));//modify by neo on 2016/11/12 m.get("pobj")
+        return MyHelper.getSqlGenerator(m).sqlOfInsertSelective(m.get("pobj"));//modify by neo on 2016/11/12 m.get("pobj")
     }
 
     /**
@@ -39,7 +39,7 @@ public class BaseInsertProvider {
     public String insertBatch(Map<String, Object> m) {
 
         if(m.get("pobj") instanceof MapperMethod.ParamMap) {
-            return MyHelper.getSqlGenerator(m).sql2InsertOfBatch(
+            return MyHelper.getSqlGenerator(m).sqlOfInsertBatch(
                     ((MapperMethod.ParamMap) m.get("pobj")).get("param1"),
                     ((MapperMethod.ParamMap) m.get("pobj")).get("param2"));
         } else {
@@ -55,7 +55,7 @@ public class BaseInsertProvider {
     public String insertBatchOfMyCat(Map<String, Object> m) {
 
         if(m.get("pobj") instanceof MapperMethod.ParamMap) {
-            return MyHelper.getSqlGenerator(m).insertBatchOfMyCat(
+            return MyHelper.getSqlGenerator(m).sqlOfInsertBatchForMyCat(
                     ((MapperMethod.ParamMap) m.get("pobj")).get("param1"),
                     ((MapperMethod.ParamMap) m.get("pobj")).get("param2"),
                     ((MapperMethod.ParamMap) m.get("pobj")).get("param3"));

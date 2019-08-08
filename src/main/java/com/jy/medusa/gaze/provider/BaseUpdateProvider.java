@@ -21,7 +21,7 @@ public class BaseUpdateProvider {
     public String updateByPrimaryKey(Map<String, Object> m) {
 
         if(m.get("pobj") instanceof MapperMethod.ParamMap) {
-            return MyHelper.getSqlGenerator(m).sql2ModifyNull(
+            return MyHelper.getSqlGenerator(m).sqlOfModifyNull(
                     ((MapperMethod.ParamMap) m.get("pobj")).get("param1"),
                     ((MapperMethod.ParamMap) m.get("pobj")).get("param2"));
         } else {
@@ -35,7 +35,7 @@ public class BaseUpdateProvider {
      * @return 返回值类型
      */
     public String updateByPrimaryKeySelective(Map<String, Object> m) {
-        return MyHelper.getSqlGenerator(m).sql2Modify(m.get("pobj"));
+        return MyHelper.getSqlGenerator(m).sqlOfModify(m.get("pobj"));
     }
 
     /**
@@ -46,7 +46,7 @@ public class BaseUpdateProvider {
     public String updateByPrimaryKeyBatch(Map<String, Object> m) {
 
         if(m.get("pobj") instanceof MapperMethod.ParamMap) {
-            return MyHelper.getSqlGenerator(m).sql2ModifyOfBatch(
+            return MyHelper.getSqlGenerator(m).sqlOfModifyOfBatch(
                     ((MapperMethod.ParamMap) m.get("pobj")).get("param1"),
                     ((MapperMethod.ParamMap) m.get("pobj")).get("param2"));
         } else {
