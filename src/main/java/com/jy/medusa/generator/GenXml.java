@@ -6,11 +6,9 @@ import com.jy.medusa.gaze.utils.SystemConfigs;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.*;
+import java.util.Date;
 
 /**
  * Created by neo on 16/7/27.
@@ -35,6 +33,8 @@ public class GenXml {
 
     private List<String> associationColumn;
     private String pluralAssociation;//映射关系字段的后缀名 一般为s
+
+    private String primaryKey = SystemConfigs.PRIMARY_KEY;//主键字段名
 
 
 
@@ -128,6 +128,18 @@ public class GenXml {
 
             changeTypes(colTypes, colTypesSql);//处理mybatis类型 和 sql类型不一致
 
+            //modify by neo on 2019.08.17
+            //get current primary key from table
+            DatabaseMetaData dbmd = conn.getMetaData();
+            ResultSet resultSet = dbmd.getPrimaryKeys(null, null, tableName);
+            while(resultSet.next()) {
+                if(!resultSet.isLast()) {
+                    System.out.println("注意: " + tableName + " 表拥有多个主键 - 已跳过生成!");
+                    break;
+                }
+                primaryKey = resultSet.getObject(4).toString();
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -158,7 +170,7 @@ public class GenXml {
 
         for (int i = 0; i < colSqlNames.length; i++) {
 
-            if (colNames[i].trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY)) {
+            if (colNames[i].trim().equalsIgnoreCase(primaryKey)) {
                 sb.append("\t\t<id column=\"id\" jdbcType=\"INTEGER\" property=\"id\" />\r\n");
             } else {
                 sb.append("\t\t<result column=\"" + colSqlNames[i] + "\" jdbcType=\"" + colTypes[i] + "\" property=\"" + colNames[i] + "\" />\r\n");

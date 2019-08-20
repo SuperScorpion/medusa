@@ -5,8 +5,8 @@ package com.jy.medusa.gaze.stuff.reload;
  */
 
 import com.jy.medusa.gaze.stuff.exception.MedusaException;
-import com.jy.medusa.gaze.utils.MyReflectionUtils;
 import com.jy.medusa.gaze.utils.MyCommonUtils;
+import com.jy.medusa.gaze.utils.MyReflectionUtils;
 import com.jy.medusa.gaze.utils.SystemConfigs;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.session.Configuration;
@@ -156,7 +156,8 @@ import java.util.*;
 
                     List<String> paramList = new ArrayList<>();///////标记为非框架的 内部方法名
 
-                    for (Object v : configMap.keySet()) {
+                    for (Map.Entry<Object, Object> entry : configMap.entrySet()) {
+                        Object v = entry.getKey();
                         if (!mappedStatementCacheKeyList.contains(v.toString())) paramList.add(v.toString());
                     }
 
@@ -234,7 +235,8 @@ import java.util.*;
          Field field = MyReflectionUtils.obtainAccessibleField(configuration, "mappedStatements");
          Map<String, Object> configMap = (Map) field.get(configuration);
 
-         for(String k : configMap.keySet()) {
+         for (Map.Entry<String, Object> entry : configMap.entrySet()) {
+             String k = entry.getKey();
              for(String l : SystemConfigs.MY_ALL_METHOD_NANES_LIST) {
                  if(k.endsWith(l)) mappedStatementCacheKeyList.add(k);
              }

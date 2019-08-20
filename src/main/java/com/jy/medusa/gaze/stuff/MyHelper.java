@@ -130,6 +130,15 @@ public class MyHelper {
         return methodName.equals("insertSelectiveUUID") ? true : false;
     }
 
+    /**
+     * check insertUUID selectKey method
+     * @param methodName     参数
+     * @return 返回值类型
+     */
+    public static boolean checkInsertUUIDMethodSelectKey(String methodName) {
+        return methodName.equals("insertSelectiveUUID!selectKey") ? true : false;
+    }
+
 
     /**
      *
@@ -142,7 +151,7 @@ public class MyHelper {
 
         MySqlGenerator por = MyHelperCacheManager.getCacheGenerator(p);
 
-        if(por != null){
+        if(por != null) {
             return por;
         } else {
             Class<?> c = getEntityClass(p);
@@ -288,8 +297,9 @@ public class MyHelper {
 
         if(map != null && !map.isEmpty()) {
             resultMap = new HashMap<T, K>();
-            for(K key : map.keySet()) {
-                T value = map.get(key);
+            for(Map.Entry<K, T> entry : map.entrySet()) {
+                K key = entry.getKey();
+                T value = entry.getValue();
                 //resultMap.remove(key);会报错
                 resultMap.put(value, key);
             }
@@ -544,35 +554,37 @@ public class MyHelper {
      * @param t
      * @return 返回值类型
      */
-    public static String[] concatInsertDynamicSql(Map<String, String> currentFieldTypeNameMap, Map<String, String> currentFieldColumnNameMap, Object t) {
+    public static String[] concatInsertDynamicSql(Map<String, String> currentFieldTypeNameMap, Map<String, String> currentFieldColumnNameMap, Object t, String primaryKeyColumn) {
 
         int dataSizeAll = currentFieldTypeNameMap.size();
 
         StringBuilder sbb = new StringBuilder(39 * dataSizeAll);
         StringBuilder sbs = new StringBuilder(15 * dataSizeAll);
 
-        for(String fieName : currentFieldTypeNameMap.keySet()) {//同一个hashset 遍历的元素顺序是否一样的
+        for (Map.Entry<String, String> entry : currentFieldTypeNameMap.entrySet()) {//同一个hashset 遍历的元素顺序是否一样的
+
+            String fieName = entry.getKey();
 
             if (t == null || (t != null && MyReflectionUtils.obtainFieldValue(t, fieName) != null)) {///modify by neo on 20170117 selective
 
-                if (fieName.trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY)) {
+               /* if (fieName.trim().equalsIgnoreCase(primaryKeyColumn)) {
 
 //                sbb.append("#{id, jdbcType=" + javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)) + "},");
-                    sbb.append("#{pobj." + SystemConfigs.PRIMARY_KEY + ", jdbcType=" + javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)) + "},");
+                    sbb.append("#{pobj.").append(primaryKeyColumn).append(", jdbcType=").append(javaType2SqlTypes(entry.getValue())).append("},");
 
                     sbs.append(currentFieldColumnNameMap.get(fieName));
                     sbs.append(",");
-                } else {
+                } else {*/
 
                     sbb.append("#{pobj.");
                     sbb.append(fieName);
                     sbb.append(", jdbcType=");
-                    sbb.append(javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)));
+                    sbb.append(javaType2SqlTypes(entry.getValue()));
                     sbb.append("},");
 
                     sbs.append(currentFieldColumnNameMap.get(fieName));
                     sbs.append(",");
-                }
+                /*}*/
             }
         }
 
@@ -594,7 +606,9 @@ public class MyHelper {
      * @param paramColumn 参数
      * @return 返回值类型
      */
-    public static String concatInsertDynamicSqlForBatch(Map<String, String> currentColumnFieldNameMap, Map<String, String> currentFieldTypeNameMap, Object t, String paramColumn, String mycatSeq) {
+    public static String concatInsertDynamicSqlForBatch(Map<String, String> currentColumnFieldNameMap, Map<String, String> currentFieldTypeNameMap, Object t, String paramColumn, String primaryKeyColumn, String myCatSequence) {
+
+        boolean myCatFlag = MyCommonUtils.isNotBlank(myCatSequence);//modify by neo on 2019.08.07 for mycat
 
         List<Object> obs = t instanceof List ? (ArrayList)t : new ArrayList<>();
 
@@ -617,15 +631,9 @@ public class MyHelper {
 
                 if(MyCommonUtils.isBlank(fieName)) throw new MedusaException("Medusa: The insertBatch method failed. It might be a field spelling error!");
 
-                if(fieName.trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY)) {
-
-                    if (MyCommonUtils.isNotBlank(mycatSeq)) {//modify by neo on 2019.08.07 for mycat
-                        sbb.append("next value for ").append(mycatSeq).append(",");
-                    } else {
-                        sbb.append("#{pobj.param1[").append(i).append("].").append(SystemConfigs.PRIMARY_KEY).append(", jdbcType=").append(javaType2SqlTypes(currentFieldTypeNameMap.get(fieName))).append("},");
-                    }
+                if (myCatFlag && col.trim().equalsIgnoreCase(primaryKeyColumn)) {//modify by neo on 2019.08.07 for mycat
+                    sbb.append("next value for ").append(myCatSequence).append(",");
                 } else {
-
                     sbb.append("#{pobj.param1[");
                     sbb.append(i);
                     sbb.append("].");
@@ -701,7 +709,7 @@ public class MyHelper {
 
         for(String columns : columnArr) {
             if(!columns.equals(SystemConfigs.PRIMARY_KEY)) {
-                sbb.append(columns + "=values(" + columns + "),");
+                sbb.append(columns).append("=values(").append(columns).append("),");
             }
         }
 
@@ -720,7 +728,7 @@ public class MyHelper {
      * @param currentColumnFieldNameMap 参数
      * @return 返回值类型
      */
-    public static String concatUpdateDynamicSqlValuesForBatchPre(String tableName, Object t, String paramColumn, Map<String, String> currentColumnFieldNameMap) {
+    public static String concatUpdateDynamicSqlValuesForBatchPre(String tableName, Object t, String paramColumn, Map<String, String> currentColumnFieldNameMap, String primaryKeyColumn) {
 
         /*UPDATE users SET
                 name = CASE id
@@ -734,7 +742,6 @@ public class MyHelper {
         WHEN 9 THEN 'New Title 3'
         END
         WHERE id IN (7,8,9)*/
-
 
         List<Object> obs = t instanceof List ? (ArrayList)t : new ArrayList<>();
 
@@ -753,20 +760,18 @@ public class MyHelper {
         int len = obs.size();
         for(String columns : columnArr) {
 
-            if(!columns.equals(SystemConfigs.PRIMARY_KEY)) {
+            if(!columns.equals(primaryKeyColumn)) {
 
                 if (!checkIsAllNullColumn(obs, columns, currentColumnFieldNameMap)) {//modify by neo on 2019.07.05
 
-                    sbb.append(columns).append(" = CASE ").append(SystemConfigs.PRIMARY_KEY);
+                    sbb.append(columns).append(" = CASE ").append(primaryKeyColumn);
 
                     for (int i = 0; i < len; i++) {
 
-                        if (flag) {
-                            sbbIdd.append("#{pobj.param1[").append(i).append("].").append(SystemConfigs.PRIMARY_KEY).append("},");
-                        }
+                        if (flag) sbbIdd.append("#{pobj.param1[").append(i).append("].").append(currentColumnFieldNameMap.get(primaryKeyColumn)).append("},");
 
                         sbb.append(" WHEN ")
-                                .append("#{pobj.param1[").append(i).append("].").append(SystemConfigs.PRIMARY_KEY).append("}")
+                                .append("#{pobj.param1[").append(i).append("].").append(currentColumnFieldNameMap.get(primaryKeyColumn)).append("}")
                                 .append(" THEN ")
                                 .append("#{pobj.param1[").append(i).append("].").append(currentColumnFieldNameMap.get(columns)).append("}");
                     }
@@ -784,7 +789,7 @@ public class MyHelper {
 
         if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
 
-        sbb.append(" WHERE ").append(SystemConfigs.PRIMARY_KEY).append(" IN (").append(sbbIdd).append(")");
+        sbb.append(" WHERE ").append(primaryKeyColumn).append(" IN (").append(sbbIdd).append(")");
 
         return sbb.toString();
     }

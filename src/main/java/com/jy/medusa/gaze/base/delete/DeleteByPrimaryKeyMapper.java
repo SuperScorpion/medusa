@@ -18,5 +18,4 @@ public interface DeleteByPrimaryKeyMapper<T> {
      */
     @DeleteProvider(type = BaseDeleteProvider.class, method = "deleteByPrimaryKey")
     int deleteByPrimaryKey(Object key);
-
 }

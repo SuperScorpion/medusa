@@ -23,6 +23,6 @@ public interface InsertBatchMapper<T> {
      */
     @InsertProvider(type = BaseInsertProvider.class, method = "insertBatch")
 //    @SelectKey(statement = "select last_insert_id() as id", keyProperty = "id", keyColumn = "id", before = true, resultType = int.class)
-    @Options(useGeneratedKeys = true, keyColumn = SystemConfigs.PRIMARY_KEY, keyProperty = SystemConfigs.PRIMARY_KEY)
+    @Options(useGeneratedKeys = true, keyProperty = SystemConfigs.PRIMARY_KEY)
     int insertBatch(List<T> records, Object... ps);
 }

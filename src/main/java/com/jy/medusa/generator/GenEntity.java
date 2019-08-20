@@ -37,6 +37,9 @@ public class GenEntity {
     private Map<String, String> defaultMap = new HashMap<>();//字段名称 和 默认值关系
     private Map<String, String> commentMap = new HashMap<>();//字段名称 和 注注释对应关系
 
+    private String primaryKey = SystemConfigs.PRIMARY_KEY;//主键字段名
+
+
     public GenEntity(String packagePath, String tableName, Object colValidArray) {
         this.packagePath = packagePath;
         this.tableName = tableName;
@@ -96,11 +99,23 @@ public class GenEntity {
                 colSizes[i] = rsmd.getColumnDisplaySize(i + 1);
             }
 
+            //modify by neo on 2019.08.17
+            //get current primary key from table
+            DatabaseMetaData dbmd = conn.getMetaData();
+            ResultSet resultSet = dbmd.getPrimaryKeys(null, null, tableName);
+            while(resultSet.next()) {
+                if(!resultSet.isLast()) {
+                    System.out.println("注意: " + tableName + " 表拥有多个主键 - 已跳过生成!");
+                    break;
+                }
+                primaryKey = resultSet.getObject(4).toString();
+            }
+
             try {
                 String content = parse();
                 String path = Home.proPath + packagePath.replaceAll("\\.", "/");
                 File file = new File(path);
-                if(!file.exists()){
+                if(!file.exists()) {
                     file.mkdirs();
                 }
                 String resPath = path + "/" + MyGenUtils.upcaseFirst(tableName) + Home.entityNameSuffix + ".java";
@@ -285,7 +300,7 @@ public class GenEntity {
                 }
             }*/
 
-            String primaryAnnotationTxt = colNames[i].trim().equalsIgnoreCase(SystemConfigs.PRIMARY_KEY) ? "\t@Id\r\n" : "";
+            String primaryAnnotationTxt = colNames[i].trim().equalsIgnoreCase(primaryKey) ? "\t@Id\r\n" : "";
 
             //添加默认值
             String defaultStr = MyCommonUtils.isNotBlank(defaultMap.get(colNames[i])) ? " = " + sqlType2JavaTypeForDefault(colTypes[i], defaultMap.get(colNames[i])) : "";
@@ -408,80 +423,80 @@ public class GenEntity {
 
 
 
-/**
- * 获取properties 属性值 并初始化
- */
-public class DataBaseTools{
+    /**
+     * 获取properties 属性值 并初始化
+     */
+    public class DataBaseTools {
 
-    private String driver;
+        private String driver;
 
-    private String url;
+        private String url;
 
-    private String user;
+        private String user;
 
-    private String password;
+        private String password;
 
-    private Connection conn;
+        private Connection conn;
 
-    public DataBaseTools() {
-        loadProperties();
-//        loadProperties(fileName);
-    }
+        public DataBaseTools() {
+            loadProperties();
+    //        loadProperties(fileName);
+        }
 
-    private void loadProperties() {
-//    private void loadProperties(String fileName) {
+        private void loadProperties() {
+    //    private void loadProperties(String fileName) {
 
-/*        String resPaths = System.getProperty("user.dir") + Home.getProperPath() + fileName;
+    /*        String resPaths = System.getProperty("user.dir") + Home.getProperPath() + fileName;
 
-        Properties props = new Properties();
-        try {
-            props.load(new FileInputStream(resPaths));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-/*        this.driver = props.getProperty("jdbc.driver");
-        this.url = props.getProperty("jdbc.url");
-        this.user = props.getProperty("jdbc.username");
-        this.password = props.getProperty("jdbc.password");*/
+            Properties props = new Properties();
+            try {
+                props.load(new FileInputStream(resPaths));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }*/
+    /*        this.driver = props.getProperty("jdbc.driver");
+            this.url = props.getProperty("jdbc.url");
+            this.user = props.getProperty("jdbc.username");
+            this.password = props.getProperty("jdbc.password");*/
 
-        this.driver = Home.jdbcDriver;
-        this.url = Home.jdbcUrl;
-        this.user = Home.jdbcUsername;
-        this.password = Home.jdbcPassword;
-    }
+            this.driver = Home.jdbcDriver;
+            this.url = Home.jdbcUrl;
+            this.user = Home.jdbcUsername;
+            this.password = Home.jdbcPassword;
+        }
 
 
-    public Connection openConnection(){
-        try {
-            if (conn != null && !conn.isClosed()) {
-                return this.conn;
-            } else {
-                try {
-                    Class.forName(driver);
-                    this.conn = DriverManager.getConnection(url, user, password);
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
+        public Connection openConnection() {
+            try {
+                if (conn != null && !conn.isClosed()) {
+                    return this.conn;
+                } else {
+                    try {
+                        Class.forName(driver);///初始化 并注册 driver
+                        this.conn = DriverManager.getConnection(url, user, password);
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
                 }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+            return this.conn;
         }
-        return this.conn;
-    }
 
-    public void closeConnection(Connection conn, Statement st){
-        try {
-            if (st != null) {
-                st.close();
+        public void closeConnection(Connection conn, Statement st) {
+            try {
+                if (st != null) {
+                    st.close();
+                }
+                if (conn != null && !conn.isClosed()) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-            if (conn != null && !conn.isClosed()) {
-                conn.close();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
-}
 }

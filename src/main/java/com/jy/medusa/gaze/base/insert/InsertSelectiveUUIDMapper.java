@@ -19,6 +19,6 @@ public interface InsertSelectiveUUIDMapper<T> {
      * @return 返回值类型
      */
     @InsertProvider(type = BaseInsertProvider.class, method = "insertSelective")
-    @SelectKey(statement = "SELECT uuid()", keyProperty = SystemConfigs.PRIMARY_KEY, keyColumn = SystemConfigs.PRIMARY_KEY, before = true, resultType = String.class)
+    @SelectKey(statement = "SELECT uuid()", keyProperty = SystemConfigs.PRIMARY_KEY, before = true, resultType = String.class)
     int insertSelectiveUUID(T record);
 }

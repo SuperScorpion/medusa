@@ -42,6 +42,10 @@ public class MySqlGenerator {
         this.entityClass = entityClass;
     }
 
+    public String getPkName() {
+        return this.pkName;
+    }
+
     /**
      * for mycat
      * 生成根据IDs批量新增的SQL not selective
@@ -55,7 +59,7 @@ public class MySqlGenerator {
 
         if(paramColumn.equals("*")) paramColumn = columnsStr;
 
-        String dynamicSqlForBatch = MyHelper.concatInsertDynamicSqlForBatch(currentColumnFieldNameMap, currentFieldTypeNameMap, t, paramColumn, String.valueOf(mycatSeq));
+        String dynamicSqlForBatch = MyHelper.concatInsertDynamicSqlForBatch(currentColumnFieldNameMap, currentFieldTypeNameMap, t, paramColumn, pkName, String.valueOf(mycatSeq));
 
         int sbbLength = paramColumn.length() + tableName.length() + dynamicSqlForBatch.length() + 33;
 
@@ -84,7 +88,7 @@ public class MySqlGenerator {
 
         if(paramColumn.equals("*")) paramColumn = columnsStr;
 
-        String dynamicSqlForBatch = MyHelper.concatInsertDynamicSqlForBatch(currentColumnFieldNameMap, currentFieldTypeNameMap, t, paramColumn, null);
+        String dynamicSqlForBatch = MyHelper.concatInsertDynamicSqlForBatch(currentColumnFieldNameMap, currentFieldTypeNameMap, t, paramColumn, pkName, null);
 
         int sbbLength = paramColumn.length() + tableName.length() + dynamicSqlForBatch.length() + 33;
 
@@ -108,7 +112,7 @@ public class MySqlGenerator {
     public String sqlOfInsert() {//modify by neo on 2016.11.12 Object t
 //        List<Object> values = obtainFieldValues(t);// modify by neo on 2016.11.15
 
-        String[] paraArray = MyHelper.concatInsertDynamicSql(currentFieldTypeNameMap, currentFieldColumnNameMap, null);
+        String[] paraArray = MyHelper.concatInsertDynamicSql(currentFieldTypeNameMap, currentFieldColumnNameMap, null, pkName);
         String insertColumn = paraArray[1], insertDynamicSql = paraArray[0];
 
         int sbbLength = insertColumn.length() + tableName.length() + insertDynamicSql.length() + 33;
@@ -134,7 +138,7 @@ public class MySqlGenerator {
 
         if(t == null) throw new MedusaException("Medusa: The entity param is null");
 
-        String[] dynamicSqlForSelective = MyHelper.concatInsertDynamicSql(currentFieldTypeNameMap, currentFieldColumnNameMap, t);
+        String[] dynamicSqlForSelective = MyHelper.concatInsertDynamicSql(currentFieldTypeNameMap, currentFieldColumnNameMap, t, pkName);
         String insertColumn = dynamicSqlForSelective[1], insertDynamicSql = dynamicSqlForSelective[0];
 
         int sbbLength = insertColumn.length() + tableName.length() + insertDynamicSql.length() + 33;
@@ -316,7 +320,7 @@ public class MySqlGenerator {
 
         if(paramColumn != columnsStr && notContainPkName) paramColumn = pkName + "," + paramColumn;/////modify by neo on 2017.04.20
 
-        String dynamicSqlForBatch = MyHelper.concatUpdateDynamicSqlValuesForBatchPre(tableName, t, paramColumn, currentColumnFieldNameMap);
+        String dynamicSqlForBatch = MyHelper.concatUpdateDynamicSqlValuesForBatchPre(tableName, t, paramColumn, currentColumnFieldNameMap, pkName);
 
         logger.debug("Medusa: Generated SQL ^_^ " + dynamicSqlForBatch);
 
@@ -346,7 +350,7 @@ public class MySqlGenerator {
         StringBuilder sqlBuild = new StringBuilder(len);
         sqlBuild.append("UPDATE ").append(tableName).append(" SET ")
                 .append(MyCommonUtils.join(values, ",")).append(" WHERE ")
-                .append(pkName).append(" = ").append("#{pobj." + pkName + "}");
+                .append(pkName).append(" = ").append("#{pobj.").append(currentColumnFieldNameMap.get(pkName)).append("}");///modify by neo on 2019.08.20
 
         String sql = sqlBuild.toString();
 
@@ -402,7 +406,7 @@ public class MySqlGenerator {
         StringBuilder sqlBuild = new StringBuilder(len);
         sqlBuild.append("UPDATE ").append(tableName).append(" SET ")
                 .append(MyCommonUtils.join(values, ",")).append(" WHERE ")
-                .append(pkName).append(" = ").append("#{pobj.param1." + pkName + "}");
+                .append(pkName).append(" = ").append("#{pobj.param1.").append(currentColumnFieldNameMap.get(pkName)).append("}");///modify by neo on 2019.08.20
 
         String sql = sqlBuild.toString();
 
@@ -483,7 +487,7 @@ public class MySqlGenerator {
         int len = 39 + tableName.length() + pkName.length() + paramColumn.length();
 
         StringBuilder sqlBuild = new StringBuilder(len);
-        sqlBuild.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName).append(" WHERE " + pkName + " = " + "#{pobj.param1}");
+        sqlBuild.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName).append(" WHERE ").append(pkName).append(" = ").append("#{pobj.param1}");
 
         String sql = sqlBuild.toString();
 
@@ -615,11 +619,15 @@ public class MySqlGenerator {
 
         // 从缓存里拿到分页查询语句 必须清理掉缓存
         String cacheSq = MyHelper.myThreadLocal.get();
+
         if (MyCommonUtils.isNotBlank(cacheSq)) {
+
             MyHelper.myThreadLocal.remove();
             logger.debug("Medusa: Successfully cleared the query page in the cache");
+
             String countSq = cacheSq.replaceAll("SELECT\\b.*\\bFROM", "SELECT COUNT(1) FROM").replaceAll("\\border by\\b.*", "");
             logger.debug("Medusa: Successfully returns the count sql of pages in the cache ^_^ " + countSq);
+
             return countSq;
         }
 
@@ -831,7 +839,7 @@ public class MySqlGenerator {
                 Object p = ((SingleParam) z).getValue();
 
                 if(p != null && MyCommonUtils.isNotBlank(p.toString())) {
-                    sbb.append(" AND ").append(column).append(" = ").append("#{pobj.array[" + isd + "].paramList[" + ind + "].value}");
+                    sbb.append(" AND ").append(column).append(" = ").append("#{pobj.array[").append(isd).append("].paramList[").append(ind).append("].value}");
                 }
 
             } else if (z instanceof BetweenParam) {
@@ -841,9 +849,9 @@ public class MySqlGenerator {
                 if(start != null) {
                     sbb.append(" AND ").append(column).append(" BETWEEN ")
                             //.append("'").append(MyDateUtils.convertDateToStr(p.getEnd(), MyDateUtils.DATE_FULL_STR)).append("'")
-                            .append("#{pobj.array[" + isd + "].paramList[" + ind + "].start}")
+                            .append("#{pobj.array[").append(isd).append("].paramList[").append(ind).append("].start}")
                             .append(" AND ")
-                            .append("#{pobj.array[" + isd + "].paramList[" + ind + "].end}");
+                            .append("#{pobj.array[").append(isd).append("].paramList[").append(ind).append("].end}");
                 }
             } else if (z instanceof NotInParam) {
 
@@ -861,7 +869,7 @@ public class MySqlGenerator {
 
                     int k = 0;
                     while(k < p.size()) {
-                        sbb.append("#{pobj.array[" + isd + "].paramList[" + ind + "].value[" + k + "]},");
+                        sbb.append("#{pobj.array[").append(isd).append("].paramList[").append(ind).append("].value[").append(k).append("]},");
                         k += 1;
                     }
 
@@ -873,7 +881,7 @@ public class MySqlGenerator {
                 Object p = ((LikeParam) z).getValue();
 
                 if(p != null && MyCommonUtils.isNotBlank(p.toString())) {
-                    sbb.append(" AND ").append(column).append(" LIKE ").append("CONCAT('%',#{pobj.array[" + isd + "].paramList[" + ind + "].value},'%')");
+                    sbb.append(" AND ").append(column).append(" LIKE ").append("CONCAT('%',#{pobj.array[").append(isd).append("].paramList[").append(ind).append("].value},'%')");
                 }
             } else if (z instanceof NotNullParam) {
 
@@ -895,16 +903,16 @@ public class MySqlGenerator {
 
                 if (z instanceof GreatThanParam) {
 
-                    sbb.append(" AND ").append(column).append(" > ").append("#{pobj.array[" + isd + "].paramList[" + ind + "].value}");
+                    sbb.append(" AND ").append(column).append(" > ").append("#{pobj.array[").append(isd).append("].paramList[").append(ind).append("].value}");
                 } else if (z instanceof GreatEqualParam) {
 
-                    sbb.append(" AND ").append(column).append(" >= ").append("#{pobj.array[" + isd + "].paramList[" + ind + "].value}");
+                    sbb.append(" AND ").append(column).append(" >= ").append("#{pobj.array[").append(isd).append("].paramList[").append(ind).append("].value}");
                 } else if (z instanceof LessThanParam) {
 
-                    sbb.append(" AND ").append(column).append(" < ").append("#{pobj.array[" + isd + "].paramList[" + ind + "].value}");
+                    sbb.append(" AND ").append(column).append(" < ").append("#{pobj.array[").append(isd).append("].paramList[").append(ind).append("].value}");
                 } else if (z instanceof LessEqualParam) {
 
-                    sbb.append(" AND ").append(column).append(" <= ").append("#{pobj.array[" + isd + "].paramList[" + ind + "].value");
+                    sbb.append(" AND ").append(column).append(" <= ").append("#{pobj.array[").append(isd).append("].paramList[").append(ind).append("].value");
                 }
             }
         }

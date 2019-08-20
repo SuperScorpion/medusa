@@ -12,18 +12,18 @@ import java.util.List;
 
 public class Pager<T> implements Serializable {
 
-	public final String[] legalColumn = { SystemConfigs.PRIMARY_KEY, "created_at"};
-	public final String[] legalSort = { "desc", "asc" };
+	public final String[] legalColumn = {SystemConfigs.PRIMARY_KEY, "created_at"};
+	public final String[] legalSort = {"desc", "asc"};
 
-	public final Integer MAX_PAGE_SIZE = 500;// 每页最大记录数限制
+	public final Integer MAX_PAGE_SIZE = 1000;// 每页最大记录数限制
 	
 	
 	private Integer pageNumber = 1;// 当前页码
 	private Integer pageSize = 10;// 每页记录数
 	private Integer totalCount = 0;// 总记录数
 	private Integer pageCount = 0;// 总页数
-	private String[] orderBy = {legalColumn[0]};// 排序字段
-	private String[] orderType = {legalSort[0]};// 排序方式
+	private String[] orderBy = {};// 排序字段
+	private String[] orderType = {};// 排序方式
 	private List<T> list;//  数据List
 
 	public Integer getPageNumber() {

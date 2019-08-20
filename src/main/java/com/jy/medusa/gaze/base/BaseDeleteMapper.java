@@ -13,5 +13,5 @@ import com.jy.medusa.gaze.base.delete.DeleteMapper;
 public interface BaseDeleteMapper<T> extends
         DeleteMapper<T>,
         DeleteByPrimaryKeyMapper<T>,
-        DeleteBatchMapper {
+        DeleteBatchMapper<T> {
 }

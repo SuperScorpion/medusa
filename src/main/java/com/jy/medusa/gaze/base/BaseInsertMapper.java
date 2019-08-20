@@ -12,6 +12,6 @@ public interface BaseInsertMapper<T> extends
         InsertSelectiveMapper<T>,
         InsertBatchMapper<T>,
         InsertBatchOfMyCatMapper<T>,
-        InsertSelectiveUUIDMapper,
+        InsertSelectiveUUIDMapper<T>,
         InsertMapper<T> {
 }

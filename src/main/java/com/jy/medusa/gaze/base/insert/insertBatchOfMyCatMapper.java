@@ -22,6 +22,6 @@ public interface InsertBatchOfMyCatMapper<T> {
      * @return 返回值类型
      */
     @InsertProvider(type = BaseInsertProvider.class, method = "insertBatchOfMyCat")
-    @Options(useGeneratedKeys = true, keyColumn = SystemConfigs.PRIMARY_KEY, keyProperty = SystemConfigs.PRIMARY_KEY)
+    @Options(useGeneratedKeys = true, keyProperty = SystemConfigs.PRIMARY_KEY)
     int insertBatchOfMyCat(List<T> records, Object mycatSeq, Object... ps);
 }

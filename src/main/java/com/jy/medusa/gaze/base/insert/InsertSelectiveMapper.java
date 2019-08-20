@@ -19,6 +19,6 @@ public interface InsertSelectiveMapper<T> {
      * @return 返回值类型
      */
     @InsertProvider(type = BaseInsertProvider.class, method = "insertSelective")
-    @Options(useGeneratedKeys = true, keyColumn = SystemConfigs.PRIMARY_KEY, keyProperty = SystemConfigs.PRIMARY_KEY)
+    @Options(useGeneratedKeys = true, keyProperty = SystemConfigs.PRIMARY_KEY)
     int insertSelective(T record);
 }
