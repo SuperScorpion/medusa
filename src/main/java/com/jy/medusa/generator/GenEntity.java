@@ -17,7 +17,7 @@ import java.util.Date;
 public class GenEntity {
 
     private String[] colSqlNames;//数据库列名数组
-    private String[] colNames; // 列名数组
+    private String[] colFieldNames; // 列名数组
     private String[] colTypes; // mybatis 列名类型数组
     private int[] colSizes; // 列名大小数组
     private boolean isMyDateUtils = false; // 是否需要导入包 myDateUtils
@@ -77,17 +77,17 @@ public class GenEntity {
             ResultSetMetaData rsmd = pstmt.getMetaData();
             int size = rsmd.getColumnCount(); // 共有多少列
             colSqlNames = new String[size];
-            colNames = new String[size];
+            colFieldNames = new String[size];
             colTypes = new String[size];
             colSizes = new int[size];
 
             for (int i = 0; i < rsmd.getColumnCount(); i++) {
 
                 colSqlNames[i] = rsmd.getColumnName(i + 1);
-                colNames[i] = MyGenUtils.getCamelStr(rsmd.getColumnName(i + 1));
+                colFieldNames[i] = MyGenUtils.getCamelStr(rsmd.getColumnName(i + 1));
                 colTypes[i] = rsmd.getColumnTypeName(i + 1);
                 if (colTypes[i].equalsIgnoreCase("datetime") || colTypes[i].equalsIgnoreCase("date") || colTypes[i].equalsIgnoreCase("TIMESTAMP")) {
-                    if(MyCommonUtils.isNotBlank(defaultMap.get(colNames[i]))) isMyDateUtils = true;
+                    if(MyCommonUtils.isNotBlank(defaultMap.get(colFieldNames[i]))) isMyDateUtils = true;
                     isDate = true;
                 }
                 if (colTypes[i].equalsIgnoreCase("image") || colTypes[i].equalsIgnoreCase("text")) {
@@ -197,9 +197,9 @@ public class GenEntity {
      */
     private void processAllMethod(StringBuilder sb) {
 
-        for (int i = 0; i < colNames.length; i++) {
+        for (int i = 0; i < colFieldNames.length; i++) {
 
-            String p1 = "\tpublic void set" + MyGenUtils.upcaseFirst(colNames[i]) + "(" + sqlType2JavaType(colTypes[i]) + " " + colNames[i] + ") {\r\n";
+            String p1 = "\tpublic void set" + MyGenUtils.upcaseFirst(colFieldNames[i]) + "(" + sqlType2JavaType(colTypes[i]) + " " + colFieldNames[i] + ") {\r\n";
             String paramStr1 = MyGenUtils.genMarkStr(markStrList, p1, "{");
             if(paramStr1 != null) {
                 sb.append("\t//以下为上次注释需要保存下来的代码" + "\r\n");
@@ -207,12 +207,12 @@ public class GenEntity {
                 sb.append("\r\n");
             } else {
                 sb.append(p1);
-                sb.append("\t\tthis." + colNames[i] + "=" + colNames[i] + ";\r\n");
+                sb.append("\t\tthis." + colFieldNames[i] + "=" + colFieldNames[i] + ";\r\n");
                 sb.append("\t}\r\n\r\n");
             }
 
 
-            String p2 = "\tpublic " + sqlType2JavaType(colTypes[i]) + " get" + MyGenUtils.upcaseFirst(colNames[i]) + "() {\r\n";
+            String p2 = "\tpublic " + sqlType2JavaType(colTypes[i]) + " get" + MyGenUtils.upcaseFirst(colFieldNames[i]) + "() {\r\n";
             String paramStr2 = MyGenUtils.genMarkStr(markStrList, p2, "{");
             if(paramStr2 != null) {
                 sb.append("\t//以下为上次注释需要保存下来的代码" + "\r\n");
@@ -220,14 +220,14 @@ public class GenEntity {
                 sb.append("\r\n");
             } else {
                 sb.append(p2);
-                sb.append("\t\treturn " + colNames[i] + ";\r\n");
+                sb.append("\t\treturn " + colFieldNames[i] + ";\r\n");
                 sb.append("\t}\r\n\r\n");
             }
         }
 
 
         //字段都生成完了 再生成映射属性
-        for (int i = 0; i < colNames.length; i++) {
+        for (int i = 0; i < colFieldNames.length; i++) {
             //处理外间关联的表字段名称
             if(MyCommonUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
 
@@ -274,12 +274,12 @@ public class GenEntity {
      * @return 返回值类型
      */
     private void processAllAttrs(StringBuilder sb) {
-        for (int i = 0; i < colNames.length; i++) {
+        for (int i = 0; i < colFieldNames.length; i++) {
 
             //添加注释
-            if(MyCommonUtils.isNotBlank(commentMap.get(colNames[i]))) {
+            if(MyCommonUtils.isNotBlank(commentMap.get(colFieldNames[i]))) {
                 sb.append("\t/*");
-                sb.append(commentMap.get(colNames[i]));
+                sb.append(commentMap.get(colFieldNames[i]));
                 sb.append("*/\r\n");
             }
 
@@ -287,8 +287,8 @@ public class GenEntity {
             /*if(colValidArray != null && !colValidArray.isEmpty()) {
                 String[] validStrArray = null;
                 for (Object n : colValidArray) {
-                    if (MyCommonUtils.isNotBlank(((JSONObject) n).getString(colNames[i])))
-                        validStrArray = ((JSONObject) n).getString(colNames[i]).split("&");
+                    if (MyCommonUtils.isNotBlank(((JSONObject) n).getString(colFieldNames[i])))
+                        validStrArray = ((JSONObject) n).getString(colFieldNames[i]).split("&");
                 }
 
                 if (validStrArray != null && validStrArray.length != 0) {
@@ -300,12 +300,12 @@ public class GenEntity {
                 }
             }*/
 
-            String primaryAnnotationTxt = colNames[i].trim().equalsIgnoreCase(primaryKey) ? "\t@Id\r\n" : "";
+            String primaryAnnotationTxt = colSqlNames[i].trim().equalsIgnoreCase(primaryKey) ? "\t@Id\r\n" : "";
 
             //添加默认值
-            String defaultStr = MyCommonUtils.isNotBlank(defaultMap.get(colNames[i])) ? " = " + sqlType2JavaTypeForDefault(colTypes[i], defaultMap.get(colNames[i])) : "";
+            String defaultStr = MyCommonUtils.isNotBlank(defaultMap.get(colFieldNames[i])) ? " = " + sqlType2JavaTypeForDefault(colTypes[i], defaultMap.get(colFieldNames[i])) : "";
 
-            String wellStr = primaryAnnotationTxt + "\t@Column(name = \"" + colSqlNames[i] + "\")\r\n\tprivate " + sqlType2JavaType(colTypes[i]) + " " + colNames[i] + defaultStr + ";\r\n\r\n";
+            String wellStr = primaryAnnotationTxt + "\t@Column(name = \"" + colSqlNames[i] + "\")\r\n\tprivate " + sqlType2JavaType(colTypes[i]) + " " + colFieldNames[i] + defaultStr + ";\r\n\r\n";
 
             String paramStr = MyGenUtils.genMarkStr(markStrList, wellStr, ";");
 
@@ -319,7 +319,7 @@ public class GenEntity {
         }
 
         //字段都生成完了 再生成映射属性
-        for (int i = 0; i < colNames.length; i++) {
+        for (int i = 0; i < colFieldNames.length; i++) {
             //外间关联表关系
             if(MyCommonUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
 

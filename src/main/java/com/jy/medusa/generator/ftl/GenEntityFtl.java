@@ -22,7 +22,7 @@ import java.util.Date;
 public class GenEntityFtl {
 
     private String[] colSqlNames;//数据库列名数组
-    private String[] colNames; // 列名数组
+    private String[] colFieldNames; // 列名数组
     private String[] colTypes; // mybatis 列名类型数组
     private int[] colSizes; // 列名大小数组
     private boolean isMyDateUtils = false; // 是否需要导入包 myDateUtils
@@ -82,17 +82,17 @@ public class GenEntityFtl {
             ResultSetMetaData rsmd = pstmt.getMetaData();
             int size = rsmd.getColumnCount(); // 共有多少列
             colSqlNames = new String[size];
-            colNames = new String[size];
+            colFieldNames = new String[size];
             colTypes = new String[size];
             colSizes = new int[size];
 
             for (int i = 0; i < rsmd.getColumnCount(); i++) {
 
                 colSqlNames[i] = rsmd.getColumnName(i + 1);
-                colNames[i] = MyGenUtils.getCamelStr(rsmd.getColumnName(i + 1));
+                colFieldNames[i] = MyGenUtils.getCamelStr(rsmd.getColumnName(i + 1));
                 colTypes[i] = rsmd.getColumnTypeName(i + 1);
                 if (colTypes[i].equalsIgnoreCase("datetime") || colTypes[i].equalsIgnoreCase("date") || colTypes[i].equalsIgnoreCase("TIMESTAMP")) {
-                    if(MyCommonUtils.isNotBlank(defaultMap.get(colNames[i]))) isMyDateUtils = true;
+                    if(MyCommonUtils.isNotBlank(defaultMap.get(colFieldNames[i]))) isMyDateUtils = true;
                     isDate = true;
                 }
                 if (colTypes[i].equalsIgnoreCase("image") || colTypes[i].equalsIgnoreCase("text")) {
@@ -224,7 +224,7 @@ public class GenEntityFtl {
 
     private void processAll(List<EntityColumnVo> entityDtos) {
 
-        for (int i = 0; i < colNames.length; i++) {
+        for (int i = 0; i < colFieldNames.length; i++) {
 
             EntityColumnVo cv = new EntityColumnVo();
 
@@ -243,20 +243,20 @@ public class GenEntityFtl {
 
         cv.setColumn(colSqlNames[i]);
         cv.setJavaType(sqlType2JavaType(colTypes[i]));
-        cv.setUpperName(MyGenUtils.upcaseFirst(colNames[i]));
-        cv.setLowwerName(colNames[i]);
+        cv.setUpperName(MyGenUtils.upcaseFirst(colFieldNames[i]));
+        cv.setLowwerName(colFieldNames[i]);
 
         //添加注释
-        if(MyCommonUtils.isNotBlank(commentMap.get(colNames[i]))) {
-            cv.setComment(commentMap.get(colNames[i]));
+        if(MyCommonUtils.isNotBlank(commentMap.get(colFieldNames[i]))) {
+            cv.setComment(commentMap.get(colFieldNames[i]));
         }
 
-        if(colNames[i].trim().equalsIgnoreCase(primaryKey)) {
+        if(colSqlNames[i].trim().equalsIgnoreCase(primaryKey)) {
             cv.setPrimarykeyFlag(true);
         }
 
         //添加默认值
-        String defaultStr = MyCommonUtils.isNotBlank(defaultMap.get(colNames[i])) ? " = " + sqlType2JavaTypeForDefault(colTypes[i], defaultMap.get(colNames[i])) : "";
+        String defaultStr = MyCommonUtils.isNotBlank(defaultMap.get(colFieldNames[i])) ? " = " + sqlType2JavaTypeForDefault(colTypes[i], defaultMap.get(colFieldNames[i])) : "";
         cv.setDefaultStr(defaultStr);
 
         //字段都生成完了 再生成映射属性

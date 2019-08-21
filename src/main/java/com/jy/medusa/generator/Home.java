@@ -102,6 +102,16 @@ public class Home {
             m = (JSONArray) job.get("validator");
         }*/
 
+        if(checkIsFtl()) {
+            System.out.println("Medusa: " + "启动 ftl 生成模式...");
+            if(checkIsFtlAvailable())
+                System.out.println("Medusa: " + "启动 自定义模块 生成模式...");
+            else
+                System.out.println("Medusa: " + "启动 内置模版 生成模式...");
+        } else {
+            System.out.println("Medusa: " + "启动 default 生成模式...");
+        }
+
         for(String tabName : tableNameArray) {
             if(MyCommonUtils.isNotBlank(tabName)) {
 
@@ -115,6 +125,7 @@ public class Home {
                     }
                 }*/
 
+
                 if(MyCommonUtils.isNotBlank(entitySuffix)) {
                     long nanoSs = System.nanoTime();
                     if(checkIsFtl()) {
@@ -122,7 +133,7 @@ public class Home {
                     } else {
                         new GenEntity(entityPath, tabName, null).process();//生成 实体类
                     }
-                    System.out.println(tabName + " entity文件生成用时:" + (System.nanoTime() - nanoSs) + " ns");
+                    System.out.println("Medusa: 已完成 " + tabName + " - entity文件 总用时 & " + (System.nanoTime() - nanoSs) + " ns");
                 }
 
                 if(MyCommonUtils.isNotBlank(serviceImplSuffix) && MyCommonUtils.isNotBlank(serviceSuffix) && MyCommonUtils.isNotBlank(entitySuffix) && MyCommonUtils.isNotBlank(mapperSuffix)) {
@@ -132,7 +143,7 @@ public class Home {
                     } else {
                         new GenService(tabName, entityPath, servicePath, serviceImplPath, mapperPath).process();//执行生成service serviceimpl mapper
                     }
-                    System.out.println(tabName + " service文件 mapper文件生成用时:" + (System.nanoTime() - nanoSs) + " ns");
+                    System.out.println("Medusa: 已完成 " + tabName + " - service文件 总用时 & " + (System.nanoTime() - nanoSs) + " ns");
                 }
 
                 if(MyCommonUtils.isNotBlank(xmlSuffix) && MyCommonUtils.isNotBlank(entitySuffix) && MyCommonUtils.isNotBlank(mapperSuffix)) {
@@ -142,34 +153,35 @@ public class Home {
                     } else {
                         new GenXml(mapperPath, xmlPath, entityPath, tabName).process();//执行生成xml
                     }
-                    System.out.println(tabName + " xml文件生成用时:" + (System.nanoTime() - nanoSs) + " ns");
+                    System.out.println("Medusa: 已完成 " + tabName + " - xml文件 总用时 & " + (System.nanoTime() - nanoSs) + " ns");
                 }
 
 
                 if(checkIsFtl()) {
                     long nanoSs = System.nanoTime();
                     new GenControllerFtl(tabName, controlPathJson, entityPath, servicePath).process();
-                    System.out.println(tabName + " controller 文件生成用时:" + (System.nanoTime() - nanoSs) + " ns");
+                    System.out.println("Medusa: 已完成 " + tabName + " - controller文件 总用时 & " + (System.nanoTime() - nanoSs) + " ns");
                 } else {
-                    if(MyCommonUtils.isNotBlank(controlJsonSuffix) && MyCommonUtils.isNotBlank(entitySuffix) && MyCommonUtils.isNotBlank(serviceSuffix)) {
-                        long nanoSs = System.nanoTime();
-                        new GenControllerJson(tabName, controlPathJson, entityPath, servicePath).process();//生成controller
-                        System.out.println(tabName + " controllerJson文件生成用时:" + (System.nanoTime() - nanoSs) + " ns");
-                    }
-
-                    if(MyCommonUtils.isNotBlank(controlMortalSuffix) && MyCommonUtils.isNotBlank(entitySuffix) && MyCommonUtils.isNotBlank(serviceSuffix)) {
-                        long nanoSs = System.nanoTime();
-                        new GenControllerMortal(tabName, controlPathMortal, entityPath, servicePath).process();//生成controller
-                        System.out.println(tabName + " controllerMortal文件生成用时:" + (System.nanoTime() - nanoSs) + " ns");
+                    if (MyCommonUtils.isNotBlank(entitySuffix) && MyCommonUtils.isNotBlank(serviceSuffix)) {
+                        if (MyCommonUtils.isNotBlank(controlJsonSuffix)) {
+                            long nanoSs = System.nanoTime();
+                            new GenControllerJson(tabName, controlPathJson, entityPath, servicePath).process();//生成controller
+                            System.out.println("Medusa: 已完成 " + tabName + " - controllerJson文件 总用时 & " + (System.nanoTime() - nanoSs) + " ns");
+                        }
+                        if (MyCommonUtils.isNotBlank(controlMortalSuffix)) {
+                            long nanoSs = System.nanoTime();
+                            new GenControllerMortal(tabName, controlPathMortal, entityPath, servicePath).process();//生成controller
+                            System.out.println("Medusa: 已完成 " + tabName + " - controllerMortal文件 总用时 & " + (System.nanoTime() - nanoSs) + " ns");
+                        }
                     }
                 }
-
             }
         }
 
-        if(MyCommonUtils.isNotBlank(baseServiceSwitch) && baseServiceSwitch.trim().equalsIgnoreCase("yes")) new GenBaseServiceAndImpl(servicePath, serviceImplPath).process();//处理生成基础的 service
+        ///yml 文件里面的属性值 会自动转换 比如 on->true yes->true no->false
+        if(MyCommonUtils.isNotBlank(baseServiceSwitch) && (baseServiceSwitch.trim().equalsIgnoreCase("true"))) new GenBaseServiceAndImpl(servicePath, serviceImplPath).process();//处理生成基础的 service
 
-        System.out.println("Complete...");
+        System.out.println("Medusa: The task has been completed...");
         System.out.println("Since 2016 in Jy - Hangzhou");
     }
 
@@ -199,10 +211,10 @@ public class Home {
         } else if(ymlres != null && yamlres == null) {
             resPaths = ymlres.getPath();
         } else if(ymlres == null && yamlres == null) {
-            System.out.println("大兄弟你的 application yml 或 yaml 配置文件 去火星了?");
+            System.out.println("Medusa: 大兄弟你的 application yml 或 yaml 配置文件 去火星了?");
             return;
         } else {
-            System.out.println("大兄弟你的 application yml 或 yaml 配置文件 存在重复?");
+            System.out.println("Medusa: 大兄弟你的 application yml 或 yaml 配置文件 存在重复?");
             return;
         }
 
@@ -219,12 +231,12 @@ public class Home {
             Map<String ,Object> childMap = (Map) map.get("medusa");
 
             if(childMap == null) {
-                System.out.println("大兄弟你的 application.yml 里的 medusa 相关配置 去火星了?");
+                System.out.println("Medusa: 大兄弟你的 application.yml 里的 medusa 相关配置 去火星了?");
                 return;
             }
 
             if(childMap.get("jdbc") == null) {
-                System.out.println("大兄弟你的 application.yml 里的 medusa 的 jdbc 相关配置 去火星了?");
+                System.out.println("Medusa: 大兄弟你的 application.yml 里的 medusa 的 jdbc 相关配置 去火星了?");
                 return;
             }
 
@@ -232,7 +244,7 @@ public class Home {
 
 
 
-            this.packagePath = childMap.get("packagePath") == null || MyCommonUtils.isBlank(childMap.get("packagePath").toString()) ? "com.jy.xxx" : childMap.get("packagePath").toString().trim();
+            this.packagePath = childMap.get("packagePath") == null || MyCommonUtils.isBlank(childMap.get("packagePath").toString()) ? "com.medusa.xxx" : childMap.get("packagePath").toString().trim();
             this.tableName = childMap.get("tableName") == null || MyCommonUtils.isBlank(childMap.get("tableName").toString()) ?  "" : childMap.get("tableName").toString().trim();
             this.tag = childMap.get("tag") == null || MyCommonUtils.isBlank(childMap.get("tag").toString()) ?  "<" : childMap.get("tag").toString().trim();
 
@@ -251,9 +263,9 @@ public class Home {
             this.entityNameSuffix = childMap.get("entityNameSuffix") == null || MyCommonUtils.isBlank(childMap.get("entityNameSuffix").toString()) ?  "" : childMap.get("entityNameSuffix").toString().trim();
             this.lazyLoad = childMap.get("lazyLoad") == null || MyCommonUtils.isBlank(childMap.get("lazyLoad").toString()) ?  "" : "fetchType=\"lazy\"";
             this.entitySerializable = childMap.get("entitySerializable") == null || MyCommonUtils.isBlank(childMap.get("entitySerializable").toString()) ?  "" : childMap.get("entitySerializable").toString().trim();
-            this.baseServiceSwitch = childMap.get("baseServiceSwitch") == null || MyCommonUtils.isBlank(childMap.get("baseServiceSwitch").toString()) ?  "" : "gen";
+            this.baseServiceSwitch = childMap.get("baseServiceSwitch") == null || MyCommonUtils.isBlank(childMap.get("baseServiceSwitch").toString()) ?  "" : childMap.get("baseServiceSwitch").toString();
 
-            this.ftlDirPath = childMap.get("ftlDirPath") == null || MyCommonUtils.isBlank(childMap.get("ftlDirPath").toString()) ?  "" : childMap.get("ftlDirPath").toString().trim();
+            this.ftlDirPath = childMap.get("ftlDirPath") == null || MyCommonUtils.isBlank(childMap.get("ftlDirPath").toString()) ?  "medusa" : childMap.get("ftlDirPath").toString().trim();
 
             this.jdbcDriver = jdbcMap.get("driver") == null || MyCommonUtils.isBlank(jdbcMap.get("driver").toString()) ?  "" : jdbcMap.get("driver").toString().trim();
             this.jdbcUrl = jdbcMap.get("url") == null || MyCommonUtils.isBlank(jdbcMap.get("url").toString()) ?  "" : jdbcMap.get("url").toString().trim();

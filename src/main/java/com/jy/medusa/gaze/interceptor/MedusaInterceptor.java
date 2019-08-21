@@ -12,8 +12,6 @@ import com.jy.medusa.gaze.utils.MyReflectionUtils;
 import com.jy.medusa.gaze.utils.SystemConfigs;
 import org.apache.ibatis.builder.annotation.ProviderSqlSource;
 import org.apache.ibatis.executor.Executor;
-import org.apache.ibatis.executor.statement.PreparedStatementHandler;
-import org.apache.ibatis.executor.statement.RoutingStatementHandler;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.plugin.*;
@@ -66,7 +64,7 @@ public class MedusaInterceptor implements Interceptor {
 
         if (mt.getSqlSource() instanceof ProviderSqlSource && MyHelper.checkMortalMethds(medusaMethodName)) {//Modify by neo on 2019.05.31
 
-            Map<String, Object> p = new HashMap<>(1 << 2);
+            Map<String, Object> p = new HashMap<>(1 << 1);
 
             p.put("pobj", invocation.getArgs()[1]);
 
@@ -121,13 +119,13 @@ public class MedusaInterceptor implements Interceptor {
                     if (m instanceof MyRestrictions) ((MyRestrictions) m).clear();
                 }
 
-            } else if (MyHelper.checkInsertMethod(medusaMethodName)) {//如果是insert方法相关的则修改传入对象的id 回执其
+            } else if (MyHelper.checkInsertMethod(medusaMethodName)) {//如果是insert方法相关的则通过反射来修改传入对象的主键
 
                 //returns generator id key change return values
 
-                if (((Map) invocation.getArgs()[1]).get(SystemConfigs.PRIMARY_KEY) != null) {///modify by neo on 2016.10.27 因为有些非自增主键 手动添加的id值 不会返回艾迪
+                if (((Map) invocation.getArgs()[1]).get(SystemConfigs.PRIMARY_KEY) != null) {///modify by neo on 2016.10.27 因为有些非自增主键 手动添加的id值 不会返回id
 
-                    Object m = Integer.valueOf((((Map) invocation.getArgs()[1]).get(SystemConfigs.PRIMARY_KEY).toString()));//TODO mybaits long is default id types
+                    Object m = Integer.valueOf((((Map) invocation.getArgs()[1]).get(SystemConfigs.PRIMARY_KEY).toString()));// mybatis long is default id types
 
                     MyReflectionUtils.invokeSetterMethod(p.get("pobj"), MyHelper.getSqlGenerator(p).getPkName(), m);//注入属性id值
                 }
@@ -151,11 +149,11 @@ public class MedusaInterceptor implements Interceptor {
 
         Object parObj = sh.getBoundSql().getParameterObject();
 
-        if (parObj instanceof Map) {//过滤掉用户自定义的insert方法
+        if (parObj instanceof Map) {//过滤掉用户自定义的各种方法
 
             Object pobj = ((Map) parObj).containsKey("pobj") ? ((Map) parObj).get("pobj") : null;
 
-            if (pobj instanceof Map && sh.getBoundSql().getSql().contains("INSERT INTO")) {//过滤medusa单个insert delete update //过滤掉deleteBatch insertBatch updateBatch之类的 非insert方法 modify by neo on 2017.12.13
+            if (pobj instanceof Map && sh.getBoundSql().getSql().contains("INSERT INTO")) {//过滤medusa单个insert delete update 的方法 //过滤掉deleteBatch insertBatch updateBatch之类的 非insert方法 modify by neo on 2017.12.13
 
                 List<Object> paramList = (List) ((Map) pobj).get("param1");
 

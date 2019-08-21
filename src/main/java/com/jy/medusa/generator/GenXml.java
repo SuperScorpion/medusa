@@ -16,7 +16,7 @@ import java.util.Date;
 public class GenXml {
 
     private String[] colSqlNames;//数据库列名数组
-    private String[] colNames; // 列名数组
+    private String[] colFieldNames; // 列名数组
     private String[] colTypes; // 列名类型数组
     private String[] colTypesSql;//mysql 对应的类型数组
     private Integer[] colSizes; // 列名大小数组
@@ -75,7 +75,7 @@ public class GenXml {
         Map<String, Object[]> resultMap = genAllKindTypes(tableName);
 
         colSqlNames = (String[]) resultMap.get("colSqlNames");
-        colNames = (String[]) resultMap.get("colNames");
+        colFieldNames = (String[]) resultMap.get("colFieldNames");
         colTypes = (String[]) resultMap.get("colTypes");
         colSizes = (Integer[]) resultMap.get("colSizes");
         colTypesSql = (String[]) resultMap.get("colTypesSql");
@@ -100,7 +100,7 @@ public class GenXml {
 
         Map<String, Object[]> resultMap = new HashMap<>();
 
-        String[] colSqlNames = null,colNames = null,colTypes = null,colTypesSql = null;
+        String[] colSqlNames = null,colFieldNames = null,colTypes = null,colTypesSql = null;
         Integer[] colSizes = null;
 
         GenEntity.DataBaseTools dataBaseTools = new GenEntity().new DataBaseTools();
@@ -113,7 +113,7 @@ public class GenXml {
             ResultSetMetaData rsmd = pstmt.getMetaData();
             int size = rsmd.getColumnCount(); // 共有多少列
             colSqlNames = new String[size];
-            colNames = new String[size];
+            colFieldNames = new String[size];
             colTypes = new String[size];
             colSizes = new Integer[size];
             colTypesSql = new String[size];
@@ -121,7 +121,7 @@ public class GenXml {
             for (int i = 0; i < rsmd.getColumnCount(); i++) {
 
                 colSqlNames[i] = rsmd.getColumnName(i + 1);
-                colNames[i] = MyGenUtils.getCamelStr(rsmd.getColumnName(i + 1));
+                colFieldNames[i] = MyGenUtils.getCamelStr(rsmd.getColumnName(i + 1));
                 colTypesSql[i] = rsmd.getColumnTypeName(i + 1);
                 colSizes[i] = rsmd.getColumnDisplaySize(i + 1);
             }
@@ -147,7 +147,7 @@ public class GenXml {
         }
 
         resultMap.put("colSqlNames", colSqlNames);
-        resultMap.put("colNames", colNames);
+        resultMap.put("colFieldNames", colFieldNames);
         resultMap.put("colTypes", colTypes);
         resultMap.put("colSizes", colSizes);
         resultMap.put("colTypesSql", colTypesSql);
@@ -170,10 +170,10 @@ public class GenXml {
 
         for (int i = 0; i < colSqlNames.length; i++) {
 
-            if (colNames[i].trim().equalsIgnoreCase(primaryKey)) {
-                sb.append("\t\t<id column=\"id\" jdbcType=\"INTEGER\" property=\"id\" />\r\n");
+            if (colSqlNames[i].trim().equalsIgnoreCase(primaryKey)) {
+                sb.append("\t\t<id column=\"" + colSqlNames[i] + "\" jdbcType=\"" + colTypes[i] + "\" property=\"" + colFieldNames[i] + "\" />\r\n");
             } else {
-                sb.append("\t\t<result column=\"" + colSqlNames[i] + "\" jdbcType=\"" + colTypes[i] + "\" property=\"" + colNames[i] + "\" />\r\n");
+                sb.append("\t\t<result column=\"" + colSqlNames[i] + "\" jdbcType=\"" + colTypes[i] + "\" property=\"" + colFieldNames[i] + "\" />\r\n");
             }
 
             //外间关联
@@ -246,18 +246,18 @@ public class GenXml {
                 Map<String, Object[]> resultMap = genAllKindTypes(p);
 
                 String[] colSqlNames = (String[]) resultMap.get("colSqlNames");
-                String[] colNames = (String[]) resultMap.get("colNames");
+                String[] colFieldNames = (String[]) resultMap.get("colFieldNames");
 
                 StringBuilder sbb = new StringBuilder();
 
                 for (int j = 0; j < colSqlNames.length; j++) {
 
-                    if(colSqlNames[j].equals(colNames[j])) {
+                    if(colSqlNames[j].equals(colFieldNames[j])) {
                         sbb.append(colSqlNames[j]);
                         sbb.append(",");
                     } else {
                         sbb.append(colSqlNames[j] + " ");
-                        sbb.append(colNames[j]);
+                        sbb.append(colFieldNames[j]);
                         sbb.append(",");
                     }
                 }

@@ -69,7 +69,7 @@ public class GenControllerJson {
         sbb.append("import org.slf4j.Logger;\r\n");
         sbb.append("import org.slf4j.LoggerFactory;\r\n");
         sbb.append("import org.springframework.stereotype.Controller;\r\n");
-        sbb.append("import org.springframework.ui.ModelMap;\r\n");
+//        sbb.append("import org.springframework.ui.ModelMap;\r\n");
         sbb.append("import org.springframework.web.bind.annotation.RequestMapping;\r\n");
         sbb.append("import org.springframework.web.bind.annotation.RequestMethod;\r\n");
         sbb.append("import org.springframework.web.bind.annotation.RequestParam;\r\n");
