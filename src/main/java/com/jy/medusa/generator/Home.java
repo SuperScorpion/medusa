@@ -265,7 +265,7 @@ public class Home {
             this.entitySerializable = childMap.get("entitySerializable") == null || MyCommonUtils.isBlank(childMap.get("entitySerializable").toString()) ?  "" : childMap.get("entitySerializable").toString().trim();
             this.baseServiceSwitch = childMap.get("baseServiceSwitch") == null || MyCommonUtils.isBlank(childMap.get("baseServiceSwitch").toString()) ?  "" : childMap.get("baseServiceSwitch").toString();
 
-            this.ftlDirPath = childMap.get("ftlDirPath") == null || MyCommonUtils.isBlank(childMap.get("ftlDirPath").toString()) ?  "medusa" : childMap.get("ftlDirPath").toString().trim();
+            this.ftlDirPath = childMap.get("ftlDirPath") == null || MyCommonUtils.isBlank(childMap.get("ftlDirPath").toString()) ?  "" : childMap.get("ftlDirPath").toString().trim();
 
             this.jdbcDriver = jdbcMap.get("driver") == null || MyCommonUtils.isBlank(jdbcMap.get("driver").toString()) ?  "" : jdbcMap.get("driver").toString().trim();
             this.jdbcUrl = jdbcMap.get("url") == null || MyCommonUtils.isBlank(jdbcMap.get("url").toString()) ?  "" : jdbcMap.get("url").toString().trim();
