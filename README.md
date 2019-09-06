@@ -1,14 +1,18 @@
 # medusa
-mybatis mapper
+Mybatis Mapper Plugin
 <br/>
 <br/>
-程序结合使用拦截器实现具体的执行Sql,完全使用原生的Mybatis进行操作,在基础上只做增强.没有一个Mapper的xml配置文件,但是却可以做到每个Mapper对应上百行xml才能完成的诸多功能,核心在于提高开发人员的效率.<br/>
+这是一个mybatis的插件或者中间件,在mybatis上进行浅封装,程序结合使用拦截器实现具体的执行Sql,
+完全保留了Mybatis原生特性,在其基础上只做增强.没有一个Mapper的xml配置文件,
+但是却可以做到每个Mapper对应上百行xml才能完成的诸多功能,核心在于提高开发人员CRUD的效率.<br/>
 <br/>
-一.代码生成模块<br/>
+按功能可以分为三大块 :<br/><br/>
+一. 代码生成模块<br/>
 1.1 能够生成entity mapper xml service controller层 不需要再手动编写基础代码.<br/>
-1.2 重新生成代码时可自动保留上次标记代码及智能替换相应代码的功能(非模版生成）.<br/>
+1.2 可根据自己DIY的FTL模版进行个性化生成代码文件.<br/>
+1.3 重新生成代码时可自动保留上次标记代码及智能替换相应代码的功能(非FTL模版生成）.<br/>
 <br/>
-二.通用mapper模块<br/>
+二. 通用mapper模块<br/>
 只需要继承通用mapper即可拥有基础的crud功能.<br/>
 2.1 支持原生mybatis 支持级联查询association.<br/>
 2.2 除了普通的条件查询还新增了 like、 between、 is null、single、not in等字段复合查询.<br/>
@@ -19,8 +23,9 @@ mybatis mapper
 2.7 纯血统 只依赖mybatis一个jar.<br/>
 2.8 支持mybatis xml热部署.<br/>
 <br/>
-三.参数校验框架<br/>
+三. 参数校验框架<br/>
 3.1 aspectj jar完成aop对controller层的参数校验值.<br/>
+3.2 aop即时返回校验的错误信息.<br/>
 <br/>
 <br/>
 <br/>
@@ -45,6 +50,10 @@ mybatis mapper
 1.7 至此 基本的crud功能便能使用。<br/>
 <br/>
 <br/>
+Tips<br/>
+一. （非FTL模版）再次生成代码的时候java、文件需要用//mark //mark保存你自己需要保存下来的代码 xml文件会自动地保留变动过的内容段<br/>
+配置属性都有默认值 需要根据自己需要变更<br/>
+
 二. 如果需要参数校验功能则需要加入下列两行代码至xml<br/>
 < aop:aspectj-autoproxy /><br/>
 < bean class="com.jy.medusa.validator.AnnotationHandler" /><br/>
@@ -67,9 +76,6 @@ public JSONObject index(@RequestParam @Length(max=1, message = "wtfuck") Integer
 第二个参数为 xml的包路径所在位<br/>
 第三个参数为 刷新间隔时间秒<br/>
 <br/>
-Tips<br/>
-再次生成的时候java、文件需要用//mark //mark保存你自己需要保存下来的代码 xml文件会自动地保留变动过的内容段(使用非模版生成模式)<br/>
-配置属性都有默认值 需要根据自己需要变更<br/>
 <br/>
 <br/>
 <br/>
@@ -128,78 +134,19 @@ int i = xxxService.deleteMulti(o);<br/>
 ...<br/>
 <br/>
 tips: 所有方法都选择查询部分字段 可以用数据库字段名或者属性名 有容错机制<br/>
-MyRestrictions是非线程安全的 提供clear方法可重复利用<br/>
+MyRestrictions是非线程安全的 查询完会自动clear<br/>
 Pager类为内部分页实现 可插拔式<br/>
 <br/>
 批量新增和批量更新可指定字段 并且批量新增可回写所有id<br/>
 <br/>
-其它的普通方法则跟现用的通用mapper一致 拥有原生的级联<br/>
+其它的普通方法则跟现用的通用mapper一致 拥有原生的级联特性<br/>
 <br/>
 <br/>
 <br/>
-medusa生成代码配置参数参考及说明<br/>
+medusa生成代码配置参数在medusa.properties有详细说明<br/>
 <br>
-#生成的根包路径<br/>
-medusa.packagePath = com.jy.xxx <br/>
-<br/>
-###需要生成的表名称 用逗号分隔 不填则生成所有表<br/>
-medusa.tableName = xx,xxx,xxxx <br/>
-<br/>
-###根路径下的实体包名<br/>
-medusa.entitySuffix = entity <br/>
-<br/>
-###生成service的路径包名<br/>
-medusa.serviceSuffix = service<br/>
-<br/>
-###生成serviceImpl的路径包名<br/>
-medusa.serviceImplSuffix = service.impl <br/>
-<br/>
-###生成的mapper的路径包名<br/>
-medusa.mapperSuffix = persistence <br/>
-<br/>
-###生成的xml路径包名<br/>
-medusa.xmlSuffix = persistence.xml <br/>
-<br/>
-###文件生成时添加的作者名称<br/>
-medusa.author = admins <br/>
-<br/>
-###是否需要延迟加载级联属性的 为空则不启用它(一般不写)<br/>
-medusa.lazyLoad = y <br/>
-<br/>
-###是否生成基础的 不写则不启用它(只在第一次生成时写)<br/>
-medusa.baseServiceSwitch = y <br/>
-<br/>
-###是否在entity类上继承序列化接口 不写则不启用它(一般不写)<br/>
-medusa.entitySerializable =  <br/>
-<br/>
-###在xml里生成关系关联属性字段(在需要级联查询功能才写)<br/>
-medusa.associationColumn= user_id <br/>
-<br/>
-###生成的关系关联属性表 是否需要添加复数后缀s(表名是复数命名则写s)<br/>
-medusa.pluralAssociation = s <br/>
-<br/>
-###生成实体文件的后缀名 (一般不写)<br/>
-medusa.entityNameSuffix = <br/>
-<br/>
-###是否根据模版来生成 如果不为空则使用模版 如果找不到路径则使用默认模版<br/>
-medusa.ftlDirPath = xxx<br/>
-<br/>
-###如果使用模版则不使用下面三个配置###<br/>
-<br/>
-###controlJsonSuffix和controlMortalSuffix二选一即可 区别在于一个是json类型一个是页面跳转的类型<br/>
-<br/>
-###controller包的名称(生成的是返回json形式 一般选这个)不写则不生成<br/>
-medusa.controlJsonSuffix = controller <br/>
-<br/>
-###controller包的名称(生成的是返回页面形式)不写则不生成<br/>
-medusa.controlMortalSuffix = controller <br/>
-<br/>
-###java文件中需要在下次生成时保留的代码段的起末标记 //mark … //mark(程序以//tag开头做匹配的)<br/>
-medusa.tag = mark<br/>
-<br/>
-###数据库四项配置<br/>
-jdbc.driver=com.mysql.jdbc.Driver<br/>
-jdbc.url=jdbc:mysql://localhost:3306/cms?useUnicode=true&characterEncoding=UTF-8<br/>
-jdbc.username=root<br/>
-jdbc.password=<br/>
-###源码包里有exp示例
+版本日志地址:<br>
+https://github.com/SuperScorpion/medusa/wiki/Medusa-Version-Logs
+<br>
+<br>
+如有问题请联系作者

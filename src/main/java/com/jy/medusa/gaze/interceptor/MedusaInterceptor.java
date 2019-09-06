@@ -64,7 +64,7 @@ public class MedusaInterceptor implements Interceptor {
 
         if (mt.getSqlSource() instanceof ProviderSqlSource && MyHelper.checkMortalMethds(medusaMethodName)) {//Modify by neo on 2019.05.31
 
-            Map<String, Object> p = new HashMap<>(1 << 1);
+            Map<String, Object> p = new HashMap<>(1 << 2);
 
             p.put("pobj", invocation.getArgs()[1]);
 
@@ -82,7 +82,7 @@ public class MedusaInterceptor implements Interceptor {
 
             result = invocation.proceed();
 
-            ///modify by neo on 2019.08.19 for UUID insert
+            //modify by neo on 2019.08.19 for UUID insert 需要先获得生成的uuid值 再注入到插入的实体里 再进行插入操作 否则插入主键为空
             if(invocation.getArgs()[1] instanceof Map && MyHelper.checkInsertUUIDMethodSelectKey(medusaMethodName)) {
 
                 Map<String, Object> p = (Map) invocation.getArgs()[1];

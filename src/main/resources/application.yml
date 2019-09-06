@@ -1,12 +1,8 @@
 server:
-  port: 3313
-
-miracle:
-  jdbc:
-    url: jdbc:mysql://localhost:3306/cms?autoReconnect=true
-    driver: com.mysql.jdbc.Driver
-    username: root
-    password:
+  port: 3315
+  servlet:
+    session:
+      timeout: 30m
 
 spring:
   redis:
@@ -21,16 +17,32 @@ spring:
         max-idle: 20
         min-idle: 15
         max-wait: 30000
+  freemarker:
+    suffix: .ftl
+  mvc:
+    static-path-pattern: /static/**
+
+  servlet:
+    multipart:
+    max-file-size: 100MB
+    max-request-size: 100MB
+    enabled: true
 
 medusa:
-  packagePath: com.jy.xxx
-  tableName: users, right_roles
+  packagePath: cn.dior.xxx
+  tableName: py_product_store, py_goods_variant
   author: monster
-  baseServiceSwitch: ok
-  ftlDirPath:
-  associationColumn: user_id
+  baseServiceSwitch:
+  ftlDirPath: /Users/neo/Desktop/template
   jdbc:
-    url: jdbc:mysql://localhost:3306/cms?autoReconnect=true
+    url: jdbc:mysql://127.0.0.1:3306/cms?autoReconnect=true&useSSL=false
     driver: com.mysql.jdbc.Driver
     username: root
     password:
+
+mycat:
+  jdbc:
+    url: jdbc:mysql://127.0.0.1:8066/catdb?autoReconnect=true&useSSL=false
+    driver: com.mysql.jdbc.Driver
+    username: root
+    password: 123456
