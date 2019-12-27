@@ -66,7 +66,7 @@ public class MyGenUtils {
      * @param s 参数
      * @return 返回值类型
      */
-    public static String getCamelStr(String s){
+    public static String getCamelStr(String s) {
         while(s.indexOf("_") > 0) {
             int index = s.indexOf("_");
             s = s.substring(0, index) + s.substring(index+1, index+2).toUpperCase() + s.substring(index+2);
@@ -123,7 +123,7 @@ public class MyGenUtils {
      * @param endChar 参数
      * @return 返回值类型
      */
-    public static String genMarkStr(List<String> markStrList, String freshLineStr, String endChar){
+    public static String genMarkStr(List<String> markStrList, String freshLineStr, String endChar) {
 
         String result = null;
 
@@ -132,12 +132,12 @@ public class MyGenUtils {
         String p = freshLineStr.replaceAll("\r", "").trim();//\t|\r|\n readline读取的上一次的代码 中 会保留\t 让有换行的时候会手动添加\n
         p = p.substring(0, p.indexOf(endChar));
 
-        for(String markStr: markStrList){
-            if(MyCommonUtils.isNotBlank(markStr)){
+        for(String markStr: markStrList) {
+            if(MyCommonUtils.isNotBlank(markStr)) {
 
                 int x = markStr.trim().indexOf(endChar);
 
-                if(x != -1 && markStr.trim().substring(0, x).equals(p)){
+                if(x != -1 && markStr.trim().substring(0, x).equals(p)) {
                     result = markStr;
                     markStrList.remove(markStr);//匹配一个删除一个元素   方法名称相同则替换方法体所有内容
                     break;

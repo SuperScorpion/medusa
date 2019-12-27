@@ -31,7 +31,7 @@ import java.util.*;
     private List<String> mappedStatementCacheKeyList = new ArrayList<>();//框架内部的方法名称 对应的 mapperstatement 的 key 记录
 
 
-    MyHotspotReloader(String xmlPath, SqlSessionFactory sqlSessionFactory){
+    MyHotspotReloader(String xmlPath, SqlSessionFactory sqlSessionFactory) {
         this.xmlPath = xmlPath;
         this.sqlSessionFactory = sqlSessionFactory;
     }

@@ -17,7 +17,7 @@ public class MyDateUtils {
      * @param regx 参数
      * @return 返回值类型
      */
-    public static String convertDateToStr(Date date, String regx){
+    public static String convertDateToStr(Date date, String regx) {
 
         if(date == null) throw new MedusaException("Medusa: The date param is null");
 
@@ -32,23 +32,23 @@ public class MyDateUtils {
      * @param dateStr 参数
      * @return 返回值类型
      */
-    public static Date convertStrToDate(String dateStr){
+    public static Date convertStrToDate(String dateStr) {
 
         if(MyCommonUtils.isBlank(dateStr)) throw new MedusaException("Medusa: The date string param is null");
         dateStr = dateStr.split("\\.")[0];//处理末尾的.0
         SimpleDateFormat sdf;
 
-        if(Pattern.compile(SystemConfigs.REGX_TIME_YYYY0mm0dd_SIMPLE_4).matcher(dateStr).matches()){
+        if(Pattern.compile(SystemConfigs.REGX_TIME_YYYY0mm0dd_SIMPLE_4).matcher(dateStr).matches()) {
             sdf = new SimpleDateFormat("yyyy/MM/dd");
-        } else if(Pattern.compile(SystemConfigs.REGX_TIME_YYYY0mm0dd_SIMPLE_3).matcher(dateStr).matches()){
+        } else if(Pattern.compile(SystemConfigs.REGX_TIME_YYYY0mm0dd_SIMPLE_3).matcher(dateStr).matches()) {
             sdf = new SimpleDateFormat("yyyy.MM.dd");
-        } else if(Pattern.compile(SystemConfigs.REGX_TIME_YYYY0mm0dd_SIMPLE_2).matcher(dateStr).matches()){
+        } else if(Pattern.compile(SystemConfigs.REGX_TIME_YYYY0mm0dd_SIMPLE_2).matcher(dateStr).matches()) {
             sdf = new SimpleDateFormat("yyyy-MM-dd");
-        } else if(Pattern.compile(SystemConfigs.REGX_TIME_YYYY0mm0dd_SIMPLE_1).matcher(dateStr).matches()){
+        } else if(Pattern.compile(SystemConfigs.REGX_TIME_YYYY0mm0dd_SIMPLE_1).matcher(dateStr).matches()) {
             sdf = new SimpleDateFormat("yyyyMMdd");
-        } else if(Pattern.compile(SystemConfigs.REGX_TIME_YYYY0mm0dd_SIMPLE_5).matcher(dateStr).matches()){
+        } else if(Pattern.compile(SystemConfigs.REGX_TIME_YYYY0mm0dd_SIMPLE_5).matcher(dateStr).matches()) {
             sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        } else if(Pattern.compile(SystemConfigs.REGX_TIME_YYYY0mm0dd_SIMPLE_6).matcher(dateStr).matches()){
+        } else if(Pattern.compile(SystemConfigs.REGX_TIME_YYYY0mm0dd_SIMPLE_6).matcher(dateStr).matches()) {
             sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
         } else {
             throw new MedusaException("Medusa: The date string no one can match, please check it");

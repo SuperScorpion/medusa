@@ -20,14 +20,14 @@ public class GenService {
 
     private String entityName;
 
-    private String mixMapper = "com.jy.medusa.gaze.commons.Mapper";
+    private String mixMapper = Home.mixMapper;
 
     private List<String> markServiceList;
     private List<String> markServiceImplList;
     private List<String> markMapperList;
     private String tag;//标记 mark
 
-    public GenService(String tableName, String entityPath, String servicePath, String serviceImplPath, String mapperPath){
+    public GenService(String tableName, String entityPath, String servicePath, String serviceImplPath, String mapperPath) {
         this.entityPath = entityPath;
         this.servicePath = servicePath;
         this.serviceImplPath = serviceImplPath;
@@ -50,20 +50,20 @@ public class GenService {
 
             String path = Home.proPath + servicePath.replaceAll("\\.", "/");
             file = new File(path);
-            if(!file.exists()){file.mkdirs();}
+            if(!file.exists()) {file.mkdirs();}
             String resPath1 = path + "/" + entityName + "Service.java";
             MyCommonUtils.writeString2File(new File(resPath1), process1(), "UTF-8");
 
             String pathImp = Home.proPath + serviceImplPath.replaceAll("\\.", "/");
             file = new File(pathImp);
-            if(!file.exists()){file.mkdirs();}
+            if(!file.exists()) {file.mkdirs();}
             String resPath2 = pathImp + "/" + entityName + "ServiceImpl.java";
             MyCommonUtils.writeString2File(new File(resPath2), process2(), "UTF-8");
 
             //mapper
             String pathmm = Home.proPath + mapperPath.replaceAll("\\.", "/");
             file = new File(pathmm);
-            if(!file.exists()){file.mkdirs();}
+            if(!file.exists()) {file.mkdirs();}
             String resPath3 = pathmm + "/" + entityName + "Mapper.java";
             MyCommonUtils.writeString2File(new File(resPath3), process3(), "UTF-8");
 

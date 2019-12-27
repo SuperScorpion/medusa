@@ -59,6 +59,9 @@ public class GenXml {
                     case "INT":
                         colTypes[i] = "INTEGER";
                         break;
+                    case "INT UNSIGNED":///modify by neo on 2019.12.11
+                        colTypes[i] = "INTEGER";
+                        break;
                     case "DATETIME":
                         colTypes[i] = "TIMESTAMP";
                         break;
@@ -84,7 +87,7 @@ public class GenXml {
             String content = parse();
             String path = Home.proPath + packagePath.replaceAll("\\.", "/");
             File file = new File(path);
-            if(!file.exists()){
+            if(!file.exists()) {
                 file.mkdirs();
             }
             String resPath = path + "/" + entityName + "Mapper.xml";

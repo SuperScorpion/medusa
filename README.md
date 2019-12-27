@@ -63,7 +63,7 @@ exp:<br/>
 @ConParamValidator<br/>
 @RequestMapping(value = "/index.json", method = RequestMethod.GET)<br/>
 @ResponseBody<br/>
-public JSONObject index(@RequestParam @Length(max=1, message = "wtfuck") Integer uid, @Valid Users users, ErrorInfo info){...}<br/>
+public JSONObject index(@RequestParam @Length(max=1, message = "wtfuck") Integer uid, @Valid Users users, ErrorInfo info) {...}<br/>
 实体类属性参数记得加入@Valid标签.<br/>
 <br/>
 三. 在spring配置文件里添加 可使用热加载 mybatis xml 功能<br/>

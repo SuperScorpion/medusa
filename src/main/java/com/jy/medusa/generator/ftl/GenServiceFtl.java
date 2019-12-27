@@ -28,14 +28,14 @@ public class GenServiceFtl {
 
     private String entityName;
 
-    private String mixMapper = "com.jy.medusa.gaze.commons.Mapper";
+    private String mixMapper = Home.mixMapper;
 
     private List<String> markServiceList;
     private List<String> markServiceImplList;
     private List<String> markMapperList;
 //    private String tag;//标记 mark
 
-    public GenServiceFtl(String tableName, String entityPath, String servicePath, String serviceImplPath, String mapperPath){
+    public GenServiceFtl(String tableName, String entityPath, String servicePath, String serviceImplPath, String mapperPath) {
         this.entityPath = entityPath;
         this.servicePath = servicePath;
         this.serviceImplPath = serviceImplPath;
@@ -55,7 +55,7 @@ public class GenServiceFtl {
             //写入service 和 impl
             String path = Home.proPath + servicePath.replaceAll("\\.", "/");
             File file1 = new File(path);
-            if(!file1.exists()){
+            if(!file1.exists()) {
                 file1.mkdirs();
             }
             String resPath1 = path + "/" + entityName + "Service.java";
@@ -63,7 +63,7 @@ public class GenServiceFtl {
 
             String pathImp = Home.proPath + serviceImplPath.replaceAll("\\.", "/");
             File file2 = new File(pathImp);
-            if(!file2.exists()){
+            if(!file2.exists()) {
                 file2.mkdirs();
             }
             String resPath2 = pathImp + "/" + entityName + "ServiceImpl.java";
@@ -72,7 +72,7 @@ public class GenServiceFtl {
             //mapper
             String pathmm = Home.proPath + mapperPath.replaceAll("\\.", "/");
             File file3 = new File(pathmm);
-            if(!file3.exists()){
+            if(!file3.exists()) {
                 file3.mkdirs();
             }
             String resPath3 = pathmm + "/" + entityName + "Mapper.java";

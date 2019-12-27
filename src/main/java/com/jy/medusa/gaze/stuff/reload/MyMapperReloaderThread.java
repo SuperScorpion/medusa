@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
     private int seconds = 3600;
     private MyHotspotReloader mr;
 
-    MyMapperReloaderThread(String xmlPath, SqlSessionFactory sqlSessionFactory, int seconds){
+    MyMapperReloaderThread(String xmlPath, SqlSessionFactory sqlSessionFactory, int seconds) {
         this.xmlPath = xmlPath;
         this.sqlSessionFactory = sqlSessionFactory;
         this.seconds = seconds;

@@ -56,12 +56,15 @@ public class GenXmlFtl {
 //        this.markXmlList = MyGenUtils.genTagStrList(entityName + "Mapper.xml", packagePath, tag, "xml");
     }
 
-    private void changeTypes(String[] colTypes, String[] colTypesSql){//TODO
+    private void changeTypes(String[] colTypes, String[] colTypesSql) {//TODO
 
         for(int i=0; i < colTypesSql.length ;i++) {
             if (MyCommonUtils.isNotBlank(colTypesSql[i])) {
                 switch (colTypesSql[i]) {
                     case "INT":
+                        colTypes[i] = "INTEGER";
+                        break;
+                    case "INT UNSIGNED":///modify by neo on 2019.12.11
                         colTypes[i] = "INTEGER";
                         break;
                     case "DATETIME":
@@ -89,7 +92,7 @@ public class GenXmlFtl {
             Map<String, Object> map = parse();
             String path = Home.proPath + packagePath.replaceAll("\\.", "/");
             File file = new File(path);
-            if(!file.exists()){
+            if(!file.exists()) {
                 file.mkdirs();
             }
             String resPath = path + "/" + entityName + "Mapper.xml";

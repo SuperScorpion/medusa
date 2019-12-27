@@ -179,6 +179,7 @@ public class Home {
         }
 
         ///yml 文件里面的属性值 会自动转换 比如 on->true yes->true no->false
+        ///baseService和baseServiceImpl 只需要生成一次所以没做ftl的模版
         if(MyCommonUtils.isNotBlank(baseServiceSwitch) && (baseServiceSwitch.trim().equalsIgnoreCase("true"))) new GenBaseServiceAndImpl(servicePath, serviceImplPath).process();//处理生成基础的 service
 
         System.out.println("Medusa: The task has been completed...");
@@ -277,7 +278,7 @@ public class Home {
         } finally {
             try {
                 if(fileInputStream != null) fileInputStream.close();
-            }catch (IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }

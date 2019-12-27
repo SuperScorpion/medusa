@@ -185,7 +185,7 @@ public class MySqlGenerator {
         } else if (value instanceof Boolean) {
             Boolean v = (Boolean) value;
             value = v ? 1 : 0;//TODO true 1 false 0
-        }else if(null == value || MyCommonUtils.isBlank(value.toString())){
+        }else if(null == value || MyCommonUtils.isBlank(value.toString())) {
             value = "null";
         }
         return value;
@@ -584,7 +584,7 @@ public class MySqlGenerator {
      * @param ps        参数
      * @return 返回值类型
      */
-    private String reSolveColumn(Object... ps){
+    private String reSolveColumn(Object... ps) {
 
         boolean isValidColumn = (ps == null || ps.length != 1 || ps[0] == null || ((Object[])ps[0]).length == 0);
 

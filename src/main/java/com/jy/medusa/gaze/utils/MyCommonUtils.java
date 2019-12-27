@@ -277,11 +277,11 @@ public class MyCommonUtils {
 
     static class Vm2 implements Cloneable{
 
-        public Object clone(){
+        public Object clone() {
             Object obj = null ;
             try{
                 obj = super.clone();
-            }catch(Exception e){
+            } catch(Exception e) {
             }
             return obj;
         }

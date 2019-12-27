@@ -29,7 +29,7 @@ public class GenControllerFtl {
     private String tag;//标记 mark
 
 
-    public GenControllerFtl(String tableName, String packagePath, String entityPath, String servicePath){
+    public GenControllerFtl(String tableName, String packagePath, String entityPath, String servicePath) {
         this.entityPath = entityPath;
         this.servicePath = servicePath;
         this.entityName = MyGenUtils.upcaseFirst(tableName);
@@ -43,7 +43,7 @@ public class GenControllerFtl {
         try {
             String path = Home.proPath + packagePath.replaceAll("\\.", "/");
             File file = new File(path);
-            if(!file.exists()){
+            if(!file.exists()) {
                 file.mkdirs();
             }
             String resPath = path + "/" + entityName + "Controller.java";

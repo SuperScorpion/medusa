@@ -18,7 +18,7 @@ public class GenBaseServiceAndImpl {
     private String servicePath;
     private String serviceImplPath;
 
-    public GenBaseServiceAndImpl(String servicePath, String serviceImplPath){
+    public GenBaseServiceAndImpl(String servicePath, String serviceImplPath) {
         this.servicePath = servicePath;
         this.serviceImplPath = serviceImplPath;
 
@@ -28,20 +28,20 @@ public class GenBaseServiceAndImpl {
         this.markServiceImplList = MyGenUtils.genTagStrList("BaseServiceImpl.java", serviceImplPath, tag, "serviceImpl");
     }
 
-    public void process(){
+    public void process() {
 
         try {
             //写入service 和 impl
             String path = Home.proPath + servicePath.replaceAll("\\.", "/");
             String pathImp = Home.proPath + serviceImplPath.replaceAll("\\.", "/");
             File file = new File(path);
-            if(!file.exists()){
+            if(!file.exists()) {
                 file.mkdirs();
             }
             String resPath1 = path + "/" + "BaseService.java";
             String resPath2 = pathImp + "/" + "BaseServiceImpl.java";
-            MyCommonUtils.writeString2File(new File(resPath1), process1(), "UTF-8");
-            MyCommonUtils.writeString2File(new File(resPath2), process2(), "UTF-8");
+            MyCommonUtils.writeString2File(new File(resPath1), process11(), "UTF-8");
+            MyCommonUtils.writeString2File(new File(resPath2), process22(), "UTF-8");
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -219,6 +219,86 @@ public class GenBaseServiceAndImpl {
                 "\t\tjson.put(\"msg\", msg);\n" +
                 "\t\treturn json;\n" +
                 "\t}\n" +
+                "}");
+
+        MyGenUtils.processAllRemains(markServiceImplList, sbb, tag, "serviceImpl");
+
+        return sbb.toString();
+    }
+
+    /**
+     * service
+     * @return 返回值类型
+     */
+    private String process11() {
+
+        StringBuilder sbb = new StringBuilder();
+
+        sbb.append("package " + servicePath + ";\r\n\r\n");
+
+        sbb.append("import com.alibaba.fastjson.JSONObject;\n" +
+                "import com.jy.medusa.gaze.commons.BaseServiceMedusa;\n" +
+                "\n" +
+                "public interface BaseService<T> extends BaseServiceMedusa<T> {\n" +
+                "\n" +
+                "\tJSONObject resultSuccess(Object result, String msg, JSONObject json);\n" +
+                "\n" +
+                "\tJSONObject resultError(Object result, String msg, JSONObject json);\n" +
+                "\n" +
+                "\t//TODO 用户自定义接口\n" +
+                "}");
+
+        MyGenUtils.processAllRemains(markServiceList, sbb, tag, "service");
+
+        return sbb.toString();
+    }
+
+    /**
+     * serviceImpl
+     * @return 返回值类型
+     */
+    private String process22() {
+
+        StringBuilder sbb = new StringBuilder();
+
+        sbb.append("package " + serviceImplPath + ";\r\n\r\n");
+
+        sbb.append("import com.alibaba.fastjson.JSONObject;\n" +
+                "import com.jy.medusa.gaze.commons.BaseServiceImplMedusa;\n" +
+                "import " + Home.mixMapper + ";\n" +
+                "import " + servicePath + ".BaseService;\n" +
+                "import org.slf4j.Logger;\n" +
+                "import org.slf4j.LoggerFactory;\n" +
+                "import org.springframework.beans.factory.annotation.Autowired;\n" +
+                "import org.springframework.stereotype.Service;\n" +
+                "\n" +
+                "@Service\n" +
+                "public abstract class BaseServiceImpl<T> extends BaseServiceImplMedusa<T> implements BaseService<T> {\n" +
+                "\n" +
+                "\tprivate static final Logger logger = LoggerFactory.getLogger(BaseServiceImpl.class);\n" +
+                "\n" +
+                "\t@Autowired\n" +
+                "\tprotected void init (Mapper<T> mapper) {\n" +
+                "\t\tsuper.initMapper(mapper);\n" +
+                "\t}\n" +
+                "\n");
+        sbb.append("\tpublic JSONObject resultSuccess(Object result, String msg, JSONObject json) {\n" +
+                "\t\tjson = json == null ? new JSONObject() : json;\n" +
+                "\t\tjson.put(\"data\", result);\n" +
+                "\t\tjson.put(\"result\",0);\n" +
+                "\t\tjson.put(\"msg\", msg);\n" +
+                "\t\treturn json;\n" +
+                "\t}\n" +
+                "\n" +
+                "\tpublic JSONObject resultError(Object result, String msg, JSONObject json) {\n" +
+                "\t\tjson = json == null ? new JSONObject() : json;\n" +
+                "\t\tjson.put(\"data\", result);\n" +
+                "\t\tjson.put(\"result\",1);\n" +
+                "\t\tjson.put(\"msg\", msg);\n" +
+                "\t\treturn json;\n" +
+                "\t}\n" +
+                "\n" +
+                "\t//TODO 用户自定义接口\n" +
                 "}");
 
         MyGenUtils.processAllRemains(markServiceImplList, sbb, tag, "serviceImpl");
