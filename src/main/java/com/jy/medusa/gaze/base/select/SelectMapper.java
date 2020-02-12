@@ -17,11 +17,11 @@ public interface SelectMapper<T> {
     /**
      * 根据实体中的属性值进行查询，查询条件使用等号
      * @param record      参数
-     * @param paramColumn 参数
+     * @param paramColumns 参数
      * @return 返回值类型
      */
     @SelectProvider(type = BaseSelectProvider.class, method = "select")
     @ResultMap("BaseResultMap")
-    List<T> select(T record, Object... paramColumn);
+    List<T> select(T record, String... paramColumns);
 
 }

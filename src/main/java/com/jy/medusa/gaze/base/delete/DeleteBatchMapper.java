@@ -15,9 +15,9 @@ public interface DeleteBatchMapper<T> {
 
     /**
      * 根据实体属性作为条件进行删除，查询条件使用等号
-     * @param ids 参数
+     * @param pks 参数
      * @return 返回值类型
      */
     @DeleteProvider(type = BaseDeleteProvider.class, method = "deleteBatch")
-    int deleteBatch(List<Object> ids);
+    int deleteBatch(List<Object> pks);
 }

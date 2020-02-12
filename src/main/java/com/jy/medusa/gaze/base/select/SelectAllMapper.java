@@ -15,10 +15,10 @@ public interface SelectAllMapper<T> {
 
     /**
      * 查询全部结果
-     * @param params 参数
+     * @param paramColumns 参数
      * @return 返回值类型
      */
     @SelectProvider(type = BaseSelectProvider.class, method = "selectAll")
     @ResultMap("BaseResultMap")
-    List<T> selectAll(Object... params);
+    List<T> selectAll(String... paramColumns);
 }

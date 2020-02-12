@@ -33,7 +33,7 @@ public class MyReflectionUtils {
      * @param obj 参数
      * @param propertyName 字段名
      * @param value 参数
-     * @throws ParseException
+     * @throws ParseException 异常
      */
     public static void invokeSetterMethod(Object obj, String propertyName, Object value) throws ParseException {
         invokeSetterMethod(obj, propertyName, value, null);
@@ -45,7 +45,7 @@ public class MyReflectionUtils {
      * @param propertyName 字段名
      * @param value 参数
      * @param propertyType 参数
-     * @throws ParseException
+     * @throws ParseException 异常
      */
     public static void invokeSetterMethod(Object obj, String propertyName, Object value, Class<?> propertyType) throws ParseException {
 

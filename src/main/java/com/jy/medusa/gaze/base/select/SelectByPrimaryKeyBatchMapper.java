@@ -16,11 +16,11 @@ public interface SelectByPrimaryKeyBatchMapper<T> {
 
     /**
      * 根据ids查询
-     * @param ids        参数
-     * @param paramColumn        参数
+     * @param pks        参数
+     * @param paramColumns        参数
      * @return 返回值类型
      */
     @SelectProvider(type = BaseSelectProvider.class, method = "selectByPrimaryKeyBatch")
     @ResultMap("BaseResultMap")
-    List<T> selectByPrimaryKeyBatch(List<Object> ids, Object... paramColumn);
+    List<T> selectByPrimaryKeyBatch(List<Object> pks, String... paramColumns);
 }

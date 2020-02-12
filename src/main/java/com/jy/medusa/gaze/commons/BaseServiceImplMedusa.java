@@ -18,33 +18,37 @@ public abstract class BaseServiceImplMedusa<T> implements BaseServiceMedusa<T> {
 		this.mapper = mapper;
 	}
 
-	public int selectCount(Object... ps) {
-		return mapper.selectCount(ps);
+	public List<T> selectAll(String... paramColumns) {
+		return mapper.selectAll(paramColumns);
 	}
 
-	public List<T> selectAll(Object... ps) {
-		return mapper.selectAll(ps);
+	public T selectOne(T entity, String... paramColumns) {
+		return mapper.selectOne(entity, paramColumns);
 	}
 
-	public T selectOne(T entity, Object... ps) {
-		return mapper.selectOne(entity, ps);
+	public List<T> selectByIds(List<Object> ids, String... paramColumns) {
+		return mapper.selectByPrimaryKeyBatch(ids, paramColumns);
 	}
 
-	public List<T> selectByIds(List<Object> ids, Object... ps) {
-		return mapper.selectByPrimaryKeyBatch(ids, ps);
+	public T selectById(Object id, String... paramColumns) {
+		return mapper.selectByPrimaryKey(id, paramColumns);
 	}
 
-	public T selectById(Object id, Object... ps) {
-		return mapper.selectByPrimaryKey(id, ps);
+	public List<T> selectListBy(T entity, String... paramColumns) {
+		return mapper.select(entity, paramColumns);
 	}
 
-	public List<T> selectListBy(T entity, Object... ps) {
-		return mapper.select(entity, ps);
+	public int selectCount(Object... mixParams) {
+		return mapper.selectCount(mixParams);
 	}
 
-	public int saveOrUpdate(T entity) {
-		return 0;//TODO
+	public List<T> selectByGaze(Object... mixParams) {
+		return mapper.showMedusaGaze(mixParams);
 	}
+
+//	public int saveOrUpdate(T entity) {
+//		return 0;//TODO
+//	}
 
 	public int saveSelective(T entity) {
 		return mapper.insertSelective(entity);
@@ -54,20 +58,20 @@ public abstract class BaseServiceImplMedusa<T> implements BaseServiceMedusa<T> {
 		return mapper.insert(entity);
 	}
 
-	public int saveBatch(List<T> obs, Object... ps) {
-		return mapper.insertBatch(obs, ps);
+	public int saveBatch(List<T> obs, String... paramColumns) {
+		return mapper.insertBatch(obs, paramColumns);
 	}
 
-	public int update(T entity, Object... ps) {
-		return mapper.updateByPrimaryKey(entity, ps);
+	public int update(T entity, String... paramColumns) {
+		return mapper.updateByPrimaryKey(entity, paramColumns);
 	}
 
 	public int updateSelective(T entity) {
 		return mapper.updateByPrimaryKeySelective(entity);
 	}
 
-	public int updateBatch(List<T> obs, Object... ps) {
-		return mapper.updateByPrimaryKeyBatch(obs, ps);
+	public int updateBatch(List<T> obs, String... paramColumns) {
+		return mapper.updateByPrimaryKeyBatch(obs, paramColumns);
 	}
 
 	public int deleteById(Object id) {
@@ -80,10 +84,6 @@ public abstract class BaseServiceImplMedusa<T> implements BaseServiceMedusa<T> {
 
 	public int deleteBy(T entity) {
 		return mapper.delete(entity);
-	}
-
-	public List<T> selectByGaze(Object... ps) {
-		return mapper.showMedusaGaze(ps);
 	}
 
 	/*public JSONObject resultSuccess(Object result, String msg, JSONObject json) {

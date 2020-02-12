@@ -50,10 +50,11 @@ public class MySqlGenerator {
      * for mycat
      * 生成根据IDs批量新增的SQL not selective
      * @param t 参数
+     * @param mycatSeq 参数
      * @param ps 参数
      * @return 返回值类型
      */
-    public String sqlOfInsertBatchForMyCat(Object t, Object mycatSeq, Object... ps) {
+    public String sqlOfInsertBatchForMyCat(Object t, Object mycatSeq, Object[] ps) {
 
         String paramColumn = reSolveColumn(ps);
 
@@ -82,7 +83,7 @@ public class MySqlGenerator {
      * @param ps 参数
      * @return 返回值类型
      */
-    public String sqlOfInsertBatch(Object t, Object... ps) {
+    public String sqlOfInsertBatch(Object t, Object[] ps) {
 
         String paramColumn = reSolveColumn(ps);
 
@@ -288,7 +289,7 @@ public class MySqlGenerator {
      */
     private List<String> obtainColumnValuesForDeleteByCondition(Object t) {
 
-        if(t == null) throw new MedusaException("Medusa: The entity param is null");
+        if(t == null || t instanceof Object[]) return null;//modify by neo on 2020.01.01 解决protostuff 序列化数组问题
 
         List<String> colVals = new ArrayList<>();
         for (String column : columns) {
@@ -310,7 +311,7 @@ public class MySqlGenerator {
      * @param ps 参数
      * @return 返回值类型
      */
-    public String sqlOfModifyOfBatch(Object t, Object... ps) {
+    public String sqlOfModifyOfBatch(Object t, Object[] ps) {
 
         String paramColumn = reSolveColumn(ps);
 
@@ -393,7 +394,7 @@ public class MySqlGenerator {
      * @param ps 参数
      * @return 返回值类型
      */
-    public String sqlOfModifyNull(Object t, Object... ps) {
+    public String sqlOfModifyNull(Object t, Object[] ps) {
 
         String paramColumn = reSolveColumn(ps);
 
@@ -439,13 +440,13 @@ public class MySqlGenerator {
 
 
     /**
+     * return "SELECT * FROM  users WHERE NAME = #{pobj.param1.name} limit 0,1";
      * 根据条件只查出一条符合的数据
      * @param t 参数
      * @param ps  参数
      * @return 返回值类型
      */
-//    return "SELECT * FROM  users WHERE NAME = #{pobj.param1.name} limit 0,1";
-    public String sqlOfFindOne(Object t, Object... ps) {
+    public String sqlOfFindOne(Object t, Object[] ps) {
 
         String paramColumn = reSolveColumn(ps);
 
@@ -480,7 +481,7 @@ public class MySqlGenerator {
      * @param ps 参数
      * @return 返回值类型
      */
-    public String sqlOfFindOneById(Object id, Object... ps) {///modify by neo on 2016.11.21 Object id,这个 id 不能去掉的
+    public String sqlOfFindOneById(Object id, Object[] ps) {///modify by neo on 2016.11.21 Object id,这个 id 不能去掉的
 
         String paramColumn = reSolveColumn(ps);
 
@@ -502,7 +503,7 @@ public class MySqlGenerator {
      * @param ps 参数
      * @return 返回值类型
      */
-    public String sqlOfFindBatchOfIds(Object t, Object... ps) {
+    public String sqlOfFindBatchOfIds(Object t, Object[] ps) {
 
         List<Object> ids = t instanceof List ? (ArrayList)t : new ArrayList<>();
 
@@ -531,7 +532,13 @@ public class MySqlGenerator {
         return sql;
     }
 
-    public String sqlOfFindListBy(Object t, Object... ps) {
+    /**
+     * 根据条件查出多条符合的数据
+     * @param t 参数
+     * @param ps 参数
+     * @return 返回值类型
+     */
+    public String sqlOfFindListBy(Object t, Object[] ps) {
 
         String paramColumn = reSolveColumn(ps);
 
@@ -559,7 +566,7 @@ public class MySqlGenerator {
     }
 
     /**
-     * 提供给selectList使用的
+     * 提供给selectList和selectOne使用的
      * @param t 参数
      * @return 返回值类型
      */
@@ -579,20 +586,25 @@ public class MySqlGenerator {
         return colVals;
     }
 
+
+
     /**
      * 处理传入的字段字符
      * @param ps        参数
      * @return 返回值类型
+     * 如果参数用Object... ps接收 则会把传入的数组封装一层ps[0] 里才是真正的参数数组 所以还是用Object[]接收
      */
-    private String reSolveColumn(Object... ps) {
+    private String reSolveColumn(Object[] ps) {
 
-        boolean isValidColumn = (ps == null || ps.length != 1 || ps[0] == null || ((Object[])ps[0]).length == 0);
+//        boolean isValidColumn = (ps == null || ps.length != 1 || ps[0] == null || ((Object[])ps[0]).length == 0);
+        boolean isValidColumn = (ps == null || ps.length == 0);//modify by neo on 2020.01.17
 
-        return isValidColumn ? columnsStr : MyHelper.buildColumnNameForSelect((Object[])ps[0], currentFieldColumnNameMap);
+        return isValidColumn ? columnsStr : MyHelper.buildColumnNameForSelect(ps, currentFieldColumnNameMap);
     }
 
     /**
      * 生成查询所有的SQL
+     * @param objParams 参数
      * @return 返回值类型
      */
     public String sqlOfFindAll(Object[] objParams) {
@@ -617,7 +629,7 @@ public class MySqlGenerator {
      */
     public String sqlOfFindAllCount(Object[] objParams) {
 
-        // 从缓存里拿到分页查询语句 必须清理掉缓存
+        //从缓存里拿到分页查询语句 必须清理掉缓存
         String cacheSq = MyHelper.myThreadLocal.get();
 
         if (MyCommonUtils.isNotBlank(cacheSq)) {
@@ -631,8 +643,13 @@ public class MySqlGenerator {
             return countSq;
         }
 
+        //1.objParams 里的entity实体类型参数处理
         List<String> values = obtainMedusaGazeS(objParams);
-//        if(values == null || values.isEmpty()) return null;
+
+        //2.objParams 里的map类型参数处理
+        List<String> mps = obtainMedusaGazeByMap(objParams);
+
+        values.addAll(mps);///合并两个集合 modify by neo on 2020.01.19
 
         int valuesLen = values == null || values.isEmpty() ? 0 : values.size();
 
@@ -647,7 +664,7 @@ public class MySqlGenerator {
             sbb.append(MyCommonUtils.join(values, " AND "));
         }
 
-        //多条件查询
+        //3.objParams 里的多条件查询类型参数处理
         if(objParams != null && objParams.length > 0) {
 
             short isd = 0;
@@ -699,9 +716,16 @@ public class MySqlGenerator {
             return cacheSq;
         }
 
+        //1.objParams 里的column字段名参数处理
         String paramColumn = (objParams == null || objParams.length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect(objParams, currentFieldColumnNameMap);
 
+        //2.objParams 里的entity实体类型参数处理
         List<String> values = obtainMedusaGazeS(objParams);
+
+        //3.objParams 里的map类型参数处理
+        List<String> mps = obtainMedusaGazeByMap(objParams);
+
+        values.addAll(mps);///合并两个集合 modify by neo on 2020.01.19
 
         int valuesLen = values == null || values.isEmpty() ? 0 : values.size();
 
@@ -717,7 +741,7 @@ public class MySqlGenerator {
             sbb.append(MyCommonUtils.join(values, " AND "));
         }
 
-
+        //4.objParams 里的多条件查询类型参数处理
         if(objParams != null && objParams.length > 0) {
 
             Pager pa = null;
@@ -784,7 +808,52 @@ public class MySqlGenerator {
     }
 
     /**
-     * 提供给selectMedusaGaze使用的
+     * 提供给selectMedusaGaze和sqlOfFindAllCount使用
+     * @param psArray 参数
+     * @return 返回值类型
+     */
+    private List<String> obtainMedusaGazeByMap(Object[] psArray) {
+
+        if(psArray != null && psArray.length != 0) {
+
+            short i = 0;
+            for(Object o : psArray) {
+
+                if(o instanceof Map<?, ?>) {
+
+                    Set<Map.Entry<String, Object>> entrySet = ((Map)o).entrySet();
+                    Iterator<Map.Entry<String, Object>> iter = entrySet.iterator();
+
+                    List<String> colVals = new ArrayList<>();
+
+                    while(iter.hasNext()) {
+
+                        Map.Entry<String, Object> entry = iter.next();
+
+                        if (entry != null && entry.getKey() instanceof String && entry.getValue() != null) {//modify by neo on 2020.01.19
+
+                            if(MyCommonUtils.isBlank(entry.getKey())) continue;
+
+                            String column = MyHelper.buildColumnNameForMedusaGaze(entry.getKey(), currentFieldColumnNameMap);
+
+                            colVals.add(column + "=" + "#{pobj.array[" + i + "]." + entry.getKey() + "}");///modify by neo on 2016.11.12
+                        }
+                    }
+
+                    return colVals;
+                }
+
+                i++;
+            }
+
+            return null;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * 提供给selectMedusaGaze和sqlOfFindAllCount使用
      * @return 返回值类型
      */
     private List<String> obtainMedusaGazeS(Object[] psArray) {
@@ -800,7 +869,7 @@ public class MySqlGenerator {
                     for (String column : columns) {
                         String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
                         Object value = MyReflectionUtils.obtainFieldValue(o, fieldName);
-                        if (value != null && !value.toString().equals("")) {
+                        if (value != null) {//modify by neo on 2020.01.19
                             colVals.add(column + "=" + "#{pobj.array[" + i + "]." + fieldName + "}");///modify by neo on 2016.11.12
                         }
                     }
@@ -827,10 +896,10 @@ public class MySqlGenerator {
      */
     public void baseParamHandler(StringBuilder sbb, Object z, short isd, short ind) {
 
+        if(z == null || MyCommonUtils.isBlank(((BaseParam) z).getColumn())) return;
+
         //转换一下column的属性值 也许是数据库字段 也有可能是属性值
         String column = MyHelper.buildColumnNameForMedusaGaze(((BaseParam) z).getColumn(), currentFieldColumnNameMap);
-
-        if(MyCommonUtils.isBlank(column)) return;
 
         if (z instanceof BaseComplexParam) {
 

@@ -13,9 +13,9 @@ public interface UpdateByPrimaryKeyMapper<T> {
     /**
      * 根据主键更新实体全部字段，null值会被更新
      * @param record    参数
-     * @param ps    参数
+     * @param paramColumns    参数
      * @return 返回值类型
      */
     @UpdateProvider(type = BaseUpdateProvider.class, method = "updateByPrimaryKey")
-    int updateByPrimaryKey(T record, Object... ps);
+    int updateByPrimaryKey(T record, String... paramColumns);
 }

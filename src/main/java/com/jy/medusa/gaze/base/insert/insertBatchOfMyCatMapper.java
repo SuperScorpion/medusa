@@ -18,10 +18,11 @@ public interface InsertBatchOfMyCatMapper<T> {
     /**
      * 保存一个实体，null的属性不会保存，会使用数据库默认值
      * @param records       参数
-     * @param ps       参数
+     * @param mycatSeq       参数
+     * @param paramColumns       参数
      * @return 返回值类型
      */
     @InsertProvider(type = BaseInsertProvider.class, method = "insertBatchOfMyCat")
     @Options(useGeneratedKeys = true, keyProperty = SystemConfigs.PRIMARY_KEY)
-    int insertBatchOfMyCat(List<T> records, Object mycatSeq, Object... ps);
+    int insertBatchOfMyCat(List<T> records, String mycatSeq, String... paramColumns);
 }

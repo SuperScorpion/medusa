@@ -13,9 +13,9 @@ public interface SelectCountMapper<T> {
 
     /**
      * 根据实体中的属性查询总数，查询条件使用等号
-     * @param params       参数
+     * @param mixParams       参数
      * @return 返回值类型
      */
     @SelectProvider(type = BaseSelectProvider.class, method = "selectCount")
-    int selectCount(Object... params);
+    int selectCount(Object... mixParams);
 }

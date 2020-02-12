@@ -29,7 +29,7 @@ public class AnnotationHandler {
      *  bean class="com.jy.medusa.validator.AnnotationHandler"
      * @param joinPoint 参数
      * @param parameter 参数
-     * @throws IllegalAccessException
+     * @throws IllegalAccessException 异常
      */
     @Before(value = "execution(public * *(..)) and @annotation(parameter))")
     public void paramHandler(JoinPoint joinPoint, ConParamValidator parameter) throws IllegalAccessException {

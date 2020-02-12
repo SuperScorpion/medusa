@@ -270,9 +270,7 @@ public class GenBaseServiceAndImpl {
                 "import org.slf4j.Logger;\n" +
                 "import org.slf4j.LoggerFactory;\n" +
                 "import org.springframework.beans.factory.annotation.Autowired;\n" +
-                "import org.springframework.stereotype.Service;\n" +
                 "\n" +
-                "@Service\n" +
                 "public abstract class BaseServiceImpl<T> extends BaseServiceImplMedusa<T> implements BaseService<T> {\n" +
                 "\n" +
                 "\tprivate static final Logger logger = LoggerFactory.getLogger(BaseServiceImpl.class);\n" +

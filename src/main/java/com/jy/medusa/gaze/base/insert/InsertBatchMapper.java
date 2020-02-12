@@ -18,11 +18,11 @@ public interface InsertBatchMapper<T> {
     /**
      * 保存一个实体，null的属性不会保存，会使用数据库默认值
      * @param records       参数
-     * @param ps       参数
+     * @param paramColumns       参数
      * @return 返回值类型
      */
     @InsertProvider(type = BaseInsertProvider.class, method = "insertBatch")
 //    @SelectKey(statement = "select last_insert_id() as id", keyProperty = "id", keyColumn = "id", before = true, resultType = int.class)
-    @Options(useGeneratedKeys = true, keyProperty = SystemConfigs.PRIMARY_KEY)
-    int insertBatch(List<T> records, Object... ps);
+    @Options(useGeneratedKeys = true, keyProperty = "param1." + SystemConfigs.PRIMARY_KEY)///for mybatis 3.5.3 & modify by neo on 2020.01.20
+    int insertBatch(List<T> records, String... paramColumns);
 }

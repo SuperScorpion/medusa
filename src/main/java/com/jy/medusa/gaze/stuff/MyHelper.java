@@ -141,7 +141,7 @@ public class MyHelper {
 
 
     /**
-     *
+     * 获取 CacheGenerator 有则返回缓存里的 没有则创建
      * @param m 参数
      * @return 返回值类型
      */
@@ -240,7 +240,7 @@ public class MyHelper {
             throw new MedusaException("Medusa: initSqlGenerator No entity type introduced!");
         }
 
-        String pkName = SystemConfigs.PRIMARY_KEY;//实体类主键名称
+        String pkName = SystemConfigs.PRIMARY_KEY;//默认实体类主键名称
         String tableName;//表名
 
         Map<String, String> currentColumnFieldNameMap = new HashMap<>();
@@ -333,12 +333,7 @@ public class MyHelper {
 
                         if (MyCommonUtils.isNotBlank(m)) {
 
-//                    if(m.contains("_"))//让用户用的可选字段 属性名字和数据库表字段名称容错
-//                        sbb.append(m.trim());
-                            if (currentFieldColumnNameMap.containsKey(m.trim()))//modify by neo on 2016.11.19
-                                sbb.append(currentFieldColumnNameMap.get(m.trim()));
-                            else
-                                sbb.append(m.trim());//都取不到时候则
+                            sbb.append(buildColumnNameForMedusaGaze(m, currentFieldColumnNameMap));
 
                             sbb.append(",");
                         }
@@ -360,8 +355,6 @@ public class MyHelper {
      * @return 返回值类型
      */
     public static String buildColumnNameForMedusaGaze(String ori, Map<String, String> currentFieldColumnNameMap) {
-
-        if(MyCommonUtils.isBlank(ori)) throw new MedusaException("Medusa: The column string is blank");
 
         String result;
 //        if (ori.contains("_"))//让用户用的可选字段 属性名字和数据库表字段名称容错
@@ -551,7 +544,8 @@ public class MyHelper {
      * 生成插入的sql语句时 not selective
      * @param currentFieldTypeNameMap 参数
      * @param currentFieldColumnNameMap 参数
-     * @param t
+     * @param t 参数
+     * @param primaryKeyColumn 参数
      * @return 返回值类型
      */
     public static String[] concatInsertDynamicSql(Map<String, String> currentFieldTypeNameMap, Map<String, String> currentFieldColumnNameMap, Object t, String primaryKeyColumn) {
@@ -604,6 +598,8 @@ public class MyHelper {
      * @param currentFieldTypeNameMap 参数
      * @param t 参数
      * @param paramColumn 参数
+     * @param primaryKeyColumn 参数
+     * @param myCatSequence 参数
      * @return 返回值类型
      */
     public static String concatInsertDynamicSqlForBatch(Map<String, String> currentColumnFieldNameMap, Map<String, String> currentFieldTypeNameMap, Object t, String paramColumn, String primaryKeyColumn, String myCatSequence) {
@@ -726,6 +722,7 @@ public class MyHelper {
      * @param t 参数
      * @param paramColumn 参数
      * @param currentColumnFieldNameMap 参数
+     * @param primaryKeyColumn 参数
      * @return 返回值类型
      */
     public static String concatUpdateDynamicSqlValuesForBatchPre(String tableName, Object t, String paramColumn, Map<String, String> currentColumnFieldNameMap, String primaryKeyColumn) {

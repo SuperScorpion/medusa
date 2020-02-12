@@ -15,10 +15,10 @@ public interface SelectOneMapper<T> {
     /**
      * 根据实体中的属性进行查询，只能有一个返回值，有多个结果是抛出异常，查询条件使用等号
      * @param record 参数
-     * @param paramColumn 参数
+     * @param paramColumns 参数
      * @return 返回值类型
      */
     @SelectProvider(type = BaseSelectProvider.class, method = "selectOne")
     @ResultMap("BaseResultMap")
-    T selectOne(T record, Object... paramColumn);
+    T selectOne(T record, String... paramColumns);
 }

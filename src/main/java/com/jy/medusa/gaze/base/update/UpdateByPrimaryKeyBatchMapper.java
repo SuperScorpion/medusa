@@ -15,9 +15,9 @@ public interface UpdateByPrimaryKeyBatchMapper<T> {
     /**
      * 根据主键更新实体全部字段，null值会被更新
      * @param records 参数
-     * @param ps 参数
+     * @param paramColumns 参数
      * @return 返回值类型
      */
     @UpdateProvider(type = BaseUpdateProvider.class, method = "updateByPrimaryKeyBatch")
-    int updateByPrimaryKeyBatch(List<T> records, Object... ps);
+    int updateByPrimaryKeyBatch(List<T> records, String... paramColumns);
 }
