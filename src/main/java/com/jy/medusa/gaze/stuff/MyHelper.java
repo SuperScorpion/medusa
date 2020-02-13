@@ -453,7 +453,7 @@ public class MyHelper {
 
 /*            String countSql = getSqlGenerator(p).sql_findAllCount(((MapperMethod.ParamMap) p.get("pobj")).get("param1"),
                     ((MapperMethod.ParamMap) p.get("pobj")).get("param2"));*/
-            String countSql = getSqlGenerator(p).sqlOfFindAllCount((Object[]) ((DefaultSqlSession.StrictMap) p.get("pobj")).get("array"));
+            String countSql = getSqlGenerator(p).sqlOfFindAllCount((Object[]) ((DefaultSqlSession.StrictMap) p).get("array"));
 
 //            BoundSql countBS = new BoundSql(mst.getConfiguration(), countSql, boundSql.getParameterMappings(),p);
 
@@ -630,7 +630,7 @@ public class MyHelper {
                 if (myCatFlag && col.trim().equalsIgnoreCase(primaryKeyColumn)) {//modify by neo on 2019.08.07 for mycat
                     sbb.append("next value for ").append(myCatSequence).append(",");
                 } else {
-                    sbb.append("#{pobj.param1[");
+                    sbb.append("#{param1[");
                     sbb.append(i);
                     sbb.append("].");
                     sbb.append(fieName);
@@ -765,12 +765,12 @@ public class MyHelper {
 
                     for (int i = 0; i < len; i++) {
 
-                        if (flag) sbbIdd.append("#{pobj.param1[").append(i).append("].").append(currentColumnFieldNameMap.get(primaryKeyColumn)).append("},");
+                        if (flag) sbbIdd.append("#{param1[").append(i).append("].").append(currentColumnFieldNameMap.get(primaryKeyColumn)).append("},");
 
                         sbb.append(" WHEN ")
-                                .append("#{pobj.param1[").append(i).append("].").append(currentColumnFieldNameMap.get(primaryKeyColumn)).append("}")
+                                .append("#{param1[").append(i).append("].").append(currentColumnFieldNameMap.get(primaryKeyColumn)).append("}")
                                 .append(" THEN ")
-                                .append("#{pobj.param1[").append(i).append("].").append(currentColumnFieldNameMap.get(columns)).append("}");
+                                .append("#{param1[").append(i).append("].").append(currentColumnFieldNameMap.get(columns)).append("}");
                     }
 
                     if (flag && sbbIdd.lastIndexOf(",") != -1) sbbIdd.deleteCharAt(sbbIdd.lastIndexOf(","));
@@ -782,7 +782,7 @@ public class MyHelper {
             }
         }
 
-        if(sbb.indexOf("pobj.param1") == -1) throw new MedusaException("The entity attribute values are all null!");///modify by neo on 2019.07.05
+        if(sbb.indexOf("param1") == -1) throw new MedusaException("The entity attribute values are all null!");///modify by neo on 2019.07.05
 
         if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
 

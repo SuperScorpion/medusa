@@ -2,6 +2,8 @@
 package com.jy.medusa.gaze.provider;
 
 import com.jy.medusa.gaze.stuff.MyHelper;
+import com.jy.medusa.gaze.stuff.exception.MedusaException;
+import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.session.defaults.DefaultSqlSession;
 
 import java.util.List;
@@ -38,8 +40,11 @@ public class BaseDeleteProvider {
      */
     public String deleteBatch(Map<String, Object> m) {
 
-        List<Object> p = (List<Object>) ((DefaultSqlSession.StrictMap) m.get("pobj")).get("list");
-
-        return MyHelper.getSqlGenerator(m).sqlOfRemoveOfBatch(p);
+//        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
+            List<Object> p = (List<Object>) ((DefaultSqlSession.StrictMap) m).get("list");
+            return MyHelper.getSqlGenerator(m).sqlOfRemoveOfBatch(p);
+//        } else {
+//            throw new MedusaException("Medusa: deleteBatch MapperMethod.ParamMap Exception");
+//        }
     }
 }

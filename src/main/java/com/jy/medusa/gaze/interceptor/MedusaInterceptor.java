@@ -41,7 +41,7 @@ public class MedusaInterceptor implements Interceptor {
 
             result = processExecutor(invocation);
 
-        } else if(invocation.getTarget() instanceof StatementHandler) {//delete insert update 都会进来此拦截(medusa的或非medusa的)
+        } else if (invocation.getTarget() instanceof StatementHandler) {//delete insert update 都会进来此拦截(medusa的或非medusa的)
 
             result = invocation.proceed();//先执行再处理的 不然处理的是上次的
 
@@ -64,30 +64,44 @@ public class MedusaInterceptor implements Interceptor {
 
         if (mt.getSqlSource() instanceof ProviderSqlSource && MyHelper.checkMortalMethds(medusaMethodName)) {//Modify by neo on 2019.05.31
 
-            Map<String, Object> p = new HashMap<>(1 << 2);
+            Map<String, Object> p;
 
-            p.put("pobj", invocation.getArgs()[1]);
+            if (invocation.getArgs()[1] instanceof Map) {//1.方法里有两个参数以上或参数类型为array或list 则mybatis会自动封装它为 map集合 modify by neo on 2020.02.13
 
-            p.put("msid", MyHelper.removeLastWord(mt.getId()));
+                p = (Map<String, Object>) invocation.getArgs()[1];
 
-            invocation.getArgs()[1] = p;
+                p.put("msid", MyHelper.removeLastWord(mt.getId()));
+
+            } else {//2.方法里若是单个参数且不是array或list 需要用到 msid 所以手动封装map 带到provider方法去使用
+
+                p = new HashMap<>(1 << 2);/// 1<<1
+
+                p.put("pobj", invocation.getArgs()[1]);
+
+                p.put("msid", MyHelper.removeLastWord(mt.getId()));
+
+                invocation.getArgs()[1] = p;
+            }
 
             result = invocation.proceed();//mybatis 的后续还有很多处理 比如 insert update delete 都会进下一个StatementHandler 的 interceptor
 
             processMedusaMethod(medusaMethodName, result, invocation, p, mt);
 
-            p.clear();//help gc
+            if(p.containsKey("pobj"))//第二种情况清除新建的 hashmap
+                p.clear();//help gc
+            else//第一种情况 只删除put进去的msid
+                p.remove("msid");
 
         } else {///如果为用户的自定义普通方法 或者 插入UUID方法
 
             result = invocation.proceed();
 
             //modify by neo on 2019.08.19 for UUID insert 需要先获得生成的uuid值 再注入到插入的实体里 再进行插入操作 否则插入主键为空
-            if(invocation.getArgs()[1] instanceof Map && MyHelper.checkInsertUUIDMethodSelectKey(medusaMethodName)) {
+            if (invocation.getArgs()[1] instanceof Map && MyHelper.checkInsertUUIDMethodSelectKey(medusaMethodName)) {
 
                 Map<String, Object> p = (Map) invocation.getArgs()[1];
 
-                MyReflectionUtils.invokeSetterMethod(p.get("pobj"), MyHelper.getSqlGenerator(p).getPkName(), ((ArrayList) result).get(0));//注入属性id值
+                MyReflectionUtils.invokeSetterMethod(p.get("pobj"), MyHelper.getSqlGenerator(p).getPkPropertyName(), ((ArrayList) result).get(0));//注入属性id值
             }
         }
 
@@ -99,9 +113,9 @@ public class MedusaInterceptor implements Interceptor {
         //测试结果由高到低:startWith->indexOf->contains modify by neo on 2016.11.07
         if (!medusaMethodName.startsWith("select") && !medusaMethodName.startsWith("delete")) {//查询比较多 避免再去判断是不是以下方法中的 提升性能 可以 短路 modify by neo on 2016.11.07
 
-            if (MyHelper.checkMedusaMethod(medusaMethodName)) {//若是多条件查询 medusas
+            if (MyHelper.checkMedusaMethod(medusaMethodName)) {//若是多条件查询 medusa
 
-                Object[] x = (Object[]) ((DefaultSqlSession.StrictMap) p.get("pobj")).get("array");//modify by neo on 2016.12.23
+                Object[] x = (Object[]) ((DefaultSqlSession.StrictMap) p).get("array");//modify by neo on 2020.02.13
 
                 Pager z = null;
 
@@ -127,7 +141,7 @@ public class MedusaInterceptor implements Interceptor {
 
                     Object m = Integer.valueOf((((Map) invocation.getArgs()[1]).get(SystemConfigs.PRIMARY_KEY).toString()));// mybatis long is default id types
 
-                    MyReflectionUtils.invokeSetterMethod(p.get("pobj"), MyHelper.getSqlGenerator(p).getPkName(), m);//注入属性id值
+                    MyReflectionUtils.invokeSetterMethod(p.get("pobj"), MyHelper.getSqlGenerator(p).getPkPropertyName(), m);//注入属性id值
                 }
 
             } else if (MyHelper.checkUpdateMethod(medusaMethodName)) {
@@ -149,13 +163,13 @@ public class MedusaInterceptor implements Interceptor {
 
         Object parObj = sh.getBoundSql().getParameterObject();
 
-        if (parObj instanceof Map) {//过滤掉用户自定义的各种方法
+//        if (parObj instanceof Map) {//过滤掉用户自定义的各种方法
 
-            Object pobj = ((Map) parObj).containsKey("pobj") ? ((Map) parObj).get("pobj") : null;
+//            Object pobj = ((Map) parObj).containsKey("pobj") ? ((Map) parObj).get("pobj") : null;
 
-            if (pobj instanceof Map && sh.getBoundSql().getSql().contains("INSERT INTO")) {//过滤medusa单个insert delete update 的方法 //过滤掉deleteBatch insertBatch updateBatch之类的 非insert方法 modify by neo on 2017.12.13
+            if (parObj instanceof Map && sh.getBoundSql().getSql().contains("INSERT INTO")) {//过滤medusa单个insert delete update 的方法 //过滤掉deleteBatch insertBatch updateBatch之类的 非insert方法 modify by neo on 2017.12.13
 
-                List<Object> paramList = (List) ((Map) pobj).get("param1");
+                List<Object> paramList = (List) ((Map) parObj).get("param1");
 
                 if (paramList != null && !paramList.isEmpty()) {
 
@@ -170,11 +184,11 @@ public class MedusaInterceptor implements Interceptor {
                         //modify by neo on 2019.08.07 for mycat
                         int currentIdValue = sh.getBoundSql().getSql().toLowerCase().contains("next value for") ? rs.getInt(1) - 1 : rs.getInt(1);//注入属性id值 mycat 方式取到的都是+1 所以这里-1
 
-                        MyReflectionUtils.invokeSetterMethod(ot, MyHelper.getSqlGenerator((Map) parObj).getPkName(), currentIdValue);
+                        MyReflectionUtils.invokeSetterMethod(ot, MyHelper.getSqlGenerator((Map) parObj).getPkPropertyName(), currentIdValue);
                     }
                 }
             }
-        }
+//        }
     }
 
     public Object plugin(Object target) {

@@ -30,10 +30,10 @@ public class MySqlGenerator {
     private Class<?> entityClass;
 
 
-    public MySqlGenerator(Map<String, String> cfMap, Map<String, String> ftMap, String tableName, String pkName, Class<?> entityClass) {
+    public MySqlGenerator(Map<String, String> cfMap, Map<String, String> ftMap, String tableName, String pkColumnName, Class<?> entityClass) {
         this.columns = cfMap.keySet();
         this.tableName = tableName;
-        this.pkName = pkName;
+        this.pkName = pkColumnName;
         this.columnsStr = MyCommonUtils.join(this.columns, ",");
         this.currentColumnFieldNameMap = cfMap;
         this.currentFieldColumnNameMap = MyHelper.exchangeKeyValues(cfMap);
@@ -42,8 +42,12 @@ public class MySqlGenerator {
         this.entityClass = entityClass;
     }
 
-    public String getPkName() {
+    public String getPkColumnName() {
         return this.pkName;
+    }
+
+    public String getPkPropertyName() {
+        return currentColumnFieldNameMap.get(pkName);
     }
 
     /**
@@ -407,7 +411,7 @@ public class MySqlGenerator {
         StringBuilder sqlBuild = new StringBuilder(len);
         sqlBuild.append("UPDATE ").append(tableName).append(" SET ")
                 .append(MyCommonUtils.join(values, ",")).append(" WHERE ")
-                .append(pkName).append(" = ").append("#{pobj.param1.").append(currentColumnFieldNameMap.get(pkName)).append("}");///modify by neo on 2019.08.20
+                .append(pkName).append(" = ").append("#{param1.").append(currentColumnFieldNameMap.get(pkName)).append("}");///modify by neo on 2020.02.13
 
         String sql = sqlBuild.toString();
 
@@ -428,7 +432,7 @@ public class MySqlGenerator {
             if (!column.equalsIgnoreCase(pkName) && parList.contains(column)) {
                 String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
 //                colVals.add(column + "=" + handleValue(value));
-                colVals.add(column + "=" + "#{pobj.param1." + fieldName +"}");
+                colVals.add(column + "=" + "#{param1." + fieldName +"}");///modify by neo on 2020.02.13
             }
         }
 
@@ -488,7 +492,7 @@ public class MySqlGenerator {
         int len = 39 + tableName.length() + pkName.length() + paramColumn.length();
 
         StringBuilder sqlBuild = new StringBuilder(len);
-        sqlBuild.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName).append(" WHERE ").append(pkName).append(" = ").append("#{pobj.param1}");
+        sqlBuild.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName).append(" WHERE ").append(pkName).append(" = ").append("#{param1}");///modify by neo on 2020.02.13
 
         String sql = sqlBuild.toString();
 
@@ -580,7 +584,7 @@ public class MySqlGenerator {
             Object value = MyReflectionUtils.obtainFieldValue(t, fieldName);
             if (value != null) {
 //                colVals.add(column + "=" + handleValue(value));
-                colVals.add(column + "=" + "#{pobj.param1." + fieldName + "}");///modify by neo on 2016.11.12
+                colVals.add(column + "=" + "#{param1." + fieldName + "}");///modify by neo on 2020.02.13
             }
         }
         return colVals;
@@ -836,7 +840,7 @@ public class MySqlGenerator {
 
                             String column = MyHelper.buildColumnNameForMedusaGaze(entry.getKey(), currentFieldColumnNameMap);
 
-                            colVals.add(column + "=" + "#{pobj.array[" + i + "]." + entry.getKey() + "}");///modify by neo on 2016.11.12
+                            colVals.add(column + "=" + "#{array[" + i + "]." + entry.getKey() + "}");///modify by neo on 2020.02.13
                         }
                     }
 
@@ -870,7 +874,7 @@ public class MySqlGenerator {
                         String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
                         Object value = MyReflectionUtils.obtainFieldValue(o, fieldName);
                         if (value != null) {//modify by neo on 2020.01.19
-                            colVals.add(column + "=" + "#{pobj.array[" + i + "]." + fieldName + "}");///modify by neo on 2016.11.12
+                            colVals.add(column + "=" + "#{array[" + i + "]." + fieldName + "}");///modify by neo on 2020.02.13
                         }
                     }
                     return colVals;
@@ -908,7 +912,7 @@ public class MySqlGenerator {
                 Object p = ((SingleParam) z).getValue();
 
                 if(p != null && MyCommonUtils.isNotBlank(p.toString())) {
-                    sbb.append(" AND ").append(column).append(" = ").append("#{pobj.array[").append(isd).append("].paramList[").append(ind).append("].value}");
+                    sbb.append(" AND ").append(column).append(" = ").append("#{array[").append(isd).append("].paramList[").append(ind).append("].value}");///modify by neo on 2020.02.13
                 }
 
             } else if (z instanceof BetweenParam) {
@@ -918,9 +922,9 @@ public class MySqlGenerator {
                 if(start != null) {
                     sbb.append(" AND ").append(column).append(" BETWEEN ")
                             //.append("'").append(MyDateUtils.convertDateToStr(p.getEnd(), MyDateUtils.DATE_FULL_STR)).append("'")
-                            .append("#{pobj.array[").append(isd).append("].paramList[").append(ind).append("].start}")
+                            .append("#{array[").append(isd).append("].paramList[").append(ind).append("].start}")///modify by neo on 2020.02.13
                             .append(" AND ")
-                            .append("#{pobj.array[").append(isd).append("].paramList[").append(ind).append("].end}");
+                            .append("#{array[").append(isd).append("].paramList[").append(ind).append("].end}");///modify by neo on 2020.02.13
                 }
             } else if (z instanceof NotInParam) {
 
@@ -938,7 +942,7 @@ public class MySqlGenerator {
 
                     int k = 0;
                     while(k < p.size()) {
-                        sbb.append("#{pobj.array[").append(isd).append("].paramList[").append(ind).append("].value[").append(k).append("]},");
+                        sbb.append("#{array[").append(isd).append("].paramList[").append(ind).append("].value[").append(k).append("]},");///modify by neo on 2020.02.13
                         k += 1;
                     }
 
@@ -950,7 +954,7 @@ public class MySqlGenerator {
                 Object p = ((LikeParam) z).getValue();
 
                 if(p != null && MyCommonUtils.isNotBlank(p.toString())) {
-                    sbb.append(" AND ").append(column).append(" LIKE ").append("CONCAT('%',#{pobj.array[").append(isd).append("].paramList[").append(ind).append("].value},'%')");
+                    sbb.append(" AND ").append(column).append(" LIKE ").append("CONCAT('%',#{array[").append(isd).append("].paramList[").append(ind).append("].value},'%')");///modify by neo on 2020.02.13
                 }
             } else if (z instanceof NotNullParam) {
 
@@ -972,16 +976,16 @@ public class MySqlGenerator {
 
                 if (z instanceof GreatThanParam) {
 
-                    sbb.append(" AND ").append(column).append(" > ").append("#{pobj.array[").append(isd).append("].paramList[").append(ind).append("].value}");
+                    sbb.append(" AND ").append(column).append(" > ").append("#{array[").append(isd).append("].paramList[").append(ind).append("].value}");///modify by neo on 2020.02.13
                 } else if (z instanceof GreatEqualParam) {
 
-                    sbb.append(" AND ").append(column).append(" >= ").append("#{pobj.array[").append(isd).append("].paramList[").append(ind).append("].value}");
+                    sbb.append(" AND ").append(column).append(" >= ").append("#{array[").append(isd).append("].paramList[").append(ind).append("].value}");///modify by neo on 2020.02.13
                 } else if (z instanceof LessThanParam) {
 
-                    sbb.append(" AND ").append(column).append(" < ").append("#{pobj.array[").append(isd).append("].paramList[").append(ind).append("].value}");
+                    sbb.append(" AND ").append(column).append(" < ").append("#{array[").append(isd).append("].paramList[").append(ind).append("].value}");///modify by neo on 2020.02.13
                 } else if (z instanceof LessEqualParam) {
 
-                    sbb.append(" AND ").append(column).append(" <= ").append("#{pobj.array[").append(isd).append("].paramList[").append(ind).append("].value");
+                    sbb.append(" AND ").append(column).append(" <= ").append("#{array[").append(isd).append("].paramList[").append(ind).append("].value");///modify by neo on 2020.02.13
                 }
             }
         }

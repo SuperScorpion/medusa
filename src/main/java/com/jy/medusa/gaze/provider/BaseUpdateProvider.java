@@ -20,13 +20,13 @@ public class BaseUpdateProvider {
      */
     public String updateByPrimaryKey(Map<String, Object> m) {
 
-        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
+//        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
             return MyHelper.getSqlGenerator(m).sqlOfModifyNull(
-                    ((MapperMethod.ParamMap) m.get("pobj")).get("param1"),
-                    ((MapperMethod.ParamMap) m.get("pobj")).get("param2"));
-        } else {
-            throw new MedusaException("Medusa: updateByPrimaryKey MapperMethod.ParamMap Exception");
-        }
+                    ((MapperMethod.ParamMap) m).get("param1"),
+                    (Object[]) ((MapperMethod.ParamMap) m).get("param2"));
+//        } else {
+//            throw new MedusaException("Medusa: updateByPrimaryKey MapperMethod.ParamMap Exception");
+//        }
     }
 
     /**
@@ -45,12 +45,12 @@ public class BaseUpdateProvider {
      */
     public String updateByPrimaryKeyBatch(Map<String, Object> m) {
 
-        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
+//        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
             return MyHelper.getSqlGenerator(m).sqlOfModifyOfBatch(
-                    ((MapperMethod.ParamMap) m.get("pobj")).get("param1"),
-                    ((MapperMethod.ParamMap) m.get("pobj")).get("param2"));
-        } else {
-            throw new MedusaException("Medusa: updateByPrimaryKeyBatch MapperMethod.ParamMap Exception");
-        }
+                    ((MapperMethod.ParamMap) m).get("param1"),
+                    (Object[]) ((MapperMethod.ParamMap) m).get("param2"));
+//        } else {
+//            throw new MedusaException("Medusa: updateByPrimaryKeyBatch MapperMethod.ParamMap Exception");
+//        }
     }
 }

@@ -38,13 +38,13 @@ public class BaseInsertProvider {
      */
     public String insertBatch(Map<String, Object> m) {
 
-        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
+//        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
             return MyHelper.getSqlGenerator(m).sqlOfInsertBatch(
-                    ((MapperMethod.ParamMap) m.get("pobj")).get("param1"),
-                    ((MapperMethod.ParamMap) m.get("pobj")).get("param2"));
-        } else {
-            throw new MedusaException("Medusa: insertBatch MapperMethod.ParamMap Exception");
-        }
+                    ((MapperMethod.ParamMap) m).get("param1"),
+                    (Object[]) ((MapperMethod.ParamMap) m).get("param2"));
+//        } else {
+//            throw new MedusaException("Medusa: insertBatch MapperMethod.ParamMap Exception");
+//        }
     }
 
     /**
@@ -54,13 +54,13 @@ public class BaseInsertProvider {
      */
     public String insertBatchOfMyCat(Map<String, Object> m) {
 
-        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
+//        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
             return MyHelper.getSqlGenerator(m).sqlOfInsertBatchForMyCat(
-                    ((MapperMethod.ParamMap) m.get("pobj")).get("param1"),
-                    ((MapperMethod.ParamMap) m.get("pobj")).get("param2"),
-                    ((MapperMethod.ParamMap) m.get("pobj")).get("param3"));
-        } else {
-            throw new MedusaException("Medusa: insertBatchOfMyCat MapperMethod.ParamMap Exception");
-        }
+                    ((MapperMethod.ParamMap) m).get("param1"),
+                    ((MapperMethod.ParamMap) m).get("param2"),
+                    (Object[]) ((MapperMethod.ParamMap) m).get("param3"));
+//        } else {
+//            throw new MedusaException("Medusa: insertBatchOfMyCat MapperMethod.ParamMap Exception");
+//        }
     }
 }

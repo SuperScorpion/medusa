@@ -23,6 +23,6 @@ public interface InsertBatchOfMyCatMapper<T> {
      * @return 返回值类型
      */
     @InsertProvider(type = BaseInsertProvider.class, method = "insertBatchOfMyCat")
-    @Options(useGeneratedKeys = true, keyProperty = SystemConfigs.PRIMARY_KEY)
+    @Options(useGeneratedKeys = true, keyProperty = "param1." + SystemConfigs.PRIMARY_KEY)///for mybatis 3.5.3 & modify by neo on 2020.01.20
     int insertBatchOfMyCat(List<T> records, String mycatSeq, String... paramColumns);
 }

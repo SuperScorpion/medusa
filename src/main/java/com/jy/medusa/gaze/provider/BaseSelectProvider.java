@@ -20,13 +20,13 @@ public class BaseSelectProvider {
      */
     public String selectByPrimaryKeyBatch(Map<String, Object> m) {
 
-        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
+//        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
             return MyHelper.getSqlGenerator(m).sqlOfFindBatchOfIds(
-                    ((MapperMethod.ParamMap) m.get("pobj")).get("param1"),
-                    ((MapperMethod.ParamMap) m.get("pobj")).get("param2"));
-        } else {
-            throw new MedusaException("Medusa: selectByIds MapperMethod.ParamMap Exception");
-        }
+                    ((MapperMethod.ParamMap) m).get("param1"),
+                    (Object[]) ((MapperMethod.ParamMap) m).get("param2"));
+//        } else {
+//            throw new MedusaException("Medusa: selectByIds MapperMethod.ParamMap Exception");
+//        }
     }
 
     /**
@@ -36,13 +36,13 @@ public class BaseSelectProvider {
      */
     public String selectOne(Map<String, Object> m) {
 
-        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
+//        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
             return MyHelper.getSqlGenerator(m).sqlOfFindOne(
-                    ((MapperMethod.ParamMap) m.get("pobj")).get("param1"),
-                    ((MapperMethod.ParamMap) m.get("pobj")).get("param2"));
-        } else {
-            throw new MedusaException("Medusa: selectOne MapperMethod.ParamMap Exception");
-        }
+                    ((MapperMethod.ParamMap) m).get("param1"),
+                    (Object[]) ((MapperMethod.ParamMap) m).get("param2"));
+//        } else {
+//            throw new MedusaException("Medusa: selectOne MapperMethod.ParamMap Exception");
+//        }
     }
 
 
@@ -53,13 +53,13 @@ public class BaseSelectProvider {
      */
     public String select(Map<String, Object> m) {
 
-        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
+//        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
             return MyHelper.getSqlGenerator(m).sqlOfFindListBy(
-                    ((MapperMethod.ParamMap) m.get("pobj")).get("param1"),
-                    ((MapperMethod.ParamMap) m.get("pobj")).get("param2"));
-        } else {
-            throw new MedusaException("Medusa: select MapperMethod.ParamMap Exception");
-        }
+                    ((MapperMethod.ParamMap) m).get("param1"),
+                    (Object[]) ((MapperMethod.ParamMap) m).get("param2"));
+//        } else {
+//            throw new MedusaException("Medusa: select MapperMethod.ParamMap Exception");
+//        }
     }
 
 
@@ -70,13 +70,13 @@ public class BaseSelectProvider {
      */
     public String selectByPrimaryKey(Map<String, Object> m) {
 
-        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
+//        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
             return MyHelper.getSqlGenerator(m).sqlOfFindOneById(
-                    ((MapperMethod.ParamMap) m.get("pobj")).get("param1"),
-                    ((MapperMethod.ParamMap) m.get("pobj")).get("param2"));
-        } else {
-            throw new MedusaException("Medusa: selectByPrimaryKey MapperMethod.ParamMap Exception");
-        }
+                    ((MapperMethod.ParamMap) m).get("param1"),
+                    (Object[]) ((MapperMethod.ParamMap) m).get("param2"));
+//        } else {
+//            throw new MedusaException("Medusa: selectByPrimaryKey MapperMethod.ParamMap Exception");
+//        }
     }
 
 
@@ -88,11 +88,12 @@ public class BaseSelectProvider {
      */
     public String selectAll(Map<String, Object> m) {
 
-        if(m.get("pobj") instanceof DefaultSqlSession.StrictMap) {
-            return MyHelper.getSqlGenerator(m).sqlOfFindAll((Object[]) ((DefaultSqlSession.StrictMap) m.get("pobj")).get("array"));
-        } else {
-            throw new MedusaException("Medusa: selectAll DefaultSqlSession.StrictMap Exception");
-        }
+//        if(m.get("pobj") instanceof DefaultSqlSession.StrictMap) {
+            return MyHelper.getSqlGenerator(m).sqlOfFindAll(
+                    (Object[]) ((DefaultSqlSession.StrictMap) m).get("array"));
+//        } else {
+//            throw new MedusaException("Medusa: selectAll DefaultSqlSession.StrictMap Exception");
+//        }
     }
 
 
@@ -104,11 +105,12 @@ public class BaseSelectProvider {
      */
     public String selectCount(Map<String, Object> m) {
 
-        if(m.get("pobj") instanceof DefaultSqlSession.StrictMap) {
-            return MyHelper.getSqlGenerator(m).sqlOfFindAllCount((Object[]) ((DefaultSqlSession.StrictMap) m.get("pobj")).get("array"));
-        } else {
-            throw new MedusaException("Medusa: selectCount DefaultSqlSession.StrictMap Exception");
-        }
+//        if(m.get("pobj") instanceof DefaultSqlSession.StrictMap) {
+            return MyHelper.getSqlGenerator(m).sqlOfFindAllCount(
+                    (Object[]) ((DefaultSqlSession.StrictMap) m).get("array"));
+//        } else {
+//            throw new MedusaException("Medusa: selectCount DefaultSqlSession.StrictMap Exception");
+//        }
     }
 
 
@@ -120,10 +122,11 @@ public class BaseSelectProvider {
      */
     public String selectMedusaGaze(Map<String, Object> m) {
 
-        if(m.get("pobj") instanceof DefaultSqlSession.StrictMap) {
-            return MyHelper.getSqlGenerator(m).sqlOfFindMedusaGaze((Object[]) ((DefaultSqlSession.StrictMap) m.get("pobj")).get("array"));
-        } else {
-            throw new MedusaException("Medusa: selectMedusaGaze DefaultSqlSession.StrictMap Exception");
-        }
+//        if(m.get("pobj") instanceof DefaultSqlSession.StrictMap) {
+            return MyHelper.getSqlGenerator(m).sqlOfFindMedusaGaze(
+                    (Object[]) ((DefaultSqlSession.StrictMap) m).get("array"));
+//        } else {
+//            throw new MedusaException("Medusa: selectMedusaGaze DefaultSqlSession.StrictMap Exception");
+//        }
     }
 }
