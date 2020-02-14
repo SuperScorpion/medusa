@@ -1,8 +1,10 @@
-package com.jy.medusa.generator;
+package com.jy.medusa.generator.gen;
 
 import com.jy.medusa.gaze.utils.MyDateUtils;
 import com.jy.medusa.gaze.utils.MyCommonUtils;
 import com.jy.medusa.gaze.utils.SystemConfigs;
+import com.jy.medusa.generator.Home;
+import com.jy.medusa.generator.MyGenUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -85,7 +87,16 @@ public class GenXml {
 
         try {
             String content = parse();
-            String path = Home.proPath + packagePath.replaceAll("\\.", "/");
+
+            //modify by neo on 2020.02.14
+            String classpathXml = Home.classpathXml;
+            String path;
+            if(classpathXml.matches("^classpath.*:.*")) {
+                path = Home.proResourcePath + classpathXml.replaceFirst("^classpath.*:", "");
+            } else {
+                path = Home.proJavaPath + packagePath.replaceAll("\\.", "/");
+            }
+
             File file = new File(path);
             if(!file.exists()) {
                 file.mkdirs();

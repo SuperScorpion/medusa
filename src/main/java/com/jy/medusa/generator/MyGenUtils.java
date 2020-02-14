@@ -149,7 +149,7 @@ public class MyGenUtils {
 
     public static List<String> genTagStrList(String fileName, String path, String tag, String flag) {
 
-        String paths = Home.proPath + path.replaceAll("\\.", "/");
+        String paths = Home.proJavaPath + path.replaceAll("\\.", "/");
         File dirsFile = new File(paths);
         if(!dirsFile.exists()) dirsFile.mkdirs();
         String resPath = paths + "/" + fileName;

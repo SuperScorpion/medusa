@@ -53,7 +53,7 @@ public class GenServiceFtl {
 
         try {
             //写入service 和 impl
-            String path = Home.proPath + servicePath.replaceAll("\\.", "/");
+            String path = Home.proJavaPath + servicePath.replaceAll("\\.", "/");
             File file1 = new File(path);
             if(!file1.exists()) {
                 file1.mkdirs();
@@ -61,7 +61,7 @@ public class GenServiceFtl {
             String resPath1 = path + "/" + entityName + "Service.java";
 //            MyCommonUtils.writeString2File(new File(resPath1), process1(), "UTF-8");
 
-            String pathImp = Home.proPath + serviceImplPath.replaceAll("\\.", "/");
+            String pathImp = Home.proJavaPath + serviceImplPath.replaceAll("\\.", "/");
             File file2 = new File(pathImp);
             if(!file2.exists()) {
                 file2.mkdirs();
@@ -70,7 +70,7 @@ public class GenServiceFtl {
 //            MyCommonUtils.writeString2File(new File(resPath2), process2(), "UTF-8");
 
             //mapper
-            String pathmm = Home.proPath + mapperPath.replaceAll("\\.", "/");
+            String pathmm = Home.proJavaPath + mapperPath.replaceAll("\\.", "/");
             File file3 = new File(pathmm);
             if(!file3.exists()) {
                 file3.mkdirs();

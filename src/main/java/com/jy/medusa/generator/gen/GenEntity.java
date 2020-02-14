@@ -1,12 +1,15 @@
-package com.jy.medusa.generator;
+package com.jy.medusa.generator.gen;
 
 /**
  * Created by neo on 16/7/19.
  */
 
-import com.jy.medusa.gaze.utils.MyDateUtils;
 import com.jy.medusa.gaze.utils.MyCommonUtils;
+import com.jy.medusa.gaze.utils.MyDateUtils;
 import com.jy.medusa.gaze.utils.SystemConfigs;
+import com.jy.medusa.generator.DataBaseTools;
+import com.jy.medusa.generator.Home;
+import com.jy.medusa.generator.MyGenUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,7 +40,7 @@ public class GenEntity {
     private Map<String, String> defaultMap = new HashMap<>();//字段名称 和 默认值关系
     private Map<String, String> commentMap = new HashMap<>();//字段名称 和 注注释对应关系
 
-    private String primaryKey = SystemConfigs.PRIMARY_KEY;//主键字段名
+    private String primaryKey = SystemConfigs.PRIMARY_KEY;//默认主键字段名
 
 
     public GenEntity(String packagePath, String tableName, Object colValidArray) {
@@ -64,6 +67,19 @@ public class GenEntity {
         String sqlComments = "show full columns from " + tableName;
 
         try {
+            //modify by neo on 2019.08.17
+            //get current primary key from table
+            DatabaseMetaData dbmd = conn.getMetaData();
+            ResultSet resultSet = dbmd.getPrimaryKeys(null, null, tableName);
+            while(resultSet.next()) {
+                if(!resultSet.isLast()) {
+                    System.out.println("注意: " + tableName + " 表拥有多个主键 - 已跳过生成!");
+                    break;
+                }
+                primaryKey = resultSet.getObject(4).toString();
+            }
+
+
             pstmt = conn.prepareStatement(sqlComments);
             ResultSet rs = pstmt.executeQuery();
             if (rs != null) {
@@ -84,7 +100,7 @@ public class GenEntity {
             for (int i = 0; i < rsmd.getColumnCount(); i++) {
 
                 colSqlNames[i] = rsmd.getColumnName(i + 1);
-                colFieldNames[i] = MyGenUtils.getCamelStr(rsmd.getColumnName(i + 1));
+                colFieldNames[i] = colSqlNames[i].equals(primaryKey) ? SystemConfigs.PRIMARY_KEY : MyGenUtils.getCamelStr(rsmd.getColumnName(i + 1));//modify by neo on 2020.02.14
                 colTypes[i] = rsmd.getColumnTypeName(i + 1);
                 if (colTypes[i].equalsIgnoreCase("datetime") || colTypes[i].equalsIgnoreCase("date") || colTypes[i].equalsIgnoreCase("TIMESTAMP")) {
                     if(MyCommonUtils.isNotBlank(defaultMap.get(colFieldNames[i]))) isMyDateUtils = true;
@@ -99,21 +115,9 @@ public class GenEntity {
                 colSizes[i] = rsmd.getColumnDisplaySize(i + 1);
             }
 
-            //modify by neo on 2019.08.17
-            //get current primary key from table
-            DatabaseMetaData dbmd = conn.getMetaData();
-            ResultSet resultSet = dbmd.getPrimaryKeys(null, null, tableName);
-            while(resultSet.next()) {
-                if(!resultSet.isLast()) {
-                    System.out.println("注意: " + tableName + " 表拥有多个主键 - 已跳过生成!");
-                    break;
-                }
-                primaryKey = resultSet.getObject(4).toString();
-            }
-
             try {
                 String content = parse();
-                String path = Home.proPath + packagePath.replaceAll("\\.", "/");
+                String path = Home.proJavaPath + packagePath.replaceAll("\\.", "/");
                 File file = new File(path);
                 if(!file.exists()) {
                     file.mkdirs();
@@ -419,84 +423,5 @@ public class GenEntity {
             return "Clob";
         }
         return null;
-    }
-
-
-
-    /**
-     * 获取properties 属性值 并初始化
-     */
-    public class DataBaseTools {
-
-        private String driver;
-
-        private String url;
-
-        private String user;
-
-        private String password;
-
-        private Connection conn;
-
-        public DataBaseTools() {
-            loadProperties();
-    //        loadProperties(fileName);
-        }
-
-        private void loadProperties() {
-    //    private void loadProperties(String fileName) {
-
-    /*        String resPaths = System.getProperty("user.dir") + Home.getProperPath() + fileName;
-
-            Properties props = new Properties();
-            try {
-                props.load(new FileInputStream(resPaths));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }*/
-    /*        this.driver = props.getProperty("jdbc.driver");
-            this.url = props.getProperty("jdbc.url");
-            this.user = props.getProperty("jdbc.username");
-            this.password = props.getProperty("jdbc.password");*/
-
-            this.driver = Home.jdbcDriver;
-            this.url = Home.jdbcUrl;
-            this.user = Home.jdbcUsername;
-            this.password = Home.jdbcPassword;
-        }
-
-
-        public Connection openConnection() {
-            try {
-                if (conn != null && !conn.isClosed()) {
-                    return this.conn;
-                } else {
-                    try {
-                        Class.forName(driver);///初始化 并注册 driver
-                        this.conn = DriverManager.getConnection(url, user, password);
-                    } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            return this.conn;
-        }
-
-        public void closeConnection(Connection conn, Statement st) {
-            try {
-                if (st != null) {
-                    st.close();
-                }
-                if (conn != null && !conn.isClosed()) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }

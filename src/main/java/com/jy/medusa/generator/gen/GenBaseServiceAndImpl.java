@@ -1,6 +1,8 @@
-package com.jy.medusa.generator;
+package com.jy.medusa.generator.gen;
 
 import com.jy.medusa.gaze.utils.MyCommonUtils;
+import com.jy.medusa.generator.Home;
+import com.jy.medusa.generator.MyGenUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,8 +34,8 @@ public class GenBaseServiceAndImpl {
 
         try {
             //写入service 和 impl
-            String path = Home.proPath + servicePath.replaceAll("\\.", "/");
-            String pathImp = Home.proPath + serviceImplPath.replaceAll("\\.", "/");
+            String path = Home.proJavaPath + servicePath.replaceAll("\\.", "/");
+            String pathImp = Home.proJavaPath + serviceImplPath.replaceAll("\\.", "/");
             File file = new File(path);
             if(!file.exists()) {
                 file.mkdirs();

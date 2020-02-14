@@ -1,7 +1,9 @@
-package com.jy.medusa.generator;
+package com.jy.medusa.generator.gen;
 
 import com.jy.medusa.gaze.utils.MyDateUtils;
 import com.jy.medusa.gaze.utils.MyCommonUtils;
+import com.jy.medusa.generator.Home;
+import com.jy.medusa.generator.MyGenUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,20 +50,20 @@ public class GenService {
 
             File file;
 
-            String path = Home.proPath + servicePath.replaceAll("\\.", "/");
+            String path = Home.proJavaPath + servicePath.replaceAll("\\.", "/");
             file = new File(path);
             if(!file.exists()) {file.mkdirs();}
             String resPath1 = path + "/" + entityName + "Service.java";
             MyCommonUtils.writeString2File(new File(resPath1), process1(), "UTF-8");
 
-            String pathImp = Home.proPath + serviceImplPath.replaceAll("\\.", "/");
+            String pathImp = Home.proJavaPath + serviceImplPath.replaceAll("\\.", "/");
             file = new File(pathImp);
             if(!file.exists()) {file.mkdirs();}
             String resPath2 = pathImp + "/" + entityName + "ServiceImpl.java";
             MyCommonUtils.writeString2File(new File(resPath2), process2(), "UTF-8");
 
             //mapper
-            String pathmm = Home.proPath + mapperPath.replaceAll("\\.", "/");
+            String pathmm = Home.proJavaPath + mapperPath.replaceAll("\\.", "/");
             file = new File(pathmm);
             if(!file.exists()) {file.mkdirs();}
             String resPath3 = pathmm + "/" + entityName + "Mapper.java";

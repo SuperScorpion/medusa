@@ -41,7 +41,7 @@ public class GenControllerFtl {
     public void process() {
 
         try {
-            String path = Home.proPath + packagePath.replaceAll("\\.", "/");
+            String path = Home.proJavaPath + packagePath.replaceAll("\\.", "/");
             File file = new File(path);
             if(!file.exists()) {
                 file.mkdirs();

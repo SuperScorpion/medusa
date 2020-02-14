@@ -90,7 +90,16 @@ public class GenXmlFtl {
 
         try {
             Map<String, Object> map = parse();
-            String path = Home.proPath + packagePath.replaceAll("\\.", "/");
+
+            //modify by neo on 2020.02.14
+            String classpathXml = Home.classpathXml;
+            String path;
+            if(classpathXml.matches("^classpath.*:.*")) {
+                path = Home.proResourcePath + classpathXml.replaceFirst("^classpath.*:", "");
+            } else {
+                path = Home.proJavaPath + packagePath.replaceAll("\\.", "/");
+            }
+
             File file = new File(path);
             if(!file.exists()) {
                 file.mkdirs();

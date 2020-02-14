@@ -1,8 +1,10 @@
-package com.jy.medusa.generator;
+package com.jy.medusa.generator.gen;
 
 import com.jy.medusa.gaze.utils.MyDateUtils;
 import com.jy.medusa.gaze.utils.MyCommonUtils;
 import com.jy.medusa.gaze.utils.SystemConfigs;
+import com.jy.medusa.generator.Home;
+import com.jy.medusa.generator.MyGenUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +38,7 @@ public class GenControllerJson {
     public void process() {
 
         try {
-            String path = Home.proPath + packagePath.replaceAll("\\.", "/");
+            String path = Home.proJavaPath + packagePath.replaceAll("\\.", "/");
             File file = new File(path);
             if(!file.exists()) {
                 file.mkdirs();

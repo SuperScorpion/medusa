@@ -5,6 +5,7 @@ import com.jy.medusa.generator.ftl.GenControllerFtl;
 import com.jy.medusa.generator.ftl.GenEntityFtl;
 import com.jy.medusa.generator.ftl.GenServiceFtl;
 import com.jy.medusa.generator.ftl.GenXmlFtl;
+import com.jy.medusa.generator.gen.*;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
@@ -27,7 +28,8 @@ public class Home {
 
     public static final String mixMapper = "com.jy.medusa.gaze.commons.Mapper";
 
-    public static String proPath;
+    public static String proJavaPath;
+    public static String proResourcePath;
 
     public static String author;
     public static String entityNameSuffix;//实体文件后缀名
@@ -52,6 +54,7 @@ public class Home {
     public static String serviceImplSuffix;
     public static String mapperSuffix;
     public static String xmlSuffix;
+    public static String classpathXml;//以classpath开头的xml生成的路径
 
     public static String controlJsonSuffix;
     public static String controlMortalSuffix;
@@ -219,8 +222,11 @@ public class Home {
             return;
         }
 
-        //给proPath赋值 其它地方也要使用
-        gainTheProPath(resPaths);
+        //给proJavaPath赋值 其它地方也要使用
+        gainTheProJavaPath(resPaths);
+
+        //给proResourcePath赋值 其它地方也要使用
+        gainTheProResourcePath(resPaths);
 
         FileInputStream fileInputStream = null;
         try {
@@ -254,6 +260,7 @@ public class Home {
             this.serviceImplSuffix = childMap.get("serviceImplSuffix") == null || MyCommonUtils.isBlank(childMap.get("serviceImplSuffix").toString()) ?  "service.impl" : childMap.get("serviceImplSuffix").toString().trim();
             this.mapperSuffix = childMap.get("mapperSuffix") == null || MyCommonUtils.isBlank(childMap.get("mapperSuffix").toString()) ?  "persistence" : childMap.get("mapperSuffix").toString().trim();
             this.xmlSuffix = childMap.get("xmlSuffix") == null || MyCommonUtils.isBlank(childMap.get("xmlSuffix").toString()) ?  "persistence.xml" : childMap.get("xmlSuffix").toString().trim();
+            this.classpathXml = childMap.get("classpathXml") == null || MyCommonUtils.isBlank(childMap.get("classpathXml").toString()) ?  "" : childMap.get("classpathXml").toString().trim();
             this.controlJsonSuffix = childMap.get("controlJsonSuffix") == null || MyCommonUtils.isBlank(childMap.get("controlJsonSuffix").toString()) ?  "controller" : childMap.get("controlJsonSuffix").toString().trim();
             this.controlMortalSuffix = childMap.get("controlMortalSuffix") == null || MyCommonUtils.isBlank(childMap.get("controlMortalSuffix").toString()) ?  "" : childMap.get("controlMortalSuffix").toString().trim();
 
@@ -290,9 +297,20 @@ public class Home {
      * /Users/neo/Desktop/my-work/arbitrage/webapi/src/main/java/
      * @param resPaths 参数
      */
-    private void gainTheProPath(String resPaths) {
+    private void gainTheProJavaPath(String resPaths) {
         String path = resPaths.replaceAll("/target/classes", "/src/main/java");
-        this.proPath = path.replaceAll("application.yml|application.yaml", "");
+        this.proJavaPath = path.replaceAll("application.yml|application.yaml", "");
+    }
+
+    /**
+     * 多模块的环境下 System.getProperty("user.dir") 获得的路径不够深入 所以用classLoader处理
+     * /Users/neo/Desktop/my-work/arbitrage/webapi/target/classes/application.yml
+     * /Users/neo/Desktop/my-work/arbitrage/webapi/src/main/resources/
+     * @param resPaths 参数
+     */
+    private void gainTheProResourcePath(String resPaths) {
+        String path = resPaths.replaceAll("/target/classes", "/src/main/resources");
+        this.proResourcePath = path.replaceAll("application.yml|application.yaml", "");
     }
 
     /**
@@ -368,7 +386,7 @@ public class Home {
 
         String result = "";
 
-        GenEntity.DataBaseTools dataBaseTools = new GenEntity().new DataBaseTools();
+        DataBaseTools dataBaseTools = new DataBaseTools();
 
         Connection conn = dataBaseTools.openConnection(); // 得到数据库连接
         PreparedStatement pstmt = null;

@@ -66,6 +66,7 @@ public class MedusaInterceptor implements Interceptor {
 
             Map<String, Object> p;
 
+            //批量插入 解析不了 多级对象如 pobj.param1.id 只能解析到param1.id 所以需要做以下区分功能
             if (invocation.getArgs()[1] instanceof Map) {//1.方法里有两个参数以上或参数类型为array或list 则mybatis会自动封装它为 map集合 modify by neo on 2020.02.13
 
                 p = (Map<String, Object>) invocation.getArgs()[1];
@@ -87,10 +88,13 @@ public class MedusaInterceptor implements Interceptor {
 
             processMedusaMethod(medusaMethodName, result, invocation, p, mt);
 
-            if(p.containsKey("pobj"))//第二种情况清除新建的 hashmap
+
+            if(p.containsKey("pobj")) {//第二种情况清除新建的 hashmap
+                System.out.println("ooooooooooooo===" + p.size());
                 p.clear();//help gc
-            else//第一种情况 只删除put进去的msid
+            } else {//第一种情况 只删除put进去的msid
                 p.remove("msid");
+            }
 
         } else {///如果为用户的自定义普通方法 或者 插入UUID方法
 
