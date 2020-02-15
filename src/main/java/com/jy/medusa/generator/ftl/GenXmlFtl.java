@@ -92,11 +92,10 @@ public class GenXmlFtl {
         try {
             Map<String, Object> map = parse();
 
-            //modify by neo on 2020.02.14
-            String classpathXml = Home.classpathXml;
+            //modify by neo on 2020.02.15
             String path;
-            if(classpathXml.matches("^classpath.*:.*")) {
-                path = Home.proResourcePath + classpathXml.replaceFirst("^classpath.*:", "");
+            if(Home.xmlSuffix.matches("^classpath.*:.*")) {
+                path = Home.proResourcePath + Home.xmlSuffix.replaceFirst("^classpath.*:", "");
             } else {
                 path = Home.proJavaPath + packagePath.replaceAll("\\.", "/");
             }

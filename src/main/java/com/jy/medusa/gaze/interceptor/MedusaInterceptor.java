@@ -90,7 +90,6 @@ public class MedusaInterceptor implements Interceptor {
 
 
             if(p.containsKey("pobj")) {//第二种情况清除新建的 hashmap
-                System.out.println("ooooooooooooo===" + p.size());
                 p.clear();//help gc
             } else {//第一种情况 只删除put进去的msid
                 p.remove("msid");

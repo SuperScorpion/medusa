@@ -56,7 +56,7 @@ public class Home {
     public static String serviceImplSuffix;
     public static String mapperSuffix;
     public static String xmlSuffix;
-    public static String classpathXml;//以classpath开头的xml生成的路径
+//    public static String classpathXml;//以classpath开头的xml生成的路径
 
     public static String controlJsonSuffix;
     public static String controlMortalSuffix;
@@ -187,7 +187,7 @@ public class Home {
         if(MyCommonUtils.isNotBlank(baseServiceSwitch) && (baseServiceSwitch.trim().equalsIgnoreCase("true"))) new GenBaseServiceAndImpl(servicePath, serviceImplPath).process();//处理生成基础的 service
 
         System.out.println("Medusa: The task has been completed...");
-        System.out.println("Since 2016 in Jy - Hangzhou");
+        System.out.println("Since 2016.09 in Compass - Hangzhou - For XBinYa.");
     }
 
     /*private JSONObject parseValidJson(String validJsonStr) {
@@ -217,8 +217,7 @@ public class Home {
         strArrays[3] = "Desert hoist your gravel, obscured the sun shine. - No scars, Aoshilian";
         strArrays[4] = "Sometimes your whole life boils down to one insane move. - Avatar";
 
-        System.out.println(strArrays[x]);
-        System.out.println("Since 2016.09 For XBinYa.");
+        System.out.println("Medusa: " + strArrays[x]);
         System.out.println("Loading.....");
     }
 
@@ -278,7 +277,7 @@ public class Home {
             this.serviceImplSuffix = childMap.get("serviceImplSuffix") == null || MyCommonUtils.isBlank(childMap.get("serviceImplSuffix").toString()) ?  "service.impl" : childMap.get("serviceImplSuffix").toString().trim();
             this.mapperSuffix = childMap.get("mapperSuffix") == null || MyCommonUtils.isBlank(childMap.get("mapperSuffix").toString()) ?  "persistence" : childMap.get("mapperSuffix").toString().trim();
             this.xmlSuffix = childMap.get("xmlSuffix") == null || MyCommonUtils.isBlank(childMap.get("xmlSuffix").toString()) ?  "persistence.xml" : childMap.get("xmlSuffix").toString().trim();
-            this.classpathXml = childMap.get("classpathXml") == null || MyCommonUtils.isBlank(childMap.get("classpathXml").toString()) ?  "" : childMap.get("classpathXml").toString().trim();
+//            this.classpathXml = childMap.get("classpathXml") == null || MyCommonUtils.isBlank(childMap.get("classpathXml").toString()) ?  "" : childMap.get("classpathXml").toString().trim();
             this.controlJsonSuffix = childMap.get("controlJsonSuffix") == null || MyCommonUtils.isBlank(childMap.get("controlJsonSuffix").toString()) ?  "controller" : childMap.get("controlJsonSuffix").toString().trim();
             this.controlMortalSuffix = childMap.get("controlMortalSuffix") == null || MyCommonUtils.isBlank(childMap.get("controlMortalSuffix").toString()) ?  "" : childMap.get("controlMortalSuffix").toString().trim();
 
