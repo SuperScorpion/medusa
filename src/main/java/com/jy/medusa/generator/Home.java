@@ -14,7 +14,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * Created by neo on 16/8/4.
@@ -77,8 +79,7 @@ public class Home {
 
     public void process() {
 
-        System.out.println("Sometimes your whole life boils down to one insane move. XBinYa");
-        System.out.println("Loading...");
+        loadRandomDialogue();
 
 //        loadProperties(medusaProName);
         loadYml();//处理spring boot 里yml相关medusa的配置
@@ -203,6 +204,23 @@ public class Home {
         }
         return result;
     }*/
+
+    private void loadRandomDialogue() {
+
+        Random ran = new Random();
+        int x = ran.nextInt(5);//0,1,2,3,4
+
+        String[] strArrays = new String[5];
+        strArrays[0] = "not born outstanding. - Aogeruimu. Destruction Hammer";
+        strArrays[1] = "Finally, I finally liberated myself. - Geluomu. Hell growl";
+        strArrays[2] = "Trembling bar, everyone. - Akemengde";
+        strArrays[3] = "Desert hoist your gravel, obscured the sun shine. - No scars, Aoshilian";
+        strArrays[4] = "Sometimes your whole life boils down to one insane move. - Avatar";
+
+        System.out.println(strArrays[x]);
+        System.out.println("Since 2016.09 For XBinYa.");
+        System.out.println("Loading.....");
+    }
 
     private void loadYml() {
 

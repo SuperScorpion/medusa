@@ -1,11 +1,12 @@
 package com.jy.medusa.generator.ftl;
 
+import com.jy.medusa.gaze.utils.MyCommonUtils;
+import com.jy.medusa.gaze.utils.MyDateUtils;
+import com.jy.medusa.gaze.utils.SystemConfigs;
+import com.jy.medusa.generator.DataBaseTools;
 import com.jy.medusa.generator.Home;
 import com.jy.medusa.generator.MyGenUtils;
 import com.jy.medusa.generator.ftl.vo.XmlAssociVo;
-import com.jy.medusa.gaze.utils.MyDateUtils;
-import com.jy.medusa.gaze.utils.MyCommonUtils;
-import com.jy.medusa.gaze.utils.SystemConfigs;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -140,7 +141,7 @@ public class GenXmlFtl {
         String[] colSqlNames = null,colFieldNames = null,colTypes = null,colTypesSql = null;
         Integer[] colSizes = null;
 
-        GenEntityFtl.DataBaseTools dataBaseTools = new GenEntityFtl().new DataBaseTools();
+        DataBaseTools dataBaseTools = new DataBaseTools();
 
         Connection conn = dataBaseTools.openConnection(); // 得到数据库连接
         PreparedStatement pstmt = null;
@@ -204,7 +205,7 @@ public class GenXmlFtl {
         for (int i = 0; i < colSqlNames.length; i++) {
 
             if (colSqlNames[i].trim().equalsIgnoreCase(primaryKey)) {
-                resultMapStrList.add("<id column=\"" + colSqlNames[i] + "\" jdbcType=\""+ colTypes[i] +"\" property=\""+ colFieldNames[i] +"\" />");
+                resultMapStrList.add("<id column=\"" + colSqlNames[i] + "\" jdbcType=\""+ colTypes[i] +"\" property=\""+ SystemConfigs.PRIMARY_KEY +"\" />");//modify by neo on 2020.02.15
             } else {
                 resultMapStrList.add("<result column=\"" + colSqlNames[i] + "\" jdbcType=\"" + colTypes[i] + "\" property=\"" + colFieldNames[i] + "\" />");
             }

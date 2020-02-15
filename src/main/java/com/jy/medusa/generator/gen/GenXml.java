@@ -1,8 +1,9 @@
 package com.jy.medusa.generator.gen;
 
-import com.jy.medusa.gaze.utils.MyDateUtils;
 import com.jy.medusa.gaze.utils.MyCommonUtils;
+import com.jy.medusa.gaze.utils.MyDateUtils;
 import com.jy.medusa.gaze.utils.SystemConfigs;
+import com.jy.medusa.generator.DataBaseTools;
 import com.jy.medusa.generator.Home;
 import com.jy.medusa.generator.MyGenUtils;
 
@@ -117,7 +118,7 @@ public class GenXml {
         String[] colSqlNames = null,colFieldNames = null,colTypes = null,colTypesSql = null;
         Integer[] colSizes = null;
 
-        GenEntity.DataBaseTools dataBaseTools = new GenEntity().new DataBaseTools();
+        DataBaseTools dataBaseTools = new DataBaseTools();
 
         Connection conn = dataBaseTools.openConnection(); // 得到数据库连接
         PreparedStatement pstmt = null;
@@ -185,7 +186,7 @@ public class GenXml {
         for (int i = 0; i < colSqlNames.length; i++) {
 
             if (colSqlNames[i].trim().equalsIgnoreCase(primaryKey)) {
-                sb.append("\t\t<id column=\"" + colSqlNames[i] + "\" jdbcType=\"" + colTypes[i] + "\" property=\"" + colFieldNames[i] + "\" />\r\n");
+                sb.append("\t\t<id column=\"" + colSqlNames[i] + "\" jdbcType=\"" + colTypes[i] + "\" property=\"" + SystemConfigs.PRIMARY_KEY + "\" />\r\n");//modify by neo on 2020.02.15
             } else {
                 sb.append("\t\t<result column=\"" + colSqlNames[i] + "\" jdbcType=\"" + colTypes[i] + "\" property=\"" + colFieldNames[i] + "\" />\r\n");
             }
