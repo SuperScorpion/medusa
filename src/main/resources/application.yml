@@ -29,10 +29,12 @@ spring:
     enabled: true
 
 medusa:
-  packagePath: cn.dior.xxx
-  tableName: py_product_store, py_goods_variant
+  packagePath: com.dior.provider
+  tableName: bac_logs,xxx,xxx
   author: monster
-  baseServiceSwitch:
+  mapperSuffix:
+  xmlSuffix: classpath:/xml
+  baseServiceSwitch: yes
   ftlDirPath: /Users/neo/Desktop/template
   jdbc:
     url: jdbc:mysql://127.0.0.1:3306/cms?autoReconnect=true&useSSL=false

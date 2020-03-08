@@ -850,9 +850,9 @@ public class MySqlGenerator {
                 i++;
             }
 
-            return null;
+            return new ArrayList<>();
         } else {
-            return null;
+            return new ArrayList<>();
         }
     }
 
@@ -883,9 +883,9 @@ public class MySqlGenerator {
                 i++;
             }
 
-            return null;
+            return new ArrayList<>();
         } else {
-            return null;
+            return new ArrayList<>();
         }
     }
 
