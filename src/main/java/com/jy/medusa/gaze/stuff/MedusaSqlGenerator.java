@@ -4,9 +4,10 @@ package com.jy.medusa.gaze.stuff;
 import com.jy.medusa.gaze.stuff.exception.MedusaException;
 import com.jy.medusa.gaze.stuff.param.*;
 import com.jy.medusa.gaze.stuff.param.gele.*;
-import com.jy.medusa.gaze.utils.MyCommonUtils;
-import com.jy.medusa.gaze.utils.MyDateUtils;
-import com.jy.medusa.gaze.utils.MyReflectionUtils;
+import com.jy.medusa.gaze.stuff.param.mix.*;
+import com.jy.medusa.gaze.utils.MedusaCommonUtils;
+import com.jy.medusa.gaze.utils.MedusaDateUtils;
+import com.jy.medusa.gaze.utils.MedusaReflectionUtils;
 import com.jy.medusa.gaze.utils.SystemConfigs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,9 +17,9 @@ import java.util.*;
 /**
  * Created by neo on 16/7/27.
  */
-public class MySqlGenerator {
+public class MedusaSqlGenerator {
 
-    private static final Logger logger = LoggerFactory.getLogger(MySqlGenerator.class);
+    private static final Logger logger = LoggerFactory.getLogger(MedusaSqlGenerator.class);
 
     private Set<String>    columns;
     private String        columnsStr;
@@ -30,13 +31,13 @@ public class MySqlGenerator {
     private Class<?> entityClass;
 
 
-    public MySqlGenerator(Map<String, String> cfMap, Map<String, String> ftMap, String tableName, String pkColumnName, Class<?> entityClass) {
+    public MedusaSqlGenerator(Map<String, String> cfMap, Map<String, String> ftMap, String tableName, String pkColumnName, Class<?> entityClass) {
         this.columns = cfMap.keySet();
         this.tableName = tableName;
         this.pkName = pkColumnName;
-        this.columnsStr = MyCommonUtils.join(this.columns, ",");
+        this.columnsStr = MedusaCommonUtils.join(this.columns, ",");
         this.currentColumnFieldNameMap = cfMap;
-        this.currentFieldColumnNameMap = MyHelper.exchangeKeyValues(cfMap);
+        this.currentFieldColumnNameMap = MedusaSqlHelper.exchangeKeyValues(cfMap);
         this.currentFieldTypeNameMap = ftMap;///modify by neo on 2016.12.15
 
         this.entityClass = entityClass;
@@ -64,7 +65,7 @@ public class MySqlGenerator {
 
         if(paramColumn.equals("*")) paramColumn = columnsStr;
 
-        String dynamicSqlForBatch = MyHelper.concatInsertDynamicSqlForBatch(currentColumnFieldNameMap, currentFieldTypeNameMap, t, paramColumn, pkName, String.valueOf(mycatSeq));
+        String dynamicSqlForBatch = MedusaSqlHelper.concatInsertDynamicSqlForBatch(currentColumnFieldNameMap, currentFieldTypeNameMap, t, paramColumn, pkName, String.valueOf(mycatSeq));
 
         int sbbLength = paramColumn.length() + tableName.length() + dynamicSqlForBatch.length() + 33;
 
@@ -93,7 +94,7 @@ public class MySqlGenerator {
 
         if(paramColumn.equals("*")) paramColumn = columnsStr;
 
-        String dynamicSqlForBatch = MyHelper.concatInsertDynamicSqlForBatch(currentColumnFieldNameMap, currentFieldTypeNameMap, t, paramColumn, pkName, null);
+        String dynamicSqlForBatch = MedusaSqlHelper.concatInsertDynamicSqlForBatch(currentColumnFieldNameMap, currentFieldTypeNameMap, t, paramColumn, pkName, null);
 
         int sbbLength = paramColumn.length() + tableName.length() + dynamicSqlForBatch.length() + 33;
 
@@ -117,7 +118,7 @@ public class MySqlGenerator {
     public String sqlOfInsert() {//modify by neo on 2016.11.12 Object t
 //        List<Object> values = obtainFieldValues(t);// modify by neo on 2016.11.15
 
-        String[] paraArray = MyHelper.concatInsertDynamicSql(currentFieldTypeNameMap, currentFieldColumnNameMap, null, pkName);
+        String[] paraArray = MedusaSqlHelper.concatInsertDynamicSql(currentFieldTypeNameMap, currentFieldColumnNameMap, null, pkName);
         String insertColumn = paraArray[1], insertDynamicSql = paraArray[0];
 
         int sbbLength = insertColumn.length() + tableName.length() + insertDynamicSql.length() + 33;
@@ -143,7 +144,7 @@ public class MySqlGenerator {
 
         if(t == null) throw new MedusaException("Medusa: The entity param is null");
 
-        String[] dynamicSqlForSelective = MyHelper.concatInsertDynamicSql(currentFieldTypeNameMap, currentFieldColumnNameMap, t, pkName);
+        String[] dynamicSqlForSelective = MedusaSqlHelper.concatInsertDynamicSql(currentFieldTypeNameMap, currentFieldColumnNameMap, t, pkName);
         String insertColumn = dynamicSqlForSelective[1], insertDynamicSql = dynamicSqlForSelective[0];
 
         int sbbLength = insertColumn.length() + tableName.length() + insertDynamicSql.length() + 33;
@@ -167,7 +168,7 @@ public class MySqlGenerator {
     private List<Object> obtainFieldValues(Object t) {
         List<Object> values = new ArrayList<>();
         for (String column : columns) {
-            Object value = MyReflectionUtils.obtainFieldValue(t, currentColumnFieldNameMap.get(column));
+            Object value = MedusaReflectionUtils.obtainFieldValue(t, currentColumnFieldNameMap.get(column));
             value = handleValue(value);
             values.add(value);
         }
@@ -185,12 +186,12 @@ public class MySqlGenerator {
             value = "\'" + value + "\'";
         } else if (value instanceof Date) {
             Date date = (Date) value;
-            value = "\'" + MyDateUtils.convertDateToStr(date, SystemConfigs.DATE_FULL_STR) + "\'";
+            value = "\'" + MedusaDateUtils.convertDateToStr(date, SystemConfigs.DATE_FULL_STR) + "\'";
             //value = "TO_TIMESTAMP('" + dateStr + "','YYYY-MM-DD HH24:MI:SS.FF3')";
         } else if (value instanceof Boolean) {
             Boolean v = (Boolean) value;
             value = v ? 1 : 0;//TODO true 1 false 0
-        }else if(null == value || MyCommonUtils.isBlank(value.toString())) {
+        }else if(null == value || MedusaCommonUtils.isBlank(value.toString())) {
             value = "null";
         }
         return value;
@@ -277,7 +278,7 @@ public class MySqlGenerator {
         if (values == null || values.isEmpty()) {
             sqlBuild.append("1!=1");//modify by neo on 2017 07
         } else {
-            sqlBuild.append(MyCommonUtils.join(values, " AND "));
+            sqlBuild.append(MedusaCommonUtils.join(values, " AND "));
         }
 
         String sql = sqlBuild.toString();
@@ -298,7 +299,7 @@ public class MySqlGenerator {
         List<String> colVals = new ArrayList<>();
         for (String column : columns) {
             String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
-            Object value = MyReflectionUtils.obtainFieldValue(t, fieldName);
+            Object value = MedusaReflectionUtils.obtainFieldValue(t, fieldName);
             if (value != null) {
 //                colVals.add(column + "=" + handleValue(value));
                 colVals.add(column + "=" + "#{pobj." + fieldName + "}");///modify by neo on 2016.11.12
@@ -325,7 +326,7 @@ public class MySqlGenerator {
 
         if(paramColumn != columnsStr && notContainPkName) paramColumn = pkName + "," + paramColumn;/////modify by neo on 2017.04.20
 
-        String dynamicSqlForBatch = MyHelper.concatUpdateDynamicSqlValuesForBatchPre(tableName, t, paramColumn, currentColumnFieldNameMap, pkName);
+        String dynamicSqlForBatch = MedusaSqlHelper.concatUpdateDynamicSqlValuesForBatchPre(tableName, t, paramColumn, currentColumnFieldNameMap, pkName);
 
         logger.debug("Medusa: Generated SQL ^_^ " + dynamicSqlForBatch);
 
@@ -342,7 +343,7 @@ public class MySqlGenerator {
     public String sqlOfModify(Object t) {
 
         List<String> values = obtainColumnValusForModify(t);
-        //Object id = MyReflectionUtils.obtainFieldValue(t, currentColumnFieldNameMap.get(pkName));
+        //Object id = MedusaReflectionUtils.obtainFieldValue(t, currentColumnFieldNameMap.get(pkName));
 
         //if(id == null) throw new MedusaException("Medusa: Update method incoming primary key value is null (selective)");//modify by neo on 2016.11.04
 
@@ -354,7 +355,7 @@ public class MySqlGenerator {
 
         StringBuilder sqlBuild = new StringBuilder(len);
         sqlBuild.append("UPDATE ").append(tableName).append(" SET ")
-                .append(MyCommonUtils.join(values, ",")).append(" WHERE ")
+                .append(MedusaCommonUtils.join(values, ",")).append(" WHERE ")
                 .append(pkName).append(" = ").append("#{pobj.").append(currentColumnFieldNameMap.get(pkName)).append("}");///modify by neo on 2019.08.20
 
         String sql = sqlBuild.toString();
@@ -379,9 +380,9 @@ public class MySqlGenerator {
 
             String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
 
-            Object value = MyReflectionUtils.invokeGetterMethod(t, fieldName);/// modify on 2016 11 21 by neo cause:先查询出来对象了 再更新对象的话 会更新到动态代理的 对象类 就会抛出找不到属性的异常问题 改为反射执行get属性方法则可以
+            Object value = MedusaReflectionUtils.invokeGetterMethod(t, fieldName);/// modify on 2016 11 21 by neo cause:先查询出来对象了 再更新对象的话 会更新到动态代理的 对象类 就会抛出找不到属性的异常问题 改为反射执行get属性方法则可以
 
-//            Object value = MyReflectionUtils.obtainFieldValue(t, fieldName);
+//            Object value = MedusaReflectionUtils.obtainFieldValue(t, fieldName);
 
             if (value != null && !column.equalsIgnoreCase(pkName)) {
 //                colVals.add(column + "=" + handleValue(value));
@@ -410,7 +411,7 @@ public class MySqlGenerator {
 
         StringBuilder sqlBuild = new StringBuilder(len);
         sqlBuild.append("UPDATE ").append(tableName).append(" SET ")
-                .append(MyCommonUtils.join(values, ",")).append(" WHERE ")
+                .append(MedusaCommonUtils.join(values, ",")).append(" WHERE ")
                 .append(pkName).append(" = ").append("#{param1.").append(currentColumnFieldNameMap.get(pkName)).append("}");///modify by neo on 2020.02.13
 
         String sql = sqlBuild.toString();
@@ -428,7 +429,7 @@ public class MySqlGenerator {
     private List<String> obtainColumnValsForModifyNull(List<Object> parList) {
         List<String> colVals = new ArrayList<>();
         for (String column : columns) {
-//            Object value = MyReflectionUtils.obtainFieldValue(t, fieldName);
+//            Object value = MedusaReflectionUtils.obtainFieldValue(t, fieldName);
             if (!column.equalsIgnoreCase(pkName) && parList.contains(column)) {
                 String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
 //                colVals.add(column + "=" + handleValue(value));
@@ -467,7 +468,7 @@ public class MySqlGenerator {
         if (values == null || values.isEmpty()) {
             sqlBuild.append("1=1");
         } else {
-            sqlBuild.append(MyCommonUtils.join(values, " AND "));
+            sqlBuild.append(MedusaCommonUtils.join(values, " AND "));
         }
 
         sqlBuild.append(" limit 0,1");
@@ -559,7 +560,7 @@ public class MySqlGenerator {
         if (values == null || values.isEmpty()) {
             sqlBuild.append("1=1");
         } else {
-            sqlBuild.append(MyCommonUtils.join(values, " AND "));
+            sqlBuild.append(MedusaCommonUtils.join(values, " AND "));
         }
 
         String sql = sqlBuild.toString();
@@ -581,7 +582,7 @@ public class MySqlGenerator {
         List<String> colVals = new ArrayList<>();
         for (String column : columns) {
             String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
-            Object value = MyReflectionUtils.obtainFieldValue(t, fieldName);
+            Object value = MedusaReflectionUtils.obtainFieldValue(t, fieldName);
             if (value != null) {
 //                colVals.add(column + "=" + handleValue(value));
                 colVals.add(column + "=" + "#{param1." + fieldName + "}");///modify by neo on 2020.02.13
@@ -603,7 +604,7 @@ public class MySqlGenerator {
 //        boolean isValidColumn = (ps == null || ps.length != 1 || ps[0] == null || ((Object[])ps[0]).length == 0);
         boolean isValidColumn = (ps == null || ps.length == 0);//modify by neo on 2020.01.17
 
-        return isValidColumn ? columnsStr : MyHelper.buildColumnNameForSelect(ps, currentFieldColumnNameMap);
+        return isValidColumn ? columnsStr : MedusaSqlHelper.buildColumnNameForSelect(ps, currentFieldColumnNameMap);
     }
 
     /**
@@ -613,7 +614,7 @@ public class MySqlGenerator {
      */
     public String sqlOfFindAll(Object[] objParams) {
 
-        String paramColumn = (objParams == null || objParams.length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect(objParams, currentFieldColumnNameMap);
+        String paramColumn = (objParams == null || objParams.length == 0) ? columnsStr : MedusaSqlHelper.buildColumnNameForSelect(objParams, currentFieldColumnNameMap);
 
         int len = 20 + tableName.length() + paramColumn.length();
 
@@ -634,11 +635,11 @@ public class MySqlGenerator {
     public String sqlOfFindAllCount(Object[] objParams) {
 
         //从缓存里拿到分页查询语句 必须清理掉缓存
-        String cacheSq = MyHelper.myThreadLocal.get();
+        String cacheSq = MedusaSqlHelper.myThreadLocal.get();
 
-        if (MyCommonUtils.isNotBlank(cacheSq)) {
+        if (MedusaCommonUtils.isNotBlank(cacheSq)) {
 
-            MyHelper.myThreadLocal.remove();
+            MedusaSqlHelper.myThreadLocal.remove();
             logger.debug("Medusa: Successfully cleared the query page in the cache");
 
             String countSq = cacheSq.replaceAll("SELECT\\b.*\\bFROM", "SELECT COUNT(1) FROM").replaceAll("\\border by\\b.*", "");
@@ -665,7 +666,7 @@ public class MySqlGenerator {
         if (values == null || values.isEmpty()) {
             sbb.append("1=1");
         } else {
-            sbb.append(MyCommonUtils.join(values, " AND "));
+            sbb.append(MedusaCommonUtils.join(values, " AND "));
         }
 
         //3.objParams 里的多条件查询类型参数处理
@@ -675,11 +676,11 @@ public class MySqlGenerator {
 
             for (Object z : objParams) {///先遍历条件like between类
 
-                if(z instanceof MyRestrictions) {//modify by neo on 2016.12.09  if(z instanceof BaseParam) {
+                if(z instanceof BaseRestrictions) {//modify by neo on 2016.12.09  if(z instanceof BaseParam) {
 
                     short v = 0;
 
-                    List<BaseParam> paramList = ((MyRestrictions) z).getParamList();
+                    List<BaseParam> paramList = ((BaseRestrictions) z).getParamList();
 
                     if(paramList != null && !paramList.isEmpty()) {
 
@@ -714,14 +715,14 @@ public class MySqlGenerator {
 
         //获取到缓存中的分页查询语句 modify by neo on 2016.11.16
         ///分页时先执行查询分页再执行查询分页 再执行总计数句 boundsql(因为)
-        String cacheSq = MyHelper.myThreadLocal.get();
-        if (MyCommonUtils.isNotBlank(cacheSq)) {
+        String cacheSq = MedusaSqlHelper.myThreadLocal.get();
+        if (MedusaCommonUtils.isNotBlank(cacheSq)) {
             logger.debug("Medusa: Successfully returns the query page in the cache ^_^ " + cacheSq);
             return cacheSq;
         }
 
         //1.objParams 里的column字段名参数处理
-        String paramColumn = (objParams == null || objParams.length == 0) ? columnsStr : MyHelper.buildColumnNameForSelect(objParams, currentFieldColumnNameMap);
+        String paramColumn = (objParams == null || objParams.length == 0) ? columnsStr : MedusaSqlHelper.buildColumnNameForSelect(objParams, currentFieldColumnNameMap);
 
         //2.objParams 里的entity实体类型参数处理
         List<String> values = obtainMedusaGazeS(objParams);
@@ -742,7 +743,7 @@ public class MySqlGenerator {
         if (values == null || values.isEmpty()) {
             sbb.append("1=1");
         } else {
-            sbb.append(MyCommonUtils.join(values, " AND "));
+            sbb.append(MedusaCommonUtils.join(values, " AND "));
         }
 
         //4.objParams 里的多条件查询类型参数处理
@@ -754,11 +755,11 @@ public class MySqlGenerator {
 
             for (Object z : objParams) {///先遍历条件like between类
 
-                if(z instanceof MyRestrictions) {//modify by neo on 2016.12.09  if(z instanceof BaseParam) {
+                if(z instanceof BaseRestrictions) {//modify by neo on 2016.12.09  if(z instanceof BaseParam) {
 
                     short v = 0;
 
-                    List<BaseParam> paramList = ((MyRestrictions) z).getParamList();
+                    List<BaseParam> paramList = ((BaseRestrictions) z).getParamList();
 
                     if(paramList != null && !paramList.isEmpty()) {
 
@@ -801,7 +802,7 @@ public class MySqlGenerator {
                 sbb.append(pa.getPageSize());
 
                 //缓存了分页的查询语句
-                MyHelper.myThreadLocal.set(sbb.toString());
+                MedusaSqlHelper.myThreadLocal.set(sbb.toString());
                 logger.debug("Medusa: Successfully saved the page query statement to the cache ^_^ " + sbb.toString());
             }
         }
@@ -836,9 +837,9 @@ public class MySqlGenerator {
 
                         if (entry != null && entry.getKey() instanceof String && entry.getValue() != null) {//modify by neo on 2020.01.19
 
-                            if(MyCommonUtils.isBlank(entry.getKey())) continue;
+                            if(MedusaCommonUtils.isBlank(entry.getKey())) continue;
 
-                            String column = MyHelper.buildColumnNameForMedusaGaze(entry.getKey(), currentFieldColumnNameMap);
+                            String column = MedusaSqlHelper.buildColumnNameForMedusaGaze(entry.getKey(), currentFieldColumnNameMap);
 
                             colVals.add(column + "=" + "#{array[" + i + "]." + entry.getKey() + "}");///modify by neo on 2020.02.13
                         }
@@ -872,7 +873,7 @@ public class MySqlGenerator {
                     List<String> colVals = new ArrayList<>();
                     for (String column : columns) {
                         String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
-                        Object value = MyReflectionUtils.obtainFieldValue(o, fieldName);
+                        Object value = MedusaReflectionUtils.obtainFieldValue(o, fieldName);
                         if (value != null) {//modify by neo on 2020.01.19
                             colVals.add(column + "=" + "#{array[" + i + "]." + fieldName + "}");///modify by neo on 2020.02.13
                         }
@@ -900,10 +901,10 @@ public class MySqlGenerator {
      */
     public void baseParamHandler(StringBuilder sbb, Object z, short isd, short ind) {
 
-        if(z == null || MyCommonUtils.isBlank(((BaseParam) z).getColumn())) return;
+        if(z == null || MedusaCommonUtils.isBlank(((BaseParam) z).getColumn())) return;
 
         //转换一下column的属性值 也许是数据库字段 也有可能是属性值
-        String column = MyHelper.buildColumnNameForMedusaGaze(((BaseParam) z).getColumn(), currentFieldColumnNameMap);
+        String column = MedusaSqlHelper.buildColumnNameForMedusaGaze(((BaseParam) z).getColumn(), currentFieldColumnNameMap);
 
         if (z instanceof BaseComplexParam) {
 
@@ -911,7 +912,7 @@ public class MySqlGenerator {
 
                 Object p = ((SingleParam) z).getValue();
 
-                if(p != null && MyCommonUtils.isNotBlank(p.toString())) {
+                if(p != null && MedusaCommonUtils.isNotBlank(p.toString())) {
                     sbb.append(" AND ").append(column).append(" = ").append("#{array[").append(isd).append("].paramList[").append(ind).append("].value}");///modify by neo on 2020.02.13
                 }
 
@@ -921,7 +922,7 @@ public class MySqlGenerator {
 
                 if(start != null) {
                     sbb.append(" AND ").append(column).append(" BETWEEN ")
-                            //.append("'").append(MyDateUtils.convertDateToStr(p.getEnd(), MyDateUtils.DATE_FULL_STR)).append("'")
+                            //.append("'").append(MedusaDateUtils.convertDateToStr(p.getEnd(), MedusaDateUtils.DATE_FULL_STR)).append("'")
                             .append("#{array[").append(isd).append("].paramList[").append(ind).append("].start}")///modify by neo on 2020.02.13
                             .append(" AND ")
                             .append("#{array[").append(isd).append("].paramList[").append(ind).append("].end}");///modify by neo on 2020.02.13
@@ -953,7 +954,7 @@ public class MySqlGenerator {
 
                 Object p = ((LikeParam) z).getValue();
 
-                if(p != null && MyCommonUtils.isNotBlank(p.toString())) {
+                if(p != null && MedusaCommonUtils.isNotBlank(p.toString())) {
                     sbb.append(" AND ").append(column).append(" LIKE ").append("CONCAT('%',#{array[").append(isd).append("].paramList[").append(ind).append("].value},'%')");///modify by neo on 2020.02.13
                 }
             } else if (z instanceof NotNullParam) {

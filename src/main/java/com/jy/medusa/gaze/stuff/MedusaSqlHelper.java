@@ -3,13 +3,13 @@ package com.jy.medusa.gaze.stuff;
 import com.jy.medusa.gaze.stuff.annotation.Column;
 import com.jy.medusa.gaze.stuff.annotation.Id;
 import com.jy.medusa.gaze.stuff.annotation.Table;
-import com.jy.medusa.gaze.stuff.cache.MyHelperCacheManager;
+import com.jy.medusa.gaze.stuff.cache.MedusaSqlHelperCacheManager;
 import com.jy.medusa.gaze.stuff.cache.MyReflectCacheManager;
 import com.jy.medusa.gaze.stuff.exception.MedusaException;
-import com.jy.medusa.gaze.utils.MyCommonUtils;
-import com.jy.medusa.gaze.utils.MyReflectionUtils;
+import com.jy.medusa.gaze.utils.MedusaCommonUtils;
+import com.jy.medusa.gaze.utils.MedusaReflectionUtils;
 import com.jy.medusa.gaze.utils.SystemConfigs;
-import com.jy.medusa.generator.MyGenUtils;
+import com.jy.medusa.generator.MedusaGenUtils;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -40,9 +40,9 @@ import java.util.Map;
 /**
  * Created by neo on 16/9/14.
  */
-public class MyHelper {
+public class MedusaSqlHelper {
 
-    private static final Logger logger = LoggerFactory.getLogger(MyHelper.class);
+    private static final Logger logger = LoggerFactory.getLogger(MedusaSqlHelper.class);
 
     //主要是为了解决 分页时 多次生成查询分页语句和总计数的查询语句时 缓存分页的查询语句
     public static ThreadLocal<String> myThreadLocal = new ThreadLocal<>();
@@ -145,23 +145,23 @@ public class MyHelper {
      * @param m 参数
      * @return 返回值类型
      */
-    public static MySqlGenerator getSqlGenerator(Map<String, Object> m) {
+    public static MedusaSqlGenerator getSqlGenerator(Map<String, Object> m) {
 
         String p = m.get("msid").toString();
 
-        MySqlGenerator por = MyHelperCacheManager.getCacheGenerator(p);
+        MedusaSqlGenerator por = MedusaSqlHelperCacheManager.getCacheGenerator(p);
 
         if(por != null) {
             return por;
         } else {
             Class<?> c = getEntityClass(p);
-            MySqlGenerator q = initSqlGenerator(c);
-            MySqlGenerator msr = MyHelperCacheManager.putCacheGenerator(p, q);
+            MedusaSqlGenerator q = initSqlGenerator(c);
+            MedusaSqlGenerator msr = MedusaSqlHelperCacheManager.putCacheGenerator(p, q);
 
             if(msr != null) {
                 return msr;
             } else {
-                logger.debug("Medusa: Successfully initialize the " + c.getSimpleName() + " Basic information of MySqlGenerator!");
+                logger.debug("Medusa: Successfully initialize the " + c.getSimpleName() + " Basic information of MedusaSqlGenerator!");
                 return q;
             }
         }
@@ -178,7 +178,7 @@ public class MyHelper {
 
         String sn = mapperClass.getSimpleName();
 
-        ///Class<?> ps = MyHelperCacheManager.getCacheClass(sn);///modify by neo on 2016.12.1
+        ///Class<?> ps = MedusaSqlHelperCacheManager.getCacheClass(sn);///modify by neo on 2016.12.1
 
         //if (ps != null) {
         //    return ps;
@@ -189,8 +189,8 @@ public class MyHelper {
                 ParameterizedType t = (ParameterizedType) type;
                 if (t.getRawType() == mapperClass || ((Class<?>) t.getRawType()).isAssignableFrom(mapperClass)) {
                     Class<?> returnType = (Class<?>) t.getActualTypeArguments()[0];
-//                        MyHelperCacheManager.putCacheClass(sn, returnType);///modify by neo on 2016.12.1
-                    logger.debug("Medusa:Successfully initialize the " + sn + " cache information");
+//                        MedusaSqlHelperCacheManager.putCacheClass(sn, returnType);///modify by neo on 2016.12.1
+                    logger.debug("Medusa: Successfully initialize the " + sn + " cache information");
                     return returnType;
                 }
             }
@@ -217,15 +217,15 @@ public class MyHelper {
     }
 
     ////Solving high concurrency problems modify by neo on 2017.07.19
-    /*private static synchronized MySqlGenerator initAndCacheGenerator(String p) {
+    /*private static synchronized MedusaSqlGenerator initAndCacheGenerator(String p) {
 
-        MySqlGenerator por = MyHelperCacheManager.getCacheGenerator(p);
+        MedusaSqlGenerator por = MedusaSqlHelperCacheManager.getCacheGenerator(p);
         if(por != null) return por;
 
         Class<?> c = getEntityClass(p);
-        MySqlGenerator q = initSqlGenerator(c);
-        MyHelperCacheManager.putCacheGenerator(p, q);
-        logger.debug("Medusa: Successfully initialize the " + c.getSimpleName() + " Basic information of MySqlGenerator!");
+        MedusaSqlGenerator q = initSqlGenerator(c);
+        MedusaSqlHelperCacheManager.putCacheGenerator(p, q);
+        logger.debug("Medusa: Successfully initialize the " + c.getSimpleName() + " Basic information of MedusaSqlGenerator!");
         return q;
     }*/
 
@@ -234,7 +234,7 @@ public class MyHelper {
      * @param entityClass 参数
      * @return 返回值类型
      */
-    private static MySqlGenerator initSqlGenerator(Class<?> entityClass) {
+    private static MedusaSqlGenerator initSqlGenerator(Class<?> entityClass) {
 
         if(entityClass == null) {
             throw new MedusaException("Medusa: initSqlGenerator No entity type introduced!");
@@ -267,7 +267,7 @@ public class MyHelper {
                     if (field.isAnnotationPresent(Id.class)) pkName = tableColumn.name();
 
                     // 如果未标识特殊的列名，默认取字段名
-                    columnName = MyCommonUtils.isBlank(columnName) ? MyGenUtils.camelToUnderline(fieldName) : columnName.trim();
+                    columnName = MedusaCommonUtils.isBlank(columnName) ? MedusaGenUtils.camelToUnderline(fieldName) : columnName.trim();
 
                     currentFieldTypeNameMap.put(fieldName, field.getType().getSimpleName());
                     currentColumnFieldNameMap.put(columnName, fieldName);
@@ -279,7 +279,7 @@ public class MyHelper {
         if (table == null) throw new MedusaException("Medusa: class - " + entityClass + " Not using @Table annotation identification!");
         tableName = table.name();
 
-        return new MySqlGenerator(currentColumnFieldNameMap, currentFieldTypeNameMap, tableName, pkName, entityClass);
+        return new MedusaSqlGenerator(currentColumnFieldNameMap, currentFieldTypeNameMap, tableName, pkName, entityClass);
     }
 
     /**
@@ -325,13 +325,13 @@ public class MyHelper {
         if(psArray != null && psArray.length != 0) {
             for (Object z : psArray) {//["a,b,b,n,m","a"] 可选的字段有可能是分开写入的 多参数传入的值
 
-                if (z instanceof String && MyCommonUtils.isNotBlank(z.toString())) {
+                if (z instanceof String && MedusaCommonUtils.isNotBlank(z.toString())) {
 
                     String[] p = z.toString().split(",");//modify by neo on 2016.12.04
 
                     for (String m : p) {
 
-                        if (MyCommonUtils.isNotBlank(m)) {
+                        if (MedusaCommonUtils.isNotBlank(m)) {
 
                             sbb.append(buildColumnNameForMedusaGaze(m, currentFieldColumnNameMap));
 
@@ -375,13 +375,13 @@ public class MyHelper {
      */
     public static String convertEntityName2SqlName(String pss) {
 
-//        String[] p = MyCommonUtils.split(pss, ",");
+//        String[] p = MedusaCommonUtils.split(pss, ",");
         String[] p = pss.split(",");
 
         StringBuilder sbb = new StringBuilder();
 
         for(String m : p) {
-            sbb.append(MyGenUtils.camelToUnderline(m));
+            sbb.append(MedusaGenUtils.camelToUnderline(m));
             sbb.append(",");
         }
 
@@ -559,7 +559,7 @@ public class MyHelper {
 
             String fieName = entry.getKey();
 
-            if (t == null || (t != null && MyReflectionUtils.obtainFieldValue(t, fieName) != null)) {///modify by neo on 20170117 selective
+            if (t == null || (t != null && MedusaReflectionUtils.obtainFieldValue(t, fieName) != null)) {///modify by neo on 20170117 selective
 
                /* if (fieName.trim().equalsIgnoreCase(primaryKeyColumn)) {
 
@@ -604,7 +604,7 @@ public class MyHelper {
      */
     public static String concatInsertDynamicSqlForBatch(Map<String, String> currentColumnFieldNameMap, Map<String, String> currentFieldTypeNameMap, Object t, String paramColumn, String primaryKeyColumn, String myCatSequence) {
 
-        boolean myCatFlag = MyCommonUtils.isNotBlank(myCatSequence);//modify by neo on 2019.08.07 for mycat
+        boolean myCatFlag = MedusaCommonUtils.isNotBlank(myCatSequence);//modify by neo on 2019.08.07 for mycat
 
         List<Object> obs = t instanceof List ? (ArrayList)t : new ArrayList<>();
 
@@ -625,7 +625,7 @@ public class MyHelper {
 
                 String fieName = currentColumnFieldNameMap.get(col);
 
-                if(MyCommonUtils.isBlank(fieName)) throw new MedusaException("Medusa: The insertBatch method failed. It might be a field spelling error!");
+                if(MedusaCommonUtils.isBlank(fieName)) throw new MedusaException("Medusa: The insertBatch method failed. It might be a field spelling error!");
 
                 if (myCatFlag && col.trim().equalsIgnoreCase(primaryKeyColumn)) {//modify by neo on 2019.08.07 for mycat
                     sbb.append("next value for ").append(myCatSequence).append(",");
@@ -635,7 +635,7 @@ public class MyHelper {
                     sbb.append("].");
                     sbb.append(fieName);
                     sbb.append(", jdbcType=");
-                    sbb.append(MyHelper.javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)));
+                    sbb.append(MedusaSqlHelper.javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)));
                     sbb.append("},");
                 }
             }
@@ -804,14 +804,14 @@ public class MyHelper {
         boolean result = true;
         int i = 0;
         for(Object s : obs) {
-            Object k = MyReflectionUtils.obtainFieldValue(s, currentColumnFieldNameMap.get(columns));
+            Object k = MedusaReflectionUtils.obtainFieldValue(s, currentColumnFieldNameMap.get(columns));
             if(k != null) i++;
         }
 
         if(i == obs.size()) {
             return false;
         } else if(i < obs.size() && i > 0) {
-            logger.warn("Because of the column [{}] attribute values are not uniform in batch updates, some column attributes are updated to null.", columns);
+            logger.warn("Medusa: Because of the column [{}] attribute values are not uniform in batch updates, some column attributes are updated to null.", columns);
             return false;
         } else {
           return result;

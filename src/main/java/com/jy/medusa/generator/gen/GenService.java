@@ -1,9 +1,9 @@
 package com.jy.medusa.generator.gen;
 
-import com.jy.medusa.gaze.utils.MyDateUtils;
-import com.jy.medusa.gaze.utils.MyCommonUtils;
+import com.jy.medusa.gaze.utils.MedusaDateUtils;
+import com.jy.medusa.gaze.utils.MedusaCommonUtils;
 import com.jy.medusa.generator.Home;
-import com.jy.medusa.generator.MyGenUtils;
+import com.jy.medusa.generator.MedusaGenUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,13 +34,13 @@ public class GenService {
         this.servicePath = servicePath;
         this.serviceImplPath = serviceImplPath;
         this.mapperPath = mapperPath;
-        this.entityName = MyGenUtils.upcaseFirst(tableName);
+        this.entityName = MedusaGenUtils.upcaseFirst(tableName);
 
         this.tag = Home.tag;
 
-        this.markServiceList = MyGenUtils.genTagStrList(entityName + "Service.java", servicePath, tag, "service");
-        this.markServiceImplList = MyGenUtils.genTagStrList(entityName + "ServiceImpl.java", serviceImplPath, tag, "serviceImpl");
-        this.markMapperList = MyGenUtils.genTagStrList(entityName + "Mapper.java", mapperPath, tag, "mapper");
+        this.markServiceList = MedusaGenUtils.genTagStrList(entityName + "Service.java", servicePath, tag, "service");
+        this.markServiceImplList = MedusaGenUtils.genTagStrList(entityName + "ServiceImpl.java", serviceImplPath, tag, "serviceImpl");
+        this.markMapperList = MedusaGenUtils.genTagStrList(entityName + "Mapper.java", mapperPath, tag, "mapper");
     }
 
     public void process() {
@@ -54,20 +54,20 @@ public class GenService {
             file = new File(path);
             if(!file.exists()) {file.mkdirs();}
             String resPath1 = path + "/" + entityName + "Service.java";
-            MyCommonUtils.writeString2File(new File(resPath1), process1(), "UTF-8");
+            MedusaCommonUtils.writeString2File(new File(resPath1), process1(), "UTF-8");
 
             String pathImp = Home.proJavaPath + serviceImplPath.replaceAll("\\.", "/");
             file = new File(pathImp);
             if(!file.exists()) {file.mkdirs();}
             String resPath2 = pathImp + "/" + entityName + "ServiceImpl.java";
-            MyCommonUtils.writeString2File(new File(resPath2), process2(), "UTF-8");
+            MedusaCommonUtils.writeString2File(new File(resPath2), process2(), "UTF-8");
 
             //mapper
             String pathmm = Home.proJavaPath + mapperPath.replaceAll("\\.", "/");
             file = new File(pathmm);
             if(!file.exists()) {file.mkdirs();}
             String resPath3 = pathmm + "/" + entityName + "Mapper.java";
-            MyCommonUtils.writeString2File(new File(resPath3), process3(), "UTF-8");
+            MedusaCommonUtils.writeString2File(new File(resPath3), process3(), "UTF-8");
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -80,18 +80,21 @@ public class GenService {
      */
     private String process1() {
 
+        String medusaStarterServicePacName = Home.checkBaseServiceSwitch() ? "" : "import com.ysl.medusa.base.BaseService;\n";
+
         StringBuilder sbb = new StringBuilder();
 
         sbb.append("package " + servicePath + ";\r\n\r\n");
 
         sbb.append("import " + entityPath + "." + entityName + Home.entityNameSuffix + ";\r\n\r\n");
-        /*sbb.append("import java.util.List;\r\n");*/
 
+        sbb.append(medusaStarterServicePacName);
+        /*sbb.append("import java.util.List;\r\n");*/
         //sbb.append("public interface "+ entityName +"Service {\r\n");
 
         //添加作者
         sbb.append("/**\r\n");
-        sbb.append(" * Created by " + Home.author + " on " + MyDateUtils.convertDateToStr(new Date(), null) + "\r\n");
+        sbb.append(" * Created by " + Home.author + " on " + MedusaDateUtils.convertDateToStr(new Date(), null) + "\r\n");
         sbb.append(" */\r\n");
 
         sbb.append("public interface "+ entityName +"Service extends BaseService<" + entityName+ Home.entityNameSuffix + "> {\r\n");
@@ -102,7 +105,7 @@ public class GenService {
         sbb.append("\tvoid delete" + entityName + "(" + entityName + " entity);\r\n\r\n");
         sbb.append("\tvoid deleteMulti" + entityName + "(List<Integer> ids, Class<" + entityName + "> t);\r\n");*/
 
-        MyGenUtils.processAllRemains(markServiceList, sbb, tag, "service");
+        MedusaGenUtils.processAllRemains(markServiceList, sbb, tag, "service");
 
         sbb.append("}");
 
@@ -115,6 +118,8 @@ public class GenService {
      */
     private String process2() {
 
+        String medusaStarterServiceImplPacName = Home.checkBaseServiceSwitch() ? "" : "import com.ysl.medusa.base.BaseServiceImpl;\n";
+
         StringBuilder sbb = new StringBuilder();
 
         sbb.append("package " + serviceImplPath + ";\r\n\r\n");
@@ -125,12 +130,13 @@ public class GenService {
         sbb.append("import " + servicePath + "." + entityName + "Service;\r\n\r\n");
 //        sbb.append("import java.util.List;\r\n");
 //        sbb.append("import " + baseMapperPath + ";\r\n\r\n");
+        sbb.append(medusaStarterServiceImplPacName);
         sbb.append("import " + "org.springframework.stereotype.Service" + ";\r\n\r\n");
 
 
         //添加作者
         sbb.append("/**\r\n");
-        sbb.append(" * Created by " + Home.author + " on " + MyDateUtils.convertDateToStr(new Date(), null) + "\r\n");
+        sbb.append(" * Created by " + Home.author + " on " + MedusaDateUtils.convertDateToStr(new Date(), null) + "\r\n");
         sbb.append(" */\r\n");
 
         sbb.append("@Service\r\n");
@@ -138,7 +144,7 @@ public class GenService {
         sbb.append("public class " + entityName + "ServiceImpl extends BaseServiceImpl<" + entityName + Home.entityNameSuffix + "> implements " + entityName + "Service {\r\n\r\n");
 
         sbb.append("\t@Resource\r\n");
-        sbb.append("\tprivate " + entityName + "Mapper " + MyGenUtils.lowcaseFirst(entityName) + "Mapper;\r\n\r\n");
+        sbb.append("\tprivate " + entityName + "Mapper " + MedusaGenUtils.lowcaseFirst(entityName) + "Mapper;\r\n\r\n");
         /*sbb.append("\t@Resource\r\n");
         sbb.append("\tprivate Mapper<" + entityName + ",Integer> superMapper;\r\n\r\n");
 
@@ -167,7 +173,7 @@ public class GenService {
         sbb.append("\t\tsuperMapper.removeOfBatch(ids, t);\r\n");
         sbb.append("\t}\r\n");*/
 
-        MyGenUtils.processAllRemains(markServiceImplList, sbb, tag, "serviceImpl");
+        MedusaGenUtils.processAllRemains(markServiceImplList, sbb, tag, "serviceImpl");
 
         sbb.append("}");
 
@@ -189,12 +195,12 @@ public class GenService {
 
         //添加作者
         sbb.append("/**\r\n");
-        sbb.append(" * Created by " + Home.author + " on " + MyDateUtils.convertDateToStr(new Date(), null) + "\r\n");
+        sbb.append(" * Created by " + Home.author + " on " + MedusaDateUtils.convertDateToStr(new Date(), null) + "\r\n");
         sbb.append(" */\r\n");
 
         sbb.append("public interface " + entityName + "Mapper extends Mapper<" + entityName + Home.entityNameSuffix + "> {\r\n");
 
-        MyGenUtils.processAllRemains(markMapperList, sbb, tag, "mapper");
+        MedusaGenUtils.processAllRemains(markMapperList, sbb, tag, "mapper");
 
         sbb.append("}");
 

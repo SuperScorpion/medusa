@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Author neo 2016
+ * Author neo 2016.09.23
  * Bean类 - 分页
  */
 
@@ -15,9 +15,9 @@ public class Pager<T> implements Serializable {
 	public final String[] legalColumn = {SystemConfigs.PRIMARY_KEY, "created_at"};
 	public final String[] legalSort = {"desc", "asc"};
 
-	public final Integer MAX_PAGE_SIZE = 1000;// 每页最大记录数限制
-	
-	
+	public final Integer MAX_PAGE_SIZE = 500;// 每页最大记录数限制
+
+
 	private Integer pageNumber = 1;// 当前页码
 	private Integer pageSize = 10;// 每页记录数
 	private Integer totalCount = 0;// 总记录数
@@ -26,11 +26,16 @@ public class Pager<T> implements Serializable {
 	private String[] orderType = {};// 排序方式
 	private List<T> list;//  数据List
 
+
+	public static Pager getPager() {
+        return new Pager();
+    }
+
 	public Integer getPageNumber() {
 		return pageNumber;
 	}
 
-	public Pager setPageNumber(Integer pageNumber) {
+	public Pager<T> setPageNumber(Integer pageNumber) {
 		if (pageNumber < 1) {
 			pageNumber = 1;
 		}
@@ -42,7 +47,7 @@ public class Pager<T> implements Serializable {
 		return pageSize;
 	}
 
-	public Pager setPageSize(Integer pageSize) {
+	public Pager<T> setPageSize(Integer pageSize) {
 		if (pageSize < 1) {
 			pageSize = 1;
 		} else if (pageSize > MAX_PAGE_SIZE) {
@@ -55,7 +60,7 @@ public class Pager<T> implements Serializable {
 	public Integer getTotalCount() {
 		return totalCount;
 	}
-	
+
 	public void setTotalCount(Integer totalCount) {
 		this.totalCount = totalCount;
 	}
@@ -73,16 +78,16 @@ public class Pager<T> implements Serializable {
 		return orderBy;
 	}
 
-	public Pager setOrderBy(String[] orderBy) {
+	public Pager<T> setOrderBy(String[] orderBy) {
 		this.orderBy = orderBy;
 		return this;
 	}
-	
+
 	public String[] getOrderType() {
 		return orderType;
 	}
 
-	public Pager setOrderType(String[] orderType) {
+	public Pager<T> setOrderType(String[] orderType) {
 		this.orderType = orderType;
 		return this;
 	}

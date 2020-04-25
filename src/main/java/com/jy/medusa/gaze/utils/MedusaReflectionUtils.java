@@ -1,6 +1,6 @@
 package com.jy.medusa.gaze.utils;
 
-import com.jy.medusa.generator.MyGenUtils;
+import com.jy.medusa.generator.MedusaGenUtils;
 import com.jy.medusa.gaze.stuff.cache.MyReflectCacheManager;
 import com.jy.medusa.gaze.stuff.exception.MedusaException;
 
@@ -15,7 +15,7 @@ import java.util.Date;
 /**
  * Created by neo on 16/7/27.
  */
-public class MyReflectionUtils {
+public class MedusaReflectionUtils {
 
     /**
      * 调用Getter方法
@@ -24,7 +24,7 @@ public class MyReflectionUtils {
      * @return 返回值类型
      */
     public static Object invokeGetterMethod(Object obj, String propertyName) {
-        String getterMethodName = "get" + MyGenUtils.upcaseFirst(propertyName);
+        String getterMethodName = "get" + MedusaGenUtils.upcaseFirst(propertyName);
         return invokeMethod(obj, getterMethodName, null, null);
     }
 
@@ -53,13 +53,13 @@ public class MyReflectionUtils {
         if (value == null) return;
 
         propertyType = propertyType != null ? propertyType : value.getClass();
-        String setterMethodName = "set" + MyGenUtils.upcaseFirst(propertyName);
+        String setterMethodName = "set" + MedusaGenUtils.upcaseFirst(propertyName);
         invokeMethod(obj, setterMethodName, new Class<?>[]{propertyType}, new Object[]{value});
     }
 
     private static Object handleValueType(Object obj, String propertyName, Object value) throws ParseException {
 
-        String getterMethodName = "get" + MyGenUtils.upcaseFirst(propertyName);
+        String getterMethodName = "get" + MedusaGenUtils.upcaseFirst(propertyName);
         Class<?> argsType = value.getClass();
         Class<?> returnType = obtainAccessibleMethod(obj, getterMethodName).getReturnType();
 
@@ -69,11 +69,11 @@ public class MyReflectionUtils {
 
         if (returnType == Boolean.class) {
             String temp = value.toString();
-            value = (MyCommonUtils.isNotBlank(temp) && Long.valueOf(temp) > 0) ? true : false;
+            value = (MedusaCommonUtils.isNotBlank(temp) && Long.valueOf(temp) > 0) ? true : false;
         } else if (returnType == Long.class) {
             value = Long.valueOf(value.toString());
         } else if (returnType == Date.class) {
-            value = MyDateUtils.convertStrToDate(value.toString());//TODO
+            value = MedusaDateUtils.convertStrToDate(value.toString());//TODO
         } else if (returnType == Short.class) {
             value = Short.valueOf(value.toString());
         } else if (returnType == BigDecimal.class) {

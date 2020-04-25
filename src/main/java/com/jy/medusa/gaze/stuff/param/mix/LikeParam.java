@@ -1,8 +1,8 @@
-package com.jy.medusa.gaze.stuff.param;
+package com.jy.medusa.gaze.stuff.param.mix;
 
 public class LikeParam extends BaseComplexParam {
 
-    LikeParam(String column, String value) {
+    public LikeParam(String column, String value) {
         this.setColumn(column);
         this.setValue(value);
     }

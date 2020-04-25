@@ -26,7 +26,7 @@ public class SystemConfigs {
     public static final String VALID_LENGTH_PATH = "com.jy.medusa.validator.annotation.Length";
     public static final String MEDUSA_PAGER_PATH = "com.jy.medusa.gaze.stuff.Pager";
 
-    public static final String MEDUSA_MYRESTRICTION_PATH = "com.jy.medusa.gaze.stuff.param.MyRestrictions";
+    public static final String MEDUSA_MYRESTRICTION_PATH = "com.jy.medusa.gaze.stuff.param.MedusaRestrictions";
 
     public static final List<String> MY_ALL_METHOD_NANES_LIST = new ArrayList<>(20);
 

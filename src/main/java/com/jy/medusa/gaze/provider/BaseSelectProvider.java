@@ -1,6 +1,6 @@
 package com.jy.medusa.gaze.provider;
 
-import com.jy.medusa.gaze.stuff.MyHelper;
+import com.jy.medusa.gaze.stuff.MedusaSqlHelper;
 import com.jy.medusa.gaze.stuff.exception.MedusaException;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.session.defaults.DefaultSqlSession;
@@ -21,7 +21,7 @@ public class BaseSelectProvider {
     public String selectByPrimaryKeyBatch(Map<String, Object> m) {
 
 //        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
-            return MyHelper.getSqlGenerator(m).sqlOfFindBatchOfIds(
+            return MedusaSqlHelper.getSqlGenerator(m).sqlOfFindBatchOfIds(
                     ((MapperMethod.ParamMap) m).get("param1"),
                     (Object[]) ((MapperMethod.ParamMap) m).get("param2"));
 //        } else {
@@ -37,7 +37,7 @@ public class BaseSelectProvider {
     public String selectOne(Map<String, Object> m) {
 
 //        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
-            return MyHelper.getSqlGenerator(m).sqlOfFindOne(
+            return MedusaSqlHelper.getSqlGenerator(m).sqlOfFindOne(
                     ((MapperMethod.ParamMap) m).get("param1"),
                     (Object[]) ((MapperMethod.ParamMap) m).get("param2"));
 //        } else {
@@ -54,7 +54,7 @@ public class BaseSelectProvider {
     public String select(Map<String, Object> m) {
 
 //        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
-            return MyHelper.getSqlGenerator(m).sqlOfFindListBy(
+            return MedusaSqlHelper.getSqlGenerator(m).sqlOfFindListBy(
                     ((MapperMethod.ParamMap) m).get("param1"),
                     (Object[]) ((MapperMethod.ParamMap) m).get("param2"));
 //        } else {
@@ -71,7 +71,7 @@ public class BaseSelectProvider {
     public String selectByPrimaryKey(Map<String, Object> m) {
 
 //        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
-            return MyHelper.getSqlGenerator(m).sqlOfFindOneById(
+            return MedusaSqlHelper.getSqlGenerator(m).sqlOfFindOneById(
                     ((MapperMethod.ParamMap) m).get("param1"),
                     (Object[]) ((MapperMethod.ParamMap) m).get("param2"));
 //        } else {
@@ -89,7 +89,7 @@ public class BaseSelectProvider {
     public String selectAll(Map<String, Object> m) {
 
 //        if(m.get("pobj") instanceof DefaultSqlSession.StrictMap) {
-            return MyHelper.getSqlGenerator(m).sqlOfFindAll(
+            return MedusaSqlHelper.getSqlGenerator(m).sqlOfFindAll(
                     (Object[]) ((DefaultSqlSession.StrictMap) m).get("array"));
 //        } else {
 //            throw new MedusaException("Medusa: selectAll DefaultSqlSession.StrictMap Exception");
@@ -106,7 +106,7 @@ public class BaseSelectProvider {
     public String selectCount(Map<String, Object> m) {
 
 //        if(m.get("pobj") instanceof DefaultSqlSession.StrictMap) {
-            return MyHelper.getSqlGenerator(m).sqlOfFindAllCount(
+            return MedusaSqlHelper.getSqlGenerator(m).sqlOfFindAllCount(
                     (Object[]) ((DefaultSqlSession.StrictMap) m).get("array"));
 //        } else {
 //            throw new MedusaException("Medusa: selectCount DefaultSqlSession.StrictMap Exception");
@@ -123,7 +123,7 @@ public class BaseSelectProvider {
     public String selectMedusaGaze(Map<String, Object> m) {
 
 //        if(m.get("pobj") instanceof DefaultSqlSession.StrictMap) {
-            return MyHelper.getSqlGenerator(m).sqlOfFindMedusaGaze(
+            return MedusaSqlHelper.getSqlGenerator(m).sqlOfFindMedusaGaze(
                     (Object[]) ((DefaultSqlSession.StrictMap) m).get("array"));
 //        } else {
 //            throw new MedusaException("Medusa: selectMedusaGaze DefaultSqlSession.StrictMap Exception");

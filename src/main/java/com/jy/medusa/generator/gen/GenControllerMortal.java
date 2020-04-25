@@ -1,10 +1,10 @@
 package com.jy.medusa.generator.gen;
 
-import com.jy.medusa.gaze.utils.MyDateUtils;
-import com.jy.medusa.gaze.utils.MyCommonUtils;
+import com.jy.medusa.gaze.utils.MedusaDateUtils;
+import com.jy.medusa.gaze.utils.MedusaCommonUtils;
 import com.jy.medusa.gaze.utils.SystemConfigs;
 import com.jy.medusa.generator.Home;
-import com.jy.medusa.generator.MyGenUtils;
+import com.jy.medusa.generator.MedusaGenUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,10 +29,10 @@ public class GenControllerMortal {
     public GenControllerMortal(String tableName, String packagePath, String entityPath, String servicePath) {
         this.entityPath = entityPath;
         this.servicePath = servicePath;
-        this.entityName = MyGenUtils.upcaseFirst(tableName);
+        this.entityName = MedusaGenUtils.upcaseFirst(tableName);
         this.packagePath = packagePath;
         this.tag = Home.tag;
-        this.markServiceList = MyGenUtils.genTagStrList(entityName + "Controller.java", packagePath, tag, "java");
+        this.markServiceList = MedusaGenUtils.genTagStrList(entityName + "Controller.java", packagePath, tag, "java");
     }
 
     public void process() {
@@ -44,7 +44,7 @@ public class GenControllerMortal {
                 file.mkdirs();
             }
             String resPath = path + "/" + entityName + "Controller.java";
-            MyCommonUtils.writeString2File(new File(resPath), home(), "UTF-8");
+            MedusaCommonUtils.writeString2File(new File(resPath), home(), "UTF-8");
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -81,28 +81,28 @@ public class GenControllerMortal {
 
         //添加作者
         sbb.append("/**\r\n");
-        sbb.append(" * Created by " + Home.author + " on " + MyDateUtils.convertDateToStr(new Date(), null) + "\r\n");
+        sbb.append(" * Created by " + Home.author + " on " + MedusaDateUtils.convertDateToStr(new Date(), null) + "\r\n");
         sbb.append(" */\r\n");
 
         sbb.append("@Controller\r\n");
-        sbb.append("@RequestMapping(\"/" + MyGenUtils.lowcaseFirst(entityName) + "\")\r\n");
+        sbb.append("@RequestMapping(\"/" + MedusaGenUtils.lowcaseFirst(entityName) + "\")\r\n");
         sbb.append("public class " + entityName + "Controller {\r\n\r\n");
         sbb.append("\tprivate static final Logger logger = LoggerFactory.getLogger(" + entityName + "Controller.class);\r\n\r\n");
 
         sbb.append("\t@Resource\r\n");
-        sbb.append("\t" + entityName + "Service " + MyGenUtils.lowcaseFirst(entityName) + "Service;\r\n\r\n");
+        sbb.append("\t" + entityName + "Service " + MedusaGenUtils.lowcaseFirst(entityName) + "Service;\r\n\r\n");
 
         //index.do
         sbb.append("\t@RequestMapping(value = \"/index.do\", method = RequestMethod.GET)\r\n");
         sbb.append("\tpublic String index(@RequestParam Integer pageNum, " + entityName + Home.entityNameSuffix + " param, ModelMap model, HttpServletRequest request) {\r\n\r\n");
 
-        sbb.append("\t\t" + "Pager<" + entityName + Home.entityNameSuffix +"> pager = MyRestrictions.getPager().setPageSize(10).setPageNumber(pageNum);\r\n");
+        sbb.append("\t\t" + "Pager<" + entityName + Home.entityNameSuffix +"> pager = Pager.getPager().setPageSize(10).setPageNumber(pageNum);\r\n");
 
-        sbb.append("\t\t" + MyGenUtils.lowcaseFirst(entityName) + "Service.selectByGaze(param, pager);\r\n\r\n");
+        sbb.append("\t\t" + MedusaGenUtils.lowcaseFirst(entityName) + "Service.selectByGaze(param, pager);\r\n\r\n");
 
         sbb.append("\t\t" + "model.put(\"result\", pager);\r\n\r\n");
 
-        sbb.append("\t\t" + "return \"" + MyGenUtils.lowcaseFirst(entityName) + "/index\";\r\n");
+        sbb.append("\t\t" + "return \"" + MedusaGenUtils.lowcaseFirst(entityName) + "/index\";\r\n");
 
         sbb.append("\t}\r\n\r\n");
 
@@ -111,7 +111,7 @@ public class GenControllerMortal {
         sbb.append("\t@RequestMapping(value = \"/toSave.do\", method = RequestMethod.GET)\r\n");
         sbb.append("\tpublic String toSave(ModelMap model, HttpServletRequest request) {\r\n\r\n");
 
-        sbb.append("\t\treturn \"" + MyGenUtils.lowcaseFirst(entityName) + "/add\";\r\n");
+        sbb.append("\t\treturn \"" + MedusaGenUtils.lowcaseFirst(entityName) + "/add\";\r\n");
         sbb.append("\t}\r\n\r\n");
 
         //save.do
@@ -119,13 +119,13 @@ public class GenControllerMortal {
         sbb.append("\tpublic String save(" + entityName + Home.entityNameSuffix + " param, ModelMap model, HttpServletRequest request) {\r\n\r\n");
 
         sbb.append("\t\ttry {\r\n");
-        sbb.append("\t\t\tif(param != null) " + MyGenUtils.lowcaseFirst(entityName) + "Service.save(param);\r\n");
+        sbb.append("\t\t\tif(param != null) " + MedusaGenUtils.lowcaseFirst(entityName) + "Service.save(param);\r\n");
         sbb.append("\t\t\tmodel.put(\"result\", param);\r\n");
-        sbb.append("\t\t\treturn \"" + MyGenUtils.lowcaseFirst(entityName) + "/success\";\r\n");
+        sbb.append("\t\t\treturn \"" + MedusaGenUtils.lowcaseFirst(entityName) + "/success\";\r\n");
         sbb.append("\t\t} catch (Exception e) {\r\n");
         sbb.append("\t\t\te.printStackTrace();\r\n");
         sbb.append("\t\t\tlogger.error(e.getMessage());\r\n");
-        sbb.append("\t\t\treturn \"" + MyGenUtils.lowcaseFirst(entityName) +"/fail\";\r\n");
+        sbb.append("\t\t\treturn \"" + MedusaGenUtils.lowcaseFirst(entityName) +"/fail\";\r\n");
         sbb.append("\t\t}\r\n");
         sbb.append("\t}\r\n\r\n");
 
@@ -133,11 +133,11 @@ public class GenControllerMortal {
         sbb.append("\t@RequestMapping(value = \"/toUpdate.do\", method = RequestMethod.GET)\r\n");
         sbb.append("\tpublic String toUpdate(@RequestParam Integer id, ModelMap model, HttpServletRequest request) {\r\n\r\n");
 
-        sbb.append("\t\t" + entityName + " param = " + MyGenUtils.lowcaseFirst(entityName) + "Service.selectById(id);\r\n\r\n");
+        sbb.append("\t\t" + entityName + " param = " + MedusaGenUtils.lowcaseFirst(entityName) + "Service.selectById(id);\r\n\r\n");
 
         sbb.append("\t\tmodel.put(\"result\", param);\r\n\r\n");
 
-        sbb.append("\t\treturn \"" + MyGenUtils.lowcaseFirst(entityName) + "/update\";\r\n");
+        sbb.append("\t\treturn \"" + MedusaGenUtils.lowcaseFirst(entityName) + "/update\";\r\n");
         sbb.append("\t}\r\n\r\n");
 
         //update.do
@@ -145,13 +145,13 @@ public class GenControllerMortal {
         sbb.append("\tpublic String update(" + entityName + Home.entityNameSuffix + " param, ModelMap model, HttpServletRequest request) {\r\n\r\n");
 
         sbb.append("\t\ttry {\r\n");
-        sbb.append("\t\t\tif(param != null) " + MyGenUtils.lowcaseFirst(entityName) + "Service.updateSelective(param);\r\n");
+        sbb.append("\t\t\tif(param != null) " + MedusaGenUtils.lowcaseFirst(entityName) + "Service.updateSelective(param);\r\n");
         sbb.append("\t\t\tmodel.put(\"result\", param);\r\n");
-        sbb.append("\t\t\treturn \"" + MyGenUtils.lowcaseFirst(entityName) + "/success\";\r\n");
+        sbb.append("\t\t\treturn \"" + MedusaGenUtils.lowcaseFirst(entityName) + "/success\";\r\n");
         sbb.append("\t\t} catch (Exception e) {\r\n");
         sbb.append("\t\t\te.printStackTrace();\r\n");
         sbb.append("\t\t\tlogger.error(e.getMessage());\r\n");
-        sbb.append("\t\t\treturn \"" + MyGenUtils.lowcaseFirst(entityName) +"/fail\";\r\n");
+        sbb.append("\t\t\treturn \"" + MedusaGenUtils.lowcaseFirst(entityName) +"/fail\";\r\n");
         sbb.append("\t\t}\r\n");
         sbb.append("\t}\r\n\r\n");
 
@@ -159,13 +159,13 @@ public class GenControllerMortal {
         sbb.append("\t@RequestMapping(value = \"/delete.do\", method = RequestMethod.GET)\r\n");
         sbb.append("\tpublic String delete(@RequestParam Integer id, ModelMap model, HttpServletRequest request) {\r\n\r\n");
 
-        sbb.append("\t\tint param = " + MyGenUtils.lowcaseFirst(entityName) + "Service.deleteById(id);\r\n\r\n");
+        sbb.append("\t\tint param = " + MedusaGenUtils.lowcaseFirst(entityName) + "Service.deleteById(id);\r\n\r\n");
 
         sbb.append("\t\tmodel.put(\"result\", param);\r\n");
-        sbb.append("\t\treturn \"" + MyGenUtils.lowcaseFirst(entityName) + "/success\";\r\n");
+        sbb.append("\t\treturn \"" + MedusaGenUtils.lowcaseFirst(entityName) + "/success\";\r\n");
         sbb.append("\t}\r\n\r\n");
 
-        MyGenUtils.processAllRemains(markServiceList, sbb, tag, "java");
+        MedusaGenUtils.processAllRemains(markServiceList, sbb, tag, "java");
 
         sbb.append("}");
 

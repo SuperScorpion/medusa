@@ -106,20 +106,23 @@ exp:<br/>
 Users s = new Users();<br/>
 s.setName("xxx");<br/>
 <br/>
-MyRestrictions mr = MyRestrictions.getMyRestrctions()<br/>
-      .betweenParam("created_at", MyDateUtils.convertStrToDate("2016-07-01 12:12:13"), null)<br/>
-      .betweenParam("updated_at", MyDateUtils.convertStrToDate("2016-07-01 12:12:13"), null)<br/>
+MedusaStringRestrictions mr = MedusaStringRestrictions.getRestrictions()()<br/>
+      .betweenParam("created_at", MedusaDateUtils.convertStrToDate("2016-07-01 12:12:13"), null)<br/>
+      .betweenParam("updated_at", MedusaDateUtils.convertStrToDate("2016-07-01 12:12:13"), null)<br/>
       .likeParam("name", "xxx").greatEqualParam("home_area", 70);<br/>
       <br/>
-Pager<Users> p = MyRestrictions.getPager().setPageSize(7);<br/>
+MedusaLambdaRestrictions<Users> mrsck = MedusaLambdaRestrictions.getRestrictions();<br/>
+mrsck.singleParam(Users::getName, "xxx");
+      <br/>        
+Pager<Users> p = MedusaRestrictions.getPager().setPageSize(7);<br/>
 <br/>
-List<Users> z = bbbService.selectByCondition(s, "id, name, homeArea", p, mr);<br/>
+List<Users> z = bbbService.selectByCondition(s, "id, name, homeArea", p, mr, mrsck);<br/>
 <br/>
 Tips:       betweenParam 后的参数不填写的话 默认为 new date();<br/>
 <br/>
 2.通过实体的某一字段来查询的<br/>
-Pager<Users> p = MyRestrictions.getPager().setPageSize(7);<br/>
-MyRestrictions mrp = MyRestrictions.getMyRestrctions().singleParam("name", "xxx");<br/>
+Pager<Users> p = MedusaRestrictions.getPager().setPageSize(7);<br/>
+MedusaRestrictions mrp = MedusaRestrictions.getMyRestrctions().singleParam("name", "xxx");<br/>
 List<Users> z = userService.selectByGaze("id, name, home", p, mrp);<br/>
 <br/>
 ...<br/>
@@ -134,7 +137,7 @@ int i = xxxService.deleteMulti(o);<br/>
 ...<br/>
 <br/>
 tips: 所有方法都选择查询部分字段 可以用数据库字段名或者属性名 有容错机制<br/>
-MyRestrictions是非线程安全的 查询完会自动clear<br/>
+MedusaRestrictions是非线程安全的 查询完会自动clear<br/>
 Pager类为内部分页实现 可插拔式<br/>
 <br/>
 批量新增和批量更新可指定字段 并且批量新增可回写所有id<br/>

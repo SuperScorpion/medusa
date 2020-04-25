@@ -1,10 +1,10 @@
-package com.jy.medusa.gaze.stuff.param;
+package com.jy.medusa.gaze.stuff.param.mix;
 
 import java.util.Date;
 
 public class BetweenParam extends BaseComplexParam {
 
-    BetweenParam(String column, Object start, Object end) {
+    public BetweenParam(String column, Object start, Object end) {
         this.setColumn(column);
         this.setStart(start);
 

@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 /**
  * Created by neo on 16/7/27.
  */
-public class MyDateUtils {
+public class MedusaDateUtils {
 
     /**
      * @param date 参数
@@ -21,7 +21,7 @@ public class MyDateUtils {
 
         if(date == null) throw new MedusaException("Medusa: The date param is null");
 
-        if(MyCommonUtils.isBlank(regx)) regx = SystemConfigs.DATE_FULL_STR;
+        if(MedusaCommonUtils.isBlank(regx)) regx = SystemConfigs.DATE_FULL_STR;
 
         SimpleDateFormat sdf = new SimpleDateFormat(regx);
         return sdf.format(date);
@@ -34,7 +34,7 @@ public class MyDateUtils {
      */
     public static Date convertStrToDate(String dateStr) {
 
-        if(MyCommonUtils.isBlank(dateStr)) throw new MedusaException("Medusa: The date string param is null");
+        if(MedusaCommonUtils.isBlank(dateStr)) throw new MedusaException("Medusa: The date string param is null");
         dateStr = dateStr.split("\\.")[0];//处理末尾的.0
         SimpleDateFormat sdf;
 

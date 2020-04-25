@@ -1,10 +1,10 @@
-package com.jy.medusa.gaze.stuff.param;
+package com.jy.medusa.gaze.stuff.param.mix;
 
 import java.util.List;
 
 public class NotInParam extends BaseComplexParam {
 
-    NotInParam(String column, List value, Boolean p) {
+    public NotInParam(String column, List value, Boolean p) {
         this.setColumn(column);
         this.setValue(value);
         this.setNotIn(p);

@@ -10,8 +10,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 <#if entitySerializable?? && entitySerializable==true>
 import java.io.Serializable;
 </#if>
-<#if isMyDateUtils?? && isMyDateUtils==true>
-import com.jy.medusa.gaze.utils.MyDateUtils;
+<#if isMedusaDateUtils?? && isMedusaDateUtils==true>
+import com.jy.medusa.gaze.utils.MedusaDateUtils;
 </#if>
 <#if isDate?? && isDate==true>
 import java.util.Date;

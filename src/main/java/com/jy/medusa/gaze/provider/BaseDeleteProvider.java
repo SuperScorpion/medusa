@@ -1,7 +1,7 @@
 
 package com.jy.medusa.gaze.provider;
 
-import com.jy.medusa.gaze.stuff.MyHelper;
+import com.jy.medusa.gaze.stuff.MedusaSqlHelper;
 import com.jy.medusa.gaze.stuff.exception.MedusaException;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.session.defaults.DefaultSqlSession;
@@ -21,7 +21,7 @@ public class BaseDeleteProvider {
      * @return 返回值类型
      */
     public String delete(Map<String, Object> m) {
-        return MyHelper.getSqlGenerator(m).sqlOfRemoveByCondition(m.get("pobj"));
+        return MedusaSqlHelper.getSqlGenerator(m).sqlOfRemoveByCondition(m.get("pobj"));
     }
 
     /**
@@ -30,7 +30,7 @@ public class BaseDeleteProvider {
      * @return 返回值类型
      */
     public String deleteByPrimaryKey(Map<String, Object> m) {
-        return MyHelper.getSqlGenerator(m).sqlOfRemoveById();//modify by neo on 2016.11.13 m.get("pobj")
+        return MedusaSqlHelper.getSqlGenerator(m).sqlOfRemoveById();//modify by neo on 2016.11.13 m.get("pobj")
     }
 
     /**
@@ -42,7 +42,7 @@ public class BaseDeleteProvider {
 
 //        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
             List<Object> p = (List<Object>) ((DefaultSqlSession.StrictMap) m).get("list");
-            return MyHelper.getSqlGenerator(m).sqlOfRemoveOfBatch(p);
+            return MedusaSqlHelper.getSqlGenerator(m).sqlOfRemoveOfBatch(p);
 //        } else {
 //            throw new MedusaException("Medusa: deleteBatch MapperMethod.ParamMap Exception");
 //        }

@@ -1,8 +1,8 @@
-package com.jy.medusa.gaze.stuff.param;
+package com.jy.medusa.gaze.stuff.param.mix;
 
 public class NotNullParam extends BaseComplexParam {
 
-    NotNullParam(String column, Boolean value) {
+    public NotNullParam(String column, Boolean value) {
         this.setColumn(column);
         this.setValue(value);
     }

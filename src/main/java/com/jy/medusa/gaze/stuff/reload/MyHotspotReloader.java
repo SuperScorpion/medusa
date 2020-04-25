@@ -5,8 +5,8 @@ package com.jy.medusa.gaze.stuff.reload;
  */
 
 import com.jy.medusa.gaze.stuff.exception.MedusaException;
-import com.jy.medusa.gaze.utils.MyCommonUtils;
-import com.jy.medusa.gaze.utils.MyReflectionUtils;
+import com.jy.medusa.gaze.utils.MedusaCommonUtils;
+import com.jy.medusa.gaze.utils.MedusaReflectionUtils;
 import com.jy.medusa.gaze.utils.SystemConfigs;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.session.Configuration;
@@ -91,7 +91,7 @@ import java.util.*;
                     }
                 }
 
-                logger.debug("Because of xml file {} changed - all xml has been overloaded.", xmlParamName);
+                logger.debug("Medusa: Because of xml file {} changed - all xml has been overloaded.", xmlParamName);
             }
 
             if(mapperXmlFileList.size() != 0) mapperXmlFileList.clear();//modify by neo on 2016.12.15
@@ -108,7 +108,7 @@ import java.util.*;
      */
     private void scanMapperXml(String xmlAbsolutelyPath) throws IOException {
 
-        if(MyCommonUtils.isBlank(xmlPath)) throw new MedusaException("Medusa: Your mybatis xmlPath is null!");
+        if(MedusaCommonUtils.isBlank(xmlPath)) throw new MedusaException("Medusa: Your mybatis xmlPath is null!");
 
         File xmlDirs = new File(xmlAbsolutelyPath);
 
@@ -147,9 +147,9 @@ import java.util.*;
 
         for(String f : fieldName) {
 
-            if (MyCommonUtils.isNotBlank(f)) {
+            if (MedusaCommonUtils.isNotBlank(f)) {
 
-                Field field = MyReflectionUtils.obtainAccessibleField(configuration, f);
+                Field field = MedusaReflectionUtils.obtainAccessibleField(configuration, f);
                 Map<Object, Object> configMap = (Map) field.get(configuration);
 
                 if (f.equals("mappedStatements")) {
@@ -175,8 +175,8 @@ import java.util.*;
     private void clearSets(Configuration configuration, String[] fieldName) throws Exception {
 
         for(String f : fieldName) {
-            if(MyCommonUtils.isNotBlank(f)) {
-                Field field = MyReflectionUtils.obtainAccessibleField(configuration, f);
+            if(MedusaCommonUtils.isNotBlank(f)) {
+                Field field = MedusaReflectionUtils.obtainAccessibleField(configuration, f);
                 Set setConfig = (Set) field.get(configuration);
                 setConfig.clear();
             }
@@ -232,7 +232,7 @@ import java.util.*;
              fileChangeMap.put(resourceName, Long.valueOf(lastFrame));
          }
 
-         Field field = MyReflectionUtils.obtainAccessibleField(configuration, "mappedStatements");
+         Field field = MedusaReflectionUtils.obtainAccessibleField(configuration, "mappedStatements");
          Map<String, Object> configMap = (Map) field.get(configuration);
 
          for (Map.Entry<String, Object> entry : configMap.entrySet()) {

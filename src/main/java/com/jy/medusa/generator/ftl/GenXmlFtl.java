@@ -1,11 +1,11 @@
 package com.jy.medusa.generator.ftl;
 
-import com.jy.medusa.gaze.utils.MyCommonUtils;
-import com.jy.medusa.gaze.utils.MyDateUtils;
+import com.jy.medusa.gaze.utils.MedusaCommonUtils;
+import com.jy.medusa.gaze.utils.MedusaDateUtils;
 import com.jy.medusa.gaze.utils.SystemConfigs;
 import com.jy.medusa.generator.DataBaseTools;
 import com.jy.medusa.generator.Home;
-import com.jy.medusa.generator.MyGenUtils;
+import com.jy.medusa.generator.MedusaGenUtils;
 import com.jy.medusa.generator.ftl.vo.XmlAssociVo;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -50,17 +50,17 @@ public class GenXmlFtl {
         this.tableName = tableName;
 //        this.propertyFilename = propertyFilename;
         this.entityPath = entityPath;
-        this.entityName = MyGenUtils.upcaseFirst(tableName);
+        this.entityName = MedusaGenUtils.upcaseFirst(tableName);
         this.tag = Home.tag;
         this.associationColumn = Arrays.asList(Home.associationColumn.split(","));
         this.pluralAssociation = Home.pluralAssociation;
-//        this.markXmlList = MyGenUtils.genTagStrList(entityName + "Mapper.xml", packagePath, tag, "xml");
+//        this.markXmlList = MedusaGenUtils.genTagStrList(entityName + "Mapper.xml", packagePath, tag, "xml");
     }
 
     private void changeTypes(String[] colTypes, String[] colTypesSql) {//TODO
 
         for(int i=0; i < colTypesSql.length ;i++) {
-            if (MyCommonUtils.isNotBlank(colTypesSql[i])) {
+            if (MedusaCommonUtils.isNotBlank(colTypesSql[i])) {
                 switch (colTypesSql[i]) {
                     case "INT":
                         colTypes[i] = "INTEGER";
@@ -158,7 +158,7 @@ public class GenXmlFtl {
             for (int i = 0; i < rsmd.getColumnCount(); i++) {
 
                 colSqlNames[i] = rsmd.getColumnName(i + 1);
-                colFieldNames[i] = MyGenUtils.getCamelStr(rsmd.getColumnName(i + 1));
+                colFieldNames[i] = MedusaGenUtils.getCamelStr(rsmd.getColumnName(i + 1));
                 colTypesSql[i] = rsmd.getColumnTypeName(i + 1);
                 colSizes[i] = rsmd.getColumnDisplaySize(i + 1);
             }
@@ -215,15 +215,15 @@ public class GenXmlFtl {
         for (int i = 0; i < colSqlNames.length; i++) {
 
             //外间关联
-            if(MyCommonUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
+            if(MedusaCommonUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
 
                 String p = colSqlNames[i].trim().replace("_id", "").trim();
-                if(MyCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
+                if(MedusaCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
                     p = p.concat(pluralAssociation);
                 }
 
-                String bigStr = MyGenUtils.upcaseFirst(p);
-                String smallStr = MyGenUtils.getCamelStr(p);
+                String bigStr = MedusaGenUtils.upcaseFirst(p);
+                String smallStr = MedusaGenUtils.getCamelStr(p);
 
                 String param = "<association property=\"" + smallStr + "\" column=\"" + colSqlNames[i] + "\" select=\"find" + bigStr + "ById\" " + Home.lazyLoad + "/>";
                 resultMapStrList.add(param);
@@ -237,11 +237,11 @@ public class GenXmlFtl {
         for (int i = 0; i < colSqlNames.length; i++) {
 
             //外间关联sss
-            if(MyCommonUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
+            if(MedusaCommonUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
 
                 String p = colSqlNames[i].trim().replace("_id", "").trim();
 
-                if(MyCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
+                if(MedusaCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
                     p = p.concat(pluralAssociation);
                 }
 
@@ -266,7 +266,7 @@ public class GenXmlFtl {
 
                 if(sbb.indexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));//去掉最后一个,
 
-                String bigStr = MyGenUtils.upcaseFirst(p);
+                String bigStr = MedusaGenUtils.upcaseFirst(p);
 
                 XmlAssociVo xav = new XmlAssociVo();
 
@@ -289,7 +289,7 @@ public class GenXmlFtl {
         map.put("entityNameSuffix", Home.entityNameSuffix);
 
         map.put("author", Home.author);
-        map.put("now_time", MyDateUtils.convertDateToStr(new Date(), null));
+        map.put("now_time", MedusaDateUtils.convertDateToStr(new Date(), null));
 
         map.put("base_column_list", String.join(",", colSqlNames));
 

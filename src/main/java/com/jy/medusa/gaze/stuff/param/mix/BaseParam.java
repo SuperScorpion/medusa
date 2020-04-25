@@ -1,4 +1,4 @@
-package com.jy.medusa.gaze.stuff.param;
+package com.jy.medusa.gaze.stuff.param.mix;
 
 /**
  * Author neo

@@ -31,20 +31,13 @@ spring:
 medusa:
   packagePath: com.dior.provider
   tableName: bac_logs,xxx,xxx
-  author: monster
-  mapperSuffix:
+  mapperSuffix: dao
   xmlSuffix: classpath:/xml
-  baseServiceSwitch: yes
-  ftlDirPath: /Users/neo/Desktop/template
+#  author: monster
+#  baseServiceSwitch: yes
+#  ftlDirPath: /Users/neo/Desktop/template
   jdbc:
     url: jdbc:mysql://127.0.0.1:3306/cms?autoReconnect=true&useSSL=false
     driver: com.mysql.jdbc.Driver
     username: root
     password:
-
-mycat:
-  jdbc:
-    url: jdbc:mysql://127.0.0.1:8066/catdb?autoReconnect=true&useSSL=false
-    driver: com.mysql.jdbc.Driver
-    username: root
-    password: 123456

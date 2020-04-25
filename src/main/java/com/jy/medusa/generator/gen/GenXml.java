@@ -1,11 +1,11 @@
 package com.jy.medusa.generator.gen;
 
-import com.jy.medusa.gaze.utils.MyCommonUtils;
-import com.jy.medusa.gaze.utils.MyDateUtils;
+import com.jy.medusa.gaze.utils.MedusaCommonUtils;
+import com.jy.medusa.gaze.utils.MedusaDateUtils;
 import com.jy.medusa.gaze.utils.SystemConfigs;
 import com.jy.medusa.generator.DataBaseTools;
 import com.jy.medusa.generator.Home;
-import com.jy.medusa.generator.MyGenUtils;
+import com.jy.medusa.generator.MedusaGenUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,17 +47,17 @@ public class GenXml {
         this.tableName = tableName;
 //        this.propertyFilename = propertyFilename;
         this.entityPath = entityPath;
-        this.entityName = MyGenUtils.upcaseFirst(tableName);
+        this.entityName = MedusaGenUtils.upcaseFirst(tableName);
         this.tag = Home.tag;
         this.associationColumn = Arrays.asList(Home.associationColumn.split(","));
         this.pluralAssociation = Home.pluralAssociation;
-        this.markXmlList = MyGenUtils.genTagStrList(entityName + "Mapper.xml", packagePath, tag, "xml");
+        this.markXmlList = MedusaGenUtils.genTagStrList(entityName + "Mapper.xml", packagePath, tag, "xml");
     }
 
     private void changeTypes(String[] colTypes, String[] colTypesSql) {//TODO
 
         for(int i=0; i < colTypesSql.length ;i++) {
-            if (MyCommonUtils.isNotBlank(colTypesSql[i])) {
+            if (MedusaCommonUtils.isNotBlank(colTypesSql[i])) {
                 switch (colTypesSql[i]) {
                     case "INT":
                         colTypes[i] = "INTEGER";
@@ -103,7 +103,7 @@ public class GenXml {
             }
             String resPath = path + "/" + entityName + "Mapper.xml";
 
-            MyCommonUtils.writeString2File(new File(resPath), content, "UTF-8");
+            MedusaCommonUtils.writeString2File(new File(resPath), content, "UTF-8");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -135,7 +135,7 @@ public class GenXml {
             for (int i = 0; i < rsmd.getColumnCount(); i++) {
 
                 colSqlNames[i] = rsmd.getColumnName(i + 1);
-                colFieldNames[i] = MyGenUtils.getCamelStr(rsmd.getColumnName(i + 1));
+                colFieldNames[i] = MedusaGenUtils.getCamelStr(rsmd.getColumnName(i + 1));
                 colTypesSql[i] = rsmd.getColumnTypeName(i + 1);
                 colSizes[i] = rsmd.getColumnDisplaySize(i + 1);
             }
@@ -191,18 +191,18 @@ public class GenXml {
             }
 
             //外间关联
-            //if(MyCommonUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !associationColumn.contains(colSqlNames[i])) {
+            //if(MedusaCommonUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && !associationColumn.contains(colSqlNames[i])) {
 
                 /*
             String p = colSqlNames[i].trim().replace("_id", "").trim();
-                if(MyCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
+                if(MedusaCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
                     p = p.concat(pluralAssociation);
                 }
-                String bigStr = MyGenUtils.upcaseFirst(p);
-                String smallStr = MyGenUtils.getCamelStr(p);
+                String bigStr = MedusaGenUtils.upcaseFirst(p);
+                String smallStr = MedusaGenUtils.getCamelStr(p);
 
                 String param = "\t\t<association property=\"" + smallStr + "\" column=\"" + colSqlNames[i] + "\" select=\"find" + bigStr + "ById\" />\r\n";
-                String paramStr11 = MyGenUtils.genMarkStr(markXmlList , param, "/>");*/
+                String paramStr11 = MedusaGenUtils.genMarkStr(markXmlList , param, "/>");*/
 
                 //上次若有相同的association标签的话 并且内容相同则使用旧的 并且markxmllist里remove掉 不再遍历它
                 //生成第一次时 直接生成 else条件 第二次如果保留了该次生成的 再次生成则使用if条件里的
@@ -219,18 +219,18 @@ public class GenXml {
         for (int i = 0; i < colSqlNames.length; i++) {
 
             //外间关联
-            if(MyCommonUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
+            if(MedusaCommonUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
 
                 String p = colSqlNames[i].trim().replace("_id", "").trim();
-                if(MyCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
+                if(MedusaCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
                     p = p.concat(pluralAssociation);
                 }
 
-                String bigStr = MyGenUtils.upcaseFirst(p);
-                String smallStr = MyGenUtils.getCamelStr(p);
+                String bigStr = MedusaGenUtils.upcaseFirst(p);
+                String smallStr = MedusaGenUtils.getCamelStr(p);
 
                 String param = "\t\t<association property=\"" + smallStr + "\" column=\"" + colSqlNames[i] + "\" select=\"find" + bigStr + "ById\" " + Home.lazyLoad + "/>\r\n";
-                String paramStr11 = MyGenUtils.genMarkStr(markXmlList , param, "/>");
+                String paramStr11 = MedusaGenUtils.genMarkStr(markXmlList , param, "/>");
 
                 //上次若有相同的association标签的话 并且内容相同则使用旧的 并且markxmllist里remove掉 不再遍历它
                 //生成第一次时 直接生成 else条件 第二次如果保留了该次生成的 再次生成则使用if条件里的
@@ -241,7 +241,7 @@ public class GenXml {
             }
         }
 
-        MyGenUtils.processAllRemains(markXmlList, sb, tag, "xml1");//处理assciation上次的遗留
+        MedusaGenUtils.processAllRemains(markXmlList, sb, tag, "xml1");//处理assciation上次的遗留
 
         sb.append("\t</resultMap>\r\n\r\n");
 
@@ -249,11 +249,11 @@ public class GenXml {
         for (int i = 0; i < colSqlNames.length; i++) {
 
             //外间关联sss
-            if(MyCommonUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
+            if(MedusaCommonUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
 
                 String p = colSqlNames[i].trim().replace("_id", "").trim();
 
-                if(MyCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
+                if(MedusaCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
                     p = p.concat(pluralAssociation);
                 }
 
@@ -278,11 +278,11 @@ public class GenXml {
 
                 if(sbb.indexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));//去掉最后一个,
 
-                String bigStr = MyGenUtils.upcaseFirst(p);
-                //String smallStr = MyGenUtils.getCamelStr(p);
+                String bigStr = MedusaGenUtils.upcaseFirst(p);
+                //String smallStr = MedusaGenUtils.getCamelStr(p);
 
                 //String param = "\t<select id = \"find" + bigStr + "ById\" resultType=\"" + entityPath + "." + bigStr + "\">\r\n" + "\t\tSELECT * FROM " + p + " WHERE id = #{id} limit 0,1\r\n" + "\t</select>\r\n\r\n";
-                //String paramStr11 = MyGenUtils.genMarkStr(markXmlList , param, "resultType=");
+                //String paramStr11 = MedusaGenUtils.genMarkStr(markXmlList , param, "resultType=");
 
                 //上次有相同的association标签内容段 则不再生产
                 //生成第一次时 直接生成 else条件 第二次如果保留了该次生成的 再次生成则使用if条件里的
@@ -303,10 +303,10 @@ public class GenXml {
         sb.append("\t\t" + String.join(",", colSqlNames) + "\r\n");
         sb.append("\t</sql>-->\r\n\r\n");
         //添加作者
-        sb.append("\t<!-- Created by " + Home.author + " on " + MyDateUtils.convertDateToStr(new Date(), null) + " -->\r\n\r\n");
+        sb.append("\t<!-- Created by " + Home.author + " on " + MedusaDateUtils.convertDateToStr(new Date(), null) + " -->\r\n\r\n");
 
 
-        MyGenUtils.processAllRemains(markXmlList, sb, tag, "xml2");//处理所有的上次遗留标签 在resultmap mapper 之间的
+        MedusaGenUtils.processAllRemains(markXmlList, sb, tag, "xml2");//处理所有的上次遗留标签 在resultmap mapper 之间的
 
         sb.append("</mapper>\r\n");
 

@@ -1,8 +1,8 @@
 package com.jy.medusa.generator.ftl;
 
 import com.jy.medusa.generator.Home;
-import com.jy.medusa.generator.MyGenUtils;
-import com.jy.medusa.gaze.utils.MyDateUtils;
+import com.jy.medusa.generator.MedusaGenUtils;
+import com.jy.medusa.gaze.utils.MedusaDateUtils;
 import com.jy.medusa.gaze.utils.SystemConfigs;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -32,10 +32,10 @@ public class GenControllerFtl {
     public GenControllerFtl(String tableName, String packagePath, String entityPath, String servicePath) {
         this.entityPath = entityPath;
         this.servicePath = servicePath;
-        this.entityName = MyGenUtils.upcaseFirst(tableName);
+        this.entityName = MedusaGenUtils.upcaseFirst(tableName);
         this.packagePath = packagePath;
         this.tag = Home.tag;
-//        this.markServiceList = MyGenUtils.genTagStrList(entityName + "Controller.java", packagePath, tag, "java");
+//        this.markServiceList = MedusaGenUtils.genTagStrList(entityName + "Controller.java", packagePath, tag, "java");
     }
 
     public void process() {
@@ -47,7 +47,7 @@ public class GenControllerFtl {
                 file.mkdirs();
             }
             String resPath = path + "/" + entityName + "Controller.java";
-//            MyCommonUtils.writeString2File(new File(resPath), home(), "UTF-8");
+//            MedusaCommonUtils.writeString2File(new File(resPath), home(), "UTF-8");
 
             Map<String, Object> map = home();
 
@@ -98,10 +98,10 @@ public class GenControllerFtl {
         map.put("medusa_pager_path", SystemConfigs.MEDUSA_PAGER_PATH);
         map.put("medusa_myrestriction_path", SystemConfigs.MEDUSA_MYRESTRICTION_PATH);
 
-        map.put("lowcaseFirstEntityName", MyGenUtils.lowcaseFirst(entityName));
+        map.put("lowcaseFirstEntityName", MedusaGenUtils.lowcaseFirst(entityName));
 
         map.put("author", Home.author);
-        map.put("now_time", MyDateUtils.convertDateToStr(new Date(), null));
+        map.put("now_time", MedusaDateUtils.convertDateToStr(new Date(), null));
 
         return map;
 

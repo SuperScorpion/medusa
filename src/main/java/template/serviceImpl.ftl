@@ -5,6 +5,7 @@ import javax.annotation.Resource;
 import ${mapperPath}.${entityName}Mapper;
 import org.springframework.stereotype.Service;
 import ${servicePath}.${entityName}Service;
+import com.ysl.medusa.base.BaseServiceImpl;
 
 /**
 * Created by ${author} on ${now_time}

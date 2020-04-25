@@ -1,6 +1,6 @@
 package com.jy.medusa.gaze.provider;
 
-import com.jy.medusa.gaze.stuff.MyHelper;
+import com.jy.medusa.gaze.stuff.MedusaSqlHelper;
 import com.jy.medusa.gaze.stuff.exception.MedusaException;
 import org.apache.ibatis.binding.MapperMethod;
 
@@ -21,7 +21,7 @@ public class BaseUpdateProvider {
     public String updateByPrimaryKey(Map<String, Object> m) {
 
 //        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
-            return MyHelper.getSqlGenerator(m).sqlOfModifyNull(
+            return MedusaSqlHelper.getSqlGenerator(m).sqlOfModifyNull(
                     ((MapperMethod.ParamMap) m).get("param1"),
                     (Object[]) ((MapperMethod.ParamMap) m).get("param2"));
 //        } else {
@@ -35,7 +35,7 @@ public class BaseUpdateProvider {
      * @return 返回值类型
      */
     public String updateByPrimaryKeySelective(Map<String, Object> m) {
-        return MyHelper.getSqlGenerator(m).sqlOfModify(m.get("pobj"));
+        return MedusaSqlHelper.getSqlGenerator(m).sqlOfModify(m.get("pobj"));
     }
 
     /**
@@ -46,7 +46,7 @@ public class BaseUpdateProvider {
     public String updateByPrimaryKeyBatch(Map<String, Object> m) {
 
 //        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
-            return MyHelper.getSqlGenerator(m).sqlOfModifyOfBatch(
+            return MedusaSqlHelper.getSqlGenerator(m).sqlOfModifyOfBatch(
                     ((MapperMethod.ParamMap) m).get("param1"),
                     (Object[]) ((MapperMethod.ParamMap) m).get("param2"));
 //        } else {

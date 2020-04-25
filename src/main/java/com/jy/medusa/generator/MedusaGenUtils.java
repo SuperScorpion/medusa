@@ -1,6 +1,6 @@
 package com.jy.medusa.generator;
 
-import com.jy.medusa.gaze.utils.MyCommonUtils;
+import com.jy.medusa.gaze.utils.MedusaCommonUtils;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by neo on 16/8/4.
  */
-public class MyGenUtils {
+public class MedusaGenUtils {
 
     /**
      * 驼峰命名---改为下划线 如  updatedAT ---updated_at
@@ -18,7 +18,7 @@ public class MyGenUtils {
      */
     public static String camelToUnderline(String param) {
 
-        if (MyCommonUtils.isBlank(param)) return "";
+        if (MedusaCommonUtils.isBlank(param)) return "";
 
         int i = 0, len = param.length();
 
@@ -133,7 +133,7 @@ public class MyGenUtils {
         p = p.substring(0, p.indexOf(endChar));
 
         for(String markStr: markStrList) {
-            if(MyCommonUtils.isNotBlank(markStr)) {
+            if(MedusaCommonUtils.isNotBlank(markStr)) {
 
                 int x = markStr.trim().indexOf(endChar);
 
@@ -147,16 +147,22 @@ public class MyGenUtils {
         return result;
     }
 
-    public static List<String> genTagStrList(String fileName, String path, String tag, String flag) {
+    public static List<String> genTagStrList(String fileName, String packagePath, String tag, String flag) {
 
-        String paths = Home.proJavaPath + path.replaceAll("\\.", "/");
-        File dirsFile = new File(paths);
+        String path;
+        if(Home.xmlSuffix.matches("^classpath.*:.*")) {//modify by neo on 2020.04.25
+            path = Home.proResourcePath + Home.xmlSuffix.replaceFirst("^classpath.*:", "");
+        } else {
+            path = Home.proJavaPath + packagePath.replaceAll("\\.", "/");
+        }
+
+        File dirsFile = new File(path);
         if(!dirsFile.exists()) dirsFile.mkdirs();
-        String resPath = paths + "/" + fileName;
+        String resPath = path + "/" + fileName;
 
         List<String> resultList = new ArrayList<>();
 
-        if (MyCommonUtils.isBlank(tag) || MyCommonUtils.isBlank(resPath)) return null;
+        if (MedusaCommonUtils.isBlank(tag) || MedusaCommonUtils.isBlank(resPath)) return null;
 
 
         String startTag;

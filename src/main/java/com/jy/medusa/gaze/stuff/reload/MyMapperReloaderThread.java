@@ -1,7 +1,7 @@
 package com.jy.medusa.gaze.stuff.reload;
 
 import com.jy.medusa.gaze.stuff.exception.MedusaException;
-import com.jy.medusa.gaze.utils.MyCommonUtils;
+import com.jy.medusa.gaze.utils.MedusaCommonUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,13 +23,13 @@ import org.slf4j.LoggerFactory;
 
     public void run() {
 
-        if(MyCommonUtils.isBlank(xmlPath)) throw new MedusaException("Medusa: Your mybatis xmlPath is null, please check it");
+        if(MedusaCommonUtils.isBlank(xmlPath)) throw new MedusaException("Medusa: Your mybatis xmlPath is null, please check it");
 
         while (true) {
             try {
 
                 if(sqlSessionFactory == null) {
-                    logger.debug("MyMapperReloaderThread wait for sqlSessionFactory and began to sleep {} seconds.", seconds);
+                    logger.debug("Medusa: MyMapperReloaderThread wait for sqlSessionFactory and began to sleep {} seconds.", seconds);
                     Thread.sleep(seconds * 1000);
                 } else {
 
@@ -37,11 +37,11 @@ import org.slf4j.LoggerFactory;
 
                     mr.refreshMapper();
 
-                    logger.debug("MyMapperReloaderThread has completed the hot - loading and began to sleep {} seconds.", seconds);
+                    logger.debug("Medusa: MyMapperReloaderThread has completed the hot - loading and began to sleep {} seconds.", seconds);
                     Thread.sleep(seconds * 1000);
                 }
             } catch (InterruptedException e) {
-                logger.error("{MyMapperReloaderThread catch the InterruptedException}", e);
+                logger.error("{Medusa: MyMapperReloaderThread catch the InterruptedException}", e);
                 e.printStackTrace();
                 try {
                     Thread.sleep(seconds * 1000);
@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
                     e1.printStackTrace();
                 }
             } catch (Exception e) {
-            	logger.error("{MyMapperReloaderThread catch the Exception}", e);
+            	logger.error("{Medusa: MyMapperReloaderThread catch the Exception}", e);
                 e.printStackTrace();
                 try {
                     Thread.sleep(seconds * 1000);

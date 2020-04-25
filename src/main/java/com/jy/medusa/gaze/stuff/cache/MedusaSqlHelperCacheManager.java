@@ -1,7 +1,7 @@
 package com.jy.medusa.gaze.stuff.cache;
 
 import com.jy.medusa.gaze.stuff.exception.MedusaException;
-import com.jy.medusa.gaze.stuff.MySqlGenerator;
+import com.jy.medusa.gaze.stuff.MedusaSqlGenerator;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -10,14 +10,14 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by neo on 16/10/12.
  * 享元模式
  */
-public class MyHelperCacheManager {
+public class MedusaSqlHelperCacheManager {
 
     /**
      * 缓存
      * TODO class 要缓存起来的
      */
     private static final Map<String, Class<?>> entityClassMap = new ConcurrentHashMap<>();//缓存class
-    private static final Map<String, MySqlGenerator> generatorMap = new ConcurrentHashMap<>();//缓存个 generator
+    private static final Map<String, MedusaSqlGenerator> generatorMap = new ConcurrentHashMap<>();//缓存generator
 
 
     public static Class<?> getCacheClass(String p) {
@@ -36,7 +36,7 @@ public class MyHelperCacheManager {
     }
 
 
-    public static MySqlGenerator getCacheGenerator(String p) {
+    public static MedusaSqlGenerator getCacheGenerator(String p) {
 
         if(p == null) throw new MedusaException("Medusa: The param key is null");
 
@@ -47,7 +47,7 @@ public class MyHelperCacheManager {
         }
     }
 
-    public static MySqlGenerator putCacheGenerator(String p, MySqlGenerator t) {
+    public static MedusaSqlGenerator putCacheGenerator(String p, MedusaSqlGenerator t) {
         if(p != null && t != null) {
             return generatorMap.putIfAbsent(p, t);
         } else {

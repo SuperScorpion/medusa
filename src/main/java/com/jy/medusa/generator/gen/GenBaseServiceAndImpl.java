@@ -1,8 +1,8 @@
 package com.jy.medusa.generator.gen;
 
-import com.jy.medusa.gaze.utils.MyCommonUtils;
+import com.jy.medusa.gaze.utils.MedusaCommonUtils;
 import com.jy.medusa.generator.Home;
-import com.jy.medusa.generator.MyGenUtils;
+import com.jy.medusa.generator.MedusaGenUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,8 +26,8 @@ public class GenBaseServiceAndImpl {
 
         this.tag = Home.tag;
 
-        this.markServiceList = MyGenUtils.genTagStrList("BaseService.java", servicePath, tag, "service");
-        this.markServiceImplList = MyGenUtils.genTagStrList("BaseServiceImpl.java", serviceImplPath, tag, "serviceImpl");
+        this.markServiceList = MedusaGenUtils.genTagStrList("BaseService.java", servicePath, tag, "service");
+        this.markServiceImplList = MedusaGenUtils.genTagStrList("BaseServiceImpl.java", serviceImplPath, tag, "serviceImpl");
     }
 
     public void process() {
@@ -42,8 +42,8 @@ public class GenBaseServiceAndImpl {
             }
             String resPath1 = path + "/" + "BaseService.java";
             String resPath2 = pathImp + "/" + "BaseServiceImpl.java";
-            MyCommonUtils.writeString2File(new File(resPath1), process11(), "UTF-8");
-            MyCommonUtils.writeString2File(new File(resPath2), process22(), "UTF-8");
+            MedusaCommonUtils.writeString2File(new File(resPath1), process11(), "UTF-8");
+            MedusaCommonUtils.writeString2File(new File(resPath2), process22(), "UTF-8");
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -105,7 +105,7 @@ public class GenBaseServiceAndImpl {
                 "\tJSONObject resultError(Object result, String msg, JSONObject json);\n" +
                 "}");
 
-        MyGenUtils.processAllRemains(markServiceList, sbb, tag, "service");
+        MedusaGenUtils.processAllRemains(markServiceList, sbb, tag, "service");
 
         return sbb.toString();
     }
@@ -223,7 +223,7 @@ public class GenBaseServiceAndImpl {
                 "\t}\n" +
                 "}");
 
-        MyGenUtils.processAllRemains(markServiceImplList, sbb, tag, "serviceImpl");
+        MedusaGenUtils.processAllRemains(markServiceImplList, sbb, tag, "serviceImpl");
 
         return sbb.toString();
     }
@@ -250,7 +250,7 @@ public class GenBaseServiceAndImpl {
                 "\t//TODO 用户自定义接口\n" +
                 "}");
 
-        MyGenUtils.processAllRemains(markServiceList, sbb, tag, "service");
+        MedusaGenUtils.processAllRemains(markServiceList, sbb, tag, "service");
 
         return sbb.toString();
     }
@@ -269,13 +269,13 @@ public class GenBaseServiceAndImpl {
                 "import com.jy.medusa.gaze.commons.BaseServiceImplMedusa;\n" +
                 "import " + Home.mixMapper + ";\n" +
                 "import " + servicePath + ".BaseService;\n" +
-                "import org.slf4j.Logger;\n" +
-                "import org.slf4j.LoggerFactory;\n" +
+//                "import org.slf4j.Logger;\n" +
+//                "import org.slf4j.LoggerFactory;\n" +
                 "import org.springframework.beans.factory.annotation.Autowired;\n" +
                 "\n" +
                 "public abstract class BaseServiceImpl<T> extends BaseServiceImplMedusa<T> implements BaseService<T> {\n" +
-                "\n" +
-                "\tprivate static final Logger logger = LoggerFactory.getLogger(BaseServiceImpl.class);\n" +
+//                "\n" +
+//                "\tprivate static final Logger logger = LoggerFactory.getLogger(BaseServiceImpl.class);\n" +
                 "\n" +
                 "\t@Autowired\n" +
                 "\tprotected void init (Mapper<T> mapper) {\n" +
@@ -301,7 +301,7 @@ public class GenBaseServiceAndImpl {
                 "\t//TODO 用户自定义接口\n" +
                 "}");
 
-        MyGenUtils.processAllRemains(markServiceImplList, sbb, tag, "serviceImpl");
+        MedusaGenUtils.processAllRemains(markServiceImplList, sbb, tag, "serviceImpl");
 
         return sbb.toString();
     }

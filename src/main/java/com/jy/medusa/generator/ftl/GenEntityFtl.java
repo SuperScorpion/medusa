@@ -4,12 +4,12 @@ package com.jy.medusa.generator.ftl;
  * Created by neo on 16/7/19.
  */
 
-import com.jy.medusa.gaze.utils.MyCommonUtils;
-import com.jy.medusa.gaze.utils.MyDateUtils;
+import com.jy.medusa.gaze.utils.MedusaCommonUtils;
+import com.jy.medusa.gaze.utils.MedusaDateUtils;
 import com.jy.medusa.gaze.utils.SystemConfigs;
 import com.jy.medusa.generator.DataBaseTools;
 import com.jy.medusa.generator.Home;
-import com.jy.medusa.generator.MyGenUtils;
+import com.jy.medusa.generator.MedusaGenUtils;
 import com.jy.medusa.generator.ftl.vo.EntityColumnVo;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -26,7 +26,7 @@ public class GenEntityFtl {
     private String[] colFieldNames; // 列名数组
     private String[] colTypes; // mybatis 列名类型数组
     private int[] colSizes; // 列名大小数组
-    private boolean isMyDateUtils = false; // 是否需要导入包 myDateUtils
+    private boolean isMedusaDateUtils = false; // 是否需要导入包 MedusaDateUtils
     private boolean isDate = false; // 是否需要导入包java.util.Date
     private boolean isSql = false; // 是否需要导入包java.sql.*
     private boolean isMoney = false; // 是否需要导入包java.math.BigDecimal
@@ -57,7 +57,7 @@ public class GenEntityFtl {
 //        this.colValidArray = colValidArray;
         this.associationColumn = Arrays.asList(Home.associationColumn.split(","));
         this.pluralAssociation = Home.pluralAssociation;
-//        this.markStrList = MyGenUtils.genTagStrList(MyGenUtils.upcaseFirst(tableName) + ".java", packagePath, tag, "java");
+//        this.markStrList = MedusaGenUtils.genTagStrList(MedusaGenUtils.upcaseFirst(tableName) + ".java", packagePath, tag, "java");
     }
 
     public void process() {
@@ -87,8 +87,8 @@ public class GenEntityFtl {
             ResultSet rs = pstmt.executeQuery();
             if (rs != null) {
                 while (rs.next()) {
-                    defaultMap.put(MyGenUtils.getCamelStr(rs.getString("Field")), rs.getString("Default"));
-                    commentMap.put(MyGenUtils.getCamelStr(rs.getString("Field")), rs.getString("Comment"));
+                    defaultMap.put(MedusaGenUtils.getCamelStr(rs.getString("Field")), rs.getString("Default"));
+                    commentMap.put(MedusaGenUtils.getCamelStr(rs.getString("Field")), rs.getString("Comment"));
                 }
             }
 
@@ -103,10 +103,10 @@ public class GenEntityFtl {
             for (int i = 0; i < rsmd.getColumnCount(); i++) {
 
                 colSqlNames[i] = rsmd.getColumnName(i + 1);
-                colFieldNames[i] = colSqlNames[i].equals(primaryKey) ? SystemConfigs.PRIMARY_KEY : MyGenUtils.getCamelStr(rsmd.getColumnName(i + 1));//modify by neo on 2020.02.14
+                colFieldNames[i] = colSqlNames[i].equals(primaryKey) ? SystemConfigs.PRIMARY_KEY : MedusaGenUtils.getCamelStr(rsmd.getColumnName(i + 1));//modify by neo on 2020.02.14
                 colTypes[i] = rsmd.getColumnTypeName(i + 1);
                 if (colTypes[i].equalsIgnoreCase("datetime") || colTypes[i].equalsIgnoreCase("date") || colTypes[i].equalsIgnoreCase("TIMESTAMP")) {
-                    if(MyCommonUtils.isNotBlank(defaultMap.get(colFieldNames[i]))) isMyDateUtils = true;
+                    if(MedusaCommonUtils.isNotBlank(defaultMap.get(colFieldNames[i]))) isMedusaDateUtils = true;
                     isDate = true;
                 }
                 if (colTypes[i].equalsIgnoreCase("image") || colTypes[i].equalsIgnoreCase("text")) {
@@ -125,8 +125,8 @@ public class GenEntityFtl {
                 if(!file.exists()) {
                     file.mkdirs();
                 }
-                String resPath = path + "/" + MyGenUtils.upcaseFirst(tableName) + Home.entityNameSuffix + ".java";
-                MyCommonUtils.writeString2File(new File(resPath), content, "UTF-8");
+                String resPath = path + "/" + MedusaGenUtils.upcaseFirst(tableName) + Home.entityNameSuffix + ".java";
+                MedusaCommonUtils.writeString2File(new File(resPath), content, "UTF-8");
             } catch (IOException e) {
                 e.printStackTrace();
             }*/
@@ -138,7 +138,7 @@ public class GenEntityFtl {
             if(!file.exists()) {
                 file.mkdirs();
             }
-            String resPath = path + "/" + MyGenUtils.upcaseFirst(tableName) + Home.entityNameSuffix + ".java";
+            String resPath = path + "/" + MedusaGenUtils.upcaseFirst(tableName) + Home.entityNameSuffix + ".java";
 
             Configuration cfg = new Configuration(Configuration.VERSION_2_3_22);
 
@@ -187,8 +187,8 @@ public class GenEntityFtl {
         boolean entitySerializable = false;
         boolean useValid = false;
 
-        if(MyCommonUtils.isNotBlank(Home.lazyLoad)) lazyLoad = true;
-        if(MyCommonUtils.isNotBlank(Home.entitySerializable)) entitySerializable = true;
+        if(MedusaCommonUtils.isNotBlank(Home.lazyLoad)) lazyLoad = true;
+        if(MedusaCommonUtils.isNotBlank(Home.entitySerializable)) entitySerializable = true;
 
         //参数校验
         /*if(colValidArray != null && !colValidArray.isEmpty()) {
@@ -201,11 +201,11 @@ public class GenEntityFtl {
         map.put("tableName", tableName);
         map.put("entityPath", packagePath);
         map.put("author", Home.author);
-        map.put("upcaseFirstTableName", MyGenUtils.upcaseFirst(tableName));
+        map.put("upcaseFirstTableName", MedusaGenUtils.upcaseFirst(tableName));
         map.put("entityNameSuffix", Home.entityNameSuffix);
-        map.put("now_time", MyDateUtils.convertDateToStr(new Date(), null));
+        map.put("now_time", MedusaDateUtils.convertDateToStr(new Date(), null));
 
-        map.put("isMyDateUtils", isMyDateUtils);
+        map.put("isMedusaDateUtils", isMedusaDateUtils);
         map.put("isDate", isDate);
         map.put("isSql", isSql);
         map.put("isMoney", isMoney);
@@ -245,11 +245,11 @@ public class GenEntityFtl {
 
         cv.setColumn(colSqlNames[i]);
         cv.setJavaType(sqlType2JavaType(colTypes[i]));
-        cv.setUpperName(MyGenUtils.upcaseFirst(colFieldNames[i]));
+        cv.setUpperName(MedusaGenUtils.upcaseFirst(colFieldNames[i]));
         cv.setLowwerName(colFieldNames[i]);
 
         //添加注释
-        if(MyCommonUtils.isNotBlank(commentMap.get(colFieldNames[i]))) {
+        if(MedusaCommonUtils.isNotBlank(commentMap.get(colFieldNames[i]))) {
             cv.setComment(commentMap.get(colFieldNames[i]));
         }
 
@@ -258,26 +258,26 @@ public class GenEntityFtl {
         }
 
         //添加默认值
-        String defaultStr = MyCommonUtils.isNotBlank(defaultMap.get(colFieldNames[i])) ? " = " + sqlType2JavaTypeForDefault(colTypes[i], defaultMap.get(colFieldNames[i])) : "";
+        String defaultStr = MedusaCommonUtils.isNotBlank(defaultMap.get(colFieldNames[i])) ? " = " + sqlType2JavaTypeForDefault(colTypes[i], defaultMap.get(colFieldNames[i])) : "";
         cv.setDefaultStr(defaultStr);
 
         //字段都生成完了 再生成映射属性
         //外间关联表关系
-        if(MyCommonUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
+        if(MedusaCommonUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
 
             cv.setNotOnlyColumnFlag(true);
 
 
             String p = colSqlNames[i].trim().replace("_id", "").trim();
 
-            if(MyCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
+            if(MedusaCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
                 p = p.concat(pluralAssociation);
             }
 
             cv.setAssociRemark("/*这是" + colSqlNames[i] + "的关联属性*/");
 
-            cv.setAssociUpperName(MyGenUtils.upcaseFirst(p) + Home.entityNameSuffix);
-            cv.setAssociLowwerName(MyGenUtils.getCamelStr(p));
+            cv.setAssociUpperName(MedusaGenUtils.upcaseFirst(p) + Home.entityNameSuffix);
+            cv.setAssociLowwerName(MedusaGenUtils.getCamelStr(p));
         }
     }
 
@@ -313,7 +313,7 @@ public class GenEntityFtl {
             if(def.equals("CURRENT_TIMESTAMP")) {
                 return "new Date()";
             } else {
-                return "MyDateUtils.convertStrToDate(\"" + def + "\")";
+                return "MedusaDateUtils.convertStrToDate(\"" + def + "\")";
             }
         }
 

@@ -1,8 +1,8 @@
 package com.jy.medusa.generator.ftl;
 
 import com.jy.medusa.generator.Home;
-import com.jy.medusa.generator.MyGenUtils;
-import com.jy.medusa.gaze.utils.MyDateUtils;
+import com.jy.medusa.generator.MedusaGenUtils;
+import com.jy.medusa.gaze.utils.MedusaDateUtils;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -40,13 +40,13 @@ public class GenServiceFtl {
         this.servicePath = servicePath;
         this.serviceImplPath = serviceImplPath;
         this.mapperPath = mapperPath;
-        this.entityName = MyGenUtils.upcaseFirst(tableName);
+        this.entityName = MedusaGenUtils.upcaseFirst(tableName);
 
 //        this.tag = Home.tag;
 
-//        this.markServiceList = MyGenUtils.genTagStrList(entityName + "Service.java", servicePath, tag, "service");
-//        this.markServiceImplList = MyGenUtils.genTagStrList(entityName + "ServiceImpl.java", serviceImplPath, tag, "serviceImpl");
-//        this.markMapperList = MyGenUtils.genTagStrList(entityName + "Mapper.java", mapperPath, tag, "mapper");
+//        this.markServiceList = MedusaGenUtils.genTagStrList(entityName + "Service.java", servicePath, tag, "service");
+//        this.markServiceImplList = MedusaGenUtils.genTagStrList(entityName + "ServiceImpl.java", serviceImplPath, tag, "serviceImpl");
+//        this.markMapperList = MedusaGenUtils.genTagStrList(entityName + "Mapper.java", mapperPath, tag, "mapper");
     }
 
     public void process() {
@@ -59,7 +59,7 @@ public class GenServiceFtl {
                 file1.mkdirs();
             }
             String resPath1 = path + "/" + entityName + "Service.java";
-//            MyCommonUtils.writeString2File(new File(resPath1), process1(), "UTF-8");
+//            MedusaCommonUtils.writeString2File(new File(resPath1), process1(), "UTF-8");
 
             String pathImp = Home.proJavaPath + serviceImplPath.replaceAll("\\.", "/");
             File file2 = new File(pathImp);
@@ -67,7 +67,7 @@ public class GenServiceFtl {
                 file2.mkdirs();
             }
             String resPath2 = pathImp + "/" + entityName + "ServiceImpl.java";
-//            MyCommonUtils.writeString2File(new File(resPath2), process2(), "UTF-8");
+//            MedusaCommonUtils.writeString2File(new File(resPath2), process2(), "UTF-8");
 
             //mapper
             String pathmm = Home.proJavaPath + mapperPath.replaceAll("\\.", "/");
@@ -76,7 +76,7 @@ public class GenServiceFtl {
                 file3.mkdirs();
             }
             String resPath3 = pathmm + "/" + entityName + "Mapper.java";
-//            MyCommonUtils.writeString2File(new File(resPath3), process3(), "UTF-8");
+//            MedusaCommonUtils.writeString2File(new File(resPath3), process3(), "UTF-8");
 
 
 
@@ -150,7 +150,10 @@ public class GenServiceFtl {
         map.put("entityNameSuffix", Home.entityNameSuffix);
 
         map.put("author", Home.author);
-        map.put("now_time", MyDateUtils.convertDateToStr(new Date(), null));
+        map.put("now_time", MedusaDateUtils.convertDateToStr(new Date(), null));
+
+        String medusaStarterServicePacName = Home.checkBaseServiceSwitch() ? "" : "com.ysl.medusa.base.BaseService";
+        map.put("medusaStarterServicePacName", medusaStarterServicePacName);
 
         return map;
     }
@@ -172,9 +175,12 @@ public class GenServiceFtl {
         map.put("mapperPath", mapperPath);
 
         map.put("author", Home.author);
-        map.put("now_time", MyDateUtils.convertDateToStr(new Date(), null));
+        map.put("now_time", MedusaDateUtils.convertDateToStr(new Date(), null));
 
-        map.put("lowcaseFirstEntityName", MyGenUtils.lowcaseFirst(entityName));
+        map.put("lowcaseFirstEntityName", MedusaGenUtils.lowcaseFirst(entityName));
+
+        String medusaStarterServiceImplPacName = Home.checkBaseServiceSwitch() ? "" : "com.ysl.medusa.base.BaseServiceImpl";
+        map.put("medusaStarterServiceImplPacName", medusaStarterServiceImplPacName);
 
         return map;
     }
@@ -195,7 +201,7 @@ public class GenServiceFtl {
         map.put("mixMapper", mixMapper);
 
         map.put("author", Home.author);
-        map.put("now_time", MyDateUtils.convertDateToStr(new Date(), null));
+        map.put("now_time", MedusaDateUtils.convertDateToStr(new Date(), null));
 
         return map;
     }

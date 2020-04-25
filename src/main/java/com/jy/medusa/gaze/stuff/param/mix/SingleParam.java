@@ -1,8 +1,8 @@
-package com.jy.medusa.gaze.stuff.param;
+package com.jy.medusa.gaze.stuff.param.mix;
 
 public class SingleParam extends BaseComplexParam {
 
-    SingleParam(String column, Object value) {
+    public SingleParam(String column, Object value) {
         this.setColumn(column);
         this.setValue(value);
     }

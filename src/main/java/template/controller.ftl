@@ -35,7 +35,7 @@ public class ${entityName}Controller {
         JSONObject json = new JSONObject();
 
         try {
-            Pager<${entityName}> pager = MyRestrictions.getPager().setPageSize(10).setPageNumber(pageNum);
+            Pager<${entityName}> pager = Pager.getPager().setPageSize(10).setPageNumber(pageNum);
             ${lowcaseFirstEntityName}Service.selectByGaze(pager);
 
             ${lowcaseFirstEntityName}Service.resultSuccess(pager, "ok", json);

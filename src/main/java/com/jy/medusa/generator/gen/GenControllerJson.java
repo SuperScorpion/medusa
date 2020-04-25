@@ -1,10 +1,10 @@
 package com.jy.medusa.generator.gen;
 
-import com.jy.medusa.gaze.utils.MyDateUtils;
-import com.jy.medusa.gaze.utils.MyCommonUtils;
+import com.jy.medusa.gaze.utils.MedusaDateUtils;
+import com.jy.medusa.gaze.utils.MedusaCommonUtils;
 import com.jy.medusa.gaze.utils.SystemConfigs;
 import com.jy.medusa.generator.Home;
-import com.jy.medusa.generator.MyGenUtils;
+import com.jy.medusa.generator.MedusaGenUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,10 +29,10 @@ public class GenControllerJson {
     public GenControllerJson(String tableName, String packagePath, String entityPath, String servicePath) {
         this.entityPath = entityPath;
         this.servicePath = servicePath;
-        this.entityName = MyGenUtils.upcaseFirst(tableName);
+        this.entityName = MedusaGenUtils.upcaseFirst(tableName);
         this.packagePath = packagePath;
         this.tag = Home.tag;
-        this.markServiceList = MyGenUtils.genTagStrList(entityName + "Controller.java", packagePath, tag, "java");
+        this.markServiceList = MedusaGenUtils.genTagStrList(entityName + "Controller.java", packagePath, tag, "java");
     }
 
     public void process() {
@@ -44,7 +44,7 @@ public class GenControllerJson {
                 file.mkdirs();
             }
             String resPath = path + "/" + entityName + "Controller.java";
-            MyCommonUtils.writeString2File(new File(resPath), home(), "UTF-8");
+            MedusaCommonUtils.writeString2File(new File(resPath), home(), "UTF-8");
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -81,16 +81,16 @@ public class GenControllerJson {
 
         //添加作者
         sbb.append("/**\r\n");
-        sbb.append(" * Created by " + Home.author + " on " + MyDateUtils.convertDateToStr(new Date(), null) + "\r\n");
+        sbb.append(" * Created by " + Home.author + " on " + MedusaDateUtils.convertDateToStr(new Date(), null) + "\r\n");
         sbb.append(" */\r\n");
 
         sbb.append("@Controller\r\n");
-        sbb.append("@RequestMapping(\"/" + MyGenUtils.lowcaseFirst(entityName) + "\")\r\n");
+        sbb.append("@RequestMapping(\"/" + MedusaGenUtils.lowcaseFirst(entityName) + "\")\r\n");
         sbb.append("public class " + entityName + "Controller {\r\n\r\n");
         sbb.append("\tprivate static final Logger logger = LoggerFactory.getLogger(" + entityName + "Controller.class);\r\n\r\n");
 
         sbb.append("\t@Resource\r\n");
-        sbb.append("\t" + entityName + "Service " + MyGenUtils.lowcaseFirst(entityName) + "Service;\r\n\r\n");
+        sbb.append("\t" + entityName + "Service " + MedusaGenUtils.lowcaseFirst(entityName) + "Service;\r\n\r\n");
 
         //index.json
         sbb.append("\t@RequestMapping(value = \"/index.json\", method = RequestMethod.GET)\r\n");
@@ -99,8 +99,8 @@ public class GenControllerJson {
         sbb.append("\t\tJSONObject json = new JSONObject();\r\n\r\n");
 
         StringBuilder sb2 = new StringBuilder();
-        sb2.append("\t\t\t" + "Pager<" + entityName + Home.entityNameSuffix +"> pager = MyRestrictions.getPager().setPageSize(10).setPageNumber(pageNum);\r\n");
-        sb2.append("\t\t\t" + MyGenUtils.lowcaseFirst(entityName) + "Service.selectByGaze(param, pager);\r\n\r\n");
+        sb2.append("\t\t\t" + "Pager<" + entityName + Home.entityNameSuffix +"> pager = Pager.getPager().setPageSize(10).setPageNumber(pageNum);\r\n");
+        sb2.append("\t\t\t" + MedusaGenUtils.lowcaseFirst(entityName) + "Service.selectByGaze(param, pager);\r\n\r\n");
 
         genTryCatch(sbb, sb2.toString());
         sbb.append("\t\treturn json;\r\n");
@@ -113,7 +113,7 @@ public class GenControllerJson {
         sbb.append("\t\tJSONObject json = new JSONObject();\r\n\r\n");
 
         sb2.delete(0, sb2.length());
-        sb2.append("\t\t\tif(param != null) " + MyGenUtils.lowcaseFirst(entityName) + "Service.save(param);\r\n\r\n");
+        sb2.append("\t\t\tif(param != null) " + MedusaGenUtils.lowcaseFirst(entityName) + "Service.save(param);\r\n\r\n");
         genTryCatch(sbb, sb2.toString());
         sbb.append("\t\treturn json;\r\n");
         sbb.append("\t}\r\n\r\n");
@@ -125,7 +125,7 @@ public class GenControllerJson {
         sbb.append("\t\tJSONObject json = new JSONObject();\r\n\r\n");
 
         sb2.delete(0, sb2.length());
-        sb2.append("\t\t\tif(param != null) " + MyGenUtils.lowcaseFirst(entityName) + "Service.updateSelective(param);\r\n\r\n");
+        sb2.append("\t\t\tif(param != null) " + MedusaGenUtils.lowcaseFirst(entityName) + "Service.updateSelective(param);\r\n\r\n");
         genTryCatch(sbb, sb2.toString());
         sbb.append("\t\treturn json;\r\n");
         sbb.append("\t}\r\n\r\n");
@@ -137,14 +137,14 @@ public class GenControllerJson {
         sbb.append("\t\tJSONObject json = new JSONObject();\r\n\r\n");
 
         sb2.delete(0, sb2.length());
-        sb2.append("\t\t\tint param = " + MyGenUtils.lowcaseFirst(entityName) + "Service.deleteById(id);\r\n\r\n");
+        sb2.append("\t\t\tint param = " + MedusaGenUtils.lowcaseFirst(entityName) + "Service.deleteById(id);\r\n\r\n");
         genTryCatch(sbb, sb2.toString());
         sbb.append("\t\treturn json;\r\n");
         sbb.append("\t}\r\n\r\n");
 
 
 
-        MyGenUtils.processAllRemains(markServiceList, sbb, tag, "java");
+        MedusaGenUtils.processAllRemains(markServiceList, sbb, tag, "java");
 
         sbb.append("}");
 
@@ -157,10 +157,10 @@ public class GenControllerJson {
         sb.append(sbbb);
 
         if(sbbb.contains("pager"))
-            sb.append("\t\t\t" + MyGenUtils.lowcaseFirst(entityName) + "Service.resultSuccess(pager, \"ok\", json);\r\n");
+            sb.append("\t\t\t" + MedusaGenUtils.lowcaseFirst(entityName) + "Service.resultSuccess(pager, \"ok\", json);\r\n");
 //            sb.append("\t\t\tjson.put(\"data\", pager);\r\n");
         else
-            sb.append("\t\t\t" + MyGenUtils.lowcaseFirst(entityName) + "Service.resultSuccess(param, \"ok\", json);\r\n");
+            sb.append("\t\t\t" + MedusaGenUtils.lowcaseFirst(entityName) + "Service.resultSuccess(param, \"ok\", json);\r\n");
 //            sb.append("\t\t\tjson.put(\"data\", param);\r\n");
 
         /*sb.append("\t\t\tjson.put(\"result\",0);\r\n");
@@ -170,7 +170,7 @@ public class GenControllerJson {
 //        sb.append("\t\t\tjson.put(\"result\",1);\r\n");
 //        sb.append("\t\t\tjson.put(\"msg\",\"服务器异常：\" + e.getMessage());\r\n");
 //        sb.append("\t\t\tjson.put(\"data\", null);\r\n");
-        sb.append("\t\t\t" + MyGenUtils.lowcaseFirst(entityName) + "Service.resultError(null, \"服务器异常：\" + e.getMessage(), json);\r\n");
+        sb.append("\t\t\t" + MedusaGenUtils.lowcaseFirst(entityName) + "Service.resultError(null, \"服务器异常：\" + e.getMessage(), json);\r\n");
         sb.append("\t\t\te.printStackTrace();\r\n");
         sb.append("\t\t\tlogger.error(e.getMessage());\r\n");
         sb.append("\t\t}\r\n");
