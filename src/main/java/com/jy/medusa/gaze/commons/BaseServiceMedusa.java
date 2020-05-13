@@ -2,7 +2,7 @@ package com.jy.medusa.gaze.commons;
 
 import java.util.List;
 
-public interface BaseServiceMedusa<T> {
+public interface BaseServiceMedusa<T> extends BaseServiceMedusaLambda<T> {
 
 	List<T> selectAll(String... paramColumn);
 

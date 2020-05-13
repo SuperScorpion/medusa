@@ -114,14 +114,14 @@ MedusaStringRestrictions mr = MedusaStringRestrictions.getRestrictions()()<br/>
 MedusaLambdaRestrictions<Users> mrsck = MedusaLambdaRestrictions.getRestrictions();<br/>
 mrsck.singleParam(Users::getName, "xxx");
       <br/>        
-Pager<Users> p = MedusaRestrictions.getPager().setPageSize(7);<br/>
+Pager<Users> p = Pager.getPager().setPageSize(7);<br/>
 <br/>
-List<Users> z = bbbService.selectByCondition(s, "id, name, homeArea", p, mr, mrsck);<br/>
+List<Users> z = bbbService.selectByGaze(s, "id, name, homeArea", p, mr, mrsck);<br/>
 <br/>
 Tips:       betweenParam 后的参数不填写的话 默认为 new date();<br/>
 <br/>
 2.通过实体的某一字段来查询的<br/>
-Pager<Users> p = MedusaRestrictions.getPager().setPageSize(7);<br/>
+Pager<Users> p = Pager.getPager().setPageSize(7);<br/>
 MedusaRestrictions mrp = MedusaRestrictions.getMyRestrctions().singleParam("name", "xxx");<br/>
 List<Users> z = userService.selectByGaze("id, name, home", p, mrp);<br/>
 <br/>

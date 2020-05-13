@@ -3,15 +3,7 @@ package com.jy.medusa.gaze.commons;
 import java.util.List;
 
 //@Service
-public abstract class BaseServiceImplMedusa<T> implements BaseServiceMedusa<T> {
-
-//	@Autowired
-	protected Mapper<T> mapper;
-
-//	@Autowired
-	protected void initMapper (Mapper<T> mapper) {
-		this.mapper = mapper;
-	}
+public abstract class BaseServiceImplMedusa<T> extends BaseServiceImplMedusaLambda<T> implements BaseServiceMedusa<T> {
 
 	public List<T> selectAll(String... paramColumns) {
 		return mapper.selectAll(paramColumns);
