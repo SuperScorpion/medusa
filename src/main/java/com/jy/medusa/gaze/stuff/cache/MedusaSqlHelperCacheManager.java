@@ -16,8 +16,8 @@ public class MedusaSqlHelperCacheManager {
      * 缓存
      * TODO class 要缓存起来的
      */
-    private static final Map<String, Class<?>> entityClassMap = new ConcurrentHashMap<>();//缓存class
-    private static final Map<String, MedusaSqlGenerator> generatorMap = new ConcurrentHashMap<>();//缓存generator
+    private static volatile Map<String, Class<?>> entityClassMap = new ConcurrentHashMap<>();//缓存class
+    private static volatile Map<String, MedusaSqlGenerator> generatorMap = new ConcurrentHashMap<>();//缓存generator
 
 
     public static Class<?> getCacheClass(String p) {

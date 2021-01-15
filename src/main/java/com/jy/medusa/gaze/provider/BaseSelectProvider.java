@@ -1,9 +1,7 @@
 package com.jy.medusa.gaze.provider;
 
 import com.jy.medusa.gaze.stuff.MedusaSqlHelper;
-import com.jy.medusa.gaze.stuff.exception.MedusaException;
 import org.apache.ibatis.binding.MapperMethod;
-import org.apache.ibatis.session.defaults.DefaultSqlSession;
 
 import java.util.Map;
 
@@ -85,15 +83,12 @@ public class BaseSelectProvider {
      * 查询全部结果
      * @param m 参数
      * @return 返回值类型
+     * 新老版本产生的 bug fixed (DefaultSqlSession.StrictMap - MapperMethod.ParamMap) 20210113
      */
     public String selectAll(Map<String, Object> m) {
 
-//        if(m.get("pobj") instanceof DefaultSqlSession.StrictMap) {
             return MedusaSqlHelper.getSqlGenerator(m).sqlOfFindAll(
-                    (Object[]) ((DefaultSqlSession.StrictMap) m).get("array"));
-//        } else {
-//            throw new MedusaException("Medusa: selectAll DefaultSqlSession.StrictMap Exception");
-//        }
+                    (Object[]) ((MapperMethod.ParamMap) m).get("array"));
     }
 
 
@@ -102,15 +97,12 @@ public class BaseSelectProvider {
      * 查询总数
      * @param m 参数
      * @return 返回值类型
+     * 新老版本产生的 bug fixed (DefaultSqlSession.StrictMap - MapperMethod.ParamMap) 20210113
      */
     public String selectCount(Map<String, Object> m) {
 
-//        if(m.get("pobj") instanceof DefaultSqlSession.StrictMap) {
             return MedusaSqlHelper.getSqlGenerator(m).sqlOfFindAllCount(
-                    (Object[]) ((DefaultSqlSession.StrictMap) m).get("array"));
-//        } else {
-//            throw new MedusaException("Medusa: selectCount DefaultSqlSession.StrictMap Exception");
-//        }
+                    (Object[]) ((MapperMethod.ParamMap) m).get("array"));
     }
 
 
@@ -119,14 +111,11 @@ public class BaseSelectProvider {
      * 根据多条件查询数据
      * @param m 参数
      * @return 返回值类型
+     * 新老版本产生的 bug fixed (DefaultSqlSession.StrictMap - MapperMethod.ParamMap) 20210113
      */
     public String selectMedusaGaze(Map<String, Object> m) {
 
-//        if(m.get("pobj") instanceof DefaultSqlSession.StrictMap) {
             return MedusaSqlHelper.getSqlGenerator(m).sqlOfFindMedusaGaze(
-                    (Object[]) ((DefaultSqlSession.StrictMap) m).get("array"));
-//        } else {
-//            throw new MedusaException("Medusa: selectMedusaGaze DefaultSqlSession.StrictMap Exception");
-//        }
+                    (Object[]) ((MapperMethod.ParamMap) m).get("array"));
     }
 }

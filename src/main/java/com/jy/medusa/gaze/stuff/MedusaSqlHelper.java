@@ -10,6 +10,7 @@ import com.jy.medusa.gaze.utils.MedusaCommonUtils;
 import com.jy.medusa.gaze.utils.MedusaReflectionUtils;
 import com.jy.medusa.gaze.utils.SystemConfigs;
 import com.jy.medusa.generator.MedusaGenUtils;
+import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -113,11 +114,11 @@ public class MedusaSqlHelper {
     }
 
     /**
-     * check medusas method
+     * check medusaGaze method
      * @param methodName  参数
      * @return 返回值类型
      */
-    public static boolean checkMedusaMethod(String methodName) {
+    public static boolean checkMedusaGazeMethod(String methodName) {
         return methodName.equals("showMedusaGaze") ? true : false;
     }
 
@@ -453,7 +454,7 @@ public class MedusaSqlHelper {
 
 /*            String countSql = getSqlGenerator(p).sql_findAllCount(((MapperMethod.ParamMap) p.get("pobj")).get("param1"),
                     ((MapperMethod.ParamMap) p.get("pobj")).get("param2"));*/
-            String countSql = getSqlGenerator(p).sqlOfFindAllCount((Object[]) ((DefaultSqlSession.StrictMap) p).get("array"));
+            String countSql = getSqlGenerator(p).sqlOfFindAllCount((Object[]) ((MapperMethod.ParamMap) p).get("array"));//新老版本产生的 bug fixed (DefaultSqlSession.StrictMap - MapperMethod.ParamMap) 20210113
 
 //            BoundSql countBS = new BoundSql(mst.getConfiguration(), countSql, boundSql.getParameterMappings(),p);
 

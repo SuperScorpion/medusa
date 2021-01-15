@@ -10,6 +10,7 @@ import com.jy.medusa.gaze.stuff.exception.MedusaException;
 import com.jy.medusa.gaze.stuff.param.MedusaRestrictions;
 import com.jy.medusa.gaze.utils.MedusaReflectionUtils;
 import com.jy.medusa.gaze.utils.SystemConfigs;
+import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.builder.annotation.ProviderSqlSource;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
@@ -17,7 +18,6 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.plugin.*;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
-import org.apache.ibatis.session.defaults.DefaultSqlSession;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
@@ -116,9 +116,10 @@ public class MedusaInterceptor implements Interceptor {
         //测试结果由高到低:startWith->indexOf->contains modify by neo on 2016.11.07
         if (!medusaMethodName.startsWith("select") && !medusaMethodName.startsWith("delete")) {//查询比较多 避免再去判断是不是以下方法中的 提升性能 可以 短路 modify by neo on 2016.11.07
 
-            if (MedusaSqlHelper.checkMedusaMethod(medusaMethodName)) {//若是多条件查询 medusa
+            if (MedusaSqlHelper.checkMedusaGazeMethod(medusaMethodName)) {//若是多条件查询 medusa
 
-                Object[] x = (Object[]) ((DefaultSqlSession.StrictMap) p).get("array");//modify by neo on 2020.02.13
+                //新老版本产生的 bug fixed (DefaultSqlSession.StrictMap - MapperMethod.ParamMap) 20210113
+                Object[] x = (Object[]) ((MapperMethod.ParamMap) p).get("array");//modify by neo on 2020.02.13
 
                 Pager z = null;
 

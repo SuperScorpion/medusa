@@ -34,7 +34,11 @@ public abstract class BaseServiceImplBasis<T> {
 						lit.add(HolyGetPropertyNameLambda.convertToFieldName((HolyGetter<T>)fns));
 					}
 				}
-			}
+			}/* else if (param instanceof HolyGetter) {//Object is not a functionInterface
+                lit.add(HolyGetPropertyNameLambda.convertToFieldName((HolyGetter<T>)param));
+            } else {
+			    //do nothing
+            }*/
 		}
 
 //		paramList.forEach(param -> {

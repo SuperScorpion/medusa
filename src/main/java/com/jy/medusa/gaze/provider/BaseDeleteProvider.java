@@ -37,14 +37,11 @@ public class BaseDeleteProvider {
      * 通过主键批量的去做删除
      * @param m 参数
      * @return 返回值类型
+     * 新老版本产生的 bug fixed (DefaultSqlSession.StrictMap - MapperMethod.ParamMap) 20210113
      */
     public String deleteBatch(Map<String, Object> m) {
 
-//        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
-            List<Object> p = (List<Object>) ((DefaultSqlSession.StrictMap) m).get("list");
+            List<Object> p = (List<Object>) ((MapperMethod.ParamMap) m).get("list");
             return MedusaSqlHelper.getSqlGenerator(m).sqlOfRemoveOfBatch(p);
-//        } else {
-//            throw new MedusaException("Medusa: deleteBatch MapperMethod.ParamMap Exception");
-//        }
     }
 }

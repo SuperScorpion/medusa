@@ -20,8 +20,8 @@ public class MyReflectCacheManager {
     /**
      * 缓存方法
      */
-    private static final Map<Class<?>, Method[]> METHODS_CACHEMAP = new ConcurrentHashMap<>();///缓存methods
-    private static final Map<Class<?>, Field[]> FIELDS_CACHEMAP = new ConcurrentHashMap<>();/////缓存fields
+    private static volatile Map<Class<?>, Method[]> METHODS_CACHEMAP = new ConcurrentHashMap<>();///缓存methods
+    private static volatile Map<Class<?>, Field[]> FIELDS_CACHEMAP = new ConcurrentHashMap<>();/////缓存fields
 
 
     /**
