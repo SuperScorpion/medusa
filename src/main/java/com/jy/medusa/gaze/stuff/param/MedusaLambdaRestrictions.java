@@ -58,7 +58,7 @@ public class MedusaLambdaRestrictions<T> extends BaseRestrictions<T, HolyGetter<
         return this;
     }
 
-    public MedusaLambdaRestrictions<T> singleParam(HolyGetter<T> fn, Object v) {
+    public MedusaLambdaRestrictions singleParam(HolyGetter<T> fn, Object v) {
 
         paramList.add(new SingleParam(HolyGetPropertyNameLambda.convertToFieldName(fn), v));
         return this;

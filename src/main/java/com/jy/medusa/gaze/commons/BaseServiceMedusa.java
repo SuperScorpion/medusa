@@ -16,7 +16,7 @@ public interface BaseServiceMedusa<T> extends BaseServiceMedusaLambda<T> {
 
 	int selectCount(Object... mixParams);
 
-	List<T> selectByGaze(Object... mixParams);
+//	List<T> selectByGaze(Object... mixParams);
 
 //	int saveOrUpdate(T entity);
 

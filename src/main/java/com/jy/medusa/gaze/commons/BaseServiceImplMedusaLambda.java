@@ -32,7 +32,7 @@ public abstract class BaseServiceImplMedusaLambda<T> extends BaseServiceImplBasi
 		return mapper.selectCount(transferLambdaForGaze(mixParams));
 	}
 
-	public List<T> selectByGazeLambda(Object... mixParams) {
+	public List<T> selectByGazeMagic(Object... mixParams) {
 		return mapper.showMedusaGaze(transferLambdaForGaze(mixParams));
 	}
 

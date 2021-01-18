@@ -29,9 +29,9 @@ public abstract class BaseServiceImplMedusa<T> extends BaseServiceImplMedusaLamb
 		return mapper.selectCount(mixParams);
 	}
 
-	public List<T> selectByGaze(Object... mixParams) {
-		return mapper.showMedusaGaze(mixParams);
-	}
+//	public List<T> selectByGaze(Object... mixParams) {
+//		return mapper.showMedusaGaze(mixParams);
+//	}
 
 //	public int saveOrUpdate(T entity) {
 //		return 0;//TODO

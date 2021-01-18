@@ -18,7 +18,7 @@ public interface BaseServiceMedusaLambda<T> {
 
 	int selectCountLambda(Object... mixParams);
 
-	List<T> selectByGazeLambda(Object... mixParams);
+	List<T> selectByGazeMagic(Object... mixParams);
 
 //	int saveSelective(T entity);
 

@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class SystemConfigs {
 
-    public static final String PRIMARY_KEY = "id";
+    public static final String PRIMARY_KEY = "id";//TODO insert的相关方法主键能否动态呢
 
     public static final String DATE_FULL_STR = "yyyy-MM-dd HH:mm:ss";
 

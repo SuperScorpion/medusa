@@ -22,13 +22,13 @@ public abstract class BaseServiceImplBasis<T> {
 
 //		List<Object> paramList = Arrays.asList(paramObjs);//https://blog.csdn.net/x541211190/article/details/79597236
 
-		List< Object> paramList = new ArrayList<>(paramObjs.length);
+		List<Object> paramList = new ArrayList<>(paramObjs.length);
 		Collections.addAll(paramList, paramObjs);
 
 		ListIterator<Object> lit = paramList.listIterator();
-		while(lit.hasNext()) {
+		while (lit.hasNext()) {
 			Object param = lit.next();
-			if(param instanceof Collection) {
+			if (param instanceof Collection) {
 				for (Object fns : (Collection) param) {
 					if (fns instanceof HolyGetter) {
 						lit.add(HolyGetPropertyNameLambda.convertToFieldName((HolyGetter<T>)fns));
@@ -51,14 +51,22 @@ public abstract class BaseServiceImplBasis<T> {
 //			}
 //		});
 
-		return paramList.toArray(new Object[]{});
+		Object[] result = paramList.toArray(new Object[]{});;
+
+		//help gc
+		if(paramList != null) {
+			paramList.clear();
+			paramList = null;
+		}
+
+		return result;
 	}
 
 	protected String[] transferStringColumnByLambda(HolyGetter<T>[] paramFns) {
 
 		List<Object> paramList = new ArrayList<>();
 
-		for(HolyGetter<T> fns : paramFns) {
+		for (HolyGetter<T> fns : paramFns) {
 			paramList.add(HolyGetPropertyNameLambda.convertToFieldName(fns));
 		}
 
