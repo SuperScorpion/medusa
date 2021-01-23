@@ -1,9 +1,5 @@
 package com.jy.medusa.generator.gen;
 
-/**
- * Created by neo on 16/7/19.
- */
-
 import com.jy.medusa.gaze.utils.MedusaCommonUtils;
 import com.jy.medusa.gaze.utils.MedusaDateUtils;
 import com.jy.medusa.gaze.utils.SystemConfigs;
@@ -16,6 +12,11 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 import java.util.Date;
+
+/**
+ * Created by neo on 16/7/19.
+ * @deprecated
+ */
 
 public class GenEntity {
 

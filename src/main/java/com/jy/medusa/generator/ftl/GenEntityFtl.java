@@ -17,8 +17,8 @@ import freemarker.template.TemplateException;
 
 import java.io.*;
 import java.sql.*;
-import java.util.*;
 import java.util.Date;
+import java.util.*;
 
 public class GenEntityFtl {
 
@@ -45,6 +45,8 @@ public class GenEntityFtl {
 
     private String primaryKey = SystemConfigs.PRIMARY_KEY;//主键字段名
 
+    private String tableComment = "";//表备注信息
+
 
     public GenEntityFtl() {
 
@@ -66,8 +68,10 @@ public class GenEntityFtl {
 
         Connection conn = dataBaseTools.openConnection(); // 得到数据库连接
         PreparedStatement pstmt = null;
+        ResultSet rs = null;
         String strsql = "select * from " + tableName;
         String sqlComments = "show full columns from " + tableName;
+        String tableInfoSql = "SHOW CREATE TABLE " + tableName;
 
         try {
             //modify by neo on 2019.08.17
@@ -83,8 +87,25 @@ public class GenEntityFtl {
             }
 
 
+            //1.先处理表备注信息 add by neo on 20210120
+            pstmt = conn.prepareStatement(tableInfoSql);
+            rs = pstmt.executeQuery();
+            if (rs != null) {
+                while (rs.next()) {
+                    String createDDL = rs.getString(2);
+                    int index = createDDL.indexOf("COMMENT='");
+                    if (index < 0) {
+                        tableComment = "";
+                    } else {
+                        tableComment = createDDL.substring(index + 9);
+                        tableComment = tableComment.substring(0, tableComment.length() - 1);
+                    }
+                }
+            }
+
+            //2.处理默认值和字段备注信息
             pstmt = conn.prepareStatement(sqlComments);
-            ResultSet rs = pstmt.executeQuery();
+            rs = pstmt.executeQuery();
             if (rs != null) {
                 while (rs.next()) {
                     defaultMap.put(MedusaGenUtils.getCamelStr(rs.getString("Field")), rs.getString("Default"));
@@ -92,6 +113,7 @@ public class GenEntityFtl {
                 }
             }
 
+            //3.处理各种数据库字段信息
             pstmt = conn.prepareStatement(strsql);
             ResultSetMetaData rsmd = pstmt.getMetaData();
             int size = rsmd.getColumnCount(); // 共有多少列
@@ -103,7 +125,7 @@ public class GenEntityFtl {
             for (int i = 0; i < rsmd.getColumnCount(); i++) {
 
                 colSqlNames[i] = rsmd.getColumnName(i + 1);
-                colFieldNames[i] = colSqlNames[i].equals(primaryKey) ? SystemConfigs.PRIMARY_KEY : MedusaGenUtils.getCamelStr(rsmd.getColumnName(i + 1));//modify by neo on 2020.02.14
+                colFieldNames[i] = MedusaGenUtils.getCamelStr(rsmd.getColumnName(i + 1));//modify by neo on 20210121
                 colTypes[i] = rsmd.getColumnTypeName(i + 1);
                 if (colTypes[i].equalsIgnoreCase("datetime") || colTypes[i].equalsIgnoreCase("date") || colTypes[i].equalsIgnoreCase("TIMESTAMP")) {
                     if(MedusaCommonUtils.isNotBlank(defaultMap.get(colFieldNames[i]))) isMedusaDateUtils = true;
@@ -199,6 +221,7 @@ public class GenEntityFtl {
         Map<String, Object> map = new HashMap<>();
 
         map.put("tableName", tableName);
+        map.put("tableComment", tableComment);
         map.put("entityPath", packagePath);
         map.put("author", Home.author);
         map.put("upcaseFirstTableName", MedusaGenUtils.upcaseFirst(tableName));
@@ -321,13 +344,14 @@ public class GenEntityFtl {
     }
 
     private String sqlType2JavaType(String sqlType) {
+        sqlType = sqlType.toLowerCase().trim().replace(" unsigned", "");//add by neo on 20210120
         if (sqlType.equalsIgnoreCase("bit")) {
             return "Boolean";
         } else if (sqlType.equalsIgnoreCase("tinyint")) {
             return "Byte";
         } else if (sqlType.equalsIgnoreCase("smallint")) {
             return "Short";
-        } else if (sqlType.equalsIgnoreCase("int") || sqlType.equalsIgnoreCase("integer") || sqlType.equalsIgnoreCase("int unsigned")) {
+        } else if (sqlType.equalsIgnoreCase("int") || sqlType.equalsIgnoreCase("integer")) {
             return "Integer";
         } else if (sqlType.equalsIgnoreCase("bigint")) {
             return "Long";
@@ -349,11 +373,12 @@ public class GenEntityFtl {
             return "String";
         } else if (sqlType.equalsIgnoreCase("datetime") || sqlType.equalsIgnoreCase("date") || sqlType.equalsIgnoreCase("timestamp")) {
             return "Date";
-        }
-        else if (sqlType.equalsIgnoreCase("image")) {
+        } else if (sqlType.equalsIgnoreCase("image")) {
             return "Blob";
         } else if (sqlType.equalsIgnoreCase("text")) {
             return "Clob";
+        } else if (sqlType.equalsIgnoreCase("json")) {//add by neo on 20210120
+            return "String";
         }
         return null;
     }

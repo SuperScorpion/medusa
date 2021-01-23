@@ -15,6 +15,7 @@ import java.util.Date;
 
 /**
  * Created by neo on 16/7/27.
+ * @deprecated
  */
 public class GenXml {
 

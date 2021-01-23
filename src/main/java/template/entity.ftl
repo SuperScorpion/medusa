@@ -1,4 +1,4 @@
-package ${entityPath};
+package ${entityPath?default("")};
 
 import com.jy.medusa.gaze.stuff.annotation.Column;
 import com.jy.medusa.gaze.stuff.annotation.Id;
@@ -29,38 +29,44 @@ import SystemConfigs.VALID_VALIDATOR_PATH;
 </#if>
 
 /**
-* Created by ${author} on ${now_time}
+* Created by ${author?default("")} on ${now_time?default("")}
+* ${tableComment?default("")}
 */
-@Table(name = "${tableName}")
+@Table(name = "${tableName?default("")}")
 <#if lazyLoad?? && lazyLoad==true>
 @JsonIgnoreProperties(value={"handler"})
 </#if>
-public class ${upcaseFirstTableName}${entityNameSuffix} {
+public class ${upcaseFirstTableName?default("")}${entityNameSuffix?default("")} {
 
 <#if columnDtos??>
 <#list columnDtos as cl>
-<#if cl.primarykeyFlag?? && cl.primarykeyFlag == true>
-	@Id
-</#if>
+    <#if cl.comment??>
+        /**
+        ${cl.comment}
+        */
+    </#if>
+    <#if cl.primarykeyFlag?? && cl.primarykeyFlag == true>
+        @Id
+    </#if>
 	@Column(name = "${cl.column}")
-	private ${cl.javaType} ${cl.lowwerName};
+    private ${cl.javaType?default("")} ${cl.lowwerName?default("")};
 
 </#list>
 <#list columnDtos as cl>
     <#if cl.notOnlyColumnFlag?? && cl.notOnlyColumnFlag == true>
     ${cl.associRemark}
-    private ${cl.associUpperName} ${cl.associLowwerName};
+    private ${cl.associUpperName?default("")} ${cl.associLowwerName?default("")};
     </#if>
 </#list>
 
 
 <#list columnDtos as cl>
-	public ${cl.javaType} get${cl.upperName}() {
-		return ${cl.lowwerName};
+	public ${cl.javaType?default("")} get${cl.upperName?default("")}() {
+		return ${cl.lowwerName?default("")};
 	}
 
-	public void set${cl.upperName}(${cl.javaType} ${cl.lowwerName}) {
-		this.${cl.lowwerName} = ${cl.lowwerName};
+	public void set${cl.upperName?default("")}(${cl.javaType?default("")} ${cl.lowwerName?default("")}) {
+		this.${cl.lowwerName?default("")} = ${cl.lowwerName?default("")};
 	}
 
 </#list>

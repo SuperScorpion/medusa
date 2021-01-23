@@ -409,7 +409,7 @@ public class Home {
      * 获取数据库的表所有名称
      * @return 返回值类型
      */
-    public String getAllTableName() {
+    private String getAllTableName() {
 
         String result = "";
 

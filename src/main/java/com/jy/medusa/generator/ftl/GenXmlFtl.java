@@ -13,8 +13,8 @@ import freemarker.template.TemplateException;
 
 import java.io.*;
 import java.sql.*;
-import java.util.*;
 import java.util.Date;
+import java.util.*;
 
 /**
  * Created by neo on 16/7/27.
@@ -57,22 +57,21 @@ public class GenXmlFtl {
 //        this.markXmlList = MedusaGenUtils.genTagStrList(entityName + "Mapper.xml", packagePath, tag, "xml");
     }
 
-    private void changeTypes(String[] colTypes, String[] colTypesSql) {//TODO
+    //TODO 待添加 但是xml的jdbcType没用了 所以此方法没意义了
+    private void changeTypes(String[] colTypes, String[] colTypesSql) {
 
         for(int i=0; i < colTypesSql.length ;i++) {
             if (MedusaCommonUtils.isNotBlank(colTypesSql[i])) {
-                switch (colTypesSql[i]) {
+                String sqlTypeNoUnsigned = colTypesSql[i].toLowerCase().trim().replace(" unsigned", "");//add by neo on 20210120
+                switch (sqlTypeNoUnsigned) {
                     case "INT":
-                        colTypes[i] = "INTEGER";
-                        break;
-                    case "INT UNSIGNED":///modify by neo on 2019.12.11
                         colTypes[i] = "INTEGER";
                         break;
                     case "DATETIME":
                         colTypes[i] = "TIMESTAMP";
                         break;
                     default:
-                        colTypes[i] = colTypesSql[i];
+                        colTypes[i] = sqlTypeNoUnsigned;
                         break;
                 }
             }
@@ -204,9 +203,11 @@ public class GenXmlFtl {
         for (int i = 0; i < colSqlNames.length; i++) {
 
             if (colSqlNames[i].trim().equalsIgnoreCase(primaryKey)) {
-                resultMapStrList.add("<id column=\"" + colSqlNames[i] + "\" jdbcType=\""+ colTypes[i] +"\" property=\""+ SystemConfigs.PRIMARY_KEY +"\" />");//modify by neo on 2020.02.15
+//                resultMapStrList.add("<id column=\"" + colSqlNames[i] + "\" jdbcType=\""+ colTypes[i] +"\" property=\""+ SystemConfigs.PRIMARY_KEY +"\" />");//modify by neo on 2020.02.15
+                resultMapStrList.add("<id column=\"" + colSqlNames[i] + "\" property=\""+ SystemConfigs.PRIMARY_KEY +"\" />");//modify by neo on 2020.02.15
             } else {
-                resultMapStrList.add("<result column=\"" + colSqlNames[i] + "\" jdbcType=\"" + colTypes[i] + "\" property=\"" + colFieldNames[i] + "\" />");
+//                resultMapStrList.add("<result column=\"" + colSqlNames[i] + "\" jdbcType=\"" + colTypes[i] + "\" property=\"" + colFieldNames[i] + "\" />");
+                resultMapStrList.add("<result column=\"" + colSqlNames[i] + "\" property=\"" + colFieldNames[i] + "\" />");
             }
 
         }
