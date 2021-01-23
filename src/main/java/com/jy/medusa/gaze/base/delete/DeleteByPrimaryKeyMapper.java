@@ -4,6 +4,8 @@ package com.jy.medusa.gaze.base.delete;
 import com.jy.medusa.gaze.provider.BaseDeleteProvider;
 import org.apache.ibatis.annotations.DeleteProvider;
 
+import java.io.Serializable;
+
 /**
  * 通用Mapper接口,删除
  * @param <T> 不能为空
@@ -17,5 +19,5 @@ public interface DeleteByPrimaryKeyMapper<T> {
      * @return 返回值类型
      */
     @DeleteProvider(type = BaseDeleteProvider.class, method = "deleteByPrimaryKey")
-    int deleteByPrimaryKey(Object pk);
+    int deleteByPrimaryKey(Serializable pk);
 }

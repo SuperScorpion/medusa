@@ -5,6 +5,8 @@ import com.jy.medusa.gaze.provider.BaseSelectProvider;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.SelectProvider;
 
+import java.io.Serializable;
+
 /**
  * 通用Mapper接口,其他接口继承该接口即可
  * @param <T> 不能为空
@@ -20,5 +22,5 @@ public interface SelectByPrimaryKeyMapper<T> {
      */
     @SelectProvider(type = BaseSelectProvider.class, method = "selectByPrimaryKey")
     @ResultMap("BaseResultMap")
-    T selectByPrimaryKey(Object pk, String... paramColumns);
+    T selectByPrimaryKey(Serializable pk, String... paramColumns);
 }

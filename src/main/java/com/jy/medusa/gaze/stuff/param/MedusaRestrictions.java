@@ -2,9 +2,10 @@ package com.jy.medusa.gaze.stuff.param;
 
 import com.jy.medusa.gaze.stuff.param.mix.BaseParam;
 
+import java.io.Serializable;
 import java.util.List;
 
-public interface MedusaRestrictions<T, P, R> {
+public interface MedusaRestrictions<T, P, R> extends Serializable {
 
     R notInParam(P fn, List v, Boolean p);
 

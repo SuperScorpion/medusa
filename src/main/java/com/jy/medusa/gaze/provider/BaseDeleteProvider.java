@@ -21,7 +21,7 @@ public class BaseDeleteProvider {
      * @return 返回值类型
      */
     public String delete(Map<String, Object> m) {
-        return MedusaSqlHelper.getSqlGenerator(m).sqlOfRemoveByCondition(m.get("pobj"));
+        return MedusaSqlHelper.getSqlGenerator(m).sqlOfDelete(m.get("pobj"));
     }
 
     /**
@@ -30,7 +30,7 @@ public class BaseDeleteProvider {
      * @return 返回值类型
      */
     public String deleteByPrimaryKey(Map<String, Object> m) {
-        return MedusaSqlHelper.getSqlGenerator(m).sqlOfRemoveById();//modify by neo on 2016.11.13 m.get("pobj")
+        return MedusaSqlHelper.getSqlGenerator(m).sqlOfDeleteByPrimaryKey();//modify by neo on 2016.11.13 m.get("pobj")
     }
 
     /**
@@ -42,6 +42,6 @@ public class BaseDeleteProvider {
     public String deleteBatch(Map<String, Object> m) {
 
             List<Object> p = (List<Object>) ((MapperMethod.ParamMap) m).get("list");
-            return MedusaSqlHelper.getSqlGenerator(m).sqlOfRemoveOfBatch(p);
+            return MedusaSqlHelper.getSqlGenerator(m).sqlOfDeleteBatch(p);
     }
 }

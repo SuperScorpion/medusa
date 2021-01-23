@@ -4,6 +4,8 @@ package com.jy.medusa.gaze.base.select;
 import com.jy.medusa.gaze.provider.BaseSelectProvider;
 import org.apache.ibatis.annotations.SelectProvider;
 
+import java.io.Serializable;
+
 /**
  * 通用Mapper接口,查询
  * @param <T> 不能为空

@@ -1,44 +1,47 @@
 package com.jy.medusa.gaze.commons;
 
+import java.io.Serializable;
 import java.util.List;
 
-public interface BaseServiceMedusa<T> extends BaseServiceMedusaLambda<T> {
+/**
+ * 基础接口 BaseServiceMedusa - BaseServiceMedusaString - BaseServiceMedusaLambda
+ * @param <T>
+ */
+public interface BaseServiceMedusa<T> extends BaseServiceMedusaString<T> {
 
-	List<T> selectAll(String... paramColumn);
+	List<T> selectAll();
 
-	T selectOne(T entity, String... paramColumns);
+	T selectOne(T entity);
 
-	List<T> selectByIds(List<Object> ids, String... paramColumns);
+	List<T> selectByIds(List<Serializable> ids);
 
-	T selectById(Object id, String... paramColumns);
+	T selectById(Serializable id);
 
-	List<T> selectListBy(T entity, String... paramColumns);
+	List<T> selectListBy(T entity);
 
-	int selectCount(Object... mixParams);
+//	int selectCount(Serializable... mixParams);
 
-//	List<T> selectByGaze(Object... mixParams);
-
-//	int saveOrUpdate(T entity);
+//	List<T> selectByGaze(Serializable... mixParams);
 
 	int saveSelective(T entity);
 
 	int save(T entity);
 
-	int saveBatch(List<T> obs, String... paramColumns);
+	int saveBatch(List<T> obs);
 
-	int update(T entity, String... paramColumns);
+	int update(T entity);
 
 	int updateSelective(T entity);
 
-	int updateBatch(List<T> obs, String... paramColumns);
+	int updateBatch(List<T> obs);
 
-	int deleteById(Object id);
+	int deleteById(Serializable id);
 
-	int deleteBatch(List<Object> ids);
+	int deleteBatch(List<Serializable> ids);
 
 	int deleteBy(T entity);
 
-	/*JSONObject resultSuccess(Object result, String msg, JSONObject json);
+//	public JSONSerializable resultSuccess(Serializable result, String msg, JSONSerializable json);
 
-	JSONObject resultError(Object result, String msg, JSONObject json);*/
+//	public JSONSerializable resultError(Serializable result, String msg, JSONSerializable json);
 }

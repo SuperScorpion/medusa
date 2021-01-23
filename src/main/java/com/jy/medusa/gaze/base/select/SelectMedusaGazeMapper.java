@@ -5,6 +5,7 @@ import com.jy.medusa.gaze.provider.BaseSelectProvider;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.SelectProvider;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**

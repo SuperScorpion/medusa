@@ -1,12 +1,17 @@
 package com.jy.medusa.gaze.commons;
 
+import com.jy.medusa.gaze.stuff.param.MedusaLambdaColumns;
 import com.jy.medusa.gaze.stuff.param.lambda.HolyGetPropertyNameLambda;
 import com.jy.medusa.gaze.stuff.param.lambda.HolyGetter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.stream.Collectors;
 
 //@Service
-public abstract class BaseServiceImplBasis<T> {
+public abstract class BaseServiceImplLambdaBasis<T> {
 
 	//	@Autowired
 	protected Mapper<T> mapper;
@@ -22,14 +27,16 @@ public abstract class BaseServiceImplBasis<T> {
 
 //		List<Object> paramList = Arrays.asList(paramObjs);//https://blog.csdn.net/x541211190/article/details/79597236
 
-		List<Object> paramList = new ArrayList<>(paramObjs.length);
-		Collections.addAll(paramList, paramObjs);
+        List<Object> paramList= Arrays.stream(paramObjs).collect(Collectors.toList());
+
+//        List<Object> paramList = new ArrayList<>(paramObjs.length);
+//		Collections.addAll(paramList, paramObjs);
 
 		ListIterator<Object> lit = paramList.listIterator();
 		while (lit.hasNext()) {
 			Object param = lit.next();
-			if (param instanceof Collection) {
-				for (Object fns : (Collection) param) {
+			if (param instanceof MedusaLambdaColumns) {
+				for (Object fns : ((MedusaLambdaColumns) param).getParamList()) {
 					if (fns instanceof HolyGetter) {
 						lit.add(HolyGetPropertyNameLambda.convertToFieldName((HolyGetter<T>)fns));
 					}
@@ -51,7 +58,7 @@ public abstract class BaseServiceImplBasis<T> {
 //			}
 //		});
 
-		Object[] result = paramList.toArray(new Object[]{});;
+		Object[] result = paramList.toArray(new Object[]{});
 
 		//help gc
 		if(paramList != null) {

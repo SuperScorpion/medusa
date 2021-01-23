@@ -19,7 +19,7 @@ public class BaseSelectProvider {
     public String selectByPrimaryKeyBatch(Map<String, Object> m) {
 
 //        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
-            return MedusaSqlHelper.getSqlGenerator(m).sqlOfFindBatchOfIds(
+            return MedusaSqlHelper.getSqlGenerator(m).sqlOfSelectByPrimaryKeyBatch(
                     ((MapperMethod.ParamMap) m).get("param1"),
                     (Object[]) ((MapperMethod.ParamMap) m).get("param2"));
 //        } else {
@@ -35,7 +35,7 @@ public class BaseSelectProvider {
     public String selectOne(Map<String, Object> m) {
 
 //        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
-            return MedusaSqlHelper.getSqlGenerator(m).sqlOfFindOne(
+            return MedusaSqlHelper.getSqlGenerator(m).sqlOfSelectOne(
                     ((MapperMethod.ParamMap) m).get("param1"),
                     (Object[]) ((MapperMethod.ParamMap) m).get("param2"));
 //        } else {
@@ -52,7 +52,7 @@ public class BaseSelectProvider {
     public String select(Map<String, Object> m) {
 
 //        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
-            return MedusaSqlHelper.getSqlGenerator(m).sqlOfFindListBy(
+            return MedusaSqlHelper.getSqlGenerator(m).sqlOfSelect(
                     ((MapperMethod.ParamMap) m).get("param1"),
                     (Object[]) ((MapperMethod.ParamMap) m).get("param2"));
 //        } else {
@@ -69,7 +69,7 @@ public class BaseSelectProvider {
     public String selectByPrimaryKey(Map<String, Object> m) {
 
 //        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
-            return MedusaSqlHelper.getSqlGenerator(m).sqlOfFindOneById(
+            return MedusaSqlHelper.getSqlGenerator(m).sqlOfSelectByPrimaryKey(
                     ((MapperMethod.ParamMap) m).get("param1"),
                     (Object[]) ((MapperMethod.ParamMap) m).get("param2"));
 //        } else {
@@ -87,7 +87,7 @@ public class BaseSelectProvider {
      */
     public String selectAll(Map<String, Object> m) {
 
-            return MedusaSqlHelper.getSqlGenerator(m).sqlOfFindAll(
+            return MedusaSqlHelper.getSqlGenerator(m).sqlOfSelectAll(
                     (Object[]) ((MapperMethod.ParamMap) m).get("array"));
     }
 
@@ -101,7 +101,7 @@ public class BaseSelectProvider {
      */
     public String selectCount(Map<String, Object> m) {
 
-            return MedusaSqlHelper.getSqlGenerator(m).sqlOfFindAllCount(
+            return MedusaSqlHelper.getSqlGenerator(m).sqlOfSelectCount(
                     (Object[]) ((MapperMethod.ParamMap) m).get("array"));
     }
 
@@ -115,7 +115,7 @@ public class BaseSelectProvider {
      */
     public String selectMedusaGaze(Map<String, Object> m) {
 
-            return MedusaSqlHelper.getSqlGenerator(m).sqlOfFindMedusaGaze(
+            return MedusaSqlHelper.getSqlGenerator(m).sqlOfSelectMedusaGaze(
                     (Object[]) ((MapperMethod.ParamMap) m).get("array"));
     }
 }

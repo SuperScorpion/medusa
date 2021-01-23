@@ -4,6 +4,7 @@ package com.jy.medusa.gaze.base.delete;
 import com.jy.medusa.gaze.provider.BaseDeleteProvider;
 import org.apache.ibatis.annotations.DeleteProvider;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -19,5 +20,5 @@ public interface DeleteBatchMapper<T> {
      * @return 返回值类型
      */
     @DeleteProvider(type = BaseDeleteProvider.class, method = "deleteBatch")
-    int deleteBatch(List<Object> pks);
+    int deleteBatch(List<Serializable> pks);
 }

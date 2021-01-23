@@ -1,10 +1,6 @@
 package com.jy.medusa.gaze.stuff.param;
 
 import com.jy.medusa.gaze.stuff.Pager;
-import com.jy.medusa.gaze.stuff.param.lambda.HolyGetter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MedusaMagicBox {
 
@@ -20,7 +16,7 @@ public class MedusaMagicBox {
         return MedusaLambdaRestrictions.getRestrictions();
     }
 
-    public static List getLambdaColums() {
-        return new ArrayList();
+    public static MedusaLambdaColumns getLambdaColums() {
+        return MedusaLambdaColumns.getLambdaColums();
     }
 }

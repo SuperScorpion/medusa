@@ -201,7 +201,7 @@ public class MedusaSqlGenerator {
      * 生成根据ID删除的SQL
      * @return 返回值类型
      */
-    public String sqlOfRemoveById() {//modify by neo on 2016.11.13 Object id
+    public String sqlOfDeleteByPrimaryKey() {//modify by neo on 2016.11.13 Object id
 
         //if(id == null) id = 0;//modify by neo on 2016.11.04
 
@@ -223,7 +223,7 @@ public class MedusaSqlGenerator {
      * @param t 参数
      * @return 返回值类型
      */
-    public String sqlOfRemoveOfBatch(Object t) {
+    public String sqlOfDeleteBatch(Object t) {
 
 //        Boolean b = List.class.isAssignableFrom(t.getClass());
 
@@ -264,7 +264,7 @@ public class MedusaSqlGenerator {
      * @param t 参数
      * @return 返回值类型
      */
-    public String sqlOfRemoveByCondition(Object t) {
+    public String sqlOfDelete(Object t) {
 
         List<String> values = obtainColumnValuesForDeleteByCondition(t);
 
@@ -316,7 +316,7 @@ public class MedusaSqlGenerator {
      * @param ps 参数
      * @return 返回值类型
      */
-    public String sqlOfModifyOfBatch(Object t, Object[] ps) {
+    public String sqlOfUpdateByPrimaryKeyBatch(Object t, Object[] ps) {
 
         String paramColumn = reSolveColumn(ps);
 
@@ -340,7 +340,7 @@ public class MedusaSqlGenerator {
      * @param t 参数
      * @return 返回值类型
      */
-    public String sqlOfModify(Object t) {
+    public String sqlOfUpdateByPrimaryKeySelective(Object t) {
 
         List<String> values = obtainColumnValusForModify(t);
         //Object id = MedusaReflectionUtils.obtainFieldValue(t, currentColumnFieldNameMap.get(pkName));
@@ -399,7 +399,7 @@ public class MedusaSqlGenerator {
      * @param ps 参数
      * @return 返回值类型
      */
-    public String sqlOfModifyNull(Object t, Object[] ps) {
+    public String sqlOfUpdateByPrimaryKey(Object t, Object[] ps) {
 
         String paramColumn = reSolveColumn(ps);
 
@@ -451,7 +451,7 @@ public class MedusaSqlGenerator {
      * @param ps  参数
      * @return 返回值类型
      */
-    public String sqlOfFindOne(Object t, Object[] ps) {
+    public String sqlOfSelectOne(Object t, Object[] ps) {
 
         String paramColumn = reSolveColumn(ps);
 
@@ -486,7 +486,7 @@ public class MedusaSqlGenerator {
      * @param ps 参数
      * @return 返回值类型
      */
-    public String sqlOfFindOneById(Object id, Object[] ps) {///modify by neo on 2016.11.21 Object id,这个 id 不能去掉的
+    public String sqlOfSelectByPrimaryKey(Object id, Object[] ps) {///modify by neo on 2016.11.21 Object id,这个 id 不能去掉的
 
         String paramColumn = reSolveColumn(ps);
 
@@ -508,7 +508,7 @@ public class MedusaSqlGenerator {
      * @param ps 参数
      * @return 返回值类型
      */
-    public String sqlOfFindBatchOfIds(Object t, Object[] ps) {
+    public String sqlOfSelectByPrimaryKeyBatch(Object t, Object[] ps) {
 
         List<Object> ids = t instanceof List ? (ArrayList)t : new ArrayList<>();
 
@@ -543,7 +543,7 @@ public class MedusaSqlGenerator {
      * @param ps 参数
      * @return 返回值类型
      */
-    public String sqlOfFindListBy(Object t, Object[] ps) {
+    public String sqlOfSelect(Object t, Object[] ps) {
 
         String paramColumn = reSolveColumn(ps);
 
@@ -612,7 +612,7 @@ public class MedusaSqlGenerator {
      * @param objParams 参数
      * @return 返回值类型
      */
-    public String sqlOfFindAll(Object[] objParams) {
+    public String sqlOfSelectAll(Object[] objParams) {
 
         String paramColumn = (objParams == null || objParams.length == 0) ? columnsStr : MedusaSqlHelper.buildColumnNameForSelect(objParams, currentFieldColumnNameMap);
 
@@ -632,7 +632,7 @@ public class MedusaSqlGenerator {
      * @param objParams 参数
      * @return 返回值类型
      */
-    public String sqlOfFindAllCount(Object[] objParams) {
+    public String sqlOfSelectCount(Object[] objParams) {
 
         //从缓存里拿到分页查询语句 必须清理掉缓存
         String cacheSq = MedusaSqlHelper.myThreadLocal.get();
@@ -711,7 +711,7 @@ public class MedusaSqlGenerator {
      * @param objParams 参数
      * @return 返回值类型
      **/
-    public String sqlOfFindMedusaGaze(Object[] objParams) {//modify by neo on 2016.12.23
+    public String sqlOfSelectMedusaGaze(Object[] objParams) {//modify by neo on 2016.12.23
 
         //获取到缓存中的分页查询语句 modify by neo on 2016.11.16
         ///分页时先执行查询分页再执行查询分页 再执行总计数句 boundsql(因为)

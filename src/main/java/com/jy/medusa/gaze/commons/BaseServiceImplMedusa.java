@@ -1,40 +1,41 @@
 package com.jy.medusa.gaze.commons;
 
+import java.io.Serializable;
 import java.util.List;
 
+/**
+ * 基础接口 BaseServiceImplMedusa - BaseServiceImplMedusaString - BaseServiceImplMedusaLambda
+ * @param <T>
+ */
 //@Service
-public abstract class BaseServiceImplMedusa<T> extends BaseServiceImplMedusaLambda<T> implements BaseServiceMedusa<T> {
+public abstract class BaseServiceImplMedusa<T> extends BaseServiceImplMedusaString<T> implements BaseServiceMedusa<T> {
 
-	public List<T> selectAll(String... paramColumns) {
-		return mapper.selectAll(paramColumns);
+	public List<T> selectAll() {
+		return mapper.selectAll();
 	}
 
-	public T selectOne(T entity, String... paramColumns) {
-		return mapper.selectOne(entity, paramColumns);
+	public T selectOne(T entity) {
+		return mapper.selectOne(entity);
 	}
 
-	public List<T> selectByIds(List<Object> ids, String... paramColumns) {
-		return mapper.selectByPrimaryKeyBatch(ids, paramColumns);
+	public List<T> selectByIds(List<Serializable> ids) {
+		return mapper.selectByPrimaryKeyBatch(ids);
 	}
 
-	public T selectById(Object id, String... paramColumns) {
-		return mapper.selectByPrimaryKey(id, paramColumns);
+	public T selectById(Serializable id) {
+		return mapper.selectByPrimaryKey(id);
 	}
 
-	public List<T> selectListBy(T entity, String... paramColumns) {
-		return mapper.select(entity, paramColumns);
+	public List<T> selectListBy(T entity) {
+		return mapper.select(entity);
 	}
 
-	public int selectCount(Object... mixParams) {
-		return mapper.selectCount(mixParams);
-	}
-
-//	public List<T> selectByGaze(Object... mixParams) {
-//		return mapper.showMedusaGaze(mixParams);
+//	public int selectCount(Serializable... mixParams) {
+//		return mapper.selectCount(mixParams);
 //	}
 
-//	public int saveOrUpdate(T entity) {
-//		return 0;//TODO
+//	public List<T> selectByGaze(Serializable... mixParams) {
+//		return mapper.showMedusaGaze(mixParams);
 //	}
 
 	public int saveSelective(T entity) {
@@ -45,27 +46,27 @@ public abstract class BaseServiceImplMedusa<T> extends BaseServiceImplMedusaLamb
 		return mapper.insert(entity);
 	}
 
-	public int saveBatch(List<T> obs, String... paramColumns) {
-		return mapper.insertBatch(obs, paramColumns);
+	public int saveBatch(List<T> obs) {
+		return mapper.insertBatch(obs);
 	}
 
-	public int update(T entity, String... paramColumns) {
-		return mapper.updateByPrimaryKey(entity, paramColumns);
+	public int update(T entity) {
+		return mapper.updateByPrimaryKey(entity);
 	}
 
 	public int updateSelective(T entity) {
 		return mapper.updateByPrimaryKeySelective(entity);
 	}
 
-	public int updateBatch(List<T> obs, String... paramColumns) {
-		return mapper.updateByPrimaryKeyBatch(obs, paramColumns);
+	public int updateBatch(List<T> obs) {
+		return mapper.updateByPrimaryKeyBatch(obs);
 	}
 
-	public int deleteById(Object id) {
+	public int deleteById(Serializable id) {
 		return mapper.deleteByPrimaryKey(id);
 	}
 
-	public int deleteBatch(List<Object> ids) {
+	public int deleteBatch(List<Serializable> ids) {
 		return mapper.deleteBatch(ids);
 	}
 
@@ -73,16 +74,16 @@ public abstract class BaseServiceImplMedusa<T> extends BaseServiceImplMedusaLamb
 		return mapper.delete(entity);
 	}
 
-	/*public JSONObject resultSuccess(Object result, String msg, JSONObject json) {
-		json = json == null ? new JSONObject() : json;
+	/*public JSONSerializable resultSuccess(Serializable result, String msg, JSONSerializable json) {
+		json = json == null ? new JSONSerializable() : json;
 		json.put("data", result);
 		json.put("result",0);
 		json.put("msg", msg);
 		return json;
 	}
 
-	public JSONObject resultError(Object result, String msg, JSONObject json) {
-		json = json == null ? new JSONObject() : json;
+	public JSONSerializable resultError(Serializable result, String msg, JSONSerializable json) {
+		json = json == null ? new JSONSerializable() : json;
 		json.put("data", result);
 		json.put("result",1);
 		json.put("msg", msg);
