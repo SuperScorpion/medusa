@@ -203,8 +203,8 @@ public class GenXmlFtl {
         for (int i = 0; i < colSqlNames.length; i++) {
 
             if (colSqlNames[i].trim().equalsIgnoreCase(primaryKey)) {
-//                resultMapStrList.add("<id column=\"" + colSqlNames[i] + "\" jdbcType=\""+ colTypes[i] +"\" property=\""+ SystemConfigs.PRIMARY_KEY +"\" />");//modify by neo on 2020.02.15
-                resultMapStrList.add("<id column=\"" + colSqlNames[i] + "\" property=\""+ SystemConfigs.PRIMARY_KEY +"\" />");//modify by neo on 2020.02.15
+//                resultMapStrList.add("<id column=\"" + colSqlNames[i] + "\" jdbcType=\""+ colTypes[i] +"\" property=\""+ primaryKey +"\" />");//modify by neo on 2020.02.15
+                resultMapStrList.add("<id column=\"" + colSqlNames[i] + "\" property=\""+ primaryKey +"\" />");//modify by neo on 2020.02.15
             } else {
 //                resultMapStrList.add("<result column=\"" + colSqlNames[i] + "\" jdbcType=\"" + colTypes[i] + "\" property=\"" + colFieldNames[i] + "\" />");
                 resultMapStrList.add("<result column=\"" + colSqlNames[i] + "\" property=\"" + colFieldNames[i] + "\" />");
