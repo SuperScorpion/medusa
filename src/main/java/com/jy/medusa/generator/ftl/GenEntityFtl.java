@@ -43,7 +43,7 @@ public class GenEntityFtl {
     private Map<String, String> defaultMap = new HashMap<>();//字段名称 和 默认值关系
     private Map<String, String> commentMap = new HashMap<>();//字段名称 和 注注释对应关系
 
-    private String primaryKey = SystemConfigs.PRIMARY_KEY;//主键字段名
+    private String primaryKey = SystemConfigs.PRIMARY_KEY;//默认主键字段名
 
     private String tableComment = "";//表备注信息
 

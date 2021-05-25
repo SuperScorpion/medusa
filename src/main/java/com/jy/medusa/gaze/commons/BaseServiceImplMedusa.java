@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * 基础接口 BaseServiceImplMedusa - BaseServiceImplMedusaString - BaseServiceImplMedusaLambda
- * @param <T>
+ * @param <T> 参数
  */
 //@Service
 public abstract class BaseServiceImplMedusa<T> extends BaseServiceImplMedusaString<T> implements BaseServiceMedusa<T> {

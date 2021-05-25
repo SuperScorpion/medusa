@@ -12,7 +12,7 @@ import java.util.List;
 
 public class Pager<T> implements Serializable {
 
-	public final String[] legalColumn = {SystemConfigs.PRIMARY_KEY, "created_at"};
+	public final String[] legalColumn = {"created_at", "updated_at"};
 	public final String[] legalSort = {"desc", "asc"};
 
 	public final Integer MAX_PAGE_SIZE = 500;// 每页最大记录数限制

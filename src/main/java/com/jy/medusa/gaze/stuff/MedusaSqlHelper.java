@@ -96,7 +96,7 @@ public class MedusaSqlHelper {
     }
 
     /**
-     * check end with-insertSelective
+     * check methodName is insert or insertSelective
      * @param methodName 参数
      * @return 返回值类型
      */
@@ -105,7 +105,16 @@ public class MedusaSqlHelper {
     }
 
     /**
-     * check end with updateByPrimaryKey or  updateByPrimaryKeySelective
+     * check methodName is insertBatch or insertBatchOfMyCat
+     * @param methodName 参数
+     * @return 返回值类型
+     */
+    public static boolean checkInsertBatchMethod(String methodName) {
+        return methodName.equals("insertBatchOfMyCat") || methodName.equals("insertBatch") ? true : false;
+    }
+
+    /**
+     * check methodName is updateByPrimaryKey or updateByPrimaryKeySelective
      * @param methodName 参数
      * @return 返回值类型
      */

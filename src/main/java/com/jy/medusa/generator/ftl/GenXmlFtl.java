@@ -40,7 +40,7 @@ public class GenXmlFtl {
     private List<String> associationColumn;
     private String pluralAssociation;//映射关系字段的后缀名 一般为s
 
-    private String primaryKey = SystemConfigs.PRIMARY_KEY;//主键字段名
+    private String primaryKey = SystemConfigs.PRIMARY_KEY;//默认主键字段名
 
 
 
@@ -204,12 +204,11 @@ public class GenXmlFtl {
 
             if (colSqlNames[i].trim().equalsIgnoreCase(primaryKey)) {
 //                resultMapStrList.add("<id column=\"" + colSqlNames[i] + "\" jdbcType=\""+ colTypes[i] +"\" property=\""+ primaryKey +"\" />");//modify by neo on 2020.02.15
-                resultMapStrList.add("<id column=\"" + colSqlNames[i] + "\" property=\""+ colFieldNames[i] +"\" />");//modify by neo on 2020.02.15
+                resultMapStrList.add("<id column=\"" + colSqlNames[i] + "\" property=\""+ colFieldNames[i] +"\" />");//modify by neo on 2021.05.22
             } else {
 //                resultMapStrList.add("<result column=\"" + colSqlNames[i] + "\" jdbcType=\"" + colTypes[i] + "\" property=\"" + colFieldNames[i] + "\" />");
                 resultMapStrList.add("<result column=\"" + colSqlNames[i] + "\" property=\"" + colFieldNames[i] + "\" />");
             }
-
         }
 
         //association 等到最后才生成

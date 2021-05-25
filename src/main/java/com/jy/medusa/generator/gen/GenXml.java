@@ -38,7 +38,7 @@ public class GenXml {
     private List<String> associationColumn;
     private String pluralAssociation;//映射关系字段的后缀名 一般为s
 
-    private String primaryKey = SystemConfigs.PRIMARY_KEY;//主键字段名
+    private String primaryKey = SystemConfigs.PRIMARY_KEY;//默认主键字段名
 
 
 
@@ -186,7 +186,8 @@ public class GenXml {
         for (int i = 0; i < colSqlNames.length; i++) {
 
             if (colSqlNames[i].trim().equalsIgnoreCase(primaryKey)) {
-                sb.append("\t\t<id column=\"" + colSqlNames[i] + "\" jdbcType=\"" + colTypes[i] + "\" property=\"" + SystemConfigs.PRIMARY_KEY + "\" />\r\n");//modify by neo on 2020.02.15
+//                sb.append("\t\t<id column=\"" + colSqlNames[i] + "\" jdbcType=\"" + colTypes[i] + "\" property=\"" + SystemConfigs.PRIMARY_KEY + "\" />\r\n");//modify by neo on 2020.02.15
+                sb.append("\t\t<id column=\"" + colSqlNames[i] + "\" jdbcType=\"" + colTypes[i] + "\" property=\"" + colFieldNames[i] + "\" />\r\n");//modify by neo on 2021.05.22
             } else {
                 sb.append("\t\t<result column=\"" + colSqlNames[i] + "\" jdbcType=\"" + colTypes[i] + "\" property=\"" + colFieldNames[i] + "\" />\r\n");
             }
