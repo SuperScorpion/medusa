@@ -44,6 +44,8 @@ public class MedusaInterceptor implements Interceptor {
 
         } else if (invocation.getTarget() instanceof StatementHandler) {//delete insert update 都会进来此拦截(medusa的或非medusa的)
 
+            //processExecutor里的invocation.proceed()嵌套进入
+
             result = invocation.proceed();//先执行再处理的 不然处理的是上次的
 
             processBatchInsertPrimaryKeyWriteBack(invocation);
@@ -85,7 +87,6 @@ public class MedusaInterceptor implements Interceptor {
                 invocation.getArgs()[1] = p;
             }
 
-
             //通过反射改变 insert 相关方法的 keyProperties 的主键属性 实现插入时动态变更 @Options-keyProperty 的功能 modify by neo on 20210522
             if(medusaMethodName.startsWith("insert")) {
                 if (MedusaSqlHelper.checkInsertMethod(medusaMethodName)) {
@@ -111,14 +112,15 @@ public class MedusaInterceptor implements Interceptor {
             //medusa的一些方法后续处理
             processMedusaMethod(medusaMethodName, result, invocation, p, mt);
 
-            //clean map
+            //clean map params
             if(p.containsKey("pobj")) {//第二种情况清除新建的 hashmap
                 p.clear();//help gc
             } else {//第一种情况 只删除put进去的msid
                 p.remove("msid");
             }
 
-        } else if (mt.getSqlSource() instanceof RawSqlSource//medusa的insertSelectiveUUID 生成UUID时 SELECT REPLACE(UUID(), '-', '') 内部嵌套查询UUID的查询方法
+        } else if (mt.getSqlSource() instanceof RawSqlSource//processExecutor里的invocation.proceed()嵌套进入
+                // medusa的insertSelectiveUUID 生成UUID时 SELECT REPLACE(UUID(), '-', '') 内部嵌套查询UUID的查询方法
                  && MedusaSqlHelper.checkInsertUUIDMethodSelectKey(medusaMethodName)) {
 
             result = invocation.proceed();
