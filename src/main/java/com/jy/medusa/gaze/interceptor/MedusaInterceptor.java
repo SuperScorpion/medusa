@@ -57,6 +57,17 @@ public class MedusaInterceptor implements Interceptor {
         return result;
     }
 
+    /**
+     * Executor拦截器处理入口
+     * For mybatis interceptor of Executor
+     * @param invocation
+     * @return
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     * @throws ParseException
+     * @throws SQLException
+     * @throws NoSuchFieldException
+     */
     private Object processExecutor(Invocation invocation) throws InvocationTargetException, IllegalAccessException, ParseException, SQLException, NoSuchFieldException {
 
         Object result;
@@ -87,29 +98,14 @@ public class MedusaInterceptor implements Interceptor {
                 invocation.getArgs()[1] = p;
             }
 
-            //通过反射改变 insert 相关方法的 keyProperties 的主键属性 实现插入时动态变更 @Options-keyProperty 的功能 modify by neo on 20210522
-            if(medusaMethodName.startsWith("insert")) {
-                if (MedusaSqlHelper.checkInsertMethod(medusaMethodName)) {
-                    Field f = mt.getClass().getDeclaredField("keyProperties");
-                    f.setAccessible(true);
-                    f.set(mt, new String[]{MedusaSqlHelper.getSqlGenerator(p).getPkPropertyName()});
-                } else if (MedusaSqlHelper.checkInsertBatchMethod(medusaMethodName)) {
-                    Field f = mt.getClass().getDeclaredField("keyProperties");
-                    f.setAccessible(true);
-                    f.set(mt, new String[]{"param1.".concat(MedusaSqlHelper.getSqlGenerator(p).getPkPropertyName())});
-                } else if (MedusaSqlHelper.checkInsertUUIDMethod(medusaMethodName)) {
-                    //插入主键为UUID的方法时 keyProperties没啥用 因为是嵌套生成的UUID
-                    //do nothing
-                } else {
-                    //do nothing
-                }
-            }
+            //通过反射改变 insert相关方法的 keyProperties 的主键属性 实现插入时动态变更 @Options-keyProperty 的功能 modify by neo on 20210522
+            processInsertKeyPropertiesBeforeProceed(mt, medusaMethodName, p);
 
-            //mybatis 的后续还有很多处理 比如 insert update delete 都会进下一个StatementHandler 的 interceptor
+            //执行db操作 (当然 mybatis 的后续还有很多处理 比如 insert update delete 都会进下一个StatementHandler 的 interceptor)
             result = invocation.proceed();
 
             //processBatchInsertPrimaryKeyWriteBack()先执行完后才到此处
-            //medusa的一些方法后续处理
+            //medusa的一些方法后续处理(insert相关 update相关 medusaGaze相关)
             processMedusaMethod(medusaMethodName, result, invocation, p, mt);
 
             //clean map params
@@ -137,6 +133,49 @@ public class MedusaInterceptor implements Interceptor {
         return result;
     }
 
+    /**
+     * 通过反射改变 insert 相关方法的 keyProperties 的主键属性 实现插入时动态变更 @Options-keyProperty 的功能 modify by neo on 20210522
+     * 在processExecutor里的invocation.proceed() 处理前进入
+     * For mybatis interceptor of Executor
+     * @param mt
+     * @param medusaMethodName
+     * @param p
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
+    private void processInsertKeyPropertiesBeforeProceed(MappedStatement mt, String medusaMethodName, Map<String, Object> p) throws NoSuchFieldException, IllegalAccessException {
+
+        //判断是否是insert相关的方法
+        if(medusaMethodName.startsWith("insert")) {
+            if (MedusaSqlHelper.checkInsertMethod(medusaMethodName)) {
+                Field f = mt.getClass().getDeclaredField("keyProperties");
+                f.setAccessible(true);
+                f.set(mt, new String[]{MedusaSqlHelper.getSqlGenerator(p).getPkPropertyName()});
+            } else if (MedusaSqlHelper.checkInsertBatchMethod(medusaMethodName)) {
+                Field f = mt.getClass().getDeclaredField("keyProperties");
+                f.setAccessible(true);
+                f.set(mt, new String[]{"param1.".concat(MedusaSqlHelper.getSqlGenerator(p).getPkPropertyName())});
+            } else if (MedusaSqlHelper.checkInsertUUIDMethod(medusaMethodName)) {
+                //插入主键为UUID的方法时 keyProperties没啥用 因为是嵌套生成的UUID
+                //do nothing
+            } else {
+                //do nothing
+            }
+        }
+    }
+
+    /**
+     * 主要是insert update 和 medusaGaze 相关方法的后续处理
+     * 通过processExecutor里的invocation.proceed() 处理完成后进入
+     * For mybatis interceptor of Executor
+     * @param medusaMethodName
+     * @param result
+     * @param invocation
+     * @param p
+     * @param mt
+     * @throws SQLException
+     * @throws ParseException
+     */
     private void processMedusaMethod(String medusaMethodName, Object result, Invocation invocation, Map<String, Object> p, MappedStatement mt) throws SQLException, ParseException {
 
         //测试结果由高到低:startWith->indexOf->contains modify by neo on 2016.11.07
@@ -189,6 +228,14 @@ public class MedusaInterceptor implements Interceptor {
         }
     }
 
+    /**
+     * 批量插入时的生成的主键通过反射回写入实体的相关处理
+     * 通过processExecutor里的invocation.proceed()嵌套进入
+     * For mybatis interceptor of StatementHandler
+     * @param invocation
+     * @throws SQLException
+     * @throws ParseException
+     */
     private void processBatchInsertPrimaryKeyWriteBack(Invocation invocation) throws SQLException, ParseException {
 
         StatementHandler sh = (StatementHandler) invocation.getTarget();
