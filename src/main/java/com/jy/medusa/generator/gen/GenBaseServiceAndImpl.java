@@ -99,7 +99,7 @@ public class GenBaseServiceAndImpl {
                 "\n" +
                 "\tint deleteBy(T entity);\n" +
                 "\n" +
-                "\tList<T> selectByGaze(Object... ps);\n" +
+                "\tList<T> selectByGazeMagic(Object... ps);\n" +
                 "\n" +
                 "\tJSONObject resultSuccess(Object result, String msg, JSONObject json);\n" +
                 "\n" +
@@ -202,7 +202,7 @@ public class GenBaseServiceAndImpl {
                 "\t\treturn mapper.delete(entity);\n" +
                 "\t}\n" +
                 "\n" +
-                "\tpublic List<T> selectByGaze(Object... ps) {\n" +
+                "\tpublic List<T> selectByGazeMagic(Object... ps) {\n" +
                 "\t\treturn mapper.showMedusaGaze(ps);\n" +
                 "\t}\n" +
                 "\n");
