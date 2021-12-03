@@ -3,7 +3,6 @@ package com.jy.medusa.validator;
 import com.jy.medusa.gaze.utils.MedusaCommonUtils;
 import com.jy.medusa.validator.annotation.*;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 
@@ -31,26 +30,25 @@ public class AnnotationHandler {
      * @param parameter 参数
      * @throws IllegalAccessException 异常
      */
-    @Before(value = "execution(public * *(..)) and @annotation(parameter))")
+    @Before(value = "(execution(public * *(..))) and @annotation(parameter)")
     public void paramHandler(JoinPoint joinPoint, ConParamValidator parameter) throws IllegalAccessException {
 
         List<String> messageList = new ArrayList<>();
 
-        int i = 0;
-
         ErrorInfo k = null;
 
-        Signature sig = joinPoint.getSignature();
-        Class sigCls = sig.getDeclaringType();
+        Class currentClass = joinPoint.getSignature().getDeclaringType();//获取当前class类
+        String currentMethodName = joinPoint.getSignature().getName();//获取当前切入方法的名字
 
-        List<Object> paramValueList = Arrays.asList(joinPoint.getArgs());
+        List<Object> paramValueList = Arrays.asList(joinPoint.getArgs());//获取切入方法的入参值
 
-        Method[] medArray = sigCls.getDeclaredMethods();
+        Method[] medArray = currentClass.getDeclaredMethods();//获取当前类里所有的方法对象
 
         for(Method method : medArray) {
-            List<Annotation> methodList = Arrays.asList(method.getDeclaredAnnotations());
-            if(methodList.contains(parameter)) {
-                Parameter[] params = method.getParameters();
+            int i = 0;
+            List<Annotation> methodAnnoList = Arrays.asList(method.getDeclaredAnnotations());//获取当前方法被修饰的所有annotation标签
+            if(methodAnnoList.contains(parameter) && currentMethodName.equals(method.getName())) {//1.判断被annotation修饰 //2.判断为当前切入的方法
+                Parameter[] params = method.getParameters();//获取当前方法的所有参数对象(声明字段属性等 但是获取不到值)
                 for(Parameter p : params) {
 
                     Length length = p.getDeclaredAnnotation(Length.class);
@@ -62,16 +60,16 @@ public class AnnotationHandler {
 
                     if(paramVal != null) {
 
-                        if (length != null) {
+                        if (length != null) {//处理方法参数是否被标签修饰
                             processLength(length, p.getName(), paramVal, messageList);
                         }
-                        if (notNull != null) {
+                        if (notNull != null) {//处理方法参数是否被标签修饰
                             processNotNull(notNull, p.getName(), paramVal, messageList);
                         }
-                        if (vertifi != null) {
+                        if (vertifi != null) {//处理方法参数是否被标签修饰
                             processVertifi(vertifi, p.getName(), paramVal, messageList);
                         }
-                        if (valid != null) {
+                        if (valid != null) {//处理方法参数是否被标签修饰 并且里面包含各种标签的处理
                             processValid(paramVal, messageList);
                         }
 
@@ -80,7 +78,7 @@ public class AnnotationHandler {
                         }
                     }
 
-                    i=i+1;
+                    i+=1;
                 }
             }
         }

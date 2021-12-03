@@ -213,7 +213,7 @@ public class GenEntity {
                 sb.append("\r\n");
             } else {
                 sb.append(p1);
-                sb.append("\t\tthis." + colFieldNames[i] + "=" + colFieldNames[i] + ";\r\n");
+                sb.append("\t\tthis." + colFieldNames[i] + " = " + colFieldNames[i] + ";\r\n");
                 sb.append("\t}\r\n\r\n");
             }
 
