@@ -4,6 +4,7 @@ import com.jy.medusa.gaze.stuff.param.MedusaLambdaColumns;
 import com.jy.medusa.gaze.stuff.param.lambda.HolyGetPropertyNameLambda;
 import com.jy.medusa.gaze.stuff.param.lambda.HolyGetter;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,13 +14,14 @@ import java.util.stream.Collectors;
 //@Service
 public abstract class BaseServiceImplLambdaBasis<T> {
 
-	//	@Autowired
+    @Resource
 	protected Mapper<T> mapper;
 
 	//	@Autowired
-	protected void initMapper (Mapper<T> mapper) {
-		this.mapper = mapper;
-	}
+//	@Resource
+//	protected void initMapper (Mapper<T> mapper) {
+//		this.mapper = mapper;
+//	}
 
 	protected Object[] transferLambdaForGaze(Object[] paramObjs) {
 
