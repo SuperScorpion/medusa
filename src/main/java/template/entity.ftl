@@ -46,7 +46,7 @@ public class ${upcaseFirstTableName?default("")}${entityNameSuffix?default("")} 
         */
     </#if>
     <#if cl.primarykeyFlag?? && cl.primarykeyFlag == true>
-        @Id
+    @Id
     </#if>
 	@Column(name = "${cl.column}")
     private ${cl.javaType?default("")} ${cl.lowwerName?default("")};

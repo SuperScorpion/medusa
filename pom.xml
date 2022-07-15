@@ -6,7 +6,7 @@
 
     <groupId>com.github.superscorpion</groupId>
     <artifactId>medusa</artifactId>
-    <version>3.1.1-RELEASE</version>
+    <version>3.1.2-RELEASE</version>
     <packaging>jar</packaging>
 
     <name>medusa</name>
@@ -56,7 +56,7 @@
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjrt</artifactId>
             <version>${aspectjrt.version}</version>
-            <optional>true</optional><!--让用户来提供-->
+<!--            <optional>true</optional>&lt;!&ndash;让用户来提供&ndash;&gt;-->
         </dependency>
         <!--<dependency>
             <groupId>org.aspectj</groupId>
@@ -68,14 +68,14 @@
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
             <version>${freemarker.version}</version>
-            <optional>true</optional><!--让用户来提供-->
+<!--            <optional>true</optional>&lt;!&ndash;让用户来提供&ndash;&gt;-->
         </dependency>
 
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
             <version>${snakeyaml.version}</version>
-            <optional>true</optional><!--让用户来提供-->
+<!--            <optional>true</optional>&lt;!&ndash;让用户来提供&ndash;&gt;-->
         </dependency>
 
     </dependencies>

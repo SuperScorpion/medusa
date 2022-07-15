@@ -14,8 +14,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Random;
 
 /**
@@ -23,12 +24,14 @@ import java.util.Random;
  */
 public class Home {
 
-    /*private static boolean devFlag = true;
-
-    public static final String medusaPropPath = "/src/main/resources/";
-    public static final String medusaPropPathDev = "/";*/
-
     public static final String mixMapper = "com.jy.medusa.gaze.commons.Mapper";
+
+
+    private static boolean devFlag = true;
+    public static final String medusaPropPath = "/src/main/resources/";
+    public static final String medusaPropPathDev = "/";
+
+    public static String medusaProFileName;
 
     public static String proJavaPath;
     public static String proResourcePath;
@@ -50,7 +53,6 @@ public class Home {
 //  public static String jdbcName;///////该字段已弃用了
 
     public static String tag;
-//    public static String medusaProName;
     public static String entitySuffix;
     public static String serviceSuffix;
     public static String serviceImplSuffix;
@@ -68,21 +70,35 @@ public class Home {
     public Home() {
     }
 
-    /*public Home(String medusaProName) {
-        this.medusaProName = medusaProName;
-    }*/
+    public Home(String medusaProFileName) {
+        this.medusaProFileName = medusaProFileName;
+    }
 
-    /*public static String getProperPath() {
+    public static String getProperPath() {
         return devFlag ? medusaPropPath : medusaPropPathDev;
-    }*/
+    }
 
 
     public void process() {
+        process(medusaProFileName);
+    }
+
+    public void process(String medusaProFileName) {
 
         loadRandomDialogue();
 
-//        loadProperties(medusaProName);
-        loadYml();//处理spring boot 里yml相关medusa的配置
+        if(MedusaCommonUtils.isBlank(medusaProFileName)) {
+            loadYml("");//处理spring boot 里yml相关medusa的配置 - 先找默认yml文件有无配置项 如果没有再找properties文件配置项
+        } else {
+            if(medusaProFileName.endsWith(".yml") || medusaProFileName.endsWith(".yaml")) {
+                loadYml(medusaProFileName);
+            } else if(medusaProFileName.endsWith(".properties")) {
+                loadProperties(medusaProFileName);
+            } else {
+                System.out.println("Medusa: 识别不了该配置文件类型...");
+                return;
+            }
+        }
 
 //        if(!checkParams()) return;
 
@@ -128,7 +144,6 @@ public class Home {
                         if ((((JSONObject) p).get(tabName)) != null) colValidArray = ((JSONArray) ((JSONObject) p).get(tabName));
                     }
                 }*/
-
 
                 if(MedusaCommonUtils.isNotBlank(entitySuffix)) {
                     long nanoSs = System.nanoTime();
@@ -213,7 +228,7 @@ public class Home {
         int x = ran.nextInt(5);//0,1,2,3,4
 
         String[] strArrays = new String[5];
-        strArrays[0] = "not born outstanding. - Aogeruimu. Destruction Hammer";
+        strArrays[0] = "Not born outstanding. - Aogeruimu. Destruction Hammer";
         strArrays[1] = "Finally, I finally liberated myself. - Geluomu. Hell growl";
         strArrays[2] = "Trembling bar, everyone. - Akemengde";
         strArrays[3] = "Desert hoist your gravel, obscured the sun shine. - No scars, Aoshilian";
@@ -223,29 +238,42 @@ public class Home {
         System.out.println("Loading.....");
     }
 
-    private void loadYml() {
+    private void loadYml(String medusaProFileName) {
 
-        String resPaths;
-        URL ymlres = this.getClass().getClassLoader().getResource("application.yml");
-        URL yamlres = this.getClass().getClassLoader().getResource("application.yaml");
+        String resPaths = null;
+        
+        //文件名为空则使用默认文件名
+        if(MedusaCommonUtils.isBlank(medusaProFileName)) {
+            URL ymlres = this.getClass().getClassLoader().getResource("application.yml");
+            URL yamlres = this.getClass().getClassLoader().getResource("application.yaml");
 
-        if(ymlres == null && yamlres != null) {
-            resPaths = yamlres.getPath();
-        } else if(ymlres != null && yamlres == null) {
-            resPaths = ymlres.getPath();
-        } else if(ymlres == null && yamlres == null) {
-            System.out.println("Medusa: 大兄弟你的 application yml 或 yaml 配置文件 去火星了?");
-            return;
-        } else {
-            System.out.println("Medusa: 大兄弟你的 application yml 或 yaml 配置文件 存在重复?");
-            return;
+            if(ymlres == null && yamlres != null) {
+                resPaths = yamlres.getPath();
+            } else if(ymlres != null && yamlres == null) {
+                resPaths = ymlres.getPath();
+            } else if(ymlres == null && yamlres == null) {
+                System.out.println("Medusa: 未能找到 application yml 或 yaml 配置文件...");
+                loadProperties("medusa.properties");
+                return;
+            } else {
+                System.out.println("Medusa: 请检查 application yml 或 yaml 配置文件是否存在重复...");
+                return;
+            }
+        } else {///文件名不为空则使用指定文件名
+            URL yyres = this.getClass().getClassLoader().getResource(medusaProFileName);
+            if(yyres == null) {
+                System.out.println("Medusa: 未能找到指定的yml配置文件...");
+                return;
+            } else {
+                resPaths = yyres.getPath();
+            }
         }
 
         //给proJavaPath赋值 其它地方也要使用
-        gainTheProJavaPath(resPaths);
+        gainTheProJavaPath(resPaths, medusaProFileName);
 
         //给proResourcePath赋值 其它地方也要使用
-        gainTheProResourcePath(resPaths);
+        gainTheProResourcePath(resPaths, medusaProFileName);
 
         FileInputStream fileInputStream = null;
         try {
@@ -254,20 +282,26 @@ public class Home {
             fileInputStream = new FileInputStream(file);
             Map<String ,Object> map = yaml.loadAs(fileInputStream, Map.class);//装载的对象，这里使用Map, 当然也可使用自己写的对象
 
+            if(map == null) {
+                System.out.println("Medusa: 未能找到 yml 文件里的 medusa 相关配置...");
+                loadProperties("medusa.properties");
+                return;
+            }
+
             Map<String ,Object> childMap = (Map) map.get("medusa");
 
             if(childMap == null) {
-                System.out.println("Medusa: 大兄弟你的 application.yml 里的 medusa 相关配置 去火星了?");
+                System.out.println("Medusa: 未能找到 yml 文件里的 medusa 相关配置...");
+                loadProperties("medusa.properties");
                 return;
             }
 
             if(childMap.get("jdbc") == null) {
-                System.out.println("Medusa: 大兄弟你的 application.yml 里的 medusa 的 jdbc 相关配置 去火星了?");
+                System.out.println("Medusa: 未能找到 yml 文件里的 medusa - jdbc 相关配置...");
                 return;
             }
 
             Map<String ,String> jdbcMap = (Map<String, String>) childMap.get("jdbc");
-
 
 
             this.packagePath = childMap.get("packagePath") == null || MedusaCommonUtils.isBlank(childMap.get("packagePath").toString()) ? "com.medusa.xxx" : childMap.get("packagePath").toString().trim();
@@ -314,11 +348,12 @@ public class Home {
      * 多模块的环境下 System.getProperty("user.dir") 获得的路径不够深入 所以用classLoader处理
      * /Users/neo/Desktop/my-work/arbitrage/webapi/target/classes/application.yml
      * /Users/neo/Desktop/my-work/arbitrage/webapi/src/main/java/
+     * @param medusaProFileName 参数
      * @param resPaths 参数
      */
-    private void gainTheProJavaPath(String resPaths) {
+    private void gainTheProJavaPath(String resPaths, String medusaProFileName) {
         String path = resPaths.replaceAll("/target/classes", "/src/main/java");
-        this.proJavaPath = path.replaceAll("application.yml|application.yaml", "");
+        this.proJavaPath = path.replaceAll("application.yml|application.yaml|medusa.properties", "").replaceAll(medusaProFileName, "");
     }
 
     /**
@@ -327,58 +362,11 @@ public class Home {
      * /Users/neo/Desktop/my-work/arbitrage/webapi/src/main/resources/
      * @param resPaths 参数
      */
-    private void gainTheProResourcePath(String resPaths) {
+    private void gainTheProResourcePath(String resPaths, String medusaProFileName) {
         String path = resPaths.replaceAll("/target/classes", "/src/main/resources");
-        this.proResourcePath = path.replaceAll("application.yml|application.yaml", "");
+        this.proResourcePath = path.replaceAll("application.yml|application.yaml|medusa.properties", "").replaceAll(medusaProFileName, "");
     }
 
-    /**
-     * @deprecated
-     * @param fileName
-     */
-    private void loadProperties(String fileName) {
-/*
-        String resPaths = System.getProperty("user.dir") + getProperPath() + fileName;
-
-        Properties props = new Properties();
-        try {
-            props.load(new FileInputStream(resPaths));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        this.packagePath = MedusaCommonUtils.isBlank(props.get("medusa.packagePath")) ? "" : childMap.get("medusa.packagePath");
-        this.tableName = MedusaCommonUtils.isBlank(childMap.get("medusa.tableName")) ? "" : childMap.get("medusa.tableName");
-        this.tag = MedusaCommonUtils.isBlank(childMap.get("medusa.tag")) ? "" : childMap.get("medusa.tag");
-
-        this.entitySuffix = MedusaCommonUtils.isBlank(childMap.get("medusa.entitySuffix")) ? "" : childMap.get("medusa.entitySuffix");
-        this.serviceSuffix = MedusaCommonUtils.isBlank(childMap.get("medusa.serviceSuffix")) ? "" : childMap.get("medusa.serviceSuffix");
-        this.serviceImplSuffix = MedusaCommonUtils.isBlank(childMap.get("medusa.serviceImplSuffix")) ? "" : childMap.get("medusa.serviceImplSuffix");
-        this.mapperSuffix = MedusaCommonUtils.isBlank(childMap.get("medusa.mapperSuffix")) ? "" : childMap.get("medusa.mapperSuffix");
-        this.xmlSuffix = MedusaCommonUtils.isBlank(childMap.get("medusa.xmlSuffix")) ? "" : childMap.get("medusa.xmlSuffix");
-        this.controlJsonSuffix = MedusaCommonUtils.isBlank(childMap.get("medusa.controlJsonSuffix")) ? "" : childMap.get("medusa.controlJsonSuffix");
-        this.controlMortalSuffix = MedusaCommonUtils.isBlank(childMap.get("medusa.controlMortalSuffix")) ? "" : childMap.get("medusa.controlMortalSuffix");
-
-//        this.validJsonStr = MedusaCommonUtils.isBlank(childMap.get("medusa.validator")) ? "" : childMap.get("medusa.validator");
-        this.associationColumn = MedusaCommonUtils.isBlank(childMap.get("medusa.associationColumn")) ? "" : childMap.get("medusa.associationColumn");
-        this.pluralAssociation = MedusaCommonUtils.isBlank(childMap.get("medusa.pluralAssociation")) ? "" : childMap.get("medusa.pluralAssociation");
-
-        this.author = MedusaCommonUtils.isBlank(childMap.get("medusa.author")) ? "administrator" : childMap.get("medusa.author");
-        this.entityNameSuffix = MedusaCommonUtils.isBlank(childMap.get("medusa.entityNameSuffix")) ? "" : childMap.get("medusa.entityNameSuffix");
-        this.lazyLoad = MedusaCommonUtils.isBlank(childMap.get("medusa.lazyLoad")) ? "" : "fetchType=\"lazy\"";
-        this.entitySerializable = MedusaCommonUtils.isBlank(childMap.get("medusa.entitySerializable")) ? "" : childMap.get("medusa.entitySerializable");
-        this.baseServiceSwitch = MedusaCommonUtils.isBlank(childMap.get("medusa.baseServiceSwitch")) ? "" : "gen";
-
-
-        this.jdbcDriver = MedusaCommonUtils.isBlank(childMap.get("jdbc.driver")) ? "" : childMap.get("jdbc.driver");
-        this.jdbcUrl = MedusaCommonUtils.isBlank(childMap.get("jdbc.url")) ? "" : childMap.get("jdbc.url");
-        this.jdbcUsername = MedusaCommonUtils.isBlank(childMap.get("jdbc.username")) ? "" : childMap.get("jdbc.username");
-        this.jdbcPassword = MedusaCommonUtils.isBlank(childMap.get("jdbc.password")) ? "" : childMap.get("jdbc.password");
-
-        this.unitModel = MedusaCommonUtils.isBlank(childMap.get("medusa.unitModel")) ? "" : childMap.get("medusa.unitModel");
-        this.ftlDirPath = MedusaCommonUtils.isBlank(childMap.get("medusa.ftlDirPath")) ? "" : childMap.get("medusa.ftlDirPath");*/
-    }
 
     public static boolean checkIsFtl() {
         boolean result = false;
@@ -399,7 +387,10 @@ public class Home {
     public static boolean checkBaseServiceSwitch() {
         boolean result = false;
 
-        if(MedusaCommonUtils.isNotBlank(baseServiceSwitch) && (baseServiceSwitch.trim().equalsIgnoreCase("true"))) result = true;
+        if(MedusaCommonUtils.isNotBlank(baseServiceSwitch) &&
+                (baseServiceSwitch.trim().equalsIgnoreCase("true") || baseServiceSwitch.trim().equalsIgnoreCase("yes")
+                        || baseServiceSwitch.trim().equalsIgnoreCase("y") || baseServiceSwitch.trim().equalsIgnoreCase("ok")))
+            result = true;
 
         return result;
     }
@@ -430,5 +421,90 @@ public class Home {
         }
 
         return result;
+    }
+
+
+
+
+    /**
+     * modify by admin on 20220714 for 万弟弟
+     * 1.yml文件找不到则启用properties文件加载 | 2.指定使用properties文件加载
+     * @param medusaProFileName 一定有值 1.用户指定文件名 2.默认值 medusa.properties
+     */
+    private void loadProperties(String medusaProFileName) {
+
+        System.out.println("Medusa: 开始使用properties配置文件生成...");
+
+        URL yyres = this.getClass().getClassLoader().getResource(medusaProFileName);
+        if(yyres == null) {
+            System.out.println("Medusa: 未能找到指定的properties配置文件...");
+            return;
+        }
+
+        Properties props = new Properties();
+        try {
+            props.load(this.getClass().getClassLoader().getResourceAsStream(medusaProFileName));
+        } catch (FileNotFoundException e) {
+            System.out.println("Medusa: 未找到配置文件的异常 " + medusaProFileName + " 请检查配置...");
+            e.printStackTrace();
+            return;
+        } catch (Exception e) {
+            System.out.println("Medusa: 加载properties文件的异常 " + medusaProFileName + " 请检查配置...");
+            e.printStackTrace();
+            System.out.println("Medusa: 请确认 yml 或 properties 配置文件正确...");
+            return;
+        }
+
+        //给proJavaPath赋值 其它地方也要使用
+        gainTheProJavaPath(this.getClass().getClassLoader().getResource(medusaProFileName).getPath(), medusaProFileName);
+
+        //给proResourcePath赋值 其它地方也要使用
+        gainTheProResourcePath(this.getClass().getClassLoader().getResource(medusaProFileName).getPath(), medusaProFileName);
+
+
+        Map<String, String> childMap = new HashMap<>((Map) props);
+
+        if(childMap.isEmpty()) {
+            System.out.println("Medusa: 未能找到 properties 文件里的 medusa 相关配置...");
+            return;
+        }
+
+        if(!childMap.containsKey("medusa.jdbc.url") || !childMap.containsKey("medusa.jdbc.driver")) {
+            System.out.println("Medusa: 未能找到 properties 文件里的 medusa - jdbc 相关配置...");
+            return;
+        }
+
+
+        String prefix = "medusa.";
+        String jdbcPrefix = prefix + "jdbc.";
+
+        this.packagePath = childMap.get(prefix + "packagePath") == null || MedusaCommonUtils.isBlank(childMap.get(prefix + "packagePath").toString()) ? "com.medusa.xxx" : childMap.get(prefix + "packagePath").toString().trim();
+        this.tableName = childMap.get(prefix + "tableName") == null || MedusaCommonUtils.isBlank(childMap.get(prefix + "tableName").toString()) ?  "" : childMap.get(prefix + "tableName").toString().trim();
+        this.tag = childMap.get(prefix + "tag") == null || MedusaCommonUtils.isBlank(childMap.get(prefix + "tag").toString()) ?  "<" : childMap.get(prefix + "tag").toString().trim();
+
+        this.entitySuffix = childMap.get(prefix + "entitySuffix") == null || MedusaCommonUtils.isBlank(childMap.get(prefix + "entitySuffix").toString()) ?  "entity" : childMap.get(prefix + "entitySuffix").toString().trim();
+        this.serviceSuffix = childMap.get(prefix + "serviceSuffix") == null || MedusaCommonUtils.isBlank(childMap.get(prefix + "serviceSuffix").toString()) ?  "service" : childMap.get(prefix + "serviceSuffix").toString().trim();
+        this.serviceImplSuffix = childMap.get(prefix + "serviceImplSuffix") == null || MedusaCommonUtils.isBlank(childMap.get(prefix + "serviceImplSuffix").toString()) ?  "service.impl" : childMap.get(prefix + "serviceImplSuffix").toString().trim();
+        this.mapperSuffix = childMap.get(prefix + "mapperSuffix") == null || MedusaCommonUtils.isBlank(childMap.get(prefix + "mapperSuffix").toString()) ?  "persistence" : childMap.get(prefix + "mapperSuffix").toString().trim();
+        this.xmlSuffix = childMap.get(prefix + "xmlSuffix") == null || MedusaCommonUtils.isBlank(childMap.get(prefix + "xmlSuffix").toString()) ?  "persistence.xml" : childMap.get(prefix + "xmlSuffix").toString().trim();
+//            this.classpathXml = childMap.get(prefix + "classpathXml") == null || MedusaCommonUtils.isBlank(childMap.get(prefix + "classpathXml").toString()) ?  "" : childMap.get(prefix + "classpathXml").toString().trim();
+        this.controlJsonSuffix = childMap.get(prefix + "controlJsonSuffix") == null || MedusaCommonUtils.isBlank(childMap.get(prefix + "controlJsonSuffix").toString()) ?  "controller" : childMap.get(prefix + "controlJsonSuffix").toString().trim();
+        this.controlMortalSuffix = childMap.get(prefix + "controlMortalSuffix") == null || MedusaCommonUtils.isBlank(childMap.get(prefix + "controlMortalSuffix").toString()) ?  "" : childMap.get(prefix + "controlMortalSuffix").toString().trim();
+
+        this.associationColumn = childMap.get(prefix + "associationColumn") == null || MedusaCommonUtils.isBlank(childMap.get(prefix + "associationColumn").toString()) ?  "" : childMap.get(prefix + "associationColumn").toString().trim();
+        this.pluralAssociation = childMap.get(prefix + "pluralAssociation") == null || MedusaCommonUtils.isBlank(childMap.get(prefix + "pluralAssociation").toString()) ?  "s" : childMap.get(prefix + "pluralAssociation").toString().trim();
+
+        this.author = childMap.get(prefix + "author") == null || MedusaCommonUtils.isBlank(childMap.get(prefix + "author").toString()) ?  "administrator" : childMap.get(prefix + "author").toString().trim();
+        this.entityNameSuffix = childMap.get(prefix + "entityNameSuffix") == null || MedusaCommonUtils.isBlank(childMap.get(prefix + "entityNameSuffix").toString()) ?  "" : childMap.get(prefix + "entityNameSuffix").toString().trim();
+        this.lazyLoad = childMap.get(prefix + "lazyLoad") == null || MedusaCommonUtils.isBlank(childMap.get(prefix + "lazyLoad").toString()) ?  "" : "fetchType=\"lazy\"";
+        this.entitySerializable = childMap.get(prefix + "entitySerializable") == null || MedusaCommonUtils.isBlank(childMap.get(prefix + "entitySerializable").toString()) ?  "" : childMap.get(prefix + "entitySerializable").toString().trim();
+        this.baseServiceSwitch = childMap.get(prefix + "baseServiceSwitch") == null || MedusaCommonUtils.isBlank(childMap.get(prefix + "baseServiceSwitch").toString()) ?  "" : childMap.get(prefix + "baseServiceSwitch").toString();
+
+        this.ftlDirPath = childMap.get(prefix + "ftlDirPath") == null || MedusaCommonUtils.isBlank(childMap.get(prefix + "ftlDirPath").toString()) ?  "" : childMap.get(prefix + "ftlDirPath").toString().trim();
+
+        this.jdbcDriver = childMap.get(jdbcPrefix + "driver") == null || MedusaCommonUtils.isBlank(childMap.get(jdbcPrefix + "driver").toString()) ?  "" : childMap.get(jdbcPrefix + "driver").toString().trim();
+        this.jdbcUrl = childMap.get(jdbcPrefix + "url") == null || MedusaCommonUtils.isBlank(childMap.get(jdbcPrefix + "url").toString()) ?  "" : childMap.get(jdbcPrefix + "url").toString().trim();
+        this.jdbcUsername = childMap.get(jdbcPrefix + "username") == null || MedusaCommonUtils.isBlank(childMap.get(jdbcPrefix + "username").toString()) ?  "" : childMap.get(jdbcPrefix + "username").toString().trim();
+        this.jdbcPassword = childMap.get(jdbcPrefix + "password") == null || MedusaCommonUtils.isBlank(childMap.get(jdbcPrefix + "password").toString()) ?  "" : childMap.get(jdbcPrefix + "password").toString().trim();
     }
 }
