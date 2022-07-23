@@ -30,12 +30,12 @@ public class ${entityName}Controller {
 
     @RequestMapping(value = "/index.json", method = RequestMethod.GET)
     @ResponseBody
-    public JSONObject index(@RequestParam Integer pageNum, ${entityName} param, HttpServletRequest request) {
+    public JSONObject index(@RequestParam Integer pageNum, ${entityName}${entityNameSuffix} param, HttpServletRequest request) {
 
         JSONObject json = new JSONObject();
 
         try {
-            Pager<${entityName}> pager = Pager.getPager().setPageSize(10).setPageNumber(pageNum);
+            Pager<${entityName}${entityNameSuffix}> pager = Pager.getPager().setPageSize(10).setPageNumber(pageNum);
             ${lowcaseFirstEntityName}Service.selectByGazeMagic(pager);
 
             ${lowcaseFirstEntityName}Service.resultSuccess(pager, "ok", json);
@@ -49,7 +49,7 @@ public class ${entityName}Controller {
 
     @RequestMapping(value = "/save.json", method = RequestMethod.POST)
     @ResponseBody
-    public JSONObject save(${entityName} param, HttpServletRequest request) {
+    public JSONObject save(${entityName}${entityNameSuffix} param, HttpServletRequest request) {
 
         JSONObject json = new JSONObject();
 
@@ -67,7 +67,7 @@ public class ${entityName}Controller {
 
     @RequestMapping(value = "/update.json", method = RequestMethod.POST)
     @ResponseBody
-    public JSONObject update(${entityName} param, HttpServletRequest request) {
+    public JSONObject update(${entityName}${entityNameSuffix} param, HttpServletRequest request) {
 
         JSONObject json = new JSONObject();
 

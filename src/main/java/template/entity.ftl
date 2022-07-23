@@ -41,9 +41,9 @@ public class ${upcaseFirstTableName?default("")}${entityNameSuffix?default("")} 
 <#if columnDtos??>
 <#list columnDtos as cl>
     <#if cl.comment??>
-        /**
-        ${cl.comment}
-        */
+    /**
+    ${cl.comment}
+    */
     </#if>
     <#if cl.primarykeyFlag?? && cl.primarykeyFlag == true>
     @Id

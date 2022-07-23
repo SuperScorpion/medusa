@@ -6,7 +6,7 @@
 
     <groupId>com.github.superscorpion</groupId>
     <artifactId>medusa</artifactId>
-    <version>3.1.2-RELEASE</version>
+    <version>3.1.3-RELEASE</version>
     <packaging>jar</packaging>
 
     <name>medusa</name>
@@ -30,6 +30,13 @@
             <artifactId>mybatis</artifactId>
             <version>${mybatis.version}</version>
             <optional>true</optional><!--让用户来提供-->
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/javax.inject/javax.inject -->
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>1</version>
         </dependency>
 
         <dependency>
