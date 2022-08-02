@@ -84,7 +84,13 @@ public class AnnotationHandler {
         }
 
         //modify by neo on 2017.09.03
-        if(k != null) k.setMessageList(messageList);//等待循环完成后 方法里的参数都校验完 再给结果参数赋值去
+        if(k != null) {
+            k.setMessageList(messageList);//等待循环完成后 方法里的参数都校验完 再给结果参数赋值去
+        } else if(k == null && !messageList.isEmpty()) {//add by neo on 2022.07.29
+             throw new ValidException(messageList.get(0));
+        } else {
+            //do nothing
+        }
     }
 
 
