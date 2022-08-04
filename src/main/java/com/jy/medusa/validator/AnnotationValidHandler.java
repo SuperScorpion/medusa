@@ -19,7 +19,7 @@ import java.util.*;
  * 参数校验主要类
  */
 @Aspect
-public abstract class AnnotationHandler {
+public abstract class AnnotationValidHandler {
 
     /**
      *  所有校验标注的处理
@@ -84,10 +84,12 @@ public abstract class AnnotationHandler {
         }
 
         //modify by neo on 2017.09.03
-        processErrorMsg(k, messageList);
+//        processErrorMsg(k, messageList);
+        //modify by neo on 2022.08.04
+        processErrorMsgDefault(k, messageList);
     }
 
-    public abstract void processErrorMsg(ErrorInfo k, List<String> messageList);
+//    public abstract void processErrorMsg(ErrorInfo k, List<String> messageList);
 
     public void processErrorMsgDefault(ErrorInfo k, List<String> messageList) {
         if(k != null) {
