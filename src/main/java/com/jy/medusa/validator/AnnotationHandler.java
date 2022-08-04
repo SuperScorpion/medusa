@@ -19,7 +19,7 @@ import java.util.*;
  * 参数校验主要类
  */
 @Aspect
-public class AnnotationHandler {
+public abstract class AnnotationHandler {
 
     /**
      *  所有校验标注的处理
@@ -84,6 +84,12 @@ public class AnnotationHandler {
         }
 
         //modify by neo on 2017.09.03
+        processErrorMsg(k, messageList);
+    }
+
+    public abstract void processErrorMsg(ErrorInfo k, List<String> messageList);
+
+    public void processErrorMsgDefault(ErrorInfo k, List<String> messageList) {
         if(k != null) {
             k.setMessageList(messageList);//等待循环完成后 方法里的参数都校验完 再给结果参数赋值去
         } else if(k == null && !messageList.isEmpty()) {//add by neo on 2022.07.29
@@ -94,13 +100,13 @@ public class AnnotationHandler {
     }
 
 
-    /**
-     * 处理length标签
-     * @param len 参数
-     * @param fieldName 参数
-     * @param fieldValue    参数
-     * @return 返回值类型
-     */
+        /**
+         * 处理length标签
+         * @param len 参数
+         * @param fieldName 参数
+         * @param fieldValue    参数
+         * @return 返回值类型
+         */
     private void processLength(Length len, String fieldName, Object fieldValue, List<String> messageList) {
 
         String message = len.message();
