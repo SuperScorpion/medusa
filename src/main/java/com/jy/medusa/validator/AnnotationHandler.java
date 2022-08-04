@@ -19,7 +19,7 @@ import java.util.*;
  * 参数校验主要类
  */
 @Aspect
-public abstract class AnnotationValidHandler {
+public abstract class AnnotationHandler {
 
     /**
      *  所有校验标注的处理
