@@ -30,7 +30,7 @@ public abstract class AnnotationHandler {
      * @param parameter 参数
      * @throws IllegalAccessException 异常
      */
-    @Before(value = "(execution(public * *(..))) and @annotation(parameter)")
+    @Before(value = "execution(public * *(..)) && @annotation(parameter)")
     public void paramHandler(JoinPoint joinPoint, ConParamValidator parameter) throws IllegalAccessException {
 
         List<String> messageList = new ArrayList<>();
