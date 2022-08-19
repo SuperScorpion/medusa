@@ -60,7 +60,7 @@ Tips<br/>
 <br/>
 然后 controller 或者是 service 方法上 添加 注解 @ConParamValidator 方法参数添加相应的校验注解<br/>
 exp:<br/>
-@ConParamValidator<br/>
+@MedusaValidator<br/>
 @RequestMapping(value = "/index.json", method = RequestMethod.GET)<br/>
 @ResponseBody<br/>
 public JSONObject index(@RequestParam @Length(max=1, message = "wtfuck") Integer uid, @Valid Users users, ErrorInfo info) {...}<br/>

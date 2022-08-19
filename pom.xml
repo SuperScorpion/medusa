@@ -6,7 +6,7 @@
 
     <groupId>com.github.superscorpion</groupId>
     <artifactId>medusa</artifactId>
-    <version>3.1.4-RELEASE</version>
+    <version>3.1.5-RELEASE</version>
     <packaging>jar</packaging>
 
     <name>medusa</name>
@@ -14,11 +14,11 @@
     <url>https://github.com/SuperScorpion/medusa</url>
 
     <properties>
-        <mybatis.version>3.5.7</mybatis.version>
-        <slf4j-api.version>1.7.30</slf4j-api.version>
-        <aspectjrt.version>1.9.5</aspectjrt.version>
-        <freemarker.version>2.3.30</freemarker.version>
-        <snakeyaml.version>1.26</snakeyaml.version>
+        <mybatis.version>3.5.10</mybatis.version>
+        <slf4j-api.version>1.7.36</slf4j-api.version>
+        <aspect.version>1.9.9.1</aspect.version>
+        <freemarker.version>2.3.31</freemarker.version>
+        <snakeyaml.version>1.30</snakeyaml.version>
         <!--<com.alibaba.fastjson>1.2.66</com.alibaba.fastjson>-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -61,15 +61,10 @@
         <!-- validator 参数校验包需要 -->
         <dependency>
             <groupId>org.aspectj</groupId>
-            <artifactId>aspectjrt</artifactId>
-            <version>${aspectjrt.version}</version>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${aspect.version}</version>
 <!--            <optional>true</optional>&lt;!&ndash;让用户来提供&ndash;&gt;-->
         </dependency>
-        <!--<dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjweaver</artifactId>
-            <version>${org.aspectj}</version>
-        </dependency>-->
 
         <dependency>
             <groupId>org.freemarker</groupId>

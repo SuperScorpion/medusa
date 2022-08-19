@@ -92,8 +92,8 @@ public class Pager<T> implements Serializable {
 		return this;
 	}
 
-	public Long getStartRecord() {
-		return (pageNumber - 1L) * pageSize;
+	public Integer getStartRecord() {
+		return (pageNumber - 1) * pageSize;
 	}
 
 	public List<T> getList() {

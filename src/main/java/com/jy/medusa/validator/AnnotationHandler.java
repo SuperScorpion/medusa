@@ -31,7 +31,7 @@ public abstract class AnnotationHandler {
      * @throws IllegalAccessException 异常
      */
     @Before(value = "execution(public * *(..)) && @annotation(parameter)")
-    public void paramHandler(JoinPoint joinPoint, ConParamValidator parameter) throws IllegalAccessException {
+    public void paramHandler(JoinPoint joinPoint, MedusaValidator parameter) throws IllegalAccessException {
 
         List<String> messageList = new ArrayList<>();
 
@@ -84,17 +84,17 @@ public abstract class AnnotationHandler {
         }
 
         //modify by neo on 2017.09.03
-//        processErrorMsg(k, messageList);
+        processErrorMsg(k, messageList);
         //modify by neo on 2022.08.04
-        processErrorMsgDefault(k, messageList);
+//        processErrorMsgDefault(k, messageList);
     }
 
-//    public abstract void processErrorMsg(ErrorInfo k, List<String> messageList);
+    protected abstract void processErrorMsg(ErrorInfo errorInfo, List<String> messageList);
 
-    public void processErrorMsgDefault(ErrorInfo k, List<String> messageList) {
-        if(k != null) {
-            k.setMessageList(messageList);//等待循环完成后 方法里的参数都校验完 再给结果参数赋值去
-        } else if(k == null && !messageList.isEmpty()) {//add by neo on 2022.07.29
+    protected void processErrorMsgDefault(ErrorInfo errorInfo, List<String> messageList) {
+        if(errorInfo != null) {
+            errorInfo.setMessageList(messageList);//等待循环完成后 方法里的参数都校验完 再给结果参数赋值去
+        } else if(errorInfo == null && !messageList.isEmpty()) {//add by neo on 2022.07.29
              throw new ValidException(messageList.get(0));
         } else {
             //do nothing
