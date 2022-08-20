@@ -30,19 +30,19 @@ public abstract class BaseServiceImplMedusa<T> extends BaseServiceImplMedusaStri
 		return mapper.select(entity);
 	}
 
-//	public int selectCount(Serializable... mixParams) {
-//		return mapper.selectCount(mixParams);
-//	}
+	public int selectCount(Object... mixParams) {//
+		return mapper.selectCount(mixParams);
+	}
 
-//	public List<T> selectByGaze(Serializable... mixParams) {
-//		return mapper.showMedusaGaze(mixParams);
-//	}
+	public List<T> selectByGazeMagic(Object... mixParams) {//
+		return mapper.showMedusaGaze(mixParams);
+	}
 
-	public int saveSelective(T entity) {
+	public int saveSelective(T entity) {//
 		return mapper.insertSelective(entity);
 	}
 
-	public int save(T entity) {
+	public int save(T entity) {//
 		return mapper.insert(entity);
 	}
 
@@ -54,7 +54,7 @@ public abstract class BaseServiceImplMedusa<T> extends BaseServiceImplMedusaStri
 		return mapper.updateByPrimaryKey(entity);
 	}
 
-	public int updateSelective(T entity) {
+	public int updateSelective(T entity) {//
 		return mapper.updateByPrimaryKeySelective(entity);
 	}
 
@@ -62,31 +62,15 @@ public abstract class BaseServiceImplMedusa<T> extends BaseServiceImplMedusaStri
 		return mapper.updateByPrimaryKeyBatch(obs);
 	}
 
-	public int deleteById(Serializable id) {
+	public int deleteById(Serializable id) {//
 		return mapper.deleteByPrimaryKey(id);
 	}
 
-	public int deleteBatch(List<Serializable> ids) {
+	public int deleteBatch(List<Serializable> ids) {//
 		return mapper.deleteBatch(ids);
 	}
 
-	public int deleteBy(T entity) {
+	public int deleteBy(T entity) {//
 		return mapper.delete(entity);
 	}
-
-	/*public JSONSerializable resultSuccess(Serializable result, String msg, JSONSerializable json) {
-		json = json == null ? new JSONSerializable() : json;
-		json.put("data", result);
-		json.put("result",0);
-		json.put("msg", msg);
-		return json;
-	}
-
-	public JSONSerializable resultError(Serializable result, String msg, JSONSerializable json) {
-		json = json == null ? new JSONSerializable() : json;
-		json.put("data", result);
-		json.put("result",1);
-		json.put("msg", msg);
-		return json;
-	}*/
 }

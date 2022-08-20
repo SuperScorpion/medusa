@@ -51,6 +51,9 @@ public class DataBaseTools {
         this.url = Home.jdbcUrl;
         this.user = Home.jdbcUsername;
         this.password = Home.jdbcPassword;
+
+        //add by neo on 20220820 for https://blog.csdn.net/hechenggong159/article/details/120902126
+        this.url = this.url.contains("&nullCatalogMeansCurrent=") ? this.url : this.url.concat("&nullCatalogMeansCurrent=true");
     }
 
 

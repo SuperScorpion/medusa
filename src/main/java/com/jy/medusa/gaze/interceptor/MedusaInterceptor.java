@@ -198,9 +198,9 @@ public class MedusaInterceptor implements Interceptor {
                     z.setPageCount(z.getPageCount());
                 }
 
-                for (Object m : x) {//帮助用户自动让MedusaRestrictions清空 modify by neo on 2019.08.20
-                    if (m instanceof MedusaRestrictions) ((MedusaRestrictions) m).clear();
-                }
+//                for (Object m : x) {//帮助用户自动让MedusaRestrictions清空 modify by neo on 2019.08.20
+//                    if (m instanceof MedusaRestrictions) ((MedusaRestrictions) m).clear();
+//                }
 
             } else if (MedusaSqlHelper.checkInsertMethod(medusaMethodName)) {//如果是insert方法相关的则通过反射来修改传入对象的主键
 

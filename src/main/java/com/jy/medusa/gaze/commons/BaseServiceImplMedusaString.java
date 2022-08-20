@@ -26,11 +26,11 @@ public abstract class BaseServiceImplMedusaString<T> extends BaseServiceImplMedu
 		return mapper.select(entity, paramColumns);
 	}
 
-//	public int selectCount(Serializable... mixParams) {
+//	public int selectCount(Object... mixParams) {
 //		return mapper.selectCount(mixParams);
 //	}
 
-//	public List<T> selectByGaze(Serializable... mixParams) {
+//	public List<T> selectByGaze(Object... mixParams) {
 //		return mapper.showMedusaGaze(mixParams);
 //	}
 

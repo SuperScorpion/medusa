@@ -19,9 +19,9 @@ public interface BaseServiceMedusa<T> extends BaseServiceMedusaString<T> {
 
 	List<T> selectListBy(T entity);
 
-//	int selectCount(Serializable... mixParams);
+	int selectCount(Object... mixParams);
 
-//	List<T> selectByGaze(Serializable... mixParams);
+	List<T> selectByGazeMagic(Object... mixParams);
 
 	int saveSelective(T entity);
 
@@ -40,8 +40,4 @@ public interface BaseServiceMedusa<T> extends BaseServiceMedusaString<T> {
 	int deleteBatch(List<Serializable> ids);
 
 	int deleteBy(T entity);
-
-//	public JSONSerializable resultSuccess(Serializable result, String msg, JSONSerializable json);
-
-//	public JSONSerializable resultError(Serializable result, String msg, JSONSerializable json);
 }
