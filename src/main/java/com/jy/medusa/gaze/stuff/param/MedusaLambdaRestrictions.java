@@ -64,6 +64,12 @@ public class MedusaLambdaRestrictions<T> extends BaseRestrictions<T, HolyGetter<
         return this;
     }
 
+    public MedusaLambdaRestrictions singleNeqParam(HolyGetter<T> fn, Object v) {
+
+        paramList.add(new SingleNeqParam(HolyGetPropertyNameLambda.convertToFieldName(fn), v));
+        return this;
+    }
+
     public MedusaLambdaRestrictions<T> notNullParam(HolyGetter<T> fn, Boolean v) {
 
         paramList.add(new NotNullParam(HolyGetPropertyNameLambda.convertToFieldName(fn), v));

@@ -63,6 +63,12 @@ public class MedusaStringRestrictions<T> extends BaseRestrictions<T, String, Med
         return this;
     }
 
+    public MedusaStringRestrictions singleNeqParam(String c, Object v) {
+
+        paramList.add(new SingleNeqParam(c, v));
+        return this;
+    }
+
     public MedusaStringRestrictions notNullParam(String c, Boolean v) {
 
         paramList.add(new NotNullParam(c, v));

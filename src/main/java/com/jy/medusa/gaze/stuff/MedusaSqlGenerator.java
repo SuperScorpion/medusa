@@ -638,6 +638,7 @@ public class MedusaSqlGenerator {
         //从缓存里拿到分页查询语句 必须清理掉缓存
         String cacheSq = MedusaSqlHelper.myThreadLocal.get();
 
+        //1.处理sql为查询数量
         if (MedusaCommonUtils.isNotBlank(cacheSq)) {
 
             MedusaSqlHelper.myThreadLocal.remove();
@@ -651,26 +652,27 @@ public class MedusaSqlGenerator {
             return countSq;
         }
 
-        //1.objParams 里的entity实体类型参数处理
-        List<String> values = obtainMedusaGazeS(objParams);
+        //2.objParams 里的entity实体类型参数处理
+//        List<String> values = obtainMedusaGazeS(objParams);
 
-        //2.objParams 里的map类型参数处理
-        List<String> mps = obtainMedusaGazeByMap(objParams);
+        //3.objParams 里的map类型参数处理
+//        List<String> mps = obtainMedusaGazeByMap(objParams);
 
-        values.addAll(mps);///合并两个集合 modify by neo on 2020.01.19
+//        values.addAll(mps);///合并两个集合 modify by neo on 2020.01.19
 
-        int valuesLen = values == null || values.isEmpty() ? 0 : values.size();
+//        int valuesLen = values == null || values.isEmpty() ? 0 : values.size();
 
-        int len = 30 + tableName.length() + (valuesLen * 39) + 512;
+//        int len = 30 + tableName.length() + (valuesLen * 39) + 512;
+        int len = 30 + tableName.length() + (10 * 39) + 512;
 
         StringBuilder sbb = new StringBuilder(len);
         sbb.append("SELECT COUNT(1) ").append(" FROM ").append(tableName).append(" WHERE ");
 
-        if (values == null || values.isEmpty()) {
+//        if (values == null || values.isEmpty()) {
             sbb.append("1=1");
-        } else {
-            sbb.append(MedusaCommonUtils.join(values, " AND "));
-        }
+//        } else {
+//            sbb.append(MedusaCommonUtils.join(values, " AND "));
+//        }
 
         //3.objParams 里的多条件查询类型参数处理
         if(objParams != null && objParams.length > 0) {
@@ -693,6 +695,15 @@ public class MedusaSqlGenerator {
                             v++;
                         }
                     }
+                }
+
+                //modify by admin on 20220823 for 处理实体类型条件
+                else if(entityClass.isInstance(z)) {
+                    paramEntityConditionHandler(sbb, z, isd);
+                }
+                //modify by admin on 20220823 for 处理普通map<String, Object>
+                else if(z instanceof Map<?, ?> && !(z instanceof MedusaLambdaMap)) {
+                    paramMapConditionHandler(sbb, z, isd);
                 }
 
                 isd++;
@@ -728,26 +739,27 @@ public class MedusaSqlGenerator {
         String paramColumn = (objParams == null || objParams.length == 0) ? columnsStr : MedusaSqlHelper.buildColumnNameForSelect(objParams, currentFieldColumnNameMap);
 
         //2.objParams 里的entity实体类型参数处理
-        List<String> values = obtainMedusaGazeS(objParams);
+//        List<String> values = obtainMedusaGazeS(objParams);
 
         //3.objParams 里的map类型参数处理
-        List<String> mps = obtainMedusaGazeByMap(objParams);
+//        List<String> mps = obtainMedusaGazeByMap(objParams);
 
-        values.addAll(mps);///合并两个集合 modify by neo on 2020.01.19
+//        values.addAll(mps);///合并两个集合 modify by neo on 2020.01.19
 
-        int valuesLen = values == null || values.isEmpty() ? 0 : values.size();
+//        int valuesLen = values == null || values.isEmpty() ? 0 : values.size();
 
-        int len = 30 + tableName.length() + paramColumn.length() + (valuesLen * 39) + 512;
+//        int len = 30 + tableName.length() + paramColumn.length() + (valuesLen * 39) + 512;
+        int len = 30 + tableName.length() + paramColumn.length() + (10 * 39) + 512;
 
         StringBuilder sbb = new StringBuilder(len);
         sbb.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName).append(" WHERE ");
 
 
-        if (values == null || values.isEmpty()) {
+//        if (values == null || values.isEmpty()) {
             sbb.append("1=1");
-        } else {
-            sbb.append(MedusaCommonUtils.join(values, " AND "));
-        }
+//        } else {
+//            sbb.append(MedusaCommonUtils.join(values, " AND "));
+//        }
 
         //4.objParams 里的多条件查询类型参数处理
         if(objParams != null && objParams.length > 0) {
@@ -756,7 +768,7 @@ public class MedusaSqlGenerator {
 
             short isd = 0;
 
-            for (Object z : objParams) {///先遍历条件like between类
+            for (Object z : objParams) {///遍历各个参数
 
                 if(z instanceof BaseRestrictions) {//modify by neo on 2016.12.09  if(z instanceof BaseParam) {
 
@@ -775,6 +787,15 @@ public class MedusaSqlGenerator {
                 } else if (z instanceof Pager) {
 
                     pa = (Pager) z;//只要最后一个对象 pager
+                }
+
+                //modify by admin on 20220823 for 处理实体类型条件
+                else if(entityClass.isInstance(z)) {
+                    paramEntityConditionHandler(sbb, z, isd);
+                }
+                //modify by admin on 20220823 for 处理普通map<String, Object>
+                else if(z instanceof Map<?, ?> && !(z instanceof MedusaLambdaMap)) {
+                    paramMapConditionHandler(sbb, z, isd);
                 }
 
                 isd++;
@@ -821,80 +842,127 @@ public class MedusaSqlGenerator {
 
     /**
      * 提供给selectMedusaGaze和sqlOfFindAllCount使用
-     * @param psArray 参数
-     * @return 返回值类型
+     * 处理参数中的entity条件类型
+     * @param sbb
+     * @param z
+     * @param isd
      */
-    private List<String> obtainMedusaGazeByMap(Object[] psArray) {
-
-        if(psArray != null && psArray.length != 0) {
-
-            List<String> colVals = new ArrayList<>();
-
-            short i = 0;
-            for(Object o : psArray) {
-
-                //处理普通map<String, Object> modify by admin on 20220823
-                if(o instanceof Map<?, ?> && !(o instanceof MedusaLambdaMap)) {
-
-                    Set<Map.Entry<String, Object>> entrySet = ((Map)o).entrySet();
-                    Iterator<Map.Entry<String, Object>> iter = entrySet.iterator();
-
-                    while(iter.hasNext()) {
-
-                        Map.Entry<String, Object> entry = iter.next();
-
-                        if (entry != null && entry.getKey() instanceof String && entry.getValue() != null) {//modify by neo on 2020.01.19
-
-                            if(MedusaCommonUtils.isBlank(entry.getKey())) continue;
-
-                            String column = MedusaSqlHelper.buildColumnNameForMedusaGaze(entry.getKey(), currentFieldColumnNameMap);
-
-                            colVals.add(column + "=" + "#{array[" + i + "]." + entry.getKey() + "}");///modify by neo on 2020.02.13
-                        }
-                    }
-                }
-
-                i++;
+    private void paramEntityConditionHandler(StringBuilder sbb, Object z, short isd) {
+        for (String column : columns) {
+            String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
+            Object value = MedusaReflectionUtils.obtainFieldValue(z, fieldName);
+            if (value != null) {//modify by neo on 2020.01.19
+//                            colVals.add(column + "=" + "#{array[" + i + "]." + fieldName + "}");///modify by neo on 2020.02.13
+                sbb.append(" AND ").append(column).append(" = ").append("#{array[").append(isd).append("].").append(fieldName).append("}");///modify by neo on 2020.02.13
             }
-
-            return colVals;
-        } else {
-            return new ArrayList<>();
         }
     }
 
     /**
      * 提供给selectMedusaGaze和sqlOfFindAllCount使用
-     * @return 返回值类型
+     * 处理参数中的map条件类型
+     * @param sbb
+     * @param z
+     * @param isd
      */
-    private List<String> obtainMedusaGazeS(Object[] psArray) {
+    private void paramMapConditionHandler(StringBuilder sbb, Object z, short isd) {
 
-        if(psArray != null && psArray.length != 0) {
+        Set<Map.Entry<String, Object>> entrySet = ((Map)z).entrySet();
+        Iterator<Map.Entry<String, Object>> iter = entrySet.iterator();
 
-            List<String> colVals = new ArrayList<>();
+        while(iter.hasNext()) {
 
-            short i = 0;
-            for(Object o : psArray) {
+            Map.Entry<String, Object> entry = iter.next();
 
-                if(entityClass.isInstance(o)) {
+            if (entry != null && entry.getKey() instanceof String && entry.getValue() != null) {//modify by neo on 2020.01.19
 
-                    for (String column : columns) {
-                        String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
-                        Object value = MedusaReflectionUtils.obtainFieldValue(o, fieldName);
-                        if (value != null) {//modify by neo on 2020.01.19
-                            colVals.add(column + "=" + "#{array[" + i + "]." + fieldName + "}");///modify by neo on 2020.02.13
-                        }
-                    }
-                }
+                if(MedusaCommonUtils.isBlank(entry.getKey())) continue;
 
-                i++;
+                String column = MedusaSqlHelper.buildColumnNameForMedusaGaze(entry.getKey(), currentFieldColumnNameMap);
+//                            colVals.add(column + "=" + "#{array[" + i + "]." + entry.getKey() + "}");///modify by neo on 2020.02.13
+                sbb.append(" AND ").append(column).append(" = ").append("#{array[").append(isd).append("].").append(entry.getKey()).append("}");///modify by neo on 2020.02.13
             }
-
-            return colVals;
-        } else {
-            return new ArrayList<>();
         }
     }
+
+    /**
+     * @deprecated
+     * 提供给selectMedusaGaze和sqlOfFindAllCount使用
+     * @param psArray 参数
+     * @return 返回值类型
+     */
+//    private List<String> obtainMedusaGazeByMap(Object[] psArray) {
+//
+//        if(psArray != null && psArray.length != 0) {
+//
+//            List<String> colVals = new ArrayList<>();
+//
+//            short i = 0;
+//            for(Object o : psArray) {
+//
+//                //处理普通map<String, Object> modify by admin on 20220823
+//                if(o instanceof Map<?, ?> && !(o instanceof MedusaLambdaMap)) {
+//
+//                    Set<Map.Entry<String, Object>> entrySet = ((Map)o).entrySet();
+//                    Iterator<Map.Entry<String, Object>> iter = entrySet.iterator();
+//
+//                    while(iter.hasNext()) {
+//
+//                        Map.Entry<String, Object> entry = iter.next();
+//
+//                        if (entry != null && entry.getKey() instanceof String && entry.getValue() != null) {//modify by neo on 2020.01.19
+//
+//                            if(MedusaCommonUtils.isBlank(entry.getKey())) continue;
+//
+//                            String column = MedusaSqlHelper.buildColumnNameForMedusaGaze(entry.getKey(), currentFieldColumnNameMap);
+//
+//                            colVals.add(column + "=" + "#{array[" + i + "]." + entry.getKey() + "}");///modify by neo on 2020.02.13
+//                        }
+//                    }
+//                }
+//
+//                i++;
+//            }
+//
+//            return colVals;
+//        } else {
+//            return new ArrayList<>();
+//        }
+//    }
+
+    /**
+     * @deprecated
+     * 提供给selectMedusaGaze和sqlOfFindAllCount使用
+     * @return 返回值类型
+     */
+//    private List<String> obtainMedusaGazeS(Object[] psArray) {
+//
+//        if(psArray != null && psArray.length != 0) {
+//
+//            List<String> colVals = new ArrayList<>();
+//
+//            short i = 0;
+//            for(Object o : psArray) {
+//
+//                if(entityClass.isInstance(o)) {
+//
+//                    for (String column : columns) {
+//                        String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
+//                        Object value = MedusaReflectionUtils.obtainFieldValue(o, fieldName);
+//                        if (value != null) {//modify by neo on 2020.01.19
+//                            colVals.add(column + "=" + "#{array[" + i + "]." + fieldName + "}");///modify by neo on 2020.02.13
+//                        }
+//                    }
+//                }
+//
+//                i++;
+//            }
+//
+//            return colVals;
+//        } else {
+//            return new ArrayList<>();
+//        }
+//    }
 
     /**
      * modify by neo on 2016.12.09 添加 .paramList[index]
@@ -920,6 +988,14 @@ public class MedusaSqlGenerator {
 
                 if(p != null && MedusaCommonUtils.isNotBlank(p.toString())) {
                     sbb.append(" AND ").append(column).append(" = ").append("#{array[").append(isd).append("].paramList[").append(ind).append("].value}");///modify by neo on 2020.02.13
+                }
+
+            } else if (z instanceof SingleNeqParam) {//modify by neo on 2022.08.23
+
+                Object p = ((SingleNeqParam) z).getValue();
+
+                if(p != null && MedusaCommonUtils.isNotBlank(p.toString())) {
+                    sbb.append(" AND ").append(column).append(" != ").append("#{array[").append(isd).append("].paramList[").append(ind).append("].value}");
                 }
 
             } else if (z instanceof BetweenParam) {

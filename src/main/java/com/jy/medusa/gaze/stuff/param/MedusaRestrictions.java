@@ -23,6 +23,8 @@ public interface MedusaRestrictions<T, P, R> extends Serializable {
 
     R singleParam(P fn, Object v);
 
+    R singleNeqParam(P fn, Object v);
+
     R notNullParam(P fn, Boolean v);
 
     R clear();
