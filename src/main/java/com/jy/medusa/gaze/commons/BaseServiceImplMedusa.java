@@ -30,13 +30,13 @@ public abstract class BaseServiceImplMedusa<T> extends BaseServiceImplMedusaStri
 		return mapper.select(entity);
 	}
 
-	public int selectCount(Object... mixParams) {//
-		return mapper.selectCount(mixParams);
-	}
-
-	public List<T> selectByGazeMagic(Object... mixParams) {//
-		return mapper.showMedusaGaze(mixParams);
-	}
+//	public int selectCount(Object... mixParams) {
+//		return mapper.selectCount(mixParams);
+//	}
+//
+//	public List<T> selectByGazeMagic(Object... mixParams) {
+//		return mapper.medusaGazeMagic(mixParams);
+//	}
 
 	public int saveSelective(T entity) {//
 		return mapper.insertSelective(entity);

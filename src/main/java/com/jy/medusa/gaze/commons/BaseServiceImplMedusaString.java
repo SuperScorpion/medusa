@@ -31,7 +31,7 @@ public abstract class BaseServiceImplMedusaString<T> extends BaseServiceImplMedu
 //	}
 
 //	public List<T> selectByGaze(Object... mixParams) {
-//		return mapper.showMedusaGaze(mixParams);
+//		return mapper.medusaGazeMagic(mixParams);
 //	}
 
 //	public int saveSelective(T entity) {

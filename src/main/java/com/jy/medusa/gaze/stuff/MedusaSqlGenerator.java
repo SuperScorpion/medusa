@@ -2,7 +2,8 @@ package com.jy.medusa.gaze.stuff;
 
 
 import com.jy.medusa.gaze.stuff.exception.MedusaException;
-import com.jy.medusa.gaze.stuff.param.*;
+import com.jy.medusa.gaze.stuff.param.BaseRestrictions;
+import com.jy.medusa.gaze.stuff.param.MedusaLambdaMap;
 import com.jy.medusa.gaze.stuff.param.gele.*;
 import com.jy.medusa.gaze.stuff.param.mix.*;
 import com.jy.medusa.gaze.utils.MedusaCommonUtils;
@@ -782,16 +783,20 @@ public class MedusaSqlGenerator {
             ///////分页开始
             if(pa != null) {
 
-                if(pa.getOrderBy() != null && pa.getOrderType() != null && pa.getOrderBy().length > 0 && pa.getOrderBy().length == pa.getOrderType().length) {
+                //modify by neo on 20220822 for lambda
+                if(pa.getOrderByList() != null && pa.getOrderByList().size() > 0) {
 
                     sbb.append(" order by ");//modify by neo 2016.10.12
 
                     int i = 0;
-                    for(; i < pa.getOrderBy().length ; i++) {
+                    for(; i < pa.getOrderByList().size(); i++) {
 
-                        sbb.append(pa.getOrderBy()[i]);
+                        //orderType 默认取desc
+                        String orderType = pa.getOrderTypeList().get(i) == null ? Pager.SortTypeEnum.SORT_DESC.getCode() : (String) pa.getOrderTypeList().get(i);
+
+                        sbb.append(pa.getOrderByList().get(i));
                         sbb.append(" ");
-                        sbb.append(pa.getOrderType()[i]);
+                        sbb.append(orderType);
                         sbb.append(",");
                     }
 
@@ -823,15 +828,16 @@ public class MedusaSqlGenerator {
 
         if(psArray != null && psArray.length != 0) {
 
+            List<String> colVals = new ArrayList<>();
+
             short i = 0;
             for(Object o : psArray) {
 
-                if(o instanceof Map<?, ?>) {
+                //处理普通map<String, Object> modify by admin on 20220823
+                if(o instanceof Map<?, ?> && !(o instanceof MedusaLambdaMap)) {
 
                     Set<Map.Entry<String, Object>> entrySet = ((Map)o).entrySet();
                     Iterator<Map.Entry<String, Object>> iter = entrySet.iterator();
-
-                    List<String> colVals = new ArrayList<>();
 
                     while(iter.hasNext()) {
 
@@ -846,14 +852,12 @@ public class MedusaSqlGenerator {
                             colVals.add(column + "=" + "#{array[" + i + "]." + entry.getKey() + "}");///modify by neo on 2020.02.13
                         }
                     }
-
-                    return colVals;
                 }
 
                 i++;
             }
 
-            return new ArrayList<>();
+            return colVals;
         } else {
             return new ArrayList<>();
         }
@@ -867,12 +871,13 @@ public class MedusaSqlGenerator {
 
         if(psArray != null && psArray.length != 0) {
 
+            List<String> colVals = new ArrayList<>();
+
             short i = 0;
             for(Object o : psArray) {
 
                 if(entityClass.isInstance(o)) {
 
-                    List<String> colVals = new ArrayList<>();
                     for (String column : columns) {
                         String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
                         Object value = MedusaReflectionUtils.obtainFieldValue(o, fieldName);
@@ -880,13 +885,12 @@ public class MedusaSqlGenerator {
                             colVals.add(column + "=" + "#{array[" + i + "]." + fieldName + "}");///modify by neo on 2020.02.13
                         }
                     }
-                    return colVals;
                 }
 
                 i++;
             }
 
-            return new ArrayList<>();
+            return colVals;
         } else {
             return new ArrayList<>();
         }

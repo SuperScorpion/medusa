@@ -17,9 +17,9 @@ public interface BaseServiceMedusaLambda<T> {
 
 	List<T> selectListBy(T entity, HolyGetter<T>... paramFns);
 
-//	int selectCount(Object... mixParams);
-//
-//	List<T> selectByGaze(Object... mixParams);
+	int selectCount(Object... mixParams);
+
+	List<T> selectByGazeMagic(Object... mixParams);
 
 //	int saveSelective(T entity);
 

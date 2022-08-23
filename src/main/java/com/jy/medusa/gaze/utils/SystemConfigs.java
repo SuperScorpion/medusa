@@ -31,7 +31,7 @@ public class SystemConfigs {
     public static final List<String> MY_ALL_METHOD_NANES_LIST = new ArrayList<>(20);
 
     static {
-        MY_ALL_METHOD_NANES_LIST.add("showMedusaGaze");
+        MY_ALL_METHOD_NANES_LIST.add("medusaGazeMagic");
         MY_ALL_METHOD_NANES_LIST.add("selectAll");
         MY_ALL_METHOD_NANES_LIST.add("selectByPrimaryKeyBatch");
         MY_ALL_METHOD_NANES_LIST.add("selectByPrimaryKey");

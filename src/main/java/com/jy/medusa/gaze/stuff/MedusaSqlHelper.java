@@ -128,7 +128,7 @@ public class MedusaSqlHelper {
      * @return 返回值类型
      */
     public static boolean checkMedusaGazeMethod(String methodName) {
-        return methodName.equals("showMedusaGaze") ? true : false;
+        return methodName.equals("medusaGazeMagic") ? true : false;
     }
 
     /**

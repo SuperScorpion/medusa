@@ -28,13 +28,13 @@ public abstract class BaseServiceImplMedusaLambda<T> extends BaseServiceImplLamb
 		return mapper.select(entity, transferStringColumnByLambda(paramFns));
 	}
 
-//	public int selectCount(Object... mixParams) {
-//		return mapper.selectCount(transferLambdaForGaze(mixParams));
-//	}
-//
-//	public List<T> selectByGazeMagic(Object... mixParams) {
-//		return mapper.showMedusaGaze(transferLambdaForGaze(mixParams));
-//	}
+	public int selectCount(Object... mixParams) {
+		return mapper.selectCount(transferLambdaForGaze(mixParams));
+	}
+
+	public List<T> selectByGazeMagic(Object... mixParams) {
+		return mapper.medusaGazeMagic(transferLambdaForGaze(mixParams));
+	}
 
 //	public int saveSelective(T entity) {
 //		return mapper.insertSelective(entity);

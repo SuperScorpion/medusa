@@ -1,14 +1,12 @@
 package com.jy.medusa.gaze.commons;
 
 import com.jy.medusa.gaze.stuff.param.MedusaLambdaColumns;
+import com.jy.medusa.gaze.stuff.param.MedusaLambdaMap;
 import com.jy.medusa.gaze.stuff.param.lambda.HolyGetPropertyNameLambda;
 import com.jy.medusa.gaze.stuff.param.lambda.HolyGetter;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 import java.util.stream.Collectors;
 
 //@Service
@@ -52,32 +50,30 @@ public abstract class BaseServiceImplLambdaBasis<T> {
 						lit.add(HolyGetPropertyNameLambda.convertToFieldName((HolyGetter<T>)fns));
 					}
 				}
-			}/* else if (param instanceof HolyGetter) {//Object is not a functionInterface
+			} else if (param instanceof MedusaLambdaMap) {
+
+				HashMap<String, Object> resultMap = new HashMap<>(((MedusaLambdaMap) param).size());
+
+				Set<Map.Entry<HolyGetter<?>, Object>> entrySet = ((Map)param).entrySet();
+				Iterator<Map.Entry<HolyGetter<?>, Object>> iter = entrySet.iterator();
+
+				while(iter.hasNext()) {
+					Map.Entry<HolyGetter<?>, Object> entry = iter.next();
+					if (entry != null && entry.getKey() instanceof HolyGetter<?> && entry.getValue() != null) {//modify by neo on 2020.01.19
+						if(entry.getKey() == null) continue;
+						String fieldName = HolyGetPropertyNameLambda.convertToFieldName(entry.getKey());
+						resultMap.put(fieldName, entry.getValue());
+					}
+				}
+				lit.add(resultMap);
+			}/*else if (param instanceof HolyGetter) {//Object is not a functionInterface
                 lit.add(HolyGetPropertyNameLambda.convertToFieldName((HolyGetter<T>)param));
             } else {
 			    //do nothing
             }*/
 		}
 
-//		paramList.forEach(param -> {
-//			if(param instanceof Collection) {
-//				((Collection) param).forEach(fns -> {
-//					if (fns instanceof HolyGetter) {
-//						paramList.add(HolyGetPropertyNameLambda.convertToFieldName((HolyGetter<T>)fns));
-//					}
-//				});
-//			}
-//		});
-
-		Object[] result = paramList.toArray(new Object[]{});
-
-		//help gc
-		if(paramList != null) {
-			paramList.clear();
-			paramList = null;
-		}
-
-		return result;
+		return paramList.toArray(new Object[]{});
 	}
 
 	protected String[] transferStringColumnByLambda(HolyGetter<T>[] paramFns) {

@@ -202,7 +202,7 @@ public class GenBaseServiceAndImpl {
 //                "\t}\n" +
 //                "\n" +
 //                "\tpublic List<T> selectByGazeMagic(Object... ps) {\n" +
-//                "\t\treturn mapper.showMedusaGaze(ps);\n" +
+//                "\t\treturn mapper.medusaGazeMagic(ps);\n" +
 //                "\t}\n" +
 //                "\n");
 //

@@ -22,5 +22,5 @@ public interface SelectMedusaGazeMapper<T> {
      */
     @SelectProvider(type = BaseSelectProvider.class, method = "selectMedusaGaze")
     @ResultMap("BaseResultMap")
-    List<T> showMedusaGaze(Object... mixParams);
+    List<T> medusaGazeMagic(Object... mixParams);
 }

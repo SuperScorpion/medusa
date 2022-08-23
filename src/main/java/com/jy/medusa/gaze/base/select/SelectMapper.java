@@ -23,5 +23,4 @@ public interface SelectMapper<T> {
     @SelectProvider(type = BaseSelectProvider.class, method = "select")
     @ResultMap("BaseResultMap")
     List<T> select(T record, String... paramColumns);
-
 }

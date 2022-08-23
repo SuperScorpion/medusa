@@ -19,9 +19,9 @@ public interface BaseServiceMedusa<T> extends BaseServiceMedusaString<T> {
 
 	List<T> selectListBy(T entity);
 
-	int selectCount(Object... mixParams);
-
-	List<T> selectByGazeMagic(Object... mixParams);
+//	int selectCount(Object... mixParams);
+//
+//	List<T> selectByGazeMagic(Object... mixParams);
 
 	int saveSelective(T entity);
 
