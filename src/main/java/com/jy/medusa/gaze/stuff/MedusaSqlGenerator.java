@@ -878,7 +878,7 @@ public class MedusaSqlGenerator {
 
                 if(MedusaCommonUtils.isBlank(entry.getKey())) continue;
 
-                String column = MedusaSqlHelper.buildColumnNameForMedusaGaze(entry.getKey(), currentFieldColumnNameMap);
+                String column = MedusaSqlHelper.buildColumnNameForAll(entry.getKey(), currentFieldColumnNameMap);
 //                            colVals.add(column + "=" + "#{array[" + i + "]." + entry.getKey() + "}");///modify by neo on 2020.02.13
                 sbb.append(" AND ").append(column).append(" = ").append("#{array[").append(isd).append("].").append(entry.getKey()).append("}");///modify by neo on 2020.02.13
             }
@@ -914,7 +914,7 @@ public class MedusaSqlGenerator {
 //
 //                            if(MedusaCommonUtils.isBlank(entry.getKey())) continue;
 //
-//                            String column = MedusaSqlHelper.buildColumnNameForMedusaGaze(entry.getKey(), currentFieldColumnNameMap);
+//                            String column = MedusaSqlHelper.buildColumnNameForAll(entry.getKey(), currentFieldColumnNameMap);
 //
 //                            colVals.add(column + "=" + "#{array[" + i + "]." + entry.getKey() + "}");///modify by neo on 2020.02.13
 //                        }
@@ -978,7 +978,7 @@ public class MedusaSqlGenerator {
         if(z == null || MedusaCommonUtils.isBlank(((BaseParam) z).getColumn())) return;
 
         //转换一下column的属性值 也许是数据库字段 也有可能是属性值
-        String column = MedusaSqlHelper.buildColumnNameForMedusaGaze(((BaseParam) z).getColumn(), currentFieldColumnNameMap);
+        String column = MedusaSqlHelper.buildColumnNameForAll(((BaseParam) z).getColumn(), currentFieldColumnNameMap);
 
         if (z instanceof BaseComplexParam) {
 

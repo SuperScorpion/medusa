@@ -330,7 +330,7 @@ public class MedusaSqlHelper {
      */
     public static String buildColumnNameForSelect(Object[] psArray, Map<String, String> currentFieldColumnNameMap) {
 
-        StringBuilder sbb = new StringBuilder(100);
+        StringBuilder sbb = new StringBuilder(255);
 
         if(psArray != null && psArray.length != 0) {
             for (Object z : psArray) {//["a,b,b,n,m","a"] 可选的字段有可能是分开写入的 多参数传入的值
@@ -343,7 +343,7 @@ public class MedusaSqlHelper {
 
                         if (MedusaCommonUtils.isNotBlank(m)) {
 
-                            sbb.append(buildColumnNameForMedusaGaze(m, currentFieldColumnNameMap));
+                            sbb.append(buildColumnNameForAll(m, currentFieldColumnNameMap));
 
                             sbb.append(",");
                         }
@@ -364,7 +364,7 @@ public class MedusaSqlHelper {
      * @param currentFieldColumnNameMap 参数
      * @return 返回值类型
      */
-    public static String buildColumnNameForMedusaGaze(String ori, Map<String, String> currentFieldColumnNameMap) {
+    public static String buildColumnNameForAll(String ori, Map<String, String> currentFieldColumnNameMap) {
 
         String result;
 //        if (ori.contains("_"))//让用户用的可选字段 属性名字和数据库表字段名称容错
