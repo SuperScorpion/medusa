@@ -789,11 +789,11 @@ public class MedusaSqlGenerator {
                     pa = (Pager) z;//只要最后一个对象 pager
                 }
 
-                //modify by admin on 20220823 for 处理实体类型条件
+                //modify by neo on 2022.08.23 for 处理实体类型条件
                 else if(entityClass.isInstance(z)) {
                     paramEntityConditionHandler(sbb, z, isd);
                 }
-                //modify by admin on 20220823 for 处理普通map<String, Object>
+                //modify by neo on 2022.08.23 for 处理普通map<String, Object>
                 else if(z instanceof Map<?, ?> && !(z instanceof MedusaLambdaMap)) {
                     paramMapConditionHandler(sbb, z, isd);
                 }
