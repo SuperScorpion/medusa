@@ -8,10 +8,7 @@ import com.jy.medusa.generator.ftl.GenXmlFtl;
 import com.jy.medusa.generator.gen.*;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.sql.*;
 import java.util.HashMap;
@@ -110,10 +107,6 @@ public class Home {
         String controlPathJson = packagePath.concat(".").concat(controlJsonSuffix);
         String controlPathMortal = packagePath.concat(".").concat(controlMortalSuffix);
 
-        tableName = MedusaCommonUtils.isBlank(tableName) ? getAllTableName() : tableName;//如果不写表明则生成所有的表相关
-        String[] tableNameArray = tableName.split(",");
-        if(tableNameArray == null || tableNameArray.length == 0) return;
-
         //参数校验
         /*JSONObject job;
         JSONArray m = null;
@@ -131,6 +124,10 @@ public class Home {
         } else {
             System.out.println("Medusa: " + "启动 default 生成模式...");
         }
+
+        tableName = MedusaCommonUtils.isBlank(tableName) ? getAllTableNameSwitch() : tableName;//如果不写表明则生成所有的表相关
+        if(MedusaCommonUtils.isBlank(tableName)) return;
+        String[] tableNameArray = tableName.split(",");
 
         for(String tabName : tableNameArray) {
             if(MedusaCommonUtils.isNotBlank(tabName)) {
@@ -395,6 +392,31 @@ public class Home {
         return result;
     }
 
+
+    /**
+     * 确认是否生成库里所有表
+     * y 获取数据库的表所有名称
+     * n 返回空的字符串
+     * @return
+     */
+    private String getAllTableNameSwitch() {
+
+        System.out.println("Medusa: 确定生成所有表? y/n");
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+
+        try {
+            String flag = bufferedReader.readLine();
+            if(flag.equalsIgnoreCase("y")) {
+                String allTabName = getAllTableName();
+                if(MedusaCommonUtils.isBlank(allTabName)) System.out.println("Medusa: 请确认数据库里存在表结构...");
+                return allTabName;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return "";
+    }
 
     /**
      * 获取数据库的表所有名称

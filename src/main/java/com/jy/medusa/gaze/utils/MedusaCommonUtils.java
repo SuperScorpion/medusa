@@ -13,6 +13,11 @@ import java.util.Iterator;
  */
 public class MedusaCommonUtils {
 
+    /**
+     * copy code from org.apache.commons.lang3.StringUtils.isBlank
+     * @param cs 参数
+     * @return 返回值
+     */
     public static Boolean isBlank(CharSequence cs) {
 
         int strLen;
@@ -31,6 +36,11 @@ public class MedusaCommonUtils {
         }
     }
 
+    /**
+     * copy code from org.apache.commons.lang3.StringUtils.isNotBlank
+     * @param cs 参数
+     * @return 返回值
+     */
     public static Boolean isNotBlank(CharSequence cs) {
         return !isBlank(cs);
     }
@@ -49,6 +59,12 @@ public class MedusaCommonUtils {
         }
     }
 
+    /**
+     * copy code from org.apache.commons.lang3.StringUtils.join(Iterator iterator, String separator)
+     * @param iterable 参数
+     * @param separator 参数
+     * @return 返回值
+     */
     public static String join(Iterable<?> iterable, String separator) {
 
         Iterator iterator = iterable.iterator();
@@ -84,6 +100,13 @@ public class MedusaCommonUtils {
         }
     }
 
+    /**
+     * copy code from org.apache.commons.lang3.ArrayUtils.addAll(T[] array1, T... array2)
+     * @param array1 参数
+     * @param array2 参数
+     * @param <T> 泛型
+     * @return 返回值
+     */
     public static <T> T[] addArrayAll(T[] array1, T... array2) {
         if(array1 == null) {
             return array2.clone();
@@ -112,7 +135,7 @@ public class MedusaCommonUtils {
 
     /**
      * 为测试性能方面 从类中取出属性值来 实验证明出jdk1.8 反射的速度最快
-     * @param args   参数
+     * @param args 参数
      */
     //public static void main(String[] args) throws OgnlException, NoSuchFieldException, IllegalAccessException {
 

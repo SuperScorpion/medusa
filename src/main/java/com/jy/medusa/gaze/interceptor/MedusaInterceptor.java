@@ -7,7 +7,6 @@ package com.jy.medusa.gaze.interceptor;
 import com.jy.medusa.gaze.stuff.MedusaSqlHelper;
 import com.jy.medusa.gaze.stuff.Pager;
 import com.jy.medusa.gaze.stuff.exception.MedusaException;
-import com.jy.medusa.gaze.stuff.param.MedusaRestrictions;
 import com.jy.medusa.gaze.utils.MedusaReflectionUtils;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.builder.annotation.ProviderSqlSource;
@@ -34,6 +33,15 @@ import java.util.*;
 })
 public class MedusaInterceptor implements Interceptor {
 
+    Boolean devFlag = false;
+
+    public MedusaInterceptor() {
+    }
+
+    public MedusaInterceptor(boolean devFlag) {
+        this.devFlag = devFlag;
+    }
+
     public Object intercept(Invocation invocation) throws Throwable {
 
         Object result;
@@ -44,16 +52,29 @@ public class MedusaInterceptor implements Interceptor {
 
         } else if (invocation.getTarget() instanceof StatementHandler) {//delete insert update 都会进来此拦截(medusa的或非medusa的)
 
-            //processExecutor里的invocation.proceed()嵌套进入
+            //processExecutor里的invocationProceed(invocation)嵌套进入
 
-            result = invocation.proceed();//先执行再处理的 不然处理的是上次的
+            result = invocationProceed(invocation);//先执行再处理的 不然处理的是上次的
 
             processBatchInsertPrimaryKeyWriteBack(invocation);
 
         } else {
-            result = invocation.proceed();
+            result = invocationProceed(invocation);
         }
 
+        return result;
+    }
+
+    private Object invocationProceed(Invocation invocation) throws InvocationTargetException, IllegalAccessException {
+        Object result;
+        if(devFlag) {
+            long startTime = System.nanoTime();
+            result = invocation.proceed();
+            long endTime = System.nanoTime();
+            System.out.println("Medusa: SQL运行时间 - " + (endTime - startTime) + "ns" + " - " + (endTime - startTime)/1000000 + "ms");
+        } else {
+            result = invocation.proceed();
+        }
         return result;
     }
 
@@ -102,7 +123,7 @@ public class MedusaInterceptor implements Interceptor {
             processInsertKeyPropertiesBeforeProceed(mt, medusaMethodName, p);
 
             //执行db操作 (当然 mybatis 的后续还有很多处理 比如 insert update delete 都会进下一个StatementHandler 的 interceptor)
-            result = invocation.proceed();
+            result = invocationProceed(invocation);
 
             //processBatchInsertPrimaryKeyWriteBack()先执行完后才到此处
             //medusa的一些方法后续处理(insert相关 update相关 medusaGaze相关)
@@ -115,11 +136,11 @@ public class MedusaInterceptor implements Interceptor {
                 p.remove("msid");
             }
 
-        } else if (mt.getSqlSource() instanceof RawSqlSource//processExecutor里的invocation.proceed()嵌套进入
+        } else if (mt.getSqlSource() instanceof RawSqlSource//processExecutor里的invocationProceed(invocation)嵌套进入
                 // medusa的insertSelectiveUUID 生成UUID时 SELECT REPLACE(UUID(), '-', '') 内部嵌套查询UUID的查询方法
                  && MedusaSqlHelper.checkInsertUUIDMethodSelectKey(medusaMethodName)) {
 
-            result = invocation.proceed();
+            result = invocationProceed(invocation);
 
             //modify by neo on 2019.08.19 for UUID insert 需要先获得生成的uuid值 再注入到插入的实体里 再进行插入操作 否则插入主键为空
 
@@ -127,7 +148,7 @@ public class MedusaInterceptor implements Interceptor {
 
             MedusaReflectionUtils.invokeSetterMethod(p.get("pobj"), MedusaSqlHelper.getSqlGenerator(p).getPkPropertyName(), ((ArrayList) result).get(0));//注入属性id值
         } else {//其他的各种方法
-            result = invocation.proceed();
+            result = invocationProceed(invocation);
         }
 
         return result;
@@ -135,7 +156,7 @@ public class MedusaInterceptor implements Interceptor {
 
     /**
      * 通过反射改变 insert 相关方法的 keyProperties 的主键属性 实现插入时动态变更 @Options-keyProperty 的功能 modify by neo on 20210522
-     * 在processExecutor里的invocation.proceed() 处理前进入
+     * 在processExecutor里的invocationProceed(invocation) 处理前进入
      * For mybatis interceptor of Executor
      * @param mt
      * @param medusaMethodName
@@ -166,7 +187,7 @@ public class MedusaInterceptor implements Interceptor {
 
     /**
      * 主要是insert update 和 medusaGaze 相关方法的后续处理
-     * 通过processExecutor里的invocation.proceed() 处理完成后进入
+     * 通过processExecutor里的invocationProceed(invocation) 处理完成后进入
      * For mybatis interceptor of Executor
      * @param medusaMethodName
      * @param result
@@ -230,7 +251,7 @@ public class MedusaInterceptor implements Interceptor {
 
     /**
      * 批量插入时的生成的主键通过反射回写入实体的相关处理
-     * 通过processExecutor里的invocation.proceed()嵌套进入
+     * 通过processExecutor里的invocationProceed(invocation)嵌套进入
      * For mybatis interceptor of StatementHandler
      * @param invocation
      * @throws SQLException
