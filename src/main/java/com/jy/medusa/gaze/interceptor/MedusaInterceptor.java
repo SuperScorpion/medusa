@@ -17,6 +17,8 @@ import org.apache.ibatis.plugin.*;
 import org.apache.ibatis.scripting.defaults.RawSqlSource;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -32,6 +34,8 @@ import java.util.*;
         @Signature(method = "update", type = Executor.class, args = {MappedStatement.class, Object.class})
 })
 public class MedusaInterceptor implements Interceptor {
+
+    private static final Logger logger = LoggerFactory.getLogger(MedusaInterceptor.class);
 
     Boolean devFlag = false;
 
@@ -71,7 +75,7 @@ public class MedusaInterceptor implements Interceptor {
             long startTime = System.nanoTime();
             result = invocation.proceed();
             long endTime = System.nanoTime();
-            System.out.println("Medusa: SQL运行时间 - " + (endTime - startTime) + "ns" + " - " + (endTime - startTime)/1000000 + "ms");
+            logger.debug("Medusa: SQL运行时间 - " + (endTime - startTime) + "ns" + " - " + (endTime - startTime)/1000000 + "ms");
         } else {
             result = invocation.proceed();
         }
