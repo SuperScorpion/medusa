@@ -18,7 +18,7 @@
         <slf4j-api.version>2.0.0</slf4j-api.version>
         <aspect.version>1.9.9.1</aspect.version>
         <freemarker.version>2.3.31</freemarker.version>
-        <snakeyaml.version>1.31</snakeyaml.version>
+        <snakeyaml.version>1.30</snakeyaml.version>
         <!--<com.alibaba.fastjson>1.2.66</com.alibaba.fastjson>-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
