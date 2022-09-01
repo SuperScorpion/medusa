@@ -17,7 +17,7 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
-public class MedusaInterceptorStatementHandler extends MedusaInterceptorBaseHandler {
+public abstract class MedusaInterceptorStatementHandler extends MedusaInterceptorBaseHandler {
 
     /**
      * 处理拦截器 StatementHandler 的逻辑
