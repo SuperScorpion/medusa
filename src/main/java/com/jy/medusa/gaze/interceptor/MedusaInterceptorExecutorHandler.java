@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStatementHandler {
+abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStatementHandler {
 
     /**
      * 处理拦截器 Executor 的逻辑

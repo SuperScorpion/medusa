@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 
-public abstract class MedusaInterceptorBaseHandler {
+abstract class MedusaInterceptorBaseHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(MedusaInterceptorBaseHandler.class);
 
