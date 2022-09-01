@@ -29,7 +29,7 @@ public class MedusaInterceptor extends MedusaInterceptorExecutorHandler implemen
     }
 
     public MedusaInterceptor(boolean devFlag) {
-        this.devFlag = devFlag;
+        super.setDevFlag(devFlag);
     }
 
     public Object intercept(Invocation invocation) throws Throwable {

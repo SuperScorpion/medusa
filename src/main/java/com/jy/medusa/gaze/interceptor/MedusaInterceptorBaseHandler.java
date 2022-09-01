@@ -14,13 +14,13 @@ public class MedusaInterceptorBaseHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(MedusaInterceptorBaseHandler.class);
 
-    Boolean devFlag = false;
+    private Boolean devFlag = false;
 
-    public void setDevFlag(Boolean devFlag) {
+    protected void setDevFlag(Boolean devFlag) {
         this.devFlag = devFlag;
     }
 
-    Object invocationProceed(Invocation invocation) throws InvocationTargetException, IllegalAccessException {
+    protected Object invocationProceed(Invocation invocation) throws InvocationTargetException, IllegalAccessException {
         Object result;
         if(devFlag) {
             long startTime = System.nanoTime();

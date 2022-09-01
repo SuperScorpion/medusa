@@ -14,8 +14,6 @@ import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.scripting.defaults.RawSqlSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -27,9 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 public class MedusaInterceptorExecutorHandler extends MedusaInterceptorStatementHandler {
-
-    private static final Logger logger = LoggerFactory.getLogger(MedusaInterceptorExecutorHandler.class);
-
 
     /**
      * 处理拦截器 Executor 的逻辑
