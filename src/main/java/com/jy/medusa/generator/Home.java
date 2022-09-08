@@ -262,8 +262,10 @@ public class Home {
 
             if(ymlres == null && yamlres != null) {
                 resPaths = yamlres.getPath();
+                medusaProFileName = "application.yaml";
             } else if(ymlres != null && yamlres == null) {
                 resPaths = ymlres.getPath();
+                medusaProFileName = "application.yml";
             } else if(ymlres == null && yamlres == null) {
                 System.out.println("Medusa: 未能找到 application yml 或 yaml 配置文件...");
                 loadProperties("");
@@ -382,7 +384,7 @@ public class Home {
      */
     private void gainTheProJavaPath(String resPaths, String medusaProFileName) {
         String path = resPaths.replaceAll("/target/classes", "/src/main/java");
-        this.proJavaPath = path.replaceAll("application.yml|application.yaml|medusa.properties", "").replaceAll(medusaProFileName, "");
+        this.proJavaPath = path.replaceAll(medusaProFileName, "");
     }
 
     /**
@@ -393,7 +395,7 @@ public class Home {
      */
     private void gainTheProResourcePath(String resPaths, String medusaProFileName) {
         String path = resPaths.replaceAll("/target/classes", "/src/main/resources");
-        this.proResourcePath = path.replaceAll("application.yml|application.yaml|medusa.properties", "").replaceAll(medusaProFileName, "");
+        this.proResourcePath = path.replaceAll(medusaProFileName, "");
     }
 
 
@@ -509,7 +511,7 @@ public class Home {
     /**
      * modify by admin on 20220714 for 万弟弟
      * 1.yml文件找不到则启用properties文件加载 | 2.指定使用properties文件加载
-     * @param medusaProFileName 一定有值 1.用户指定文件名 2.默认值 medusa.properties
+     * @param medusaProFileName 一定有值 1.用户指定文件名 2.默认值 application.properties
      */
     private void loadProperties(String medusaProFileName) {
 
