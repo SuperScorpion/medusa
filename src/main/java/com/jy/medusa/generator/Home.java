@@ -256,6 +256,7 @@ public class Home {
         
         //文件名为空则使用默认文件名
         if(MedusaCommonUtils.isBlank(medusaProFileName)) {
+            System.out.println("Medusa: 正在使用默认 application.yml&yaml 配置文件...");
             URL ymlres = this.getClass().getClassLoader().getResource("application.yml");
             URL yamlres = this.getClass().getClassLoader().getResource("application.yaml");
 
@@ -265,13 +266,14 @@ public class Home {
                 resPaths = ymlres.getPath();
             } else if(ymlres == null && yamlres == null) {
                 System.out.println("Medusa: 未能找到 application yml 或 yaml 配置文件...");
-                loadProperties("medusa.properties");
+                loadProperties("");
                 return;
             } else {
                 System.out.println("Medusa: 请检查 application yml 或 yaml 配置文件是否存在重复...");
                 return;
             }
         } else {///文件名不为空则使用指定文件名
+            System.out.println("Medusa: 正在使用指定 yml&yaml 配置文件...");
             URL yyres = this.getClass().getClassLoader().getResource(medusaProFileName);
             if(yyres == null) {
                 System.out.println("Medusa: 未能找到指定的yml配置文件...");
@@ -296,7 +298,7 @@ public class Home {
 
             if(map == null) {
                 System.out.println("Medusa: 未找到 yml 文件里的 任何配置...");
-                loadProperties("medusa.properties");
+                loadProperties("");
                 return;
             }
 
@@ -304,7 +306,7 @@ public class Home {
 
             if(childMap == null) {
                 System.out.println("Medusa: 未找到 yml 文件里的 medusa 配置...");
-                loadProperties("medusa.properties");
+                loadProperties("");
                 return;
             }
             if(childMap.get("jdbc") == null) {
@@ -511,7 +513,12 @@ public class Home {
      */
     private void loadProperties(String medusaProFileName) {
 
-        System.out.println("Medusa: 开始使用properties配置文件生成...");
+        if(MedusaCommonUtils.isBlank(medusaProFileName)) {
+            System.out.println("Medusa: 正在使用默认 application.properties 配置文件生成...");
+            medusaProFileName = "application.properties";
+        } else {
+            System.out.println("Medusa: 正在使用指定 properties 配置文件生成...");
+        }
 
         URL yyres = this.getClass().getClassLoader().getResource(medusaProFileName);
         if(yyres == null) {
