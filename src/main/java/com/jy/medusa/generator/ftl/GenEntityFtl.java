@@ -64,7 +64,7 @@ public class GenEntityFtl {
 
     public void process() {
 
-        DataBaseTools dataBaseTools = new DataBaseTools();
+        DataBaseTools dataBaseTools = Home.staticDataBaseTools;
 
         Connection conn = dataBaseTools.openConnection(); // 得到数据库连接
         PreparedStatement pstmt = null;

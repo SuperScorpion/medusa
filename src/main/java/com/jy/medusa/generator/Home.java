@@ -64,6 +64,8 @@ public class Home {
     public static String pluralAssociation;//设定映射字段的后罪名
     public static String baseServiceSwitch;///是否生成基础的service类
 
+    public static DataBaseTools staticDataBaseTools;//数据库连接
+
     public Home() {
     }
 
@@ -82,7 +84,7 @@ public class Home {
 
     public void process(String medusaProFileName) {
 
-        loadRandomDialogue();
+        loadRandomDialogue();///加载随机旁白
 
         if(MedusaCommonUtils.isBlank(medusaProFileName)) {
             loadYml("");//处理spring boot 里yml相关medusa的配置 - 先找默认yml文件有无配置项 如果没有再找properties文件配置项
@@ -96,6 +98,8 @@ public class Home {
                 return;
             }
         }
+
+        loadDataBaseTools();///加载数据库连接配置
 
 //        if(!checkParams()) return;
 
@@ -129,10 +133,16 @@ public class Home {
         if(MedusaCommonUtils.isBlank(tableName)) return;
         String[] tableNameArray = tableName.split(",");
 
+
         for(String tabName : tableNameArray) {
             if(MedusaCommonUtils.isNotBlank(tabName)) {
 
-                tabName = tabName.trim();//祛除空格
+                tabName = tabName.trim();//祛除首末的空格
+
+                if(!validateTableExist(tabName)) {
+                    System.out.println("Medusa: 不存在该表 " + tabName + " 已跳过...");
+                    continue;//add by neo on 20220907 检查表是否存在
+                }
 
                 //TODO 自动生成参数校验
                 /*JSONArray colValidArray = null;
@@ -149,7 +159,7 @@ public class Home {
                     } else {
                         new GenEntity(entityPath, tabName, null).process();//生成 实体类
                     }
-                    System.out.println("Medusa: 已完成 " + tabName + " - entity文件 总用时 & " + (System.nanoTime() - nanoSs) + " ns");
+                    System.out.println("Medusa: 已完成 " + tabName + " - " + entitySuffix + "文件 总用时 - " + (System.nanoTime() - nanoSs) / 1000000.00 + " ms");
                 }
 
                 if(MedusaCommonUtils.isNotBlank(serviceImplSuffix) && MedusaCommonUtils.isNotBlank(serviceSuffix) && MedusaCommonUtils.isNotBlank(entitySuffix) && MedusaCommonUtils.isNotBlank(mapperSuffix)) {
@@ -159,7 +169,7 @@ public class Home {
                     } else {
                         new GenService(tabName, entityPath, servicePath, serviceImplPath, mapperPath).process();//执行生成service serviceimpl mapper
                     }
-                    System.out.println("Medusa: 已完成 " + tabName + " - service文件 总用时 & " + (System.nanoTime() - nanoSs) + " ns");
+                    System.out.println("Medusa: 已完成 " + tabName + " - " + serviceSuffix + "&impl" + "文件 总用时 - " + (System.nanoTime() - nanoSs) / 1000000.00 + " ms");
                 }
 
                 if(MedusaCommonUtils.isNotBlank(xmlSuffix) && MedusaCommonUtils.isNotBlank(entitySuffix) && MedusaCommonUtils.isNotBlank(mapperSuffix)) {
@@ -169,25 +179,25 @@ public class Home {
                     } else {
                         new GenXml(mapperPath, xmlPath, entityPath, tabName).process();//执行生成xml
                     }
-                    System.out.println("Medusa: 已完成 " + tabName + " - xml文件 总用时 & " + (System.nanoTime() - nanoSs) + " ns");
+                    System.out.println("Medusa: 已完成 " + tabName + " - " + mapperSuffix + "&xml" + "文件 总用时 - " + (System.nanoTime() - nanoSs)  / 1000000.00 + " ms");
                 }
 
 
                 if(checkIsFtl()) {
                     long nanoSs = System.nanoTime();
                     new GenControllerFtl(tabName, controlPathJson, entityPath, servicePath).process();
-                    System.out.println("Medusa: 已完成 " + tabName + " - controller文件 总用时 & " + (System.nanoTime() - nanoSs) + " ns");
+                    System.out.println("Medusa: 已完成 " + tabName + " - controller文件 总用时 - " + (System.nanoTime() - nanoSs) / 1000000.00 + " ms");
                 } else {
                     if (MedusaCommonUtils.isNotBlank(entitySuffix) && MedusaCommonUtils.isNotBlank(serviceSuffix)) {
                         if (MedusaCommonUtils.isNotBlank(controlJsonSuffix)) {
                             long nanoSs = System.nanoTime();
                             new GenControllerJson(tabName, controlPathJson, entityPath, servicePath).process();//生成controller
-                            System.out.println("Medusa: 已完成 " + tabName + " - controllerJson文件 总用时 & " + (System.nanoTime() - nanoSs) + " ns");
+                            System.out.println("Medusa: 已完成 " + tabName + " - controllerJson文件 总用时 - " + (System.nanoTime() - nanoSs) / 1000000.00 + " ms");
                         }
                         if (MedusaCommonUtils.isNotBlank(controlMortalSuffix)) {
                             long nanoSs = System.nanoTime();
                             new GenControllerMortal(tabName, controlPathMortal, entityPath, servicePath).process();//生成controller
-                            System.out.println("Medusa: 已完成 " + tabName + " - controllerMortal文件 总用时 & " + (System.nanoTime() - nanoSs) + " ns");
+                            System.out.println("Medusa: 已完成 " + tabName + " - controllerMortal文件 总用时 - " + (System.nanoTime() - nanoSs) / 1000000.00 + " ms");
                         }
                     }
                 }
@@ -198,6 +208,7 @@ public class Home {
         ///baseService和baseServiceImpl 只需要生成一次所以没做ftl的模版
         if(checkBaseServiceSwitch()) {
             new GenBaseServiceAndImpl(servicePath, serviceImplPath).process();//处理生成基础的 service
+            System.out.println("Medusa: 已完成 基础service和impl类文件...");
         }
 
         System.out.println("Medusa: The task has been completed...");
@@ -218,6 +229,10 @@ public class Home {
         }
         return result;
     }*/
+
+    private void loadDataBaseTools() {
+        staticDataBaseTools = new DataBaseTools();
+    }
 
     private void loadRandomDialogue() {
 
@@ -280,7 +295,7 @@ public class Home {
             Map<String ,Object> map = yaml.loadAs(fileInputStream, Map.class);//装载的对象，这里使用Map, 当然也可使用自己写的对象
 
             if(map == null) {
-                System.out.println("Medusa: 未能找到 yml 文件里的 medusa 相关配置...");
+                System.out.println("Medusa: 未找到 yml 文件里的 任何配置...");
                 loadProperties("medusa.properties");
                 return;
             }
@@ -288,18 +303,33 @@ public class Home {
             Map<String ,Object> childMap = (Map) map.get("medusa");
 
             if(childMap == null) {
-                System.out.println("Medusa: 未能找到 yml 文件里的 medusa 相关配置...");
+                System.out.println("Medusa: 未找到 yml 文件里的 medusa 配置...");
                 loadProperties("medusa.properties");
                 return;
             }
-
             if(childMap.get("jdbc") == null) {
-                System.out.println("Medusa: 未能找到 yml 文件里的 medusa - jdbc 相关配置...");
+                System.out.println("Medusa: 未找到 yml 文件里的 medusa - jdbc 配置...");
                 return;
             }
 
             Map<String ,String> jdbcMap = (Map<String, String>) childMap.get("jdbc");
 
+            if(!jdbcMap.containsKey("driver")) {
+                System.out.println("Medusa: 未找到 yml 文件里的 medusa - jdbc - driver 配置...");
+                return;
+            }
+            if(!jdbcMap.containsKey("url")) {
+                System.out.println("Medusa: 未找到 yml 文件里的 medusa - jdbc - url 配置...");
+                return;
+            }
+            if(!jdbcMap.containsKey("username")) {
+                System.out.println("Medusa: 未找到 yml 文件里的 medusa - jdbc - username 配置...");
+                return;
+            }
+            if(!jdbcMap.containsKey("password")) {
+                System.out.println("Medusa: 未找到 yml 文件里的 medusa - jdbc - password 配置...");
+                return;
+            }
 
             this.packagePath = childMap.get("packagePath") == null || MedusaCommonUtils.isBlank(childMap.get("packagePath").toString()) ? "com.medusa.xxx" : childMap.get("packagePath").toString().trim();
             this.tableName = childMap.get("tableName") == null || MedusaCommonUtils.isBlank(childMap.get("tableName").toString()) ?  "" : childMap.get("tableName").toString().trim();
@@ -426,13 +456,13 @@ public class Home {
 
         String result = "";
 
-        DataBaseTools dataBaseTools = new DataBaseTools();
+        DataBaseTools dataBaseTools = staticDataBaseTools;
 
         Connection conn = dataBaseTools.openConnection(); // 得到数据库连接
         PreparedStatement pstmt = null;
         try {
             DatabaseMetaData meta = conn.getMetaData();
-            ResultSet rs = meta.getTables(null, null, null, new String[] { "TABLE" });
+            ResultSet rs = meta.getTables(null, null, null, new String[] {"TABLE"});
             while (rs.next()) {
                 result = result + rs.getString(3) + ",";
             }
@@ -443,6 +473,32 @@ public class Home {
         }
 
         return result;
+    }
+
+
+    /**
+     * 检查表是否存在
+     * @param tableName
+     * @return
+     */
+    public boolean validateTableExist(String tableName) {
+        boolean flag = false;
+
+        DataBaseTools dataBaseTools =  staticDataBaseTools;
+
+        Connection conn = dataBaseTools.openConnection(); // 得到数据库连接
+        PreparedStatement pstmt = null;
+        try {
+            DatabaseMetaData meta = conn.getMetaData();
+            ResultSet rs = meta.getTables(null, null, tableName, new String[] {"TABLE"});
+            flag = rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            dataBaseTools.closeConnection(conn, pstmt);
+        }
+
+        return flag;
     }
 
 
@@ -487,12 +543,24 @@ public class Home {
         Map<String, String> childMap = new HashMap<>((Map) props);
 
         if(childMap.isEmpty()) {
-            System.out.println("Medusa: 未能找到 properties 文件里的 medusa 相关配置...");
+            System.out.println("Medusa: 未找到 properties 文件里的 任何配置...");
             return;
         }
 
-        if(!childMap.containsKey("medusa.jdbc.url") || !childMap.containsKey("medusa.jdbc.driver")) {
-            System.out.println("Medusa: 未能找到 properties 文件里的 medusa - jdbc 相关配置...");
+        if(!childMap.containsKey("medusa.jdbc.driver")) {
+            System.out.println("Medusa: 未找到 properties 文件里的 medusa.jdbc.driver 配置...");
+            return;
+        }
+        if(!childMap.containsKey("medusa.jdbc.url")) {
+            System.out.println("Medusa: 未找到 properties 文件里的 medusa.jdbc.url 配置...");
+            return;
+        }
+        if(!childMap.containsKey("medusa.jdbc.username")) {
+            System.out.println("Medusa: 未找到 properties 文件里的 medusa.jdbc.username 配置...");
+            return;
+        }
+        if(!childMap.containsKey("medusa.jdbc.password")) {
+            System.out.println("Medusa: 未找到 properties 文件里的 medusa.jdbc.password 配置...");
             return;
         }
 

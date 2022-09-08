@@ -118,7 +118,7 @@ public class GenXml {
         String[] colSqlNames = null,colFieldNames = null,colTypes = null,colTypesSql = null;
         Integer[] colSizes = null;
 
-        DataBaseTools dataBaseTools = new DataBaseTools();
+        DataBaseTools dataBaseTools = Home.staticDataBaseTools;
 
         Connection conn = dataBaseTools.openConnection(); // 得到数据库连接
         PreparedStatement pstmt = null;

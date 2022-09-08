@@ -36,10 +36,10 @@ public class GenBaseServiceAndImpl {
             //写入service 和 impl
             String path = Home.proJavaPath + servicePath.replaceAll("\\.", "/");
             String pathImp = Home.proJavaPath + serviceImplPath.replaceAll("\\.", "/");
-            File file = new File(path);
-            if(!file.exists()) {
-                file.mkdirs();
-            }
+            File file1 = new File(path);
+            if(!file1.exists()) file1.mkdirs();
+            File file2 = new File(pathImp);
+            if(!file2.exists()) file2.mkdirs();
             String resPath1 = path + "/" + "BaseService.java";
             String resPath2 = pathImp + "/" + "BaseServiceImpl.java";
             MedusaCommonUtils.writeString2File(new File(resPath1), process11(), "UTF-8");

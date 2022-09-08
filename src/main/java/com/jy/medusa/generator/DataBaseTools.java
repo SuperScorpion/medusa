@@ -4,6 +4,8 @@ package com.jy.medusa.generator;
  * Created by neo on 2020/2/14.
  */
 
+import com.jy.medusa.gaze.utils.MedusaCommonUtils;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -66,6 +68,10 @@ public class DataBaseTools {
                     Class.forName(driver);///初始化 并注册 driver
                     this.conn = DriverManager.getConnection(url, user, password);
                 } catch (ClassNotFoundException e) {
+                    System.out.println("Medusa: 配置文件driver参数是否正确?");
+                    e.printStackTrace();
+                } catch (SQLException e) {
+                    System.out.println("Medusa: 配置文件url、username、password参数是否正确?");
                     e.printStackTrace();
                 }
             }
