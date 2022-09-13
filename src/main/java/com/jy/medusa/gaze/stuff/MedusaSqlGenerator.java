@@ -633,7 +633,7 @@ public class MedusaSqlGenerator {
      * @param objParams 参数
      * @return 返回值类型
      */
-    public String sqlOfSelectCount(Object[] objParams) {
+    public String sqlOfSelectHolyCount(Object[] objParams) {
 
         //从缓存里拿到分页查询语句 必须清理掉缓存
         String cacheSq = MedusaSqlHelper.myThreadLocal.get();

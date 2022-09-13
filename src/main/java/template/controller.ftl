@@ -36,7 +36,7 @@ public class ${entityName}Controller {
 
         try {
             Pager<${entityName}${entityNameSuffix}> pager = Pager.getPager().setPageSize(10).setPageNumber(pageNum);
-            ${lowcaseFirstEntityName}Service.selectByGazeMagic(pager);
+            ${lowcaseFirstEntityName}Service.selectHolyGaze(pager);
 
             ${lowcaseFirstEntityName}Service.resultSuccess(pager, "ok", json);
         } catch (Exception e) {
@@ -54,7 +54,7 @@ public class ${entityName}Controller {
         JSONObject json = new JSONObject();
 
         try {
-            if(param != null) ${lowcaseFirstEntityName}Service.save(param);
+            if(param != null) ${lowcaseFirstEntityName}Service.saveSelective(param);
 
             ${lowcaseFirstEntityName}Service.resultSuccess(param, "ok", json);
         } catch (Exception e) {

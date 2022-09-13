@@ -128,7 +128,7 @@ public class MedusaSqlHelper {
      * @return 返回值类型
      */
     public static boolean checkMedusaGazeMethod(String methodName) {
-        return methodName.equals("medusaGazeMagic") ? true : false;
+        return methodName.equals("selectHolyGaze") ? true : false;
     }
 
     /**
@@ -414,7 +414,7 @@ public class MedusaSqlHelper {
         ResultSet rs = null;
 
 //        String countSql = getSqlGenerator(p).sql_findAllCount(((MapperMethod.ParamMap) p.get("pobj")).get("param1"));
-        String countSql = getSqlGenerator(p).sqlOfSelectCount((Object[]) ((DefaultSqlSession.StrictMap) p.get("pobj")).get("array"));
+        String countSql = getSqlGenerator(p).sqlOfSelectHolyCount((Object[]) ((DefaultSqlSession.StrictMap) p.get("pobj")).get("array"));
 
         int totalCount = 0;
 
@@ -463,7 +463,7 @@ public class MedusaSqlHelper {
 
 /*            String countSql = getSqlGenerator(p).sql_findAllCount(((MapperMethod.ParamMap) p.get("pobj")).get("param1"),
                     ((MapperMethod.ParamMap) p.get("pobj")).get("param2"));*/
-            String countSql = getSqlGenerator(p).sqlOfSelectCount((Object[]) ((MapperMethod.ParamMap) p).get("array"));//新老版本产生的 bug fixed (DefaultSqlSession.StrictMap - MapperMethod.ParamMap) 20210113
+            String countSql = getSqlGenerator(p).sqlOfSelectHolyCount((Object[]) ((MapperMethod.ParamMap) p).get("array"));//新老版本产生的 bug fixed (DefaultSqlSession.StrictMap - MapperMethod.ParamMap) 20210113
 
 //            BoundSql countBS = new BoundSql(mst.getConfiguration(), countSql, boundSql.getParameterMappings(),p);
 

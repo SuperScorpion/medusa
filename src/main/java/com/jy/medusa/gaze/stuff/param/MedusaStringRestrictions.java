@@ -4,7 +4,6 @@ import com.jy.medusa.gaze.stuff.param.gele.GreatEqualParam;
 import com.jy.medusa.gaze.stuff.param.gele.GreatThanParam;
 import com.jy.medusa.gaze.stuff.param.gele.LessEqualParam;
 import com.jy.medusa.gaze.stuff.param.gele.LessThanParam;
-import com.jy.medusa.gaze.stuff.param.lambda.HolyGetter;
 import com.jy.medusa.gaze.stuff.param.mix.*;
 
 import java.util.List;
@@ -78,6 +77,18 @@ public class MedusaStringRestrictions<T> extends BaseRestrictions<T, String, Med
     public MedusaStringRestrictions clear() {
 
         this.paramList.clear();
+        return this;
+    }
+
+    public MedusaStringRestrictions remove(int index) {
+
+        this.paramList.remove(index);
+        return this;
+    }
+
+    public MedusaStringRestrictions removeLast() {
+
+        this.paramList.remove(paramList.size() - 1);
         return this;
     }
 

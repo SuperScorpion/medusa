@@ -82,6 +82,18 @@ public class MedusaLambdaRestrictions<T> extends BaseRestrictions<T, HolyGetter<
         return this;
     }
 
+    public MedusaLambdaRestrictions<T> remove(int index) {
+
+        this.paramList.remove(index);
+        return this;
+    }
+
+    public MedusaLambdaRestrictions<T> removeLast() {
+
+        this.paramList.remove(paramList.size() - 1);
+        return this;
+    }
+
     public static MedusaLambdaRestrictions getRestrictions() {
         return new MedusaLambdaRestrictions<>();
     }
