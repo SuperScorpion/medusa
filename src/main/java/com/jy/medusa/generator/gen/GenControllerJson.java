@@ -101,7 +101,7 @@ public class GenControllerJson {
 
         StringBuilder sb2 = new StringBuilder();
         sb2.append("\t\t\t" + "Pager<" + entityName + Home.entityNameSuffix +"> pager = Pager.getPager().setPageSize(10).setPageNumber(pageNum);\r\n");
-        sb2.append("\t\t\t" + MedusaGenUtils.lowcaseFirst(entityName) + "Service.selectHolyGaze(param, pager);\r\n\r\n");
+        sb2.append("\t\t\t" + MedusaGenUtils.lowcaseFirst(entityName) + "Service.selectByGazeMagic(param, pager);\r\n\r\n");
 
         genTryCatch(sbb, sb2.toString());
         sbb.append("\t\treturn json;\r\n");

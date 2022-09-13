@@ -24,16 +24,16 @@ public abstract class BaseServiceImplMedusaLambda<T> extends BaseServiceImplLamb
 		return mapper.selectByPrimaryKey(id, transferStringColumnByLambda(paramFns));
 	}
 
-	public List<T> selectBy(T entity, HolyGetter<T>... paramFns) {
+	public List<T> selectListBy(T entity, HolyGetter<T>... paramFns) {
 		return mapper.select(entity, transferStringColumnByLambda(paramFns));
 	}
 
-	public int selectHolyCount(Object... mixParams) {
-		return mapper.selectHolyCount(transferLambdaForGaze(mixParams));
+	public int selectCount(Object... mixParams) {
+		return mapper.selectCount(transferLambdaForGaze(mixParams));
 	}
 
-	public List<T> selectHolyGaze(Object... mixParams) {
-		return mapper.selectHolyGaze(transferLambdaForGaze(mixParams));
+	public List<T> selectByGazeMagic(Object... mixParams) {
+		return mapper.medusaGazeMagic(transferLambdaForGaze(mixParams));
 	}
 
 //	public int saveSelective(T entity) {

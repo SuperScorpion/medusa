@@ -15,11 +15,11 @@ public interface BaseServiceMedusaLambda<T> {
 
     T selectById(Serializable id, HolyGetter<T>... paramFns);
 
-	List<T> selectBy(T entity, HolyGetter<T>... paramFns);
+	List<T> selectListBy(T entity, HolyGetter<T>... paramFns);
 
-	int selectHolyCount(Object... mixParams);
+	int selectCount(Object... mixParams);
 
-	List<T> selectHolyGaze(Object... mixParams);
+	List<T> selectByGazeMagic(Object... mixParams);
 
 //	int saveSelective(T entity);
 

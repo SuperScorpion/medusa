@@ -99,9 +99,9 @@ public class BaseSelectProvider {
      * @return 返回值类型
      * 新老版本产生的 bug fixed (DefaultSqlSession.StrictMap - MapperMethod.ParamMap) 20210113
      */
-    public String selectHolyCount(Map<String, Object> m) {
+    public String selectCount(Map<String, Object> m) {
 
-            return MedusaSqlHelper.getSqlGenerator(m).sqlOfSelectHolyCount(
+            return MedusaSqlHelper.getSqlGenerator(m).sqlOfSelectCount(
                     (Object[]) ((MapperMethod.ParamMap) m).get("array"));
     }
 

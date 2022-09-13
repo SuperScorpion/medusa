@@ -9,11 +9,11 @@ import com.jy.medusa.gaze.base.select.*;
  * Author neo
  */
 public interface BaseSelectMapper<T> extends
-        SelectHolyGazeMapper<T>,
-        SelectHolyCountMapper<T>,
-        SelectMapper<T>,
         SelectOneMapper<T>,
+        SelectMapper<T>,
         SelectAllMapper<T>,
+        SelectCountMapper<T>,
         SelectByPrimaryKeyMapper<T>,
+        SelectMedusaGazeMapper<T>,
         SelectByPrimaryKeyBatchMapper<T> {
 }

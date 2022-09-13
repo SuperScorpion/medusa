@@ -17,11 +17,11 @@ public interface BaseServiceMedusa<T> extends BaseServiceMedusaString<T> {
 
 	T selectById(Serializable id);
 
-	List<T> selectBy(T entity);
+	List<T> selectListBy(T entity);
 
-//	int selectHolyCount(Object... mixParams);
+//	int selectCount(Object... mixParams);
 //
-//	List<T> selectHolyGaze(Object... mixParams);
+//	List<T> selectByGazeMagic(Object... mixParams);
 
 	int saveSelective(T entity);
 

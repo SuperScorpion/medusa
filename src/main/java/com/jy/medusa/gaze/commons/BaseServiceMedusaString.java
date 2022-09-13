@@ -13,11 +13,11 @@ public interface BaseServiceMedusaString<T> extends BaseServiceMedusaLambda<T> {
 
 	T selectById(Serializable id, String... paramColumns);
 
-	List<T> selectBy(T entity, String... paramColumns);
+	List<T> selectListBy(T entity, String... paramColumns);
 
-//	int selectHolyCount(Object... mixParams);
+//	int selectCount(Object... mixParams);
 
-//	List<T> selectHolyGaze(Object... mixParams);
+//	List<T> selectByGaze(Object... mixParams);
 
 //	int saveSelective(T entity);
 
