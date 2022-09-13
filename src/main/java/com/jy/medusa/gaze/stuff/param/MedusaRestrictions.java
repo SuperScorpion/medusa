@@ -1,7 +1,5 @@
 package com.jy.medusa.gaze.stuff.param;
 
-import com.jy.medusa.gaze.stuff.param.mix.BaseParam;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -28,4 +26,8 @@ public interface MedusaRestrictions<T, P, R> extends Serializable {
     R notNullParam(P fn, Boolean v);
 
     R clear();
+
+    R remove(int index);
+
+    R removeLast();
 }
