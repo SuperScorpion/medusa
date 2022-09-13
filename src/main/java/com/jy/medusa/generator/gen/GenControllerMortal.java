@@ -99,7 +99,7 @@ public class GenControllerMortal {
 
         sbb.append("\t\t" + "Pager<" + entityName + Home.entityNameSuffix +"> pager = Pager.getPager().setPageSize(10).setPageNumber(pageNum);\r\n");
 
-        sbb.append("\t\t" + MedusaGenUtils.lowcaseFirst(entityName) + "Service.selectByGazeMagic(param, pager);\r\n\r\n");
+        sbb.append("\t\t" + MedusaGenUtils.lowcaseFirst(entityName) + "Service.selectHolyGaze(param, pager);\r\n\r\n");
 
         sbb.append("\t\t" + "model.put(\"result\", pager);\r\n\r\n");
 

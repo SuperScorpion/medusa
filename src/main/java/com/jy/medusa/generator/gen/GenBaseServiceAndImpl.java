@@ -66,7 +66,7 @@ public class GenBaseServiceAndImpl {
 //                "\n" +
 //                "public interface BaseService<T> {\n" +
 //                "\n" +
-//                "\tint selectCount(Object... ps);\n" +
+//                "\tint selectHolyCount(Object... ps);\n" +
 //                "\n" +
 //                "\tList<T> selectAll(Object... ps);\n" +
 //                "\n" +
@@ -76,7 +76,7 @@ public class GenBaseServiceAndImpl {
 //                "\n" +
 //                "\tT selectById(Object id, Object... ps);\n" +
 //                "\n" +
-//                "\tList<T> selectListBy(T entity, Object... ps);\n" +
+//                "\tList<T> selectBy(T entity, Object... ps);\n" +
 //                "\n" +
 //                "\tint saveOrUpdate(T entity);\n" +
 //                "\n" +
@@ -98,7 +98,7 @@ public class GenBaseServiceAndImpl {
 //                "\n" +
 //                "\tint deleteBy(T entity);\n" +
 //                "\n" +
-//                "\tList<T> selectByGazeMagic(Object... ps);\n" +
+//                "\tList<T> selectHolyGaze(Object... ps);\n" +
 //                "\n" +
 //                "\tJSONObject resultSuccess(Object result, String msg, JSONObject json);\n" +
 //                "\n" +
@@ -137,8 +137,8 @@ public class GenBaseServiceAndImpl {
 //                "\t@Autowired\n" +
 //                "\tprotected Mapper<T> mapper;\n" +
 //                "\n" +
-//                "\tpublic int selectCount(Object... ps) {\n" +
-//                "\t\treturn mapper.selectCount(ps);\n" +
+//                "\tpublic int selectHolyCount(Object... ps) {\n" +
+//                "\t\treturn mapper.selectHolyCount(ps);\n" +
 //                "\t}\n" +
 //                "\n" +
 //                "\tpublic List<T> selectAll(Object... ps) {\n" +
@@ -157,7 +157,7 @@ public class GenBaseServiceAndImpl {
 //                "\t\treturn mapper.selectByPrimaryKey(id, ps);\n" +
 //                "\t}\n" +
 //                "\n" +
-//                "\tpublic List<T> selectListBy(T entity, Object... ps) {\n" +
+//                "\tpublic List<T> selectBy(T entity, Object... ps) {\n" +
 //                "\t\treturn mapper.select(entity, ps);\n" +
 //                "\t}\n" +
 //                "\n" +
@@ -201,8 +201,8 @@ public class GenBaseServiceAndImpl {
 //                "\t\treturn mapper.delete(entity);\n" +
 //                "\t}\n" +
 //                "\n" +
-//                "\tpublic List<T> selectByGazeMagic(Object... ps) {\n" +
-//                "\t\treturn mapper.medusaGazeMagic(ps);\n" +
+//                "\tpublic List<T> selectHolyGaze(Object... ps) {\n" +
+//                "\t\treturn mapper.selectHolyGaze(ps);\n" +
 //                "\t}\n" +
 //                "\n");
 //

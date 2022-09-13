@@ -31,14 +31,13 @@ public class SystemConfigs {
     public static final List<String> MY_ALL_METHOD_NANES_LIST = new ArrayList<>(20);
 
     static {
-        MY_ALL_METHOD_NANES_LIST.add("medusaGazeMagic");
+        MY_ALL_METHOD_NANES_LIST.add("selectHolyGaze");
+        MY_ALL_METHOD_NANES_LIST.add("selectHolyCount");
         MY_ALL_METHOD_NANES_LIST.add("selectAll");
         MY_ALL_METHOD_NANES_LIST.add("selectByPrimaryKeyBatch");
         MY_ALL_METHOD_NANES_LIST.add("selectByPrimaryKey");
-        MY_ALL_METHOD_NANES_LIST.add("selectCount");
         MY_ALL_METHOD_NANES_LIST.add("select");
         MY_ALL_METHOD_NANES_LIST.add("selectOne");
-        MY_ALL_METHOD_NANES_LIST.add("selectPage");
         MY_ALL_METHOD_NANES_LIST.add("insertSelective");
         MY_ALL_METHOD_NANES_LIST.add("insertBatch");
         MY_ALL_METHOD_NANES_LIST.add("insertBatchOfMyCat");

@@ -13,7 +13,7 @@ import java.util.List;
  * @param <T> 不能为空
  * Author neo
  */
-public interface SelectMedusaGazeMapper<T> {
+public interface SelectHolyGazeMapper<T> {
 
     /**
      * 根据多条件查询数据 like查询 或者是 between查询   and 连接各条件
@@ -22,5 +22,5 @@ public interface SelectMedusaGazeMapper<T> {
      */
     @SelectProvider(type = BaseSelectProvider.class, method = "selectMedusaGaze")
     @ResultMap("BaseResultMap")
-    List<T> medusaGazeMagic(Object... mixParams);
+    List<T> selectHolyGaze(Object... mixParams);
 }

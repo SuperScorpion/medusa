@@ -26,16 +26,16 @@ public abstract class BaseServiceImplMedusa<T> extends BaseServiceImplMedusaStri
 		return mapper.selectByPrimaryKey(id);
 	}
 
-	public List<T> selectListBy(T entity) {
+	public List<T> selectBy(T entity) {
 		return mapper.select(entity);
 	}
 
-//	public int selectCount(Object... mixParams) {
-//		return mapper.selectCount(mixParams);
+//	public int selectHolyCount(Object... mixParams) {
+//		return mapper.selectHolyCount(mixParams);
 //	}
 //
-//	public List<T> selectByGazeMagic(Object... mixParams) {
-//		return mapper.medusaGazeMagic(mixParams);
+//	public List<T> selectHolyGaze(Object... mixParams) {
+//		return mapper.selectHolyGaze(mixParams);
 //	}
 
 	public int saveSelective(T entity) {//
