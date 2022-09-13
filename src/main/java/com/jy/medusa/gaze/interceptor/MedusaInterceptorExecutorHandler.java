@@ -148,6 +148,7 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
     private void processMedusaMethod(String medusaMethodName, Object result, Invocation invocation, Map<String, Object> p, MappedStatement mt) throws SQLException, ParseException {
 
         //测试结果由高到低:startWith->indexOf->contains modify by neo on 2016.11.07
+        //medusa的一些方法后续处理(insert相关 update相关 medusaGaze相关)
         if (!medusaMethodName.startsWith("select") && !medusaMethodName.startsWith("delete")) {//查询比较多 避免再去判断是不是以下方法中的 提升性能 可以 短路 modify by neo on 2016.11.07
 
             if (MedusaSqlHelper.checkMedusaGazeMethod(medusaMethodName)) {//若是多条件查询 medusa
@@ -161,7 +162,7 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
                     if (m instanceof Pager) z = (Pager) m;
                 }
 
-                if (z != null && result != null) {//modify by neo on 2016.10.11
+                if (z != null) {//modify by neo on 2016.10.11  && result != null
                     z.setList((List) result);//若结果集不为空则 给原有的pager参数注入list属性值
                     z.setTotalCount(MedusaSqlHelper.caculatePagerTotalCount(((Executor) invocation.getTarget()).getTransaction().getConnection(), mt, p));/////通过invocation参数获得connection连接 并且通过这个连接查询出totalCount 注意: 不通过mybatis的 interceptor
                     z.setPageCount(z.getPageCount());

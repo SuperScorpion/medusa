@@ -36,7 +36,7 @@ public class ${entityName}Controller {
 
         try {
             Pager<${entityName}${entityNameSuffix}> pager = Pager.getPager().setPageSize(10).setPageNumber(pageNum);
-            ${lowcaseFirstEntityName}Service.selectHolyGaze(pager);
+            ${lowcaseFirstEntityName}Service.selectByGazeMagic(pager);
 
             ${lowcaseFirstEntityName}Service.resultSuccess(pager, "ok", json);
         } catch (Exception e) {
