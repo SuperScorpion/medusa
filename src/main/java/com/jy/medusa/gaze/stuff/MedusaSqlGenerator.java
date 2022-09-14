@@ -60,9 +60,9 @@ public class MedusaSqlGenerator {
      * @param ps 参数
      * @return 返回值类型
      */
-    public String sqlOfInsertBatchForMyCat(Object t, Object mycatSeq, Object[] ps) {
+    public String sqlOfInsertBatchForMyCat(Object t, Object mycatSeq, Boolean flag, Object[] ps) {
 
-        String paramColumn = reSolveColumn(ps);
+        String paramColumn = reSolveColumn(ps, flag);
 
         if(paramColumn.equals("*")) paramColumn = columnsStr;
 
@@ -89,9 +89,9 @@ public class MedusaSqlGenerator {
      * @param ps 参数
      * @return 返回值类型
      */
-    public String sqlOfInsertBatch(Object t, Object[] ps) {
+    public String sqlOfInsertBatch(Object t, Boolean flag, Object[] ps) {
 
-        String paramColumn = reSolveColumn(ps);
+        String paramColumn = reSolveColumn(ps, flag);
 
         if(paramColumn.equals("*")) paramColumn = columnsStr;
 
@@ -317,9 +317,9 @@ public class MedusaSqlGenerator {
      * @param ps 参数
      * @return 返回值类型
      */
-    public String sqlOfUpdateByPrimaryKeyBatch(Object t, Object[] ps) {
+    public String sqlOfUpdateByPrimaryKeyBatch(Object t, Boolean flag, Object[] ps) {
 
-        String paramColumn = reSolveColumn(ps);
+        String paramColumn = reSolveColumn(ps, flag);
 
         if(paramColumn.equals("*")) paramColumn = columnsStr;
 
@@ -606,6 +606,21 @@ public class MedusaSqlGenerator {
         boolean isValidColumn = (ps == null || ps.length == 0);//modify by neo on 2020.01.17
 
         return isValidColumn ? columnsStr : MedusaSqlHelper.buildColumnNameForSelect(ps, currentFieldColumnNameMap);
+    }
+
+    /**
+     * add by neo on 20220913 for batch
+     * 处理传入的字段字符
+     * @param ps        参数
+     * @return 返回值类型
+     * 如果参数用Object... ps接收 则会把传入的数组封装一层ps[0] 里才是真正的参数数组 所以还是用Object[]接收
+     */
+    private String reSolveColumn(Object[] ps, Boolean flag) {
+
+//        boolean isValidColumn = (ps == null || ps.length != 1 || ps[0] == null || ((Object[])ps[0]).length == 0);
+        boolean isValidColumn = (ps == null || ps.length == 0);//modify by neo on 2020.01.17
+
+        return isValidColumn ? columnsStr : MedusaSqlHelper.buildColumnNameForSelect(ps, currentFieldColumnNameMap, flag, columns);
     }
 
     /**
@@ -985,12 +1000,18 @@ public class MedusaSqlGenerator {
             if (z instanceof SingleParam) {//modify by neo on 2016.11.17
 
                 Object p = ((SingleParam) z).getValue();
+                Boolean f = ((SingleParam) z).getNeq();
 
                 if(p != null && MedusaCommonUtils.isNotBlank(p.toString())) {
-                    sbb.append(" AND ").append(column).append(" = ").append("#{array[").append(isd).append("].paramList[").append(ind).append("].value}");///modify by neo on 2020.02.13
+                    sbb.append(" AND ").append(column);
+                    if(f)
+                        sbb.append(" != ");
+                    else
+                        sbb.append(" = ");
+                    sbb.append("#{array[").append(isd).append("].paramList[").append(ind).append("].value}");///modify by neo on 2020.02.13
                 }
 
-            } else if (z instanceof SingleNeqParam) {//modify by neo on 2022.08.23
+            } /*else if (z instanceof SingleNeqParam) {//modify by neo on 2022.08.23
 
                 Object p = ((SingleNeqParam) z).getValue();
 
@@ -998,7 +1019,7 @@ public class MedusaSqlGenerator {
                     sbb.append(" AND ").append(column).append(" != ").append("#{array[").append(isd).append("].paramList[").append(ind).append("].value}");
                 }
 
-            } else if (z instanceof BetweenParam) {
+            }*/ else if (z instanceof BetweenParam) {
 
                 Object start = ((BetweenParam) z).getStart();
 

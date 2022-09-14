@@ -47,7 +47,7 @@ public abstract class BaseServiceImplMedusa<T> extends BaseServiceImplMedusaStri
 	}
 
 	public int saveBatch(List<T> obs) {
-		return mapper.insertBatch(obs);
+		return mapper.insertBatch(obs, null);
 	}
 
 	public int update(T entity) {
@@ -59,7 +59,7 @@ public abstract class BaseServiceImplMedusa<T> extends BaseServiceImplMedusaStri
 	}
 
 	public int updateBatch(List<T> obs) {
-		return mapper.updateByPrimaryKeyBatch(obs);
+		return mapper.updateByPrimaryKeyBatch(obs, null);
 	}
 
 	public int deleteById(Serializable id) {//

@@ -45,7 +45,11 @@ public abstract class BaseServiceImplMedusaLambda<T> extends BaseServiceImplLamb
 //	}
 
 	public int saveBatch(List<T> obs, HolyGetter<T>... paramFns) {
-		return mapper.insertBatch(obs, transferStringColumnByLambda(paramFns));
+		return mapper.insertBatch(obs, null, transferStringColumnByLambda(paramFns));
+	}
+
+	public int saveBatch(List<T> obs, Boolean isExclude, HolyGetter<T>... paramFns) {
+		return mapper.insertBatch(obs, isExclude, transferStringColumnByLambda(paramFns));
 	}
 
 	public int update(T entity, HolyGetter<T>... paramFns) {
@@ -57,7 +61,11 @@ public abstract class BaseServiceImplMedusaLambda<T> extends BaseServiceImplLamb
 //	}
 
 	public int updateBatch(List<T> obs, HolyGetter<T>... paramFns) {
-		return mapper.updateByPrimaryKeyBatch(obs, transferStringColumnByLambda(paramFns));
+		return mapper.updateByPrimaryKeyBatch(obs, null, transferStringColumnByLambda(paramFns));
+	}
+
+	public int updateBatch(List<T> obs, Boolean isExclude, HolyGetter<T>... paramFns) {
+		return mapper.updateByPrimaryKeyBatch(obs, isExclude, transferStringColumnByLambda(paramFns));
 	}
 
 //	public int deleteById(Serializable id) {

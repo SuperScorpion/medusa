@@ -33,10 +33,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by neo on 16/9/14.
@@ -318,6 +315,35 @@ public class MedusaSqlHelper {
         return resultMap;
     }
 
+
+    /**
+     * add by neo on 20220913 for batch
+     * @param psArray
+     * @param currentFieldColumnNameMap
+     * @return
+     */
+    public static String buildColumnNameForSelect(Object[] psArray, Map<String, String> currentFieldColumnNameMap, Boolean flag, Set<String> columns) {
+
+        String paramColumns = buildColumnNameForSelect(psArray, currentFieldColumnNameMap);
+
+        if(flag == null || flag == false) {
+            return paramColumns;
+        } else {
+            List<String> columnList = Arrays.asList(paramColumns.split(","));
+
+            StringBuilder sbb = new StringBuilder(255);
+
+            for(String column : columns) {
+                if(columnList.contains(column)) continue;
+                sbb.append(column);
+                sbb.append(",");
+            }
+            if(sbb.length() == 0) sbb.append(" * ");///如果后面一个参数都没匹配到string 则会查处所有的字段值
+            if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));//去掉最后一个,
+            return sbb.toString();
+        }
+    }
+
     /**
      * 提供给生成查询字段使用
      * 上一步的方法会先判断 尾部参数是否为空 不为空也可能是pager参数 不是string参数 本方法会进一步校验
@@ -592,9 +618,9 @@ public class MedusaSqlHelper {
             }
         }
 
-        if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
+        if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));//1 - sbb
 
-        if(sbs.lastIndexOf(",") != -1) sbs.deleteCharAt(sbs.lastIndexOf(","));
+        if(sbs.lastIndexOf(",") != -1) sbs.deleteCharAt(sbs.lastIndexOf(","));//2 - sbs
 
         String[] result = {sbb.toString(), sbs.toString()};///////一个是插入语句的 字段名 一个是动态值
 

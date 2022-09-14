@@ -47,7 +47,8 @@ public class BaseUpdateProvider {
 //        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
             return MedusaSqlHelper.getSqlGenerator(m).sqlOfUpdateByPrimaryKeyBatch(
                     ((MapperMethod.ParamMap) m).get("param1"),
-                    (Object[]) ((MapperMethod.ParamMap) m).get("param2"));
+                    (Boolean) ((MapperMethod.ParamMap) m).get("param2"),
+                    (Object[]) ((MapperMethod.ParamMap) m).get("param3"));
 //        } else {
 //            throw new MedusaException("Medusa: updateByPrimaryKeyBatch MapperMethod.ParamMap Exception");
 //        }

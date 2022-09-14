@@ -14,9 +14,39 @@ import java.util.List;
  */
 public class MedusaStringRestrictions<T> extends BaseRestrictions<T, String, MedusaStringRestrictions<T>> {
 
-    public MedusaStringRestrictions notInParam(String c, List v, Boolean p) {
+    public MedusaStringRestrictions singleParam(String c, Object v) {
 
-        paramList.add(new NotInParam(c, v, p));
+        paramList.add(new SingleParam(c, v, false));
+        return this;
+    }
+
+    public MedusaStringRestrictions singleNeqParam(String c, Object v) {
+
+        paramList.add(new SingleParam(c, v, true));
+        return this;
+    }
+
+    public MedusaStringRestrictions isNotNullParam(String c) {
+
+        paramList.add(new NotNullParam(c, true));
+        return this;
+    }
+
+    public MedusaStringRestrictions isNullParam(String c) {
+
+        paramList.add(new NotNullParam(c, false));
+        return this;
+    }
+
+    public MedusaStringRestrictions notInParam(String c, List v) {
+
+        paramList.add(new NotInParam(c, v, true));
+        return this;
+    }
+
+    public MedusaStringRestrictions inParam(String c, List v) {
+
+        paramList.add(new NotInParam(c, v, false));
         return this;
     }
 
@@ -53,24 +83,6 @@ public class MedusaStringRestrictions<T> extends BaseRestrictions<T, String, Med
     public MedusaStringRestrictions lessThanParam(String c, Object v) {
 
         paramList.add(new LessThanParam(c, v));
-        return this;
-    }
-
-    public MedusaStringRestrictions singleParam(String c, Object v) {
-
-        paramList.add(new SingleParam(c, v));
-        return this;
-    }
-
-    public MedusaStringRestrictions singleNeqParam(String c, Object v) {
-
-        paramList.add(new SingleNeqParam(c, v));
-        return this;
-    }
-
-    public MedusaStringRestrictions notNullParam(String c, Boolean v) {
-
-        paramList.add(new NotNullParam(c, v));
         return this;
     }
 

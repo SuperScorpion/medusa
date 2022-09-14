@@ -41,7 +41,8 @@ public class BaseInsertProvider {
 //        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
             return MedusaSqlHelper.getSqlGenerator(m).sqlOfInsertBatch(
                     ((MapperMethod.ParamMap) m).get("param1"),
-                    (Object[]) ((MapperMethod.ParamMap) m).get("param2"));
+                    (Boolean) ((MapperMethod.ParamMap) m).get("param2"),
+                    (Object[]) ((MapperMethod.ParamMap) m).get("param3"));
 //        } else {
 //            throw new MedusaException("Medusa: insertBatch MapperMethod.ParamMap Exception");
 //        }
@@ -58,7 +59,8 @@ public class BaseInsertProvider {
             return MedusaSqlHelper.getSqlGenerator(m).sqlOfInsertBatchForMyCat(
                     ((MapperMethod.ParamMap) m).get("param1"),
                     ((MapperMethod.ParamMap) m).get("param2"),
-                    (Object[]) ((MapperMethod.ParamMap) m).get("param3"));
+                    (Boolean) ((MapperMethod.ParamMap) m).get("param3"),
+                    (Object[]) ((MapperMethod.ParamMap) m).get("param4"));
 //        } else {
 //            throw new MedusaException("Medusa: insertBatchOfMyCat MapperMethod.ParamMap Exception");
 //        }

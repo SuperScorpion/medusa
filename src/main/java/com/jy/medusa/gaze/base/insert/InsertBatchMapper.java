@@ -24,5 +24,5 @@ public interface InsertBatchMapper<T> {
     @InsertProvider(type = BaseInsertProvider.class, method = "insertBatch")
 //    @SelectKey(statement = "select last_insert_id() as id", keyProperty = "id", keyColumn = "id", before = true, resultType = int.class)
     @Options(useGeneratedKeys = true, keyProperty = "param1." + SystemConfigs.PRIMARY_KEY)///for mybatis 3.5.3 & not support pobj.param1 & modify by neo on 2020.01.20
-    int insertBatch(List<T> records, String... paramColumns);
+    int insertBatch(List<T> records, Boolean isExclude, String... paramColumns);
 }

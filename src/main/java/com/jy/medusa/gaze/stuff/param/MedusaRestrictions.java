@@ -5,7 +5,17 @@ import java.util.List;
 
 public interface MedusaRestrictions<T, P, R> extends Serializable {
 
-    R notInParam(P fn, List v, Boolean p);
+    R singleParam(P fn, Object v);
+
+    R singleNeqParam(P fn, Object v);
+
+    R isNotNullParam(P fn);
+
+    R isNullParam(P fn);
+
+    R notInParam(P fn, List v);
+
+    R inParam(P fn, List v);
 
     R likeParam(P fn, String v);
 
@@ -18,12 +28,6 @@ public interface MedusaRestrictions<T, P, R> extends Serializable {
     R lessEqualParam(P fn, Object v);
 
     R lessThanParam(P fn, Object v);
-
-    R singleParam(P fn, Object v);
-
-    R singleNeqParam(P fn, Object v);
-
-    R notNullParam(P fn, Boolean v);
 
     R clear();
 

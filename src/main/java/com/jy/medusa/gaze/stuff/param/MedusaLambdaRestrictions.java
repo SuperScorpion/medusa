@@ -16,9 +16,39 @@ import java.util.List;
  */
 public class MedusaLambdaRestrictions<T> extends BaseRestrictions<T, HolyGetter<T>, MedusaLambdaRestrictions<T>> {
 
-    public MedusaLambdaRestrictions<T> notInParam(HolyGetter<T> fn, List v, Boolean p) {
+    public MedusaLambdaRestrictions<T> singleParam(HolyGetter<T> fn, Object v) {
 
-        paramList.add(new NotInParam(HolyGetPropertyNameLambda.convertToFieldName(fn), v, p));
+        paramList.add(new SingleParam(HolyGetPropertyNameLambda.convertToFieldName(fn), v, false));
+        return this;
+    }
+
+    public MedusaLambdaRestrictions<T> singleNeqParam(HolyGetter<T> fn, Object v) {
+
+        paramList.add(new SingleParam(HolyGetPropertyNameLambda.convertToFieldName(fn), v, true));
+        return this;
+    }
+
+    public MedusaLambdaRestrictions<T> isNotNullParam(HolyGetter<T> fn) {
+
+        paramList.add(new NotNullParam(HolyGetPropertyNameLambda.convertToFieldName(fn), true));
+        return this;
+    }
+
+    public MedusaLambdaRestrictions<T> isNullParam(HolyGetter<T> fn) {
+
+        paramList.add(new NotNullParam(HolyGetPropertyNameLambda.convertToFieldName(fn), false));
+        return this;
+    }
+
+    public MedusaLambdaRestrictions<T> notInParam(HolyGetter<T> fn, List v) {
+
+        paramList.add(new NotInParam(HolyGetPropertyNameLambda.convertToFieldName(fn), v, true));
+        return this;
+    }
+
+    public MedusaLambdaRestrictions<T> inParam(HolyGetter<T> fn, List v) {
+
+        paramList.add(new NotInParam(HolyGetPropertyNameLambda.convertToFieldName(fn), v, false));
         return this;
     }
 
@@ -55,24 +85,6 @@ public class MedusaLambdaRestrictions<T> extends BaseRestrictions<T, HolyGetter<
     public MedusaLambdaRestrictions<T> lessThanParam(HolyGetter<T> fn, Object v) {
 
         paramList.add(new LessThanParam(HolyGetPropertyNameLambda.convertToFieldName(fn), v));
-        return this;
-    }
-
-    public MedusaLambdaRestrictions singleParam(HolyGetter<T> fn, Object v) {
-
-        paramList.add(new SingleParam(HolyGetPropertyNameLambda.convertToFieldName(fn), v));
-        return this;
-    }
-
-    public MedusaLambdaRestrictions singleNeqParam(HolyGetter<T> fn, Object v) {
-
-        paramList.add(new SingleNeqParam(HolyGetPropertyNameLambda.convertToFieldName(fn), v));
-        return this;
-    }
-
-    public MedusaLambdaRestrictions<T> notNullParam(HolyGetter<T> fn, Boolean v) {
-
-        paramList.add(new NotNullParam(HolyGetPropertyNameLambda.convertToFieldName(fn), v));
         return this;
     }
 

@@ -19,5 +19,5 @@ public interface UpdateByPrimaryKeyBatchMapper<T> {
      * @return 返回值类型
      */
     @UpdateProvider(type = BaseUpdateProvider.class, method = "updateByPrimaryKeyBatch")
-    int updateByPrimaryKeyBatch(List<T> records, String... paramColumns);
+    int updateByPrimaryKeyBatch(List<T> records, Boolean isExclude, String... paramColumns);
 }

@@ -27,11 +27,15 @@ public interface BaseServiceMedusaLambda<T> {
 
 	int saveBatch(List<T> obs, HolyGetter<T>... paramFns);
 
+	int saveBatch(List<T> obs, Boolean isExclude, HolyGetter<T>... paramFns);
+
 	int update(T entity, HolyGetter<T>... paramFns);
 
 //	int updateSelective(T entity);
 
 	int updateBatch(List<T> obs, HolyGetter<T>... paramFns);
+
+	int updateBatch(List<T> obs, Boolean isExclude, HolyGetter<T>... paramFns);
 
 //	int deleteById(Serializable id);
 
