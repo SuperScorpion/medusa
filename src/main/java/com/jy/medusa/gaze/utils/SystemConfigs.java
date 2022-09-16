@@ -38,7 +38,6 @@ public class SystemConfigs {
         MY_ALL_METHOD_NANES_LIST.add("selectCount");
         MY_ALL_METHOD_NANES_LIST.add("select");
         MY_ALL_METHOD_NANES_LIST.add("selectOne");
-//        MY_ALL_METHOD_NANES_LIST.add("selectPage");
         MY_ALL_METHOD_NANES_LIST.add("insertSelective");
         MY_ALL_METHOD_NANES_LIST.add("insertBatch");
         MY_ALL_METHOD_NANES_LIST.add("insertBatchOfMyCat");
