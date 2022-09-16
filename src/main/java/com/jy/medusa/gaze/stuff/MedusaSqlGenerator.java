@@ -1010,16 +1010,7 @@ public class MedusaSqlGenerator {
                         sbb.append(" = ");
                     sbb.append("#{array[").append(isd).append("].paramList[").append(ind).append("].value}");///modify by neo on 2020.02.13
                 }
-
-            } /*else if (z instanceof SingleNeqParam) {//modify by neo on 2022.08.23
-
-                Object p = ((SingleNeqParam) z).getValue();
-
-                if(p != null && MedusaCommonUtils.isNotBlank(p.toString())) {
-                    sbb.append(" AND ").append(column).append(" != ").append("#{array[").append(isd).append("].paramList[").append(ind).append("].value}");
-                }
-
-            }*/ else if (z instanceof BetweenParam) {
+            } else if (z instanceof BetweenParam) {
 
                 Object start = ((BetweenParam) z).getStart();
 

@@ -709,12 +709,12 @@ public class MedusaSqlHelper {
         int len = obs.size(), i = 0;
         for (; i < len; i++) {
             sbb.append("(");
-            for(String columns : columnArr) {
+            for(String column : columnArr) {
 
                 sbb.append("#{pobj.param1[");
                 sbb.append(i);
                 sbb.append("].");
-                sbb.append(currentColumnFieldNameMap.get(columns));
+                sbb.append(currentColumnFieldNameMap.get(column));
                 sbb.append("},");
             }
 
@@ -739,9 +739,9 @@ public class MedusaSqlHelper {
 
         StringBuilder sbb = new StringBuilder(512);
 
-        for(String columns : columnArr) {
-            if(!columns.equals(SystemConfigs.PRIMARY_KEY)) {
-                sbb.append(columns).append("=values(").append(columns).append("),");
+        for(String column : columnArr) {
+            if(!column.equals(SystemConfigs.PRIMARY_KEY)) {
+                sbb.append(column).append("=values(").append(column).append("),");
             }
         }
 
@@ -791,13 +791,13 @@ public class MedusaSqlHelper {
         boolean flag = true;///只让sbbIdd 记录一次循环id值
 
         int len = obs.size();
-        for(String columns : columnArr) {
+        for(String column : columnArr) {
 
-            if(!columns.equals(primaryKeyColumn)) {
+            if(!column.equals(primaryKeyColumn)) {
 
-                if (!checkIsAllNullColumn(obs, columns, currentColumnFieldNameMap)) {//modify by neo on 2019.07.05
+                if (!checkIsAllNullColumn(obs, column, currentColumnFieldNameMap)) {//modify by neo on 2019.07.05
 
-                    sbb.append(columns).append(" = CASE ").append(primaryKeyColumn);
+                    sbb.append(column).append(" = CASE ").append(primaryKeyColumn);
 
                     for (int i = 0; i < len; i++) {
 
@@ -806,7 +806,7 @@ public class MedusaSqlHelper {
                         sbb.append(" WHEN ")
                                 .append("#{param1[").append(i).append("].").append(currentColumnFieldNameMap.get(primaryKeyColumn)).append("}")
                                 .append(" THEN ")
-                                .append("#{param1[").append(i).append("].").append(currentColumnFieldNameMap.get(columns)).append("}");
+                                .append("#{param1[").append(i).append("].").append(currentColumnFieldNameMap.get(column)).append("}");
                     }
 
                     if (flag && sbbIdd.lastIndexOf(",") != -1) sbbIdd.deleteCharAt(sbbIdd.lastIndexOf(","));
@@ -829,25 +829,24 @@ public class MedusaSqlHelper {
 
     /**
      * 这种批量更新的方法不能完全解决各实体类里各个字段空时不更新
-     * 只能做到所有实体类的某属性值全都为null才会不更新
-     * 因为sql语句的限制
+     * 因为sql语句的限制 只能做到所有实体类的某属性值全都为null才会不更新
      * @param obs 参数
-     * @param columns 参数
+     * @param column 参数
      * @param currentColumnFieldNameMap 参数
      * @return 返回值类型
      */
-    private static boolean checkIsAllNullColumn(List<Object> obs, String columns, Map<String, String> currentColumnFieldNameMap) {
+    private static boolean checkIsAllNullColumn(List<Object> obs, String column, Map<String, String> currentColumnFieldNameMap) {
         boolean result = true;
         int i = 0;
         for(Object s : obs) {
-            Object k = MedusaReflectionUtils.obtainFieldValue(s, currentColumnFieldNameMap.get(columns));
+            Object k = MedusaReflectionUtils.obtainFieldValue(s, currentColumnFieldNameMap.get(column));
             if(k != null) i++;
         }
 
         if(i == obs.size()) {
             return false;
         } else if(i < obs.size() && i > 0) {
-            logger.warn("Medusa: Because of the column [{}] attribute values are not uniform in batch updates, some column attributes are updated to null.", columns);
+            logger.warn("Medusa: Because of the column [{}] attribute values are not uniform in batch updates, some column attributes are updated to null.", column);
             return false;
         } else {
           return result;
