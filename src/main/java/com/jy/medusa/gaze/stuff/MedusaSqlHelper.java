@@ -646,6 +646,8 @@ public class MedusaSqlHelper {
 
         if(obs.size() == 0) throw new MedusaException("Medusa: insertBatch method parameter is null or empty!");
 
+        if(obs.size() > 320000) logger.warn("Medusa: The number of data is too many [{}]. Please pay attention to the performance.", obs.size());
+
         String[] columnArr = paramColumn.split(",");
 
         int contentLength = obs.size() * columnArr.length * 50;
@@ -779,6 +781,8 @@ public class MedusaSqlHelper {
         List<Object> obs = t instanceof List ? (ArrayList)t : new ArrayList<>();
 
         if(obs.size() == 0) throw new MedusaException("Medusa: The list param is null or empty");
+
+        if(obs.size() > 320000) logger.warn("Medusa: The number of data is too many [{}]. Please pay attention to the performance.", obs.size());
 
         String[] columnArr = paramColumn.split(",");
 
