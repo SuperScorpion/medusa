@@ -44,12 +44,12 @@ public abstract class BaseServiceImplMedusaLambda<T> extends BaseServiceImplLamb
 //		return mapper.insert(entity);
 //	}
 
-	public int saveBatch(List<T> obs, HolyGetter<T>... paramFns) {
-		return mapper.insertBatch(obs, null, transferStringColumnByLambda(paramFns));
+	public int saveBatchInclude(List<T> obs, HolyGetter<T>... paramFns) {
+		return mapper.insertBatch(obs, false, transferStringColumnByLambda(paramFns));
 	}
 
-	public int saveBatch(List<T> obs, Boolean isExclude, HolyGetter<T>... paramFns) {
-		return mapper.insertBatch(obs, isExclude, transferStringColumnByLambda(paramFns));
+	public int saveBatchExclude(List<T> obs, HolyGetter<T>... paramFns) {
+		return mapper.insertBatch(obs, true, transferStringColumnByLambda(paramFns));
 	}
 
 	public int update(T entity, HolyGetter<T>... paramFns) {
@@ -60,12 +60,12 @@ public abstract class BaseServiceImplMedusaLambda<T> extends BaseServiceImplLamb
 //		return mapper.updateByPrimaryKeySelective(entity);
 //	}
 
-	public int updateBatch(List<T> obs, HolyGetter<T>... paramFns) {
-		return mapper.updateByPrimaryKeyBatch(obs, null, transferStringColumnByLambda(paramFns));
+	public int updateBatchInclude(List<T> obs, HolyGetter<T>... paramFns) {
+		return mapper.updateByPrimaryKeyBatch(obs, false, transferStringColumnByLambda(paramFns));
 	}
 
-	public int updateBatch(List<T> obs, Boolean isExclude, HolyGetter<T>... paramFns) {
-		return mapper.updateByPrimaryKeyBatch(obs, isExclude, transferStringColumnByLambda(paramFns));
+	public int updateBatchExclude(List<T> obs, HolyGetter<T>... paramFns) {
+		return mapper.updateByPrimaryKeyBatch(obs, true, transferStringColumnByLambda(paramFns));
 	}
 
 //	public int deleteById(Serializable id) {

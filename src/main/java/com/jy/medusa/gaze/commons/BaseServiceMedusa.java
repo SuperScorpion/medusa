@@ -7,7 +7,7 @@ import java.util.List;
  * 基础接口 BaseServiceMedusa - BaseServiceMedusaString - BaseServiceMedusaLambda
  * @param <T> 参数
  */
-public interface BaseServiceMedusa<T> extends BaseServiceMedusaString<T> {
+public interface BaseServiceMedusa<T> extends BaseServiceMedusaLambda<T> {
 
 	List<T> selectAll();
 

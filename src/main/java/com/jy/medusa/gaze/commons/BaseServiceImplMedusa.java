@@ -8,7 +8,7 @@ import java.util.List;
  * @param <T> 参数
  */
 //@Service
-public abstract class BaseServiceImplMedusa<T> extends BaseServiceImplMedusaString<T> implements BaseServiceMedusa<T> {
+public abstract class BaseServiceImplMedusa<T> extends BaseServiceImplMedusaLambda<T> implements BaseServiceMedusa<T> {
 
 	public List<T> selectAll() {
 		return mapper.selectAll();

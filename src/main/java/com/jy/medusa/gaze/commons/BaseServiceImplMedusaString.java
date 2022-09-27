@@ -46,8 +46,12 @@ public abstract class BaseServiceImplMedusaString<T> extends BaseServiceImplMedu
 		return mapper.insertBatch(obs, null, paramColumns);
 	}
 
-	public int saveBatch(List<T> obs, Boolean isExclude, String... paramColumns) {
-		return mapper.insertBatch(obs, isExclude, paramColumns);
+	public int saveBatchInclude(List<T> obs, String... paramColumns) {
+		return mapper.insertBatch(obs, false, paramColumns);
+	}
+
+	public int saveBatchExclude(List<T> obs, String... paramColumns) {
+		return mapper.insertBatch(obs, true, paramColumns);
 	}
 
 	public int update(T entity, String... paramColumns) {
@@ -58,12 +62,12 @@ public abstract class BaseServiceImplMedusaString<T> extends BaseServiceImplMedu
 //		return mapper.updateByPrimaryKeySelective(entity);
 //	}
 
-	public int updateBatch(List<T> obs, String... paramColumns) {
-		return mapper.updateByPrimaryKeyBatch(obs, null, paramColumns);
+	public int updateBatchInclude(List<T> obs, String... paramColumns) {
+		return mapper.updateByPrimaryKeyBatch(obs, false, paramColumns);
 	}
 
-	public int updateBatch(List<T> obs, Boolean isExclude, String... paramColumns) {
-		return mapper.updateByPrimaryKeyBatch(obs, isExclude, paramColumns);
+	public int updateBatchExclude(List<T> obs, String... paramColumns) {
+		return mapper.updateByPrimaryKeyBatch(obs, true, paramColumns);
 	}
 
 //	public int deleteById(Serializable id) {

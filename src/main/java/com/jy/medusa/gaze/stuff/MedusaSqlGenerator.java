@@ -91,6 +91,9 @@ public class MedusaSqlGenerator {
      */
     public String sqlOfInsertBatch(Object t, Boolean flag, Object[] ps) {
 
+        if(flag != null && (ps == null || ps.length == 0))
+            throw new MedusaException("Medusa: The batch method need paramColumns");//add by neo on 20220927
+
         String paramColumn = reSolveColumn(ps, flag);
 
         if(paramColumn.equals("*")) paramColumn = columnsStr;
@@ -318,6 +321,9 @@ public class MedusaSqlGenerator {
      * @return 返回值类型
      */
     public String sqlOfUpdateByPrimaryKeyBatch(Object t, Boolean flag, Object[] ps) {
+
+        if(flag != null && (ps == null || ps.length == 0))
+            throw new MedusaException("Medusa: The batch method need paramColumns");//add by neo on 20220927
 
         String paramColumn = reSolveColumn(ps, flag);
 
@@ -1002,7 +1008,7 @@ public class MedusaSqlGenerator {
                 Object p = ((SingleParam) z).getValue();
                 Boolean f = ((SingleParam) z).getNeq();
 
-                if(p != null && MedusaCommonUtils.isNotBlank(p.toString())) {
+                if(p != null && MedusaCommonUtils.isNotBlank(p.toString()) && f != null) {
                     sbb.append(" AND ").append(column);
                     if(f)
                         sbb.append(" != ");
@@ -1013,8 +1019,9 @@ public class MedusaSqlGenerator {
             } else if (z instanceof BetweenParam) {
 
                 Object start = ((BetweenParam) z).getStart();
+                Object end = ((BetweenParam) z).getEnd();
 
-                if(start != null) {
+                if(start != null && end != null && MedusaCommonUtils.isNotBlank(start.toString()) && MedusaCommonUtils.isNotBlank(end.toString())) {
                     sbb.append(" AND ").append(column).append(" BETWEEN ")
                             //.append("'").append(MedusaDateUtils.convertDateToStr(p.getEnd(), MedusaDateUtils.DATE_FULL_STR)).append("'")
                             .append("#{array[").append(isd).append("].paramList[").append(ind).append("].start}")///modify by neo on 2020.02.13
@@ -1026,7 +1033,7 @@ public class MedusaSqlGenerator {
                 List p = ((NotInParam) z).getValue();
                 Boolean f = ((NotInParam) z).getNotIn();
 
-                if(p != null && p.size() > 0) {
+                if(p != null && p.size() > 0 && f != null) {
                     sbb.append(" AND ").append(column);
 
                     if (f) {
@@ -1037,8 +1044,10 @@ public class MedusaSqlGenerator {
 
                     int k = 0;
                     while(k < p.size()) {
-                        sbb.append("#{array[").append(isd).append("].paramList[").append(ind).append("].value[").append(k).append("]},");///modify by neo on 2020.02.13
-                        k += 1;
+                        if(p.get(k) != null && MedusaCommonUtils.isNotBlank(p.get(k).toString())) {//add by neo on 20220923
+                            sbb.append("#{array[").append(isd).append("].paramList[").append(ind).append("].value[").append(k).append("]},");///modify by neo on 2020.02.13
+                            k += 1;
+                        }
                     }
 
                     if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
@@ -1067,7 +1076,7 @@ public class MedusaSqlGenerator {
 
             Object p = ((BaseGeLeParam) z).getValue();
 
-            if(p != null) {
+            if(p != null && MedusaCommonUtils.isNotBlank(p.toString())) {
 
                 if (z instanceof GreatThanParam) {
 

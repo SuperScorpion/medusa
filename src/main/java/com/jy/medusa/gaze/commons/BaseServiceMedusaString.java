@@ -23,17 +23,17 @@ public interface BaseServiceMedusaString<T> extends BaseServiceMedusaLambda<T> {
 
 //	int save(T entity);
 
-	int saveBatch(List<T> obs, String... paramColumns);
+	int saveBatchInclude(List<T> obs, String... paramColumns);
 
-	int saveBatch(List<T> obs, Boolean isExclude, String... paramColumns);
+	int saveBatchExclude(List<T> obs, String... paramColumns);
 
 	int update(T entity, String... paramColumns);
 
 //	int updateSelective(T entity);
 
-	int updateBatch(List<T> obs, String... paramColumns);
+	int updateBatchInclude(List<T> obs, String... paramColumns);
 
-	int updateBatch(List<T> obs, Boolean isExclude, String... paramColumns);
+	int updateBatchExclude(List<T> obs, String... paramColumns);
 
 //	int deleteById(Serializable id);
 

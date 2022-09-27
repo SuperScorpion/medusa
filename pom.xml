@@ -6,7 +6,7 @@
 
     <groupId>com.github.superscorpion</groupId>
     <artifactId>medusa</artifactId>
-    <version>3.1.9-RELEASE</version>
+    <version>3.2.0</version>
     <packaging>jar</packaging>
 
     <name>medusa</name>
@@ -14,11 +14,11 @@
     <url>https://github.com/SuperScorpion/medusa</url>
 
     <properties>
-        <mybatis.version>3.5.10</mybatis.version>
-        <slf4j-api.version>2.0.0</slf4j-api.version>
+        <mybatis.version>3.5.11</mybatis.version>
+        <slf4j-api.version>2.0.2</slf4j-api.version>
         <aspect.version>1.9.9.1</aspect.version>
         <freemarker.version>2.3.31</freemarker.version>
-        <snakeyaml.version>1.30</snakeyaml.version>
+        <snakeyaml.version>1.33</snakeyaml.version>
         <!--<com.alibaba.fastjson>1.2.66</com.alibaba.fastjson>-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -30,13 +30,6 @@
             <artifactId>mybatis</artifactId>
             <version>${mybatis.version}</version>
             <optional>true</optional><!--让用户来提供-->
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/javax.inject/javax.inject -->
-        <dependency>
-            <groupId>javax.inject</groupId>
-            <artifactId>javax.inject</artifactId>
-            <version>1</version>
         </dependency>
 
         <dependency>
@@ -77,6 +70,14 @@
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
             <version>${snakeyaml.version}</version>
+<!--            <optional>true</optional>&lt;!&ndash;让用户来提供&ndash;&gt;-->
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/javax.inject/javax.inject -->
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>1</version>
 <!--            <optional>true</optional>&lt;!&ndash;让用户来提供&ndash;&gt;-->
         </dependency>
 
