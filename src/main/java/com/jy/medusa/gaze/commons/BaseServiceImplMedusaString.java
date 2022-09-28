@@ -3,6 +3,7 @@ package com.jy.medusa.gaze.commons;
 import java.io.Serializable;
 import java.util.List;
 
+@Deprecated
 //@Service
 public abstract class BaseServiceImplMedusaString<T> extends BaseServiceImplMedusaLambda<T> implements BaseServiceMedusaString<T> {
 

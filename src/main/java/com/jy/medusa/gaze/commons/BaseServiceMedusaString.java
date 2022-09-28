@@ -3,6 +3,7 @@ package com.jy.medusa.gaze.commons;
 import java.io.Serializable;
 import java.util.List;
 
+@Deprecated
 public interface BaseServiceMedusaString<T> extends BaseServiceMedusaLambda<T> {
 
 	List<T> selectAll(String... paramColumn);
