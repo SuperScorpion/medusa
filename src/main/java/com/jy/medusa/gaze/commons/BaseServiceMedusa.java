@@ -4,23 +4,25 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * 基础接口 BaseServiceMedusa - BaseServiceMedusaString - BaseServiceMedusaLambda
+ * 基础接口
+ * before : BaseServiceMedusa - BaseServiceMedusaString - BaseServiceMedusaLambda
+ * after : BaseServiceMedusa -  BaseServiceMedusaLambda
  * @param <T> 参数
  */
 public interface BaseServiceMedusa<T> extends BaseServiceMedusaLambda<T> {
 
-	List<T> selectAll();
+//	List<T> selectAll();
 
-	T selectOne(T entity);
+//	T selectOne(T entity);
 
-	List<T> selectByIds(List<Serializable> ids);
+//	List<T> selectByIds(List<Serializable> ids);
 
-	T selectById(Serializable id);
+//	T selectById(Serializable id);
 
-	List<T> selectListBy(T entity);
+//	List<T> selectListBy(T entity);
 
 //	int selectCount(Object... mixParams);
-//
+
 //	List<T> selectByGazeMagic(Object... mixParams);
 
 	int saveSelective(T entity);
@@ -29,7 +31,7 @@ public interface BaseServiceMedusa<T> extends BaseServiceMedusaLambda<T> {
 
 	int saveBatch(List<T> obs);
 
-	int update(T entity);
+//	int update(T entity);
 
 	int updateSelective(T entity);
 

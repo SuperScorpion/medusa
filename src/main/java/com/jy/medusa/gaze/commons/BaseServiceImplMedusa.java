@@ -4,31 +4,33 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * 基础接口 BaseServiceImplMedusa - BaseServiceImplMedusaString - BaseServiceImplMedusaLambda
+ * 基础接口
+ * before : BaseServiceMedusa - BaseServiceMedusaString - BaseServiceMedusaLambda
+ * after : BaseServiceMedusa -  BaseServiceMedusaLambda
  * @param <T> 参数
  */
 //@Service
 public abstract class BaseServiceImplMedusa<T> extends BaseServiceImplMedusaLambda<T> implements BaseServiceMedusa<T> {
 
-	public List<T> selectAll() {
-		return mapper.selectAll();
-	}
-
-	public T selectOne(T entity) {
-		return mapper.selectOne(entity);
-	}
-
-	public List<T> selectByIds(List<Serializable> ids) {
-		return mapper.selectByPrimaryKeyBatch(ids);
-	}
-
-	public T selectById(Serializable id) {
-		return mapper.selectByPrimaryKey(id);
-	}
-
-	public List<T> selectListBy(T entity) {
-		return mapper.select(entity);
-	}
+//	public List<T> selectAll() {
+//		return mapper.selectAll();
+//	}
+//
+//	public T selectOne(T entity) {
+//		return mapper.selectOne(entity);
+//	}
+//
+//	public List<T> selectByIds(List<Serializable> ids) {
+//		return mapper.selectByPrimaryKeyBatch(ids);
+//	}
+//
+//	public T selectById(Serializable id) {
+//		return mapper.selectByPrimaryKey(id);
+//	}
+//
+//	public List<T> selectListBy(T entity) {
+//		return mapper.select(entity);
+//	}
 
 //	public int selectCount(Object... mixParams) {
 //		return mapper.selectCount(mixParams);
@@ -50,9 +52,9 @@ public abstract class BaseServiceImplMedusa<T> extends BaseServiceImplMedusaLamb
 		return mapper.insertBatch(obs, null);
 	}
 
-	public int update(T entity) {
-		return mapper.updateByPrimaryKey(entity);
-	}
+//	public int update(T entity) {
+//		return mapper.updateByPrimaryKey(entity);
+//	}
 
 	public int updateSelective(T entity) {//
 		return mapper.updateByPrimaryKeySelective(entity);

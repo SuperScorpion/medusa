@@ -79,9 +79,10 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
 
             //clean map params
             if(p.containsKey("pobj")) {//第二种情况清除新建的 hashmap
+                invocation.getArgs()[1] = p.get("pobj");//还原
                 p.clear();//help gc
             } else {//第一种情况 只删除put进去的msid
-                p.remove("msid");
+                p.remove("msid");//还原
             }
 
         } else if (mt.getSqlSource() instanceof RawSqlSource//processExecutor里的invocationProceed(invocation)嵌套进入
@@ -91,7 +92,6 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
             result = invocationProceed(invocation);
 
             //modify by neo on 2019.08.19 for UUID insert 需要先获得生成的uuid值 再注入到插入的实体里 再进行插入操作 否则插入主键为空
-
             Map<String, Object> p = (Map) invocation.getArgs()[1];
 
             MedusaReflectionUtils.invokeSetterMethod(p.get("pobj"), MedusaSqlHelper.getSqlGenerator(p).getPkPropertyName(), ((ArrayList) result).get(0));//注入属性id值
@@ -115,7 +115,7 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
     private void processInsertKeyPropertiesBeforeProceed(MappedStatement mt, String medusaMethodName, Map<String, Object> p) throws NoSuchFieldException, IllegalAccessException {
 
         //判断是否是insert相关的方法
-        if(medusaMethodName.startsWith("insert")) {
+        if (medusaMethodName.startsWith("insert")) {
             if (MedusaSqlHelper.checkInsertMethod(medusaMethodName)) {
                 Field f = mt.getClass().getDeclaredField("keyProperties");
                 f.setAccessible(true);
