@@ -1,6 +1,7 @@
 package com.jy.medusa.gaze.provider;
 
 import com.jy.medusa.gaze.stuff.MedusaSqlHelper;
+import com.jy.medusa.gaze.stuff.param.lambda.HolyGetter;
 import org.apache.ibatis.binding.MapperMethod;
 
 import java.util.Map;
@@ -21,7 +22,7 @@ public class BaseSelectProvider {
 //        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
             return MedusaSqlHelper.getSqlGenerator(m).sqlOfSelectByPrimaryKeyBatch(
                     ((MapperMethod.ParamMap) m).get("param1"),
-                    (Object[]) ((MapperMethod.ParamMap) m).get("param2"));
+                    MedusaSqlHelper.transferStringColumnByLambda((HolyGetter<?>[]) ((MapperMethod.ParamMap) m).get("param2")));
 //        } else {
 //            throw new MedusaException("Medusa: selectByIds MapperMethod.ParamMap Exception");
 //        }
@@ -37,7 +38,7 @@ public class BaseSelectProvider {
 //        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
             return MedusaSqlHelper.getSqlGenerator(m).sqlOfSelectOne(
                     ((MapperMethod.ParamMap) m).get("param1"),
-                    (Object[]) ((MapperMethod.ParamMap) m).get("param2"));
+                    MedusaSqlHelper.transferStringColumnByLambda((HolyGetter<?>[]) ((MapperMethod.ParamMap) m).get("param2")));
 //        } else {
 //            throw new MedusaException("Medusa: selectOne MapperMethod.ParamMap Exception");
 //        }
@@ -54,7 +55,7 @@ public class BaseSelectProvider {
 //        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
             return MedusaSqlHelper.getSqlGenerator(m).sqlOfSelect(
                     ((MapperMethod.ParamMap) m).get("param1"),
-                    (Object[]) ((MapperMethod.ParamMap) m).get("param2"));
+                    MedusaSqlHelper.transferStringColumnByLambda((HolyGetter<?>[]) ((MapperMethod.ParamMap) m).get("param2")));
 //        } else {
 //            throw new MedusaException("Medusa: select MapperMethod.ParamMap Exception");
 //        }
@@ -71,7 +72,7 @@ public class BaseSelectProvider {
 //        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
             return MedusaSqlHelper.getSqlGenerator(m).sqlOfSelectByPrimaryKey(
                     ((MapperMethod.ParamMap) m).get("param1"),
-                    (Object[]) ((MapperMethod.ParamMap) m).get("param2"));
+                    MedusaSqlHelper.transferStringColumnByLambda((HolyGetter<?>[]) ((MapperMethod.ParamMap) m).get("param2")));
 //        } else {
 //            throw new MedusaException("Medusa: selectByPrimaryKey MapperMethod.ParamMap Exception");
 //        }
@@ -88,7 +89,7 @@ public class BaseSelectProvider {
     public String selectAll(Map<String, Object> m) {
 
             return MedusaSqlHelper.getSqlGenerator(m).sqlOfSelectAll(
-                    (Object[]) ((MapperMethod.ParamMap) m).get("array"));
+                    MedusaSqlHelper.transferStringColumnByLambda((HolyGetter<?>[]) ((MapperMethod.ParamMap) m).get("array")));
     }
 
 
@@ -101,8 +102,11 @@ public class BaseSelectProvider {
      */
     public String selectCount(Map<String, Object> m) {
 
-            return MedusaSqlHelper.getSqlGenerator(m).sqlOfSelectCount(
-                    (Object[]) ((MapperMethod.ParamMap) m).get("array"));
+        Object[] targetObjArray = MedusaSqlHelper.transferLambdaForGaze((Object[]) ((MapperMethod.ParamMap) m).get("array"));
+
+        ((MapperMethod.ParamMap) m).put("array", targetObjArray);
+
+        return MedusaSqlHelper.getSqlGenerator(m).sqlOfSelectCount(targetObjArray);
     }
 
 
@@ -115,7 +119,10 @@ public class BaseSelectProvider {
      */
     public String selectMedusaGaze(Map<String, Object> m) {
 
-            return MedusaSqlHelper.getSqlGenerator(m).sqlOfSelectMedusaGaze(
-                    (Object[]) ((MapperMethod.ParamMap) m).get("array"));
+        Object[] targetObjArray = MedusaSqlHelper.transferLambdaForGaze((Object[]) ((MapperMethod.ParamMap) m).get("array"));
+
+        ((MapperMethod.ParamMap) m).put("array", targetObjArray);
+
+        return MedusaSqlHelper.getSqlGenerator(m).sqlOfSelectMedusaGaze(targetObjArray);
     }
 }

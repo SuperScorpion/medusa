@@ -3,6 +3,7 @@ package com.jy.medusa.gaze.stuff;
 
 import com.jy.medusa.gaze.stuff.exception.MedusaException;
 import com.jy.medusa.gaze.stuff.param.BaseRestrictions;
+import com.jy.medusa.gaze.stuff.param.MedusaLambdaColumns;
 import com.jy.medusa.gaze.stuff.param.MedusaLambdaMap;
 import com.jy.medusa.gaze.stuff.param.gele.*;
 import com.jy.medusa.gaze.stuff.param.mix.*;
@@ -698,37 +699,8 @@ public class MedusaSqlGenerator {
         //3.objParams 里的多条件查询类型参数处理
         if(objParams != null && objParams.length > 0) {
 
-            short isd = 0;
-
-            for (Object z : objParams) {///先遍历条件like between类
-
-                if(z instanceof BaseRestrictions) {//modify by neo on 2016.12.09  if(z instanceof BaseParam) {
-
-                    short v = 0;
-
-                    List<BaseParam> paramList = ((BaseRestrictions) z).getParamList();
-
-                    if(paramList != null && !paramList.isEmpty()) {
-
-                        for (BaseParam x : paramList) {
-
-                            baseParamHandler(sbb, x, isd, v);
-                            v++;
-                        }
-                    }
-                }
-
-                //modify by admin on 20220823 for 处理实体类型条件
-                else if(entityClass.isInstance(z)) {
-                    paramEntityConditionHandler(sbb, z, isd);
-                }
-                //modify by admin on 20220823 for 处理普通map<String, Object>
-                else if(z instanceof Map<?, ?> && !(z instanceof MedusaLambdaMap)) {
-                    paramMapConditionHandler(sbb, z, isd);
-                }
-
-                isd++;
-            }
+            /////处理各个参数 add by neo on 2022.09.30
+            processObjParams(sbb, objParams);
         }
 
         String sql = sbb.toString();
@@ -785,42 +757,8 @@ public class MedusaSqlGenerator {
         //4.objParams 里的多条件查询类型参数处理
         if(objParams != null && objParams.length > 0) {
 
-            Pager pa = null;
-
-            short isd = 0;
-
-            for (Object z : objParams) {///遍历各个参数
-
-                if(z instanceof BaseRestrictions) {//modify by neo on 2016.12.09  if(z instanceof BaseParam) {
-
-                    short v = 0;
-
-                    List<BaseParam> paramList = ((BaseRestrictions) z).getParamList();
-
-                    if(paramList != null && !paramList.isEmpty()) {
-
-                        for (BaseParam x : paramList) {
-
-                            baseParamHandler(sbb, x, isd, v);
-                            v++;
-                        }
-                    }
-                } else if (z instanceof Pager) {
-
-                    pa = (Pager) z;//只要最后一个对象 pager
-                }
-
-                //modify by neo on 2022.08.23 for 处理实体类型条件
-                else if(entityClass.isInstance(z)) {
-                    paramEntityConditionHandler(sbb, z, isd);
-                }
-                //modify by neo on 2022.08.23 for 处理普通map<String, Object>
-                else if(z instanceof Map<?, ?> && !(z instanceof MedusaLambdaMap)) {
-                    paramMapConditionHandler(sbb, z, isd);
-                }
-
-                isd++;
-            }
+            /////处理各个参数 add by neo on 2022.09.30
+            Pager pa = processObjParams(sbb, objParams);
 
             ///////分页开始
             if(pa != null) {
@@ -859,6 +797,54 @@ public class MedusaSqlGenerator {
         logger.debug("Medusa: Generated SQL ^_^ " + sbb.toString());
 
         return sbb.toString();
+    }
+
+    /**
+     * 处理各参数条件 并且返回最后一个pager对象
+     * @param sbb
+     * @param objParams
+     * @return
+     */
+    private Pager processObjParams(StringBuilder sbb, Object[] objParams) {
+
+        Pager pa = null;
+
+        short isd = 0;
+
+        for (Object z : objParams) {///遍历各个参数
+
+            if(z instanceof BaseRestrictions) {//modify by neo on 2016.12.09  if(z instanceof BaseParam) {
+
+                short v = 0;
+
+                List<BaseParam> paramList = ((BaseRestrictions) z).getParamList();
+
+                if(paramList != null && !paramList.isEmpty()) {
+
+                    for (BaseParam x : paramList) {
+
+                        baseParamHandler(sbb, x, isd, v);
+                        v++;
+                    }
+                }
+            } else if (z instanceof Pager) {
+
+                pa = (Pager) z;//只要最后一个对象 pager
+            }
+
+            //modify by neo on 2022.08.23 for 处理实体类型条件
+            else if(entityClass.isInstance(z)) {
+                paramEntityConditionHandler(sbb, z, isd);
+            }
+            //modify by neo on 2022.08.23 for 处理普通map<String, Object>
+            else if(z instanceof Map<?, ?> && !(z instanceof MedusaLambdaMap)) {
+                paramMapConditionHandler(sbb, z, isd);
+            }
+
+            isd++;
+        }
+
+        return pa;
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.jy.medusa.gaze.base.update;
 
 import com.jy.medusa.gaze.provider.BaseUpdateProvider;
+import com.jy.medusa.gaze.stuff.param.lambda.HolyGetter;
 import org.apache.ibatis.annotations.UpdateProvider;
 
 import java.util.List;
@@ -19,5 +20,5 @@ public interface UpdateByPrimaryKeyBatchMapper<T> {
      * @return 返回值类型
      */
     @UpdateProvider(type = BaseUpdateProvider.class, method = "updateByPrimaryKeyBatch")
-    int updateByPrimaryKeyBatch(List<T> records, Boolean isExclude, String... paramColumns);
+    int updateByPrimaryKeyBatch(List<T> records, Boolean isExclude, HolyGetter<T>... paramColumns);
 }

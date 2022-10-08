@@ -9,31 +9,31 @@ import java.util.List;
 public abstract class BaseServiceImplMedusaLambda<T> extends BaseServiceImplLambdaBasis<T> implements BaseServiceMedusaLambda<T> {
 
 	public List<T> selectAll(HolyGetter<T>... paramFns) {
-		return mapper.selectAll(transferStringColumnByLambda(paramFns));
+		return mapper.selectAll(paramFns);
 	}
 
 	public T selectOne(T entity, HolyGetter<T>... paramFns) {
-		return mapper.selectOne(entity, transferStringColumnByLambda(paramFns));
+		return mapper.selectOne(entity, paramFns);
 	}
 
 	public List<T> selectByIds(List<Serializable> ids, HolyGetter<T>... paramFns) {
-		return mapper.selectByPrimaryKeyBatch(ids, transferStringColumnByLambda(paramFns));
+		return mapper.selectByPrimaryKeyBatch(ids, paramFns);
 	}
 
 	public T selectById(Serializable id, HolyGetter<T>... paramFns) {
-		return mapper.selectByPrimaryKey(id, transferStringColumnByLambda(paramFns));
+		return mapper.selectByPrimaryKey(id, paramFns);
 	}
 
 	public List<T> selectListBy(T entity, HolyGetter<T>... paramFns) {
-		return mapper.select(entity, transferStringColumnByLambda(paramFns));
+		return mapper.select(entity, paramFns);
 	}
 
 	public int selectCount(Object... mixParams) {
-		return mapper.selectCount(transferLambdaForGaze(mixParams));
+		return mapper.selectCount(mixParams);
 	}
 
 	public List<T> selectByGazeMagic(Object... mixParams) {
-		return mapper.medusaGazeMagic(transferLambdaForGaze(mixParams));
+		return mapper.medusaGazeMagic(mixParams);
 	}
 
 //	public int saveSelective(T entity) {
@@ -45,15 +45,15 @@ public abstract class BaseServiceImplMedusaLambda<T> extends BaseServiceImplLamb
 //	}
 
 	public int saveBatchInclude(List<T> obs, HolyGetter<T>... paramFns) {
-		return mapper.insertBatch(obs, false, transferStringColumnByLambda(paramFns));
+		return mapper.insertBatch(obs, false, paramFns);
 	}
 
 	public int saveBatchExclude(List<T> obs, HolyGetter<T>... paramFns) {
-		return mapper.insertBatch(obs, true, transferStringColumnByLambda(paramFns));
+		return mapper.insertBatch(obs, true, paramFns);
 	}
 
 	public int update(T entity, HolyGetter<T>... paramFns) {
-		return mapper.updateByPrimaryKey(entity, transferStringColumnByLambda(paramFns));
+		return mapper.updateByPrimaryKey(entity, paramFns);
 	}
 
 //	public int updateSelective(T entity) {
@@ -61,11 +61,11 @@ public abstract class BaseServiceImplMedusaLambda<T> extends BaseServiceImplLamb
 //	}
 
 	public int updateBatchInclude(List<T> obs, HolyGetter<T>... paramFns) {
-		return mapper.updateByPrimaryKeyBatch(obs, false, transferStringColumnByLambda(paramFns));
+		return mapper.updateByPrimaryKeyBatch(obs, false, paramFns);
 	}
 
 	public int updateBatchExclude(List<T> obs, HolyGetter<T>... paramFns) {
-		return mapper.updateByPrimaryKeyBatch(obs, true, transferStringColumnByLambda(paramFns));
+		return mapper.updateByPrimaryKeyBatch(obs, true, paramFns);
 	}
 
 //	public int deleteById(Serializable id) {

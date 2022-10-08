@@ -1,6 +1,7 @@
 package com.jy.medusa.gaze.base.update;
 
 import com.jy.medusa.gaze.provider.BaseUpdateProvider;
+import com.jy.medusa.gaze.stuff.param.lambda.HolyGetter;
 import org.apache.ibatis.annotations.UpdateProvider;
 
 /**
@@ -17,5 +18,5 @@ public interface UpdateByPrimaryKeyMapper<T> {
      * @return 返回值类型
      */
     @UpdateProvider(type = BaseUpdateProvider.class, method = "updateByPrimaryKey")
-    int updateByPrimaryKey(T record, String... paramColumns);
+    int updateByPrimaryKey(T record, HolyGetter<T>... paramColumns);
 }

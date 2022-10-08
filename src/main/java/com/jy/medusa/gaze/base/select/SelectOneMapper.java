@@ -2,6 +2,7 @@
 package com.jy.medusa.gaze.base.select;
 
 import com.jy.medusa.gaze.provider.BaseSelectProvider;
+import com.jy.medusa.gaze.stuff.param.lambda.HolyGetter;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.SelectProvider;
 
@@ -20,5 +21,5 @@ public interface SelectOneMapper<T> {
      */
     @SelectProvider(type = BaseSelectProvider.class, method = "selectOne")
     @ResultMap("BaseResultMap")
-    T selectOne(T record, String... paramColumns);
+    T selectOne(T record, HolyGetter<T>... paramColumns);
 }

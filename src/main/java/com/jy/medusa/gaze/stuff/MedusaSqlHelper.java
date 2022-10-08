@@ -6,6 +6,10 @@ import com.jy.medusa.gaze.stuff.annotation.Table;
 import com.jy.medusa.gaze.stuff.cache.MedusaSqlHelperCacheManager;
 import com.jy.medusa.gaze.stuff.cache.MyReflectCacheManager;
 import com.jy.medusa.gaze.stuff.exception.MedusaException;
+import com.jy.medusa.gaze.stuff.param.MedusaLambdaColumns;
+import com.jy.medusa.gaze.stuff.param.MedusaLambdaMap;
+import com.jy.medusa.gaze.stuff.param.lambda.HolyGetPropertyNameLambda;
+import com.jy.medusa.gaze.stuff.param.lambda.HolyGetter;
 import com.jy.medusa.gaze.utils.MedusaCommonUtils;
 import com.jy.medusa.gaze.utils.MedusaReflectionUtils;
 import com.jy.medusa.gaze.utils.SystemConfigs;
@@ -34,6 +38,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by neo on 16/9/14.
@@ -886,5 +891,75 @@ public class MedusaSqlHelper {
         } else {
             throw new MedusaException("Medusa: The java type no one can match");
         }
+    }
+
+
+    /**
+     * 处理 MedusaLambdaColumns MedusaLambdaMap 的lambda for gaze
+     * @param paramObjs
+     * @return
+     */
+    public static Object[] transferLambdaForGaze(Object[] paramObjs) {
+
+        if(paramObjs == null || paramObjs.length == 0) return new Object[]{};
+
+//		List<Object> paramList = Arrays.asList(paramObjs);//https://blog.csdn.net/x541211190/article/details/79597236
+
+        List<Object> paramList= Arrays.stream(paramObjs).collect(Collectors.toList());
+
+//        List<Object> paramList = new ArrayList<>(paramObjs.length);
+//		Collections.addAll(paramList, paramObjs);
+
+        ListIterator<Object> lit = paramList.listIterator();
+        while (lit.hasNext()) {
+            Object param = lit.next();
+            if (param instanceof MedusaLambdaColumns) {
+                for (Object fns : ((MedusaLambdaColumns) param).getParamList()) {
+                    if (fns instanceof HolyGetter) {
+                        lit.add(HolyGetPropertyNameLambda.convertToFieldName((HolyGetter<?>)fns));
+                    }
+                }
+            } else if (param instanceof MedusaLambdaMap) {
+
+                HashMap<String, Object> resultMap = new HashMap<>(((MedusaLambdaMap) param).size());
+
+                Set<Map.Entry<HolyGetter<?>, Object>> entrySet = ((Map)param).entrySet();
+                Iterator<Map.Entry<HolyGetter<?>, Object>> iter = entrySet.iterator();
+
+                while(iter.hasNext()) {
+                    Map.Entry<HolyGetter<?>, Object> entry = iter.next();
+                    if (entry != null && entry.getKey() instanceof HolyGetter<?> && entry.getValue() != null) {//modify by neo on 2020.01.19
+                        if(entry.getKey() == null) continue;
+                        String fieldName = HolyGetPropertyNameLambda.convertToFieldName(entry.getKey());
+                        resultMap.put(fieldName, entry.getValue());
+                    }
+                }
+                lit.add(resultMap);
+            }/*else if (param instanceof HolyGetter) {//Object is not a functionInterface
+                lit.add(HolyGetPropertyNameLambda.convertToFieldName((HolyGetter<T>)param));
+            } else {
+			    //do nothing
+            }*/
+        }
+
+        return paramList.toArray(new Object[]{});
+    }
+
+    /**
+     * 处理 普通lambda字段 转为字符串字段
+     * @param paramFns
+     * @return
+     */
+    public static String[] transferStringColumnByLambda(HolyGetter<?>[] paramFns) {
+
+        if(paramFns == null || paramFns.length == 0) return null;
+
+        List<Object> paramList = new ArrayList<>(paramFns.length);
+
+        for (HolyGetter<?> fns : paramFns) {
+            paramList.add(HolyGetPropertyNameLambda.convertToFieldName(fns));
+        }
+
+        return paramList.toArray(new String[]{});
     }
 }

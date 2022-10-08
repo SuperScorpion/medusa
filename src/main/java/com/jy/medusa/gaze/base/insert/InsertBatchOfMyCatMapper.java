@@ -2,6 +2,7 @@
 package com.jy.medusa.gaze.base.insert;
 
 import com.jy.medusa.gaze.provider.BaseInsertProvider;
+import com.jy.medusa.gaze.stuff.param.lambda.HolyGetter;
 import com.jy.medusa.gaze.utils.SystemConfigs;
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Options;
@@ -24,5 +25,5 @@ public interface InsertBatchOfMyCatMapper<T> {
      */
     @InsertProvider(type = BaseInsertProvider.class, method = "insertBatchOfMyCat")
     @Options(useGeneratedKeys = true, keyProperty = "param1." + SystemConfigs.PRIMARY_KEY)///for mybatis 3.5.3 & modify by neo on 2020.01.20
-    int insertBatchOfMyCat(List<T> records, String mycatSeq, Boolean isExclude, String... paramColumns);
+    int insertBatchOfMyCat(List<T> records, String mycatSeq, Boolean isExclude, HolyGetter<T>... paramColumns);
 }

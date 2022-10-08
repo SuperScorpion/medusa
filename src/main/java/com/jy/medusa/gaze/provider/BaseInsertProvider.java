@@ -2,6 +2,7 @@ package com.jy.medusa.gaze.provider;
 
 import com.jy.medusa.gaze.stuff.MedusaSqlHelper;
 import com.jy.medusa.gaze.stuff.exception.MedusaException;
+import com.jy.medusa.gaze.stuff.param.lambda.HolyGetter;
 import org.apache.ibatis.binding.MapperMethod;
 
 import java.util.Map;
@@ -42,7 +43,7 @@ public class BaseInsertProvider {
             return MedusaSqlHelper.getSqlGenerator(m).sqlOfInsertBatch(
                     ((MapperMethod.ParamMap) m).get("param1"),
                     (Boolean) ((MapperMethod.ParamMap) m).get("param2"),
-                    (Object[]) ((MapperMethod.ParamMap) m).get("param3"));
+                    MedusaSqlHelper.transferStringColumnByLambda((HolyGetter<?>[]) ((MapperMethod.ParamMap) m).get("param3")));
 //        } else {
 //            throw new MedusaException("Medusa: insertBatch MapperMethod.ParamMap Exception");
 //        }
@@ -60,7 +61,7 @@ public class BaseInsertProvider {
                     ((MapperMethod.ParamMap) m).get("param1"),
                     ((MapperMethod.ParamMap) m).get("param2"),
                     (Boolean) ((MapperMethod.ParamMap) m).get("param3"),
-                    (Object[]) ((MapperMethod.ParamMap) m).get("param4"));
+                    MedusaSqlHelper.transferStringColumnByLambda((HolyGetter<?>[]) ((MapperMethod.ParamMap) m).get("param4")));
 //        } else {
 //            throw new MedusaException("Medusa: insertBatchOfMyCat MapperMethod.ParamMap Exception");
 //        }

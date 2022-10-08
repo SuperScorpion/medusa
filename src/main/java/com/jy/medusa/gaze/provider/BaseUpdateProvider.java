@@ -1,6 +1,7 @@
 package com.jy.medusa.gaze.provider;
 
 import com.jy.medusa.gaze.stuff.MedusaSqlHelper;
+import com.jy.medusa.gaze.stuff.param.lambda.HolyGetter;
 import org.apache.ibatis.binding.MapperMethod;
 
 import java.util.Map;
@@ -22,7 +23,7 @@ public class BaseUpdateProvider {
 //        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
             return MedusaSqlHelper.getSqlGenerator(m).sqlOfUpdateByPrimaryKey(
                     ((MapperMethod.ParamMap) m).get("param1"),
-                    (Object[]) ((MapperMethod.ParamMap) m).get("param2"));
+                    MedusaSqlHelper.transferStringColumnByLambda((HolyGetter<?>[]) ((MapperMethod.ParamMap) m).get("param2")));
 //        } else {
 //            throw new MedusaException("Medusa: updateByPrimaryKey MapperMethod.ParamMap Exception");
 //        }
@@ -48,7 +49,7 @@ public class BaseUpdateProvider {
             return MedusaSqlHelper.getSqlGenerator(m).sqlOfUpdateByPrimaryKeyBatch(
                     ((MapperMethod.ParamMap) m).get("param1"),
                     (Boolean) ((MapperMethod.ParamMap) m).get("param2"),
-                    (Object[]) ((MapperMethod.ParamMap) m).get("param3"));
+                    MedusaSqlHelper.transferStringColumnByLambda((HolyGetter<?>[]) ((MapperMethod.ParamMap) m).get("param3")));
 //        } else {
 //            throw new MedusaException("Medusa: updateByPrimaryKeyBatch MapperMethod.ParamMap Exception");
 //        }

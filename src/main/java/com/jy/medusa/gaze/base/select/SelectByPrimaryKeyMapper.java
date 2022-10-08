@@ -2,6 +2,7 @@
 package com.jy.medusa.gaze.base.select;
 
 import com.jy.medusa.gaze.provider.BaseSelectProvider;
+import com.jy.medusa.gaze.stuff.param.lambda.HolyGetter;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.SelectProvider;
 
@@ -22,5 +23,5 @@ public interface SelectByPrimaryKeyMapper<T> {
      */
     @SelectProvider(type = BaseSelectProvider.class, method = "selectByPrimaryKey")
     @ResultMap("BaseResultMap")
-    T selectByPrimaryKey(Serializable pk, String... paramColumns);
+    T selectByPrimaryKey(Serializable pk, HolyGetter... paramColumns);
 }
