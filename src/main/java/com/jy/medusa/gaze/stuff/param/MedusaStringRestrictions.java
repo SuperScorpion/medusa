@@ -12,6 +12,7 @@ import com.jy.medusa.gaze.stuff.param.sort.OrderByParam;
 import java.util.List;
 
 /**
+ * @deprecated
  * Created by neo on 2016/10/14.
  * 一个构造参数对象的类 方便用户使用
  */

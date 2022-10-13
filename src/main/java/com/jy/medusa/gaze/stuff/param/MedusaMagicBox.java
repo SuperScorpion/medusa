@@ -11,6 +11,10 @@ public class MedusaMagicBox {
         return Pager.getPager();
     }
 
+    /**
+     * @deprecated
+     * @return
+     */
     public static MedusaStringRestrictions getStringRestrictions() {
         return MedusaStringRestrictions.getRestrictions();
     }
