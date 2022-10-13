@@ -1,6 +1,6 @@
 package com.jy.medusa.gaze.stuff.param;
 
-import com.jy.medusa.gaze.stuff.param.mix.BaseParam;
+import com.jy.medusa.gaze.stuff.param.base.BaseParam;
 
 import java.util.ArrayList;
 import java.util.List;

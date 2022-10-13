@@ -1,10 +1,13 @@
 package com.jy.medusa.gaze.stuff.param;
 
+import com.jy.medusa.gaze.stuff.Pager;
 import com.jy.medusa.gaze.stuff.param.gele.GreatEqualParam;
 import com.jy.medusa.gaze.stuff.param.gele.GreatThanParam;
 import com.jy.medusa.gaze.stuff.param.gele.LessEqualParam;
 import com.jy.medusa.gaze.stuff.param.gele.LessThanParam;
 import com.jy.medusa.gaze.stuff.param.mix.*;
+import com.jy.medusa.gaze.stuff.param.sort.GroupByParam;
+import com.jy.medusa.gaze.stuff.param.sort.OrderByParam;
 
 import java.util.List;
 
@@ -106,5 +109,25 @@ public class MedusaStringRestrictions<T> extends BaseRestrictions<T, String, Med
 
     public static MedusaStringRestrictions getRestrictions() {
         return new MedusaStringRestrictions<>();
+    }
+
+
+    /////add by neo on 20221013 for order by and group by/////
+    public MedusaStringRestrictions orderByDescParam(String c) {
+
+        paramList.add(new OrderByParam(c, Pager.SortTypeEnum.SORT_DESC));
+        return this;
+    }
+
+    public MedusaStringRestrictions orderByAscParam(String c) {
+
+        paramList.add(new OrderByParam(c, Pager.SortTypeEnum.SORT_ASC));
+        return this;
+    }
+
+    public MedusaStringRestrictions groupByParam(String c) {
+
+        paramList.add(new GroupByParam(c));
+        return this;
     }
 }

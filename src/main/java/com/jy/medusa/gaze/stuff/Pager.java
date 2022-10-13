@@ -122,9 +122,9 @@ public class Pager<T> implements Serializable {
 
 	public enum SortTypeEnum {
 
-		SORT_DESC("desc"),
+		SORT_DESC("DESC"),
 
-		SORT_ASC("asc");
+		SORT_ASC("ASC");
 
 		String code;
 

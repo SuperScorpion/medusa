@@ -10,14 +10,22 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class HolyGetPropertyNameLambda {
 
     private static final Logger logger = LoggerFactory.getLogger(HolyGetPropertyNameLambda.class);
 
-    //// TODO: 2020/4/23 由于 Class 每次产生的不一样 所以缓存的没有意义
-//    private static Map<Class, WeakReference<SerializedLambda>> CLASS_LAMBDA_CACHE = new ConcurrentHashMap<>();
+    /**
+     * 2020/4/23 热缓存增加反射效率
+     * 在不同位置同样的medusa方法里 lambda参数的class不一样 比如 Users::getName 在不同medusa方法括号里时 获取到的class是不一样的
+     * 这里使用弱引用value 考虑到medusa方法越多 缓存越大 但是很多冷数据不需要一直缓存 让gc自动回收
+     * 弱引用:具有弱引用的对象拥有更短暂的生命周期。如果一个对象只有弱引用存在了，则下次GC将会回收掉该对象（不管当前内存空间足够与否）
+     */
+    private static Map<Class, WeakReference<SerializedLambda>> CLASS_LAMBDA_CACHE = new ConcurrentHashMap<>();
 
     /**
      * 根据getter方法取属性名称
@@ -30,13 +38,11 @@ public class HolyGetPropertyNameLambda {
         if (lambda == null) return "";
         String methodName = lambda.getImplMethodName();
         String prefix = null;
-        if(methodName.startsWith("get")){
+        if (methodName.startsWith("get")) {
             prefix = "get";
-        }
-        else if(methodName.startsWith("is")){
+        } else if (methodName.startsWith("is")) {
             prefix = "is";
-        }
-        if(prefix == null){
+        } else {
             logger.warn("Medusa: SerializedLambda里无效的getter方法: " + methodName);
             prefix = "";
         }
@@ -55,7 +61,7 @@ public class HolyGetPropertyNameLambda {
     public static <T, U> String convertToFieldName(HolySetter<T, U> fn) {
         SerializedLambda lambda = getSerializedLambda(fn);
         String methodName = lambda.getImplMethodName();
-        if(!methodName.startsWith("set")) {
+        if (!methodName.startsWith("set")) {
             logger.warn("Medusa: SerializedLambda里无效的setter方法：" + methodName);
         }
         return MedusaGenUtils.lowcaseFirst(methodName.replace("set", ""));
@@ -68,20 +74,17 @@ public class HolyGetPropertyNameLambda {
      * @return 返回值
      */
     public static SerializedLambda getSerializedLambda(Serializable fn) {
-//        SerializedLambda lambda = CLASS_LAMBDA_CACHE.get(fn.getClass()).get();
-//        if(lambda == null) {
-        SerializedLambda lambda = null;
-        if (fn != null) {
+        SerializedLambda lambda = CLASS_LAMBDA_CACHE.get(fn.getClass()) == null ? null : CLASS_LAMBDA_CACHE.get(fn.getClass()).get();
+        if (lambda == null) {
             try {
                 Method method = fn.getClass().getDeclaredMethod("writeReplace");
                 method.setAccessible(Boolean.TRUE);
                 lambda = (SerializedLambda) method.invoke(fn);
-//                CLASS_LAMBDA_CACHE.put(fn.getClass(), new WeakReference<>(lambda));
+                CLASS_LAMBDA_CACHE.put(fn.getClass(), new WeakReference<>(lambda));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-//        }
         return lambda;
     }
 }

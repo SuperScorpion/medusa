@@ -1,5 +1,6 @@
 package com.jy.medusa.gaze.stuff.param;
 
+import com.jy.medusa.gaze.stuff.Pager;
 import com.jy.medusa.gaze.stuff.param.gele.GreatEqualParam;
 import com.jy.medusa.gaze.stuff.param.gele.GreatThanParam;
 import com.jy.medusa.gaze.stuff.param.gele.LessEqualParam;
@@ -7,6 +8,8 @@ import com.jy.medusa.gaze.stuff.param.gele.LessThanParam;
 import com.jy.medusa.gaze.stuff.param.lambda.HolyGetPropertyNameLambda;
 import com.jy.medusa.gaze.stuff.param.lambda.HolyGetter;
 import com.jy.medusa.gaze.stuff.param.mix.*;
+import com.jy.medusa.gaze.stuff.param.sort.GroupByParam;
+import com.jy.medusa.gaze.stuff.param.sort.OrderByParam;
 
 import java.util.List;
 
@@ -108,5 +111,25 @@ public class MedusaLambdaRestrictions<T> extends BaseRestrictions<T, HolyGetter<
 
     public static MedusaLambdaRestrictions getRestrictions() {
         return new MedusaLambdaRestrictions<>();
+    }
+
+
+    /////add by neo on 20221013 for order by and group by/////
+    public MedusaLambdaRestrictions<T> orderByDescParam(HolyGetter<T> fn) {
+
+        paramList.add(new OrderByParam(HolyGetPropertyNameLambda.convertToFieldName(fn), Pager.SortTypeEnum.SORT_DESC));
+        return this;
+    }
+
+    public MedusaLambdaRestrictions<T> orderByAscParam(HolyGetter<T> fn) {
+
+        paramList.add(new OrderByParam(HolyGetPropertyNameLambda.convertToFieldName(fn), Pager.SortTypeEnum.SORT_ASC));
+        return this;
+    }
+
+    public MedusaLambdaRestrictions<T> groupByParam(HolyGetter<T> fn) {
+
+        paramList.add(new GroupByParam(HolyGetPropertyNameLambda.convertToFieldName(fn)));
+        return this;
     }
 }

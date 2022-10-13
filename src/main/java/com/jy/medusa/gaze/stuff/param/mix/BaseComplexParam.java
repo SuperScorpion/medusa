@@ -1,4 +1,6 @@
 package com.jy.medusa.gaze.stuff.param.mix;
 
-public abstract class BaseComplexParam extends BaseParam{
+import com.jy.medusa.gaze.stuff.param.base.BaseParam;
+
+public abstract class BaseComplexParam extends BaseParam {
 }

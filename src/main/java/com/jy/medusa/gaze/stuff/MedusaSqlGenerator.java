@@ -3,10 +3,13 @@ package com.jy.medusa.gaze.stuff;
 
 import com.jy.medusa.gaze.stuff.exception.MedusaException;
 import com.jy.medusa.gaze.stuff.param.BaseRestrictions;
-import com.jy.medusa.gaze.stuff.param.MedusaLambdaColumns;
 import com.jy.medusa.gaze.stuff.param.MedusaLambdaMap;
+import com.jy.medusa.gaze.stuff.param.base.BaseParam;
 import com.jy.medusa.gaze.stuff.param.gele.*;
 import com.jy.medusa.gaze.stuff.param.mix.*;
+import com.jy.medusa.gaze.stuff.param.sort.BaseSortParam;
+import com.jy.medusa.gaze.stuff.param.sort.GroupByParam;
+import com.jy.medusa.gaze.stuff.param.sort.OrderByParam;
 import com.jy.medusa.gaze.utils.MedusaCommonUtils;
 import com.jy.medusa.gaze.utils.MedusaDateUtils;
 import com.jy.medusa.gaze.utils.MedusaReflectionUtils;
@@ -764,9 +767,9 @@ public class MedusaSqlGenerator {
             if(pa != null) {
 
                 //modify by neo on 20220822 for lambda
-                if(pa.getOrderByList() != null && pa.getOrderByList().size() > 0) {
+                if(pa.getOrderByList() != null && pa.getOrderByList().size() > 0 && sbb.lastIndexOf("ORDER BY") == -1) {
 
-                    sbb.append(" order by ");//modify by neo 2016.10.12
+                    sbb.append(" ORDER BY ");//modify by neo 2016.10.12
 
                     int i = 0;
                     for(; i < pa.getOrderByList().size(); i++) {
@@ -783,7 +786,7 @@ public class MedusaSqlGenerator {
                     if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));//去除最后的一个,
                 }
 
-                sbb.append(" limit ");
+                sbb.append(" LIMIT ");
                 sbb.append(pa.getStartRecord());
                 sbb.append(",");
                 sbb.append(pa.getPageSize());
@@ -1076,6 +1079,24 @@ public class MedusaSqlGenerator {
                 } else if (z instanceof LessEqualParam) {
 
                     sbb.append(" AND ").append(column).append(" <= ").append("#{array[").append(isd).append("].paramList[").append(ind).append("].value");///modify by neo on 2020.02.13
+                }
+            }
+        } else if (z instanceof BaseSortParam) {
+
+            if (z instanceof OrderByParam) {
+
+                Pager.SortTypeEnum p = ((OrderByParam) z).getValue();
+
+                if (sbb.lastIndexOf("ORDER BY") != -1) {
+                    sbb.insert(sbb.lastIndexOf(" ORDER BY ") + " ORDER BY ".length(), column.concat(" ").concat(p.getCode()).concat(","));
+                } else {
+                    sbb.append(" ORDER BY ").append(column).append(" ").append(p.getCode());
+                }
+            } else if (z instanceof GroupByParam) {
+                if (sbb.lastIndexOf("GROUP BY") != -1) {
+                    sbb.insert(sbb.lastIndexOf(" GROUP BY ") + " GROUP BY ".length(), column.concat(","));
+                } else {
+                    sbb.append(" GROUP BY ").append(column);
                 }
             }
         }
