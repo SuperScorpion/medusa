@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class MedusaLambdaRestrictions<T> extends BaseRestrictions<T, HolyGetter<T>, MedusaLambdaRestrictions<T>> {
 
-    public MedusaLambdaRestrictions<T> singleParam(HolyGetter<T> fn, Object v) {
+    public MedusaLambdaRestrictions<T> singleEqParam(HolyGetter<T> fn, Object v) {
 
         paramList.add(new SingleParam(HolyGetPropertyNameLambda.convertToFieldName(fn), v, false));
         return this;

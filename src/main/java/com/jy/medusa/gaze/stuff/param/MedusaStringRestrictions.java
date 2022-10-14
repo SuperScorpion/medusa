@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class MedusaStringRestrictions<T> extends BaseRestrictions<T, String, MedusaStringRestrictions<T>> {
 
-    public MedusaStringRestrictions singleParam(String c, Object v) {
+    public MedusaStringRestrictions singleEqParam(String c, Object v) {
 
         paramList.add(new SingleParam(c, v, false));
         return this;

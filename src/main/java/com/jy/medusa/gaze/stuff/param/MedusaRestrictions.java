@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface MedusaRestrictions<T, P, R> extends Serializable {
 
-    R singleParam(P fn, Object v);
+    R singleEqParam(P fn, Object v);
 
     R singleNeqParam(P fn, Object v);
 
