@@ -18,13 +18,13 @@ import java.util.List;
  */
 public class MedusaStringRestrictions<T> extends BaseRestrictions<T, String, MedusaStringRestrictions<T>> {
 
-    public MedusaStringRestrictions singleEqParam(String c, Object v) {
+    public MedusaStringRestrictions eqParam(String c, Object v) {
 
         paramList.add(new SingleParam(c, v, false));
         return this;
     }
 
-    public MedusaStringRestrictions singleNeqParam(String c, Object v) {
+    public MedusaStringRestrictions notEqParam(String c, Object v) {
 
         paramList.add(new SingleParam(c, v, true));
         return this;
