@@ -101,7 +101,11 @@ public class Pager<T> implements Serializable {
 //		this.orderTypeList = orderTypeList;
 //	}
 
-
+	/**
+	 * @deprecated
+	 * @param fns
+	 * @return
+	 */
 	public Pager<T> setSortColumn(HolyGetter<T> fns) {
 
 		orderByList = orderByList == null ? new ArrayList<>() : orderByList;
@@ -111,6 +115,11 @@ public class Pager<T> implements Serializable {
 		return this;
 	}
 
+	/**
+	 * @deprecated
+	 * @param sortTypeEnum
+	 * @return
+	 */
 	public Pager<T> setSortType(SortTypeEnum sortTypeEnum) {
 
 		orderTypeList = orderTypeList == null ? new ArrayList<>() : orderTypeList;
