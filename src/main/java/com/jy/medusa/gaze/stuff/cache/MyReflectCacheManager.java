@@ -18,10 +18,10 @@ public class MyReflectCacheManager {
     private static final Logger logger = LoggerFactory.getLogger(MyReflectCacheManager.class);
 
     /**
-     * 缓存方法
+     * Cache Method and Field
      */
-    private static volatile Map<Class<?>, Method[]> METHODS_CACHEMAP = new ConcurrentHashMap<>();///缓存methods
-    private static volatile Map<Class<?>, Field[]> FIELDS_CACHEMAP = new ConcurrentHashMap<>();/////缓存fields
+    private static final Map<Class<?>, Method[]> METHODS_CACHEMAP = new ConcurrentHashMap<>();///缓存methods
+    private static final Map<Class<?>, Field[]> FIELDS_CACHEMAP = new ConcurrentHashMap<>();/////缓存fields
 
 
     /**

@@ -25,7 +25,7 @@ public class HolyGetPropertyNameLambda {
      * 这里使用弱引用value 考虑到medusa方法越多 缓存越大 但是很多冷数据不需要一直缓存 让gc自动回收
      * 弱引用:具有弱引用的对象拥有更短暂的生命周期。如果一个对象只有弱引用存在了，则下次GC将会回收掉该对象（不管当前内存空间足够与否）
      */
-    private static Map<Class, WeakReference<SerializedLambda>> CLASS_LAMBDA_CACHE = new ConcurrentHashMap<>();
+    private static final Map<Class, WeakReference<SerializedLambda>> CLASS_LAMBDA_CACHE = new ConcurrentHashMap<>();
 
     /**
      * 根据getter方法取属性名称
