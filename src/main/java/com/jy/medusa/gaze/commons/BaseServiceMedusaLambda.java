@@ -29,7 +29,7 @@ public interface BaseServiceMedusaLambda<T> {
 
 	int saveBatchExclude(List<T> obs, HolyGetter<T>... paramFns);
 
-	int update(T entity, HolyGetter<T>... paramFns);
+//	int update(T entity, HolyGetter<T>... paramFns);
 
 //	int updateSelective(T entity);
 

@@ -52,9 +52,9 @@ public abstract class BaseServiceImplMedusaLambda<T> extends BaseServiceImplLamb
 		return mapper.insertBatch(obs, true, paramFns);
 	}
 
-	public int update(T entity, HolyGetter<T>... paramFns) {
-		return mapper.updateByPrimaryKey(entity, paramFns);
-	}
+//	public int update(T entity, HolyGetter<T>... paramFns) {
+//		return mapper.updateByPrimaryKey(entity, paramFns);
+//	}
 
 //	public int updateSelective(T entity) {
 //		return mapper.updateByPrimaryKeySelective(entity);

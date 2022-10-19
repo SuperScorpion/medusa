@@ -31,7 +31,7 @@ public interface BaseServiceMedusa<T> extends BaseServiceMedusaLambda<T> {
 
 	int saveBatch(List<T> obs);
 
-//	int update(T entity);
+	int update(T entity);
 
 	int updateSelective(T entity);
 

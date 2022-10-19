@@ -91,10 +91,8 @@ public abstract class AnnotationHandler {
 
     protected abstract void processErrorMsg(ErrorInfo errorInfo, List<String> messageList);
 
-    protected void processErrorMsgDefault(ErrorInfo errorInfo, List<String> messageList) {
-        if(errorInfo != null) {
-            errorInfo.setMessageList(messageList);//等待循环完成后 方法里的参数都校验完 再给结果参数赋值去
-        } else if(errorInfo == null && !messageList.isEmpty()) {//add by neo on 2022.07.29
+    protected void processErrorMsgDefault(List<String> messageList) {
+        if(messageList != null && !messageList.isEmpty()) {//add by neo on 2022.07.29
              throw new ValidException(messageList.get(0));
         } else {
             //do nothing
