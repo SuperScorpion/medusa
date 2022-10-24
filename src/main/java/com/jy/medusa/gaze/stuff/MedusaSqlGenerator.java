@@ -670,8 +670,8 @@ public class MedusaSqlGenerator {
             logger.debug("Medusa: Successfully cleared the query page in the cache");
 
             String countSq = cacheSq.replaceAll("SELECT\\b.*\\bFROM", "SELECT COUNT(1) FROM")
-                    .replaceAll("\\border by\\b.*", "")
-                    .replaceAll("\\blimit [0-9]*,[0-9]*\\b.*", "");
+                    .replaceAll("\\bORDER BY\\s+\\w+\\s+[ASC|DESC]*", "")
+                    .replaceAll("\\bLIMIT [0-9]*,[0-9]*", "");
             logger.debug("Medusa: Successfully returns the count sql of pages in the cache ^_^ " + countSq);
 
             return countSq;
@@ -985,7 +985,7 @@ public class MedusaSqlGenerator {
      */
     public void baseParamHandler(StringBuilder sbb, Object z, short isd, short ind) {
 
-        if(z == null || MedusaCommonUtils.isBlank(((BaseParam) z).getColumn())) return;
+        if (z == null || MedusaCommonUtils.isBlank(((BaseParam) z).getColumn())) return;
 
         //转换一下column的属性值 也许是数据库字段 也有可能是属性值
         String column = MedusaSqlHelper.buildColumnNameForAll(((BaseParam) z).getColumn(), currentFieldColumnNameMap);
@@ -997,7 +997,7 @@ public class MedusaSqlGenerator {
                 Object p = ((SingleParam) z).getValue();
                 Boolean f = ((SingleParam) z).getNeq();
 
-                if(p != null && MedusaCommonUtils.isNotBlank(p.toString()) && f != null) {
+                if (p != null && MedusaCommonUtils.isNotBlank(p.toString()) && f != null) {
                     sbb.append(" AND ").append(column);
                     if(f)
                         sbb.append(" != ");
@@ -1010,7 +1010,7 @@ public class MedusaSqlGenerator {
                 Object start = ((BetweenParam) z).getStart();
                 Object end = ((BetweenParam) z).getEnd();
 
-                if(start != null && end != null && MedusaCommonUtils.isNotBlank(start.toString()) && MedusaCommonUtils.isNotBlank(end.toString())) {
+                if (start != null && end != null && MedusaCommonUtils.isNotBlank(start.toString()) && MedusaCommonUtils.isNotBlank(end.toString())) {
                     sbb.append(" AND ").append(column).append(" BETWEEN ")
                             //.append("'").append(MedusaDateUtils.convertDateToStr(p.getEnd(), MedusaDateUtils.DATE_FULL_STR)).append("'")
                             .append("#{array[").append(isd).append("].paramList[").append(ind).append("].start}")///modify by neo on 2020.02.13
@@ -1022,7 +1022,7 @@ public class MedusaSqlGenerator {
                 List p = ((NotInParam) z).getValue();
                 Boolean f = ((NotInParam) z).getNotIn();
 
-                if(p != null && p.size() > 0 && f != null) {
+                if (p != null && p.size() > 0 && f != null) {
                     sbb.append(" AND ").append(column);
 
                     if (f) {
@@ -1032,28 +1032,28 @@ public class MedusaSqlGenerator {
                     }
 
                     int k = 0;
-                    while(k < p.size()) {
-                        if(p.get(k) != null && MedusaCommonUtils.isNotBlank(p.get(k).toString())) {//add by neo on 20220923
+                    while (k < p.size()) {
+                        if (p.get(k) != null && MedusaCommonUtils.isNotBlank(p.get(k).toString())) {//add by neo on 20220923
                             sbb.append("#{array[").append(isd).append("].paramList[").append(ind).append("].value[").append(k).append("]},");///modify by neo on 2020.02.13
                             k += 1;
                         }
                     }
 
-                    if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
+                    if (sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
                     sbb.append(")");
                 }
             } else if (z instanceof LikeParam) {
 
                 Object p = ((LikeParam) z).getValue();
 
-                if(p != null && MedusaCommonUtils.isNotBlank(p.toString())) {
+                if (p != null && MedusaCommonUtils.isNotBlank(p.toString())) {
                     sbb.append(" AND ").append(column).append(" LIKE ").append("CONCAT('%',#{array[").append(isd).append("].paramList[").append(ind).append("].value},'%')");///modify by neo on 2020.02.13
                 }
             } else if (z instanceof NotNullParam) {
 
                 Boolean p = ((NotNullParam) z).getValue();
 
-                if(p != null) {
+                if (p != null) {
                     if (p) {
                         sbb.append(" AND ").append(column).append(" IS NOT NULL ");
                     } else {
@@ -1065,7 +1065,7 @@ public class MedusaSqlGenerator {
 
             Object p = ((BaseGeLeParam) z).getValue();
 
-            if(p != null && MedusaCommonUtils.isNotBlank(p.toString())) {
+            if (p != null && MedusaCommonUtils.isNotBlank(p.toString())) {
 
                 if (z instanceof GreatThanParam) {
 
