@@ -9,7 +9,6 @@ import java.util.List;
  * after : BaseServiceMedusa -  BaseServiceMedusaLambda
  * @param <T> 参数
  */
-//@Service
 public abstract class BaseServiceImplMedusa<T> extends BaseServiceImplMedusaLambda<T> implements BaseServiceMedusa<T> {
 
 //	public List<T> selectAll() {

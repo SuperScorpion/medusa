@@ -5,7 +5,6 @@ import com.jy.medusa.gaze.stuff.param.lambda.HolyGetter;
 import java.io.Serializable;
 import java.util.List;
 
-//@Service
 public abstract class BaseServiceImplMedusaLambda<T> extends BaseServiceImplLambdaBasis<T> implements BaseServiceMedusaLambda<T> {
 
 	public List<T> selectAll(HolyGetter<T>... paramFns) {

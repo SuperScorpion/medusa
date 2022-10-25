@@ -2,7 +2,6 @@ package com.jy.medusa.gaze.commons;
 
 import javax.inject.Inject;
 
-//@Service
 public abstract class BaseServiceImplLambdaBasis<T> {
 
 	/**
@@ -12,14 +11,6 @@ public abstract class BaseServiceImplLambdaBasis<T> {
 	 * 只能使用依赖类型注入 @Autowired和@Inject 等效
      * 思考: @Resource 注入的优先级为 Match by 1.Name2.Type3.Qualifier byType是否不支持泛型
 	 */
-//    @Resource
-//	@Autowired
 	@Inject
 	protected Mapper<T> mapper;
-
-//	@Resource
-//	@Autowired
-//	protected void initMapper (Mapper<T> mapper) {
-//		this.mapper = mapper;
-//	}
 }

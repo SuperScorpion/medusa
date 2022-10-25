@@ -11,9 +11,7 @@ import com.jy.medusa.gaze.stuff.param.sort.BaseSortParam;
 import com.jy.medusa.gaze.stuff.param.sort.GroupByParam;
 import com.jy.medusa.gaze.stuff.param.sort.OrderByParam;
 import com.jy.medusa.gaze.utils.MedusaCommonUtils;
-import com.jy.medusa.gaze.utils.MedusaDateUtils;
 import com.jy.medusa.gaze.utils.MedusaReflectionUtils;
-import com.jy.medusa.gaze.utils.SystemConfigs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -124,7 +122,6 @@ public class MedusaSqlGenerator {
      * @return 返回值类型
      */
     public String sqlOfInsert() {//modify by neo on 2016.11.12 Object t
-//        List<Object> values = obtainFieldValues(t);// modify by neo on 2016.11.15
 
         String[] paraArray = MedusaSqlHelper.concatInsertDynamicSql(currentFieldTypeNameMap, currentFieldColumnNameMap, null, pkName);
         String insertColumn = paraArray[1], insertDynamicSql = paraArray[0];
@@ -169,49 +166,10 @@ public class MedusaSqlGenerator {
     }
 
     /**
-     * @deprecated
-     * 提供给生成新增SQL 使用
-     * @return 返回值类型
-     */
-    private List<Object> obtainFieldValues(Object t) {
-        List<Object> values = new ArrayList<>();
-        for (String column : columns) {
-            Object value = MedusaReflectionUtils.obtainFieldValue(t, currentColumnFieldNameMap.get(column));
-            value = handleValue(value);
-            values.add(value);
-        }
-        return values;
-    }
-
-    /**
-     * @deprecated
-     * 处理value
-     * @param value
-     * @return 返回值类型
-     */
-    private Object handleValue(Object value) {
-        if (value instanceof String) {
-            value = "\'" + value + "\'";
-        } else if (value instanceof Date) {
-            Date date = (Date) value;
-            value = "\'" + MedusaDateUtils.convertDateToStr(date, SystemConfigs.DATE_FULL_STR) + "\'";
-            //value = "TO_TIMESTAMP('" + dateStr + "','YYYY-MM-DD HH24:MI:SS.FF3')";
-        } else if (value instanceof Boolean) {
-            Boolean v = (Boolean) value;
-            value = v ? 1 : 0;//TODO true 1 false 0
-        }else if(null == value || MedusaCommonUtils.isBlank(value.toString())) {
-            value = "null";
-        }
-        return value;
-    }
-
-    /**
      * 生成根据ID删除的SQL
      * @return 返回值类型
      */
     public String sqlOfDeleteByPrimaryKey() {//modify by neo on 2016.11.13 Object id
-
-        //if(id == null) id = 0;//modify by neo on 2016.11.04
 
         int len = 30 + tableName.length() + pkName.length();
 
@@ -233,15 +191,7 @@ public class MedusaSqlGenerator {
      */
     public String sqlOfDeleteBatch(Object t) {
 
-//        Boolean b = List.class.isAssignableFrom(t.getClass());
-
         List<Object> ids = t instanceof List ? (ArrayList)t : new ArrayList<>();
-
-        /*List<Object> ids;
-        if(t instanceof List)
-            ids = (ArrayList)t;
-        else
-            return "";*/
 
         int l = ids.size(), i = 0;
 
@@ -253,11 +203,8 @@ public class MedusaSqlGenerator {
 
         for (; i < l; i++) {
             sqlBuild.append(",").append(ids.get(i));
-            /*if (i > 0 && i % (AssConstant.DELETE_CRITICAL_VAL - 1) == 0) {
-                sqlBuild.append(")").append(" OR ").append(pkName)
-                        .append(" IN ( 0 ");
-            }*/
         }
+
         sqlBuild.append(")");
 
         String sql = sqlBuild.toString();
@@ -309,7 +256,6 @@ public class MedusaSqlGenerator {
             String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
             Object value = MedusaReflectionUtils.obtainFieldValue(t, fieldName);
             if (value != null) {
-//                colVals.add(column + "=" + handleValue(value));
                 colVals.add(column + "=" + "#{pobj." + fieldName + "}");///modify by neo on 2016.11.12
             }
         }
@@ -354,11 +300,6 @@ public class MedusaSqlGenerator {
     public String sqlOfUpdateByPrimaryKeySelective(Object t) {
 
         List<String> values = obtainColumnValusForModify(t);
-        //Object id = MedusaReflectionUtils.obtainFieldValue(t, currentColumnFieldNameMap.get(pkName));
-
-        //if(id == null) throw new MedusaException("Medusa: Update method incoming primary key value is null (selective)");//modify by neo on 2016.11.04
-
-        //id = handleValue(id);///这是为了处理id不为 int 变成 string 时 modify by neo on 2016.11.2
 
         if(values == null || values.isEmpty()) throw new MedusaException("Medusa: There is nothing to update");
 
@@ -393,10 +334,7 @@ public class MedusaSqlGenerator {
 
             Object value = MedusaReflectionUtils.invokeGetterMethod(t, fieldName);/// modify on 2016 11 21 by neo cause:先查询出来对象了 再更新对象的话 会更新到动态代理的 对象类 就会抛出找不到属性的异常问题 改为反射执行get属性方法则可以
 
-//            Object value = MedusaReflectionUtils.obtainFieldValue(t, fieldName);
-
             if (value != null && !column.equalsIgnoreCase(pkName)) {
-//                colVals.add(column + "=" + handleValue(value));
                 colVals.add(column + "=" + "#{pobj." + fieldName + "}");///modify by neo on 2016.11.12
             }
         }
@@ -440,10 +378,8 @@ public class MedusaSqlGenerator {
     private List<String> obtainColumnValsForModifyNull(List<Object> parList) {
         List<String> colVals = new ArrayList<>();
         for (String column : columns) {
-//            Object value = MedusaReflectionUtils.obtainFieldValue(t, fieldName);
             if (!column.equalsIgnoreCase(pkName) && parList.contains(column)) {
                 String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
-//                colVals.add(column + "=" + handleValue(value));
                 colVals.add(column + "=" + "#{param1." + fieldName +"}");///modify by neo on 2020.02.13
             }
         }
@@ -559,7 +495,6 @@ public class MedusaSqlGenerator {
         String paramColumn = reSolveColumn(ps);
 
         List<String> values = obtainColumnValusForSelectList(t);
-//        if(values == null || valudes.isEmpty()) return null;
 
         int valuesLen = values == null || values.isEmpty() ? 0 : values.size();
 
@@ -595,7 +530,6 @@ public class MedusaSqlGenerator {
             String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
             Object value = MedusaReflectionUtils.obtainFieldValue(t, fieldName);
             if (value != null) {
-//                colVals.add(column + "=" + handleValue(value));
                 colVals.add(column + "=" + "#{param1." + fieldName + "}");///modify by neo on 2020.02.13
             }
         }
@@ -612,7 +546,6 @@ public class MedusaSqlGenerator {
      */
     private String reSolveColumn(Object[] ps) {
 
-//        boolean isValidColumn = (ps == null || ps.length != 1 || ps[0] == null || ((Object[])ps[0]).length == 0);
         boolean isValidColumn = (ps == null || ps.length == 0);//modify by neo on 2020.01.17
 
         return isValidColumn ? columnsStr : MedusaSqlHelper.buildColumnNameForSelect(ps, currentFieldColumnNameMap);
@@ -627,7 +560,6 @@ public class MedusaSqlGenerator {
      */
     private String reSolveColumn(Object[] ps, Boolean flag) {
 
-//        boolean isValidColumn = (ps == null || ps.length != 1 || ps[0] == null || ((Object[])ps[0]).length == 0);
         boolean isValidColumn = (ps == null || ps.length == 0);//modify by neo on 2020.01.17
 
         return isValidColumn ? columnsStr : MedusaSqlHelper.buildColumnNameForSelect(ps, currentFieldColumnNameMap, flag, columns);
@@ -894,85 +826,6 @@ public class MedusaSqlGenerator {
             }
         }
     }
-
-    /**
-     * @deprecated
-     * 提供给selectMedusaGaze和sqlOfFindAllCount使用
-     * @param psArray 参数
-     * @return 返回值类型
-     */
-//    private List<String> obtainMedusaGazeByMap(Object[] psArray) {
-//
-//        if(psArray != null && psArray.length != 0) {
-//
-//            List<String> colVals = new ArrayList<>();
-//
-//            short i = 0;
-//            for(Object o : psArray) {
-//
-//                //处理普通map<String, Object> modify by admin on 20220823
-//                if(o instanceof Map<?, ?> && !(o instanceof MedusaLambdaMap)) {
-//
-//                    Set<Map.Entry<String, Object>> entrySet = ((Map)o).entrySet();
-//                    Iterator<Map.Entry<String, Object>> iter = entrySet.iterator();
-//
-//                    while(iter.hasNext()) {
-//
-//                        Map.Entry<String, Object> entry = iter.next();
-//
-//                        if (entry != null && entry.getKey() instanceof String && entry.getValue() != null) {//modify by neo on 2020.01.19
-//
-//                            if(MedusaCommonUtils.isBlank(entry.getKey())) continue;
-//
-//                            String column = MedusaSqlHelper.buildColumnNameForAll(entry.getKey(), currentFieldColumnNameMap);
-//
-//                            colVals.add(column + "=" + "#{array[" + i + "]." + entry.getKey() + "}");///modify by neo on 2020.02.13
-//                        }
-//                    }
-//                }
-//
-//                i++;
-//            }
-//
-//            return colVals;
-//        } else {
-//            return new ArrayList<>();
-//        }
-//    }
-
-    /**
-     * @deprecated
-     * 提供给selectMedusaGaze和sqlOfFindAllCount使用
-     * @return 返回值类型
-     */
-//    private List<String> obtainMedusaGazeS(Object[] psArray) {
-//
-//        if(psArray != null && psArray.length != 0) {
-//
-//            List<String> colVals = new ArrayList<>();
-//
-//            short i = 0;
-//            for(Object o : psArray) {
-//
-//                if(entityClass.isInstance(o)) {
-//
-//                    for (String column : columns) {
-//                        String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
-//                        Object value = MedusaReflectionUtils.obtainFieldValue(o, fieldName);
-//                        if (value != null) {//modify by neo on 2020.01.19
-//                            colVals.add(column + "=" + "#{array[" + i + "]." + fieldName + "}");///modify by neo on 2020.02.13
-//                        }
-//                    }
-//                }
-//
-//                i++;
-//            }
-//
-//            return colVals;
-//        } else {
-//            return new ArrayList<>();
-//        }
-//    }
 
     /**
      * modify by neo on 2016.12.09 添加 .paramList[index]
