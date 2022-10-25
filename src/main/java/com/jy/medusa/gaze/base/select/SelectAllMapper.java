@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  *
- * Author neo
+ * @author neo
  */
 public interface SelectAllMapper<T> {
 

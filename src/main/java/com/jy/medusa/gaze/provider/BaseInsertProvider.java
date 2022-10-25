@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * BaseInsertProvider实现类，基础方法实现类
  *
- * Author neo
+ * @author neo
  */
 public class BaseInsertProvider {
 

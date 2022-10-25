@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * 通用Mapper接口 批插入 功能
  * @param <T> 不能为空
- * Author neo
+ * @author neo
  */
 public interface InsertBatchOfMyCatMapper<T> {
 

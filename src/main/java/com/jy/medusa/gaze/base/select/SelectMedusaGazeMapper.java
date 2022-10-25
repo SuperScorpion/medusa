@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * 通用mapper 多条件查询
  * @param <T> 不能为空
- * Author neo
+ * @author neo
  */
 public interface SelectMedusaGazeMapper<T> {
 

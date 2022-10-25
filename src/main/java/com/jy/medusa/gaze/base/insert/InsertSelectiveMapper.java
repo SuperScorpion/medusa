@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Options;
 /**
  * 通用Mapper接口,插入
  * @param <T> 不能为空
- * Author neo
+ * @author neo
  */
 public interface InsertSelectiveMapper<T> {
 

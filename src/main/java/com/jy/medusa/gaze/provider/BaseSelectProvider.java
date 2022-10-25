@@ -8,7 +8,7 @@ import java.util.Map;
 
 /**
  * BaseSelectProvider实现类，基础方法实现类
- * Author neo
+ * @author neo
  */
 public class BaseSelectProvider {
 

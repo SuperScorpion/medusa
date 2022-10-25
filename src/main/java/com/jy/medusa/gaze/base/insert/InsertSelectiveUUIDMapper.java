@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.SelectKey;
 /**
  * 通用Mapper接口,插入 UUID 主键
  * @param <T> 不能为空
- * Author neo
+ * @author neo
  */
 public interface InsertSelectiveUUIDMapper<T> {
 
