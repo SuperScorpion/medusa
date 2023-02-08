@@ -8,9 +8,13 @@ import com.jy.medusa.gaze.stuff.param.gele.LessThanParam;
 import com.jy.medusa.gaze.stuff.param.lambda.HolyGetPropertyNameLambda;
 import com.jy.medusa.gaze.stuff.param.lambda.HolyGetter;
 import com.jy.medusa.gaze.stuff.param.mix.*;
+import com.jy.medusa.gaze.stuff.param.orand.AndModelClass;
+import com.jy.medusa.gaze.stuff.param.orand.BaseModelClass;
+import com.jy.medusa.gaze.stuff.param.orand.OrModelClass;
 import com.jy.medusa.gaze.stuff.param.sort.GroupByParam;
 import com.jy.medusa.gaze.stuff.param.sort.OrderByParam;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -131,5 +135,35 @@ public class MedusaLambdaRestrictions<T> extends BaseRestrictions<T, HolyGetter<
 
         paramList.add(new GroupByParam(HolyGetPropertyNameLambda.convertToFieldName(fn)));
         return this;
+    }
+
+
+    /////add by neo on 20230113 for or and/////
+    private List<MedusaLambdaRestrictions> orModelList;
+    private List<MedusaLambdaRestrictions> andModelList;
+
+    public List<MedusaLambdaRestrictions> getOrModelList() {
+        return orModelList;
+    }
+    public List<MedusaLambdaRestrictions> getAndModelList() {
+        return andModelList;
+    }
+
+    public MedusaLambdaRestrictions<T> or(MedusaLambdaRestrictions omc) {
+        if(orModelList == null) orModelList = new ArrayList<>();
+        orModelList.add(omc);
+        return this;
+    }
+    public MedusaLambdaRestrictions<T> and(MedusaLambdaRestrictions omc) {
+        if(andModelList == null) andModelList = new ArrayList<>();
+        andModelList.add(omc);
+        return this;
+    }
+
+    public BaseModelClass<T> orModel() {
+        return new OrModelClass();
+    }
+    public BaseModelClass<T> andModel() {
+        return new AndModelClass();
     }
 }

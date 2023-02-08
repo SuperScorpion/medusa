@@ -4,9 +4,13 @@ package com.jy.medusa.gaze.stuff;
 import com.jy.medusa.gaze.stuff.exception.MedusaException;
 import com.jy.medusa.gaze.stuff.param.BaseRestrictions;
 import com.jy.medusa.gaze.stuff.param.MedusaLambdaMap;
+import com.jy.medusa.gaze.stuff.param.MedusaLambdaRestrictions;
 import com.jy.medusa.gaze.stuff.param.base.BaseParam;
 import com.jy.medusa.gaze.stuff.param.gele.*;
 import com.jy.medusa.gaze.stuff.param.mix.*;
+import com.jy.medusa.gaze.stuff.param.orand.AndModelClass;
+import com.jy.medusa.gaze.stuff.param.orand.BaseModelClass;
+import com.jy.medusa.gaze.stuff.param.orand.OrModelClass;
 import com.jy.medusa.gaze.stuff.param.sort.BaseSortParam;
 import com.jy.medusa.gaze.stuff.param.sort.GroupByParam;
 import com.jy.medusa.gaze.stuff.param.sort.OrderByParam;
@@ -638,7 +642,8 @@ public class MedusaSqlGenerator {
             processObjParams(sbb, objParams);
         }
 
-        String sql = sbb.toString();
+        //处理 语句里1=1和1!=1 add by neo on 20230113
+        String sql = sbb.toString().replace("1!=1 OR", "").replace("1=1 AND", "").replace("1=1 OR", "");
 
         logger.debug("Medusa: Generated SQL ^_^ " + sql);
 
@@ -731,7 +736,8 @@ public class MedusaSqlGenerator {
 
         logger.debug("Medusa: Generated SQL ^_^ " + sbb.toString());
 
-        return sbb.toString();
+        //处理 语句里1=1和1!=1 add by neo on 20230113
+        return sbb.toString().replace("1!=1 OR", "").replace("1=1 AND", "").replace("1=1 OR", "");
     }
 
     /**
@@ -757,10 +763,14 @@ public class MedusaSqlGenerator {
                 if(paramList != null && !paramList.isEmpty()) {
 
                     for (BaseParam x : paramList) {
-
-                        baseParamHandler(sbb, x, isd, v);
+                        baseParamHandler(sbb, x, isd, v, null, null, null);
                         v++;
                     }
+                }
+
+                //处理or and 条件的语句 add by neo on 20230113
+                if(z instanceof MedusaLambdaRestrictions) {
+                    orAndParamHandler(sbb, z, isd);
                 }
             } else if (z instanceof Pager) {
 
@@ -782,6 +792,69 @@ public class MedusaSqlGenerator {
         return pa;
     }
 
+
+    /**
+     * select * from bac_logs where 1=1 AND (1!=1 OR user_id = 123 OR remark ="11111");
+     * select * from bac_logs where 1!=1 OR (1=1 AND user_id = 123 AND remark ="11111");
+     * @param sbb
+     * @param z
+     * @param isd
+     */
+    private void orAndParamHandler(StringBuilder sbb, Object z, short isd) {
+
+        List<BaseModelClass> orModelList = ((MedusaLambdaRestrictions) z).getOrModelList();
+        List<BaseModelClass> andModelList = ((MedusaLambdaRestrictions) z).getAndModelList();
+
+        if(orModelList != null && !orModelList.isEmpty()) {
+            orAndModelHandler(sbb, orModelList, isd, false);
+        }
+        if(andModelList != null && !andModelList.isEmpty()) {
+            orAndModelHandler(sbb, andModelList, isd, true);
+        }
+    }
+
+    private void orAndModelHandler(StringBuilder sbb, List<BaseModelClass> modelList, short isd, boolean isAndList) {
+
+        String orAndStr = isAndList == false ? " OR " : " AND ";
+
+        short m = 0;
+        for (BaseModelClass bmc : modelList) {
+
+            if(bmc instanceof OrModelClass) {
+                List<BaseParam> omcParamList = bmc.getParamList();
+
+                if(omcParamList != null && !omcParamList.isEmpty()) {
+
+                    short n = 0;
+                    sbb.append(orAndStr).append("(1!=1");
+                    for (BaseParam x : omcParamList) {
+                        baseParamHandler(sbb, x, isd, n, m, isAndList, false);
+                        n++;
+                    }
+                    sbb.append(")");
+                }
+            }
+
+            if(bmc instanceof AndModelClass) {
+                List<BaseParam> omcParamList = bmc.getParamList();
+
+                if(omcParamList != null && !omcParamList.isEmpty()) {
+
+                    short n = 0;
+                    sbb.append(orAndStr).append("(1=1");
+                    for (BaseParam x : omcParamList) {
+                        baseParamHandler(sbb, x, isd, n, m, isAndList, true);
+                        n++;
+                    }
+                    sbb.append(")");
+                }
+            }
+
+            m++;
+        }
+    }
+
+
     /**
      * 提供给selectMedusaGaze和sqlOfFindAllCount使用
      * 处理参数中的entity条件类型
@@ -793,7 +866,7 @@ public class MedusaSqlGenerator {
         for (String column : columns) {
             String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
             Object value = MedusaReflectionUtils.obtainFieldValue(z, fieldName);
-            if (value != null) {//modify by neo on 2020.01.19
+            if (value != null && MedusaCommonUtils.isNotBlank(value.toString())) {//modify by neo on 2020.01.19
 //                            colVals.add(column + "=" + "#{array[" + i + "]." + fieldName + "}");///modify by neo on 2020.02.13
                 sbb.append(" AND ").append(column).append(" = ").append("#{array[").append(isd).append("].").append(fieldName).append("}");///modify by neo on 2020.02.13
             }
@@ -809,18 +882,14 @@ public class MedusaSqlGenerator {
      */
     private void paramMapConditionHandler(StringBuilder sbb, Object z, short isd) {
 
-        Set<Map.Entry<String, Object>> entrySet = ((Map)z).entrySet();
-        Iterator<Map.Entry<String, Object>> iter = entrySet.iterator();
+        Set<Map.Entry<Object, Object>> entrySet = ((Map)z).entrySet();
+        Iterator<Map.Entry<Object, Object>> iter = entrySet.iterator();
 
         while(iter.hasNext()) {
-
-            Map.Entry<String, Object> entry = iter.next();
-
-            if (entry != null && entry.getKey() instanceof String && entry.getValue() != null) {//modify by neo on 2020.01.19
-
-                if(MedusaCommonUtils.isBlank(entry.getKey())) continue;
-
-                String column = MedusaSqlHelper.buildColumnNameForAll(entry.getKey(), currentFieldColumnNameMap);
+            Map.Entry<Object, Object> entry = iter.next();
+            if (entry != null && entry.getKey() instanceof String && entry.getValue() != null
+                    && MedusaCommonUtils.isNotBlank(entry.getKey().toString()) && MedusaCommonUtils.isNotBlank(entry.getValue().toString())) {//modify by neo on 2020.01.19
+                String column = MedusaSqlHelper.buildColumnNameForAll(entry.getKey().toString(), currentFieldColumnNameMap);
 //                            colVals.add(column + "=" + "#{array[" + i + "]." + entry.getKey() + "}");///modify by neo on 2020.02.13
                 sbb.append(" AND ").append(column).append(" = ").append("#{array[").append(isd).append("].").append(entry.getKey()).append("}");///modify by neo on 2020.02.13
             }
@@ -835,10 +904,17 @@ public class MedusaSqlGenerator {
      * @param z             参数
      * @param isd           参数
      * @param ind           参数
+     * @param imd           参数  //add by neo on 20230113 for or and
+     * @param isAndList     参数  //add by neo on 20230113 for or and
+     * @param isAndListElement    参数  //add by neo on 20230113 for or and
      */
-    public void baseParamHandler(StringBuilder sbb, Object z, short isd, short ind) {
+    public void baseParamHandler(StringBuilder sbb, Object z, Short isd, Short ind, Short imd, Boolean isAndList, Boolean isAndListElement) {
 
         if (z == null || MedusaCommonUtils.isBlank(((BaseParam) z).getColumn())) return;
+
+        String orAndStr = isAndListElement == null || isAndListElement == true ? " AND " : " OR ";
+
+        String modelListStr = isAndList == null ? "" : isAndList == false ? ".orModelList[" + imd + "]" : ".andModelList[" + imd + "]";
 
         //转换一下column的属性值 也许是数据库字段 也有可能是属性值
         String column = MedusaSqlHelper.buildColumnNameForAll(((BaseParam) z).getColumn(), currentFieldColumnNameMap);
@@ -851,12 +927,12 @@ public class MedusaSqlGenerator {
                 Boolean f = ((SingleParam) z).getNeq();
 
                 if (p != null && MedusaCommonUtils.isNotBlank(p.toString()) && f != null) {
-                    sbb.append(" AND ").append(column);
+                    sbb.append(orAndStr).append(column);
                     if(f)
                         sbb.append(" != ");
                     else
                         sbb.append(" = ");
-                    sbb.append("#{array[").append(isd).append("].paramList[").append(ind).append("].value}");///modify by neo on 2020.02.13
+                    sbb.append("#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].value}");///modify by neo on 2020.02.13
                 }
             } else if (z instanceof BetweenParam) {
 
@@ -864,11 +940,11 @@ public class MedusaSqlGenerator {
                 Object end = ((BetweenParam) z).getEnd();
 
                 if (start != null && end != null && MedusaCommonUtils.isNotBlank(start.toString()) && MedusaCommonUtils.isNotBlank(end.toString())) {
-                    sbb.append(" AND ").append(column).append(" BETWEEN ")
+                    sbb.append(orAndStr).append(column).append(" BETWEEN ")
                             //.append("'").append(MedusaDateUtils.convertDateToStr(p.getEnd(), MedusaDateUtils.DATE_FULL_STR)).append("'")
-                            .append("#{array[").append(isd).append("].paramList[").append(ind).append("].start}")///modify by neo on 2020.02.13
+                            .append("#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].start}")///modify by neo on 2020.02.13
                             .append(" AND ")
-                            .append("#{array[").append(isd).append("].paramList[").append(ind).append("].end}");///modify by neo on 2020.02.13
+                            .append("#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].end}");///modify by neo on 2020.02.13
                 }
             } else if (z instanceof NotInParam) {
 
@@ -876,7 +952,7 @@ public class MedusaSqlGenerator {
                 Boolean f = ((NotInParam) z).getNotIn();
 
                 if (p != null && p.size() > 0 && f != null) {
-                    sbb.append(" AND ").append(column);
+                    sbb.append(orAndStr).append(column);
 
                     if (f) {
                         sbb.append(" NOT IN (");
@@ -887,7 +963,7 @@ public class MedusaSqlGenerator {
                     int k = 0;
                     while (k < p.size()) {
                         if (p.get(k) != null && MedusaCommonUtils.isNotBlank(p.get(k).toString())) {//add by neo on 20220923
-                            sbb.append("#{array[").append(isd).append("].paramList[").append(ind).append("].value[").append(k).append("]},");///modify by neo on 2020.02.13
+                            sbb.append("#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].value[").append(k).append("]},");///modify by neo on 2020.02.13
                             k += 1;
                         }
                     }
@@ -900,7 +976,7 @@ public class MedusaSqlGenerator {
                 Object p = ((LikeParam) z).getValue();
 
                 if (p != null && MedusaCommonUtils.isNotBlank(p.toString())) {
-                    sbb.append(" AND ").append(column).append(" LIKE ").append("CONCAT('%',#{array[").append(isd).append("].paramList[").append(ind).append("].value},'%')");///modify by neo on 2020.02.13
+                    sbb.append(orAndStr).append(column).append(" LIKE ").append("CONCAT('%',#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].value},'%')");///modify by neo on 2020.02.13
                 }
             } else if (z instanceof NotNullParam) {
 
@@ -908,9 +984,9 @@ public class MedusaSqlGenerator {
 
                 if (p != null) {
                     if (p) {
-                        sbb.append(" AND ").append(column).append(" IS NOT NULL ");
+                        sbb.append(orAndStr).append(column).append(" IS NOT NULL ");
                     } else {
-                        sbb.append(" AND ").append(column).append(" IS NULL ");
+                        sbb.append(orAndStr).append(column).append(" IS NULL ");
                     }
                 }
             }
@@ -922,16 +998,16 @@ public class MedusaSqlGenerator {
 
                 if (z instanceof GreatThanParam) {
 
-                    sbb.append(" AND ").append(column).append(" > ").append("#{array[").append(isd).append("].paramList[").append(ind).append("].value}");///modify by neo on 2020.02.13
+                    sbb.append(orAndStr).append(column).append(" > ").append("#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].value}");///modify by neo on 2020.02.13
                 } else if (z instanceof GreatEqualParam) {
 
-                    sbb.append(" AND ").append(column).append(" >= ").append("#{array[").append(isd).append("].paramList[").append(ind).append("].value}");///modify by neo on 2020.02.13
+                    sbb.append(orAndStr).append(column).append(" >= ").append("#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].value}");///modify by neo on 2020.02.13
                 } else if (z instanceof LessThanParam) {
 
-                    sbb.append(" AND ").append(column).append(" < ").append("#{array[").append(isd).append("].paramList[").append(ind).append("].value}");///modify by neo on 2020.02.13
+                    sbb.append(orAndStr).append(column).append(" < ").append("#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].value}");///modify by neo on 2020.02.13
                 } else if (z instanceof LessEqualParam) {
 
-                    sbb.append(" AND ").append(column).append(" <= ").append("#{array[").append(isd).append("].paramList[").append(ind).append("].value");///modify by neo on 2020.02.13
+                    sbb.append(orAndStr).append(column).append(" <= ").append("#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].value");///modify by neo on 2020.02.13
                 }
             }
         } else if (z instanceof BaseSortParam) {
