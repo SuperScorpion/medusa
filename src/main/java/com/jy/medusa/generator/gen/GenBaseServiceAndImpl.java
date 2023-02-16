@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Created by neo on 16/7/19.
+ * Created by SuperScorpion on 16/7/19.
  */
 public class GenBaseServiceAndImpl {
 

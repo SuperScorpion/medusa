@@ -11,7 +11,7 @@ import java.util.Map;
 
 /**
  * BaseDeleteMapper实现类，基础方法实现类
- *
+ * @author SuperScorpion
  */
 public class BaseDeleteProvider {
 
@@ -30,7 +30,7 @@ public class BaseDeleteProvider {
      * @return 返回值类型
      */
     public String deleteByPrimaryKey(Map<String, Object> m) {
-        return MedusaSqlHelper.getSqlGenerator(m).sqlOfDeleteByPrimaryKey();//modify by neo on 2016.11.13 m.get("pobj")
+        return MedusaSqlHelper.getSqlGenerator(m).sqlOfDeleteByPrimaryKey();//modify by SuperScorpion on 2016.11.13 m.get("pobj")
     }
 
     /**

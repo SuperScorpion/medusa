@@ -10,8 +10,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created by neo on 16/10/12.
+ * Created by SuperScorpion on 16/10/12.
  * 享元模式
+ * @author SuperScorpion
  */
 public class MyReflectCacheManager {
 

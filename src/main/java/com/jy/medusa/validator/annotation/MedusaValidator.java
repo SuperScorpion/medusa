@@ -3,7 +3,7 @@ package com.jy.medusa.validator.annotation;
 import java.lang.annotation.*;
 
 /**
- * @author neo 2016.07.13
+ * @author SuperScorpion 2016.07.13
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by neo on 16/8/4.
+ * Created by SuperScorpion on 16/8/4.
  */
 public class MedusaGenUtils {
 
@@ -107,7 +107,7 @@ public class MedusaGenUtils {
             sbb.append("\r\n");
         } else if(!flag.equals("xml2") && !flag.equals("xml1")) {//java 类型的文件形式
             sbb.append("\t//以下为上次注释需要保存下来的代码" + "\r\n");
-            sbb.append("\t//" + tag + "\r\n");//modify by neo on 2016.10.24
+            sbb.append("\t//" + tag + "\r\n");//modify by SuperScorpion on 2016.10.24
             for(String k : markStrList) {
                 sbb.append(k);
             }
@@ -150,7 +150,7 @@ public class MedusaGenUtils {
     public static List<String> genTagStrList(String fileName, String packagePath, String tag, String flag) {
 
         String path;
-        if(Home.xmlSuffix.matches("^classpath.*:.*")) {//modify by neo on 2020.04.25
+        if(Home.xmlSuffix.matches("^classpath.*:.*")) {//modify by SuperScorpion on 2020.04.25
             path = Home.proResourcePath + Home.xmlSuffix.replaceFirst("^classpath.*:", "");
         } else {
             path = Home.proJavaPath + packagePath.replaceAll("\\.", "/");
@@ -174,7 +174,7 @@ public class MedusaGenUtils {
             endTag = "</mapper>";
         } else {
 
-            startTag = "//" + tag;//modify by neo on 2016.10.24
+            startTag = "//" + tag;//modify by SuperScorpion on 2016.10.24
             endTag = "//" + tag;
         }
 

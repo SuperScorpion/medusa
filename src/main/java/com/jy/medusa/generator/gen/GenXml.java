@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.Date;
 
 /**
- * Created by neo on 16/7/27.
+ * Created by SuperScorpion on 16/7/27.
  * @deprecated
  */
 public class GenXml {
@@ -63,7 +63,7 @@ public class GenXml {
                     case "INT":
                         colTypes[i] = "INTEGER";
                         break;
-                    case "INT UNSIGNED":///modify by neo on 2019.12.11
+                    case "INT UNSIGNED":///modify by SuperScorpion on 2019.12.11
                         colTypes[i] = "INTEGER";
                         break;
                     case "DATETIME":
@@ -90,7 +90,7 @@ public class GenXml {
         try {
             String content = parse();
 
-            //modify by neo on 2020.02.15
+            //modify by SuperScorpion on 2020.02.15
             String path;
             if(Home.xmlSuffix.matches("^classpath.*:.*")) {
                 path = Home.proResourcePath + Home.xmlSuffix.replaceFirst("^classpath.*:", "");
@@ -143,7 +143,7 @@ public class GenXml {
 
             changeTypes(colTypes, colTypesSql);//处理mybatis类型 和 sql类型不一致
 
-            //modify by neo on 2019.08.17
+            //modify by SuperScorpion on 2019.08.17
             //get current primary key from table
             DatabaseMetaData dbmd = conn.getMetaData();
             ResultSet resultSet = dbmd.getPrimaryKeys(null, null, tableName);
@@ -186,8 +186,8 @@ public class GenXml {
         for (int i = 0; i < colSqlNames.length; i++) {
 
             if (colSqlNames[i].trim().equalsIgnoreCase(primaryKey)) {
-//                sb.append("\t\t<id column=\"" + colSqlNames[i] + "\" jdbcType=\"" + colTypes[i] + "\" property=\"" + SystemConfigs.PRIMARY_KEY + "\" />\r\n");//modify by neo on 2020.02.15
-                sb.append("\t\t<id column=\"" + colSqlNames[i] + "\" jdbcType=\"" + colTypes[i] + "\" property=\"" + colFieldNames[i] + "\" />\r\n");//modify by neo on 2021.05.22
+//                sb.append("\t\t<id column=\"" + colSqlNames[i] + "\" jdbcType=\"" + colTypes[i] + "\" property=\"" + SystemConfigs.PRIMARY_KEY + "\" />\r\n");//modify by SuperScorpion on 2020.02.15
+                sb.append("\t\t<id column=\"" + colSqlNames[i] + "\" jdbcType=\"" + colTypes[i] + "\" property=\"" + colFieldNames[i] + "\" />\r\n");//modify by SuperScorpion on 2021.05.22
             } else {
                 sb.append("\t\t<result column=\"" + colSqlNames[i] + "\" jdbcType=\"" + colTypes[i] + "\" property=\"" + colFieldNames[i] + "\" />\r\n");
             }
@@ -197,7 +197,7 @@ public class GenXml {
 
                 /*
             String p = colSqlNames[i].trim().replace("_id", "").trim();
-                if(MedusaCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
+                if(MedusaCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by SuperScorpion on 2016.11.25
                     p = p.concat(pluralAssociation);
                 }
                 String bigStr = MedusaGenUtils.upcaseFirst(p);
@@ -224,7 +224,7 @@ public class GenXml {
             if(MedusaCommonUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
 
                 String p = colSqlNames[i].trim().replace("_id", "").trim();
-                if(MedusaCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
+                if(MedusaCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by SuperScorpion on 2016.11.25
                     p = p.concat(pluralAssociation);
                 }
 
@@ -255,7 +255,7 @@ public class GenXml {
 
                 String p = colSqlNames[i].trim().replace("_id", "").trim();
 
-                if(MedusaCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
+                if(MedusaCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by SuperScorpion on 2016.11.25
                     p = p.concat(pluralAssociation);
                 }
 

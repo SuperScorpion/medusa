@@ -1,7 +1,7 @@
 package com.jy.medusa.gaze.stuff.param.lambda;
 
 /**
- * Created by neo on 2020/4/21.
+ * Created by SuperScorpion on 2020/4/21.
  */
 
 import com.jy.medusa.generator.MedusaGenUtils;

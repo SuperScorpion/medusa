@@ -1,7 +1,7 @@
 package com.jy.medusa.gaze.stuff.annotation;
 
 /**
- * Created by neo on 2016/12/4.
+ * Created by SuperScorpion on 2016/12/4.
  */
 
 import java.lang.annotation.ElementType;

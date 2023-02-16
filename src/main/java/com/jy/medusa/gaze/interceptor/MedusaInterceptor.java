@@ -1,7 +1,7 @@
 package com.jy.medusa.gaze.interceptor;
 
 /**
- * Created by neo on 16/9/15.
+ * Created by SuperScorpion on 16/9/15.
  */
 
 import org.apache.ibatis.executor.Executor;

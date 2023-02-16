@@ -41,7 +41,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Created by neo on 16/9/14.
+ * Created by SuperScorpion on 16/9/14.
  */
 public class MedusaSqlHelper {
 
@@ -60,7 +60,7 @@ public class MedusaSqlHelper {
      */
     public static String removeLastWord(String msid) {
 
-        return msid.substring(0, msid.lastIndexOf("."));///moidify by neo on 2016.10.27
+        return msid.substring(0, msid.lastIndexOf("."));///moidify by SuperScorpion on 2016.10.27
 
         /*String[] arr = origin.split("\\.");
         StringBuilder sbb = new StringBuilder(70);
@@ -92,7 +92,7 @@ public class MedusaSqlHelper {
      * @param msidWho 参数
      * @return 返回值类型
      */
-    public static boolean checkMortalMethds(String msidWho) {//modify by neo on 2016.10.25 sq
+    public static boolean checkMortalMethds(String msidWho) {//modify by SuperScorpion on 2016.10.25 sq
 
         return SystemConfigs.MY_ALL_METHOD_NANES_LIST.contains(msidWho) ? true : false;
     }
@@ -190,7 +190,7 @@ public class MedusaSqlHelper {
 
         String sn = mapperClass.getSimpleName();
 
-        ///Class<?> ps = MedusaSqlHelperCacheManager.getCacheClass(sn);///modify by neo on 2016.12.1
+        ///Class<?> ps = MedusaSqlHelperCacheManager.getCacheClass(sn);///modify by SuperScorpion on 2016.12.1
 
         //if (ps != null) {
         //    return ps;
@@ -201,7 +201,7 @@ public class MedusaSqlHelper {
                 ParameterizedType t = (ParameterizedType) type;
                 if (t.getRawType() == mapperClass || ((Class<?>) t.getRawType()).isAssignableFrom(mapperClass)) {
                     Class<?> returnType = (Class<?>) t.getActualTypeArguments()[0];
-//                        MedusaSqlHelperCacheManager.putCacheClass(sn, returnType);///modify by neo on 2016.12.1
+//                        MedusaSqlHelperCacheManager.putCacheClass(sn, returnType);///modify by SuperScorpion on 2016.12.1
                     logger.debug("Medusa: Successfully initialize the " + sn + " cache information");
                     return returnType;
                 }
@@ -228,7 +228,7 @@ public class MedusaSqlHelper {
         return null;
     }
 
-    ////Solving high concurrency problems modify by neo on 2017.07.19
+    ////Solving high concurrency problems modify by SuperScorpion on 2017.07.19
     /*private static synchronized MedusaSqlGenerator initAndCacheGenerator(String p) {
 
         MedusaSqlGenerator por = MedusaSqlHelperCacheManager.getCacheGenerator(p);
@@ -242,7 +242,7 @@ public class MedusaSqlHelper {
     }*/
 
     /**
-     *
+     * 初始化SqlGenerator对象 每个表对应一个
      * @param entityClass 参数
      * @return 返回值类型
      */
@@ -259,7 +259,7 @@ public class MedusaSqlHelper {
         Map<String, String> currentFieldTypeNameMap = new HashMap<>();
 
 
-        Field[] fields = MyReflectCacheManager.getCacheFieldArray(entityClass);////从缓存读取 modify by neo on 2016.11.13
+        Field[] fields = MyReflectCacheManager.getCacheFieldArray(entityClass);////从缓存读取 modify by SuperScorpion on 2016.11.13
 
         //获取子类属性上的注解
         String fieldName;
@@ -305,7 +305,7 @@ public class MedusaSqlHelper {
 
          Map<T, K> resultMap = null;
 
-        //map.forEach((K, T) -> resultMap.put(T, K));///modify by neo on 2016.12.3
+        //map.forEach((K, T) -> resultMap.put(T, K));///modify by SuperScorpion on 2016.12.3
 
         if(map != null && !map.isEmpty()) {
             resultMap = new HashMap<T, K>();
@@ -322,7 +322,7 @@ public class MedusaSqlHelper {
 
 
     /**
-     * add by neo on 20220913 for batch
+     * add by SuperScorpion on 20220913 for batch
      * @param psArray
      * @param currentFieldColumnNameMap
      * @return
@@ -331,7 +331,7 @@ public class MedusaSqlHelper {
 
         String paramColumns = buildColumnNameForSelect(psArray, currentFieldColumnNameMap);
 
-        if(flag == null || flag == false) {
+        if(flag == null) {
             return paramColumns;
         } else {
             List<String> columnList = Arrays.asList(paramColumns.split(","));
@@ -339,9 +339,10 @@ public class MedusaSqlHelper {
             StringBuilder sbb = new StringBuilder(255);
 
             for(String column : columns) {
-                if(columnList.contains(column)) continue;
-                sbb.append(column);
-                sbb.append(",");
+                if((flag == true && !columnList.contains(column)) || (flag == false && columnList.contains(column))) {
+                    sbb.append(column);
+                    sbb.append(",");
+                }
             }
             if(sbb.length() == 0) sbb.append(" * ");///如果后面一个参数都没匹配到string 则会查处所有的字段值
             if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));//去掉最后一个,
@@ -368,7 +369,7 @@ public class MedusaSqlHelper {
 
                 if (z instanceof String && MedusaCommonUtils.isNotBlank(z.toString())) {
 
-                    String[] p = z.toString().split(",");//modify by neo on 2016.12.04
+                    String[] p = z.toString().split(",");//modify by SuperScorpion on 2016.12.04
 
                     for (String m : p) {
 
@@ -383,7 +384,7 @@ public class MedusaSqlHelper {
             }
         }
 
-        //modify by neo on 2016 10 13
+        //modify by SuperScorpion on 2016 10 13
         if(sbb.length() == 0) sbb.append(" * ");///如果后面一个参数都没匹配到string 则会查处所有的字段值
         if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));//去掉最后一个,
         return sbb.toString();
@@ -400,7 +401,7 @@ public class MedusaSqlHelper {
         String result;
 //        if (ori.contains("_"))//让用户用的可选字段 属性名字和数据库表字段名称容错
 //            result = ori.trim();
-        if(currentFieldColumnNameMap.containsKey(ori.trim()))//modify by neo on 2016.11.3
+        if(currentFieldColumnNameMap.containsKey(ori.trim()))//modify by SuperScorpion on 2016.11.3
             result = currentFieldColumnNameMap.get(ori.trim());
         else
             result = ori.trim();
@@ -600,7 +601,7 @@ public class MedusaSqlHelper {
 
             String fieName = entry.getKey();
 
-            if (t == null || (t != null && MedusaReflectionUtils.obtainFieldValue(t, fieName) != null)) {///modify by neo on 20170117 selective
+            if (t == null || (t != null && MedusaReflectionUtils.obtainFieldValue(t, fieName) != null)) {///modify by SuperScorpion on 20170117 selective
 
                /* if (fieName.trim().equalsIgnoreCase(primaryKeyColumn)) {
 
@@ -645,7 +646,7 @@ public class MedusaSqlHelper {
      */
     public static String concatInsertDynamicSqlForBatch(Map<String, String> currentColumnFieldNameMap, Map<String, String> currentFieldTypeNameMap, Object t, String paramColumn, String primaryKeyColumn, String myCatSequence) {
 
-        boolean myCatFlag = MedusaCommonUtils.isNotBlank(myCatSequence);//modify by neo on 2019.08.07 for mycat
+        boolean myCatFlag = MedusaCommonUtils.isNotBlank(myCatSequence);//modify by SuperScorpion on 2019.08.07 for mycat
 
         List<Object> obs = t instanceof List ? (ArrayList)t : new ArrayList<>();
 
@@ -670,7 +671,7 @@ public class MedusaSqlHelper {
 
                 if(MedusaCommonUtils.isBlank(fieName)) throw new MedusaException("Medusa: The insertBatch method failed. It might be a field spelling error!");
 
-                if (myCatFlag && col.trim().equalsIgnoreCase(primaryKeyColumn)) {//modify by neo on 2019.08.07 for mycat
+                if (myCatFlag && col.trim().equalsIgnoreCase(primaryKeyColumn)) {//modify by SuperScorpion on 2019.08.07 for mycat
                     sbb.append("next value for ").append(myCatSequence).append(",");
                 } else {
                     sbb.append("#{param1[");
@@ -804,7 +805,7 @@ public class MedusaSqlHelper {
 
             if(!column.equals(primaryKeyColumn)) {
 
-                if (!checkIsAllNullColumn(obs, column, currentColumnFieldNameMap)) {//modify by neo on 2019.07.05
+                if (!checkIsAllNullColumn(obs, column, currentColumnFieldNameMap)) {//modify by SuperScorpion on 2019.07.05
 
                     sbb.append(column).append(" = CASE ").append(primaryKeyColumn);
 
@@ -827,7 +828,7 @@ public class MedusaSqlHelper {
             }
         }
 
-        if(sbb.indexOf("param1") == -1) throw new MedusaException("The entity attribute values are all null!");///modify by neo on 2019.07.05
+        if(sbb.indexOf("param1") == -1) throw new MedusaException("The entity attribute values are all null!");///modify by SuperScorpion on 2019.07.05
 
         if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));
 
@@ -928,7 +929,7 @@ public class MedusaSqlHelper {
 
                 while(iter.hasNext()) {
                     Map.Entry<HolyGetter<?>, Object> entry = iter.next();
-                    if (entry != null && entry.getKey() instanceof HolyGetter<?> && entry.getValue() != null) {//modify by neo on 2020.01.19
+                    if (entry != null && entry.getKey() instanceof HolyGetter<?> && entry.getValue() != null) {//modify by SuperScorpion on 2020.01.19
                         if(entry.getKey() == null) continue;
                         String fieldName = HolyGetPropertyNameLambda.convertToFieldName(entry.getKey());
                         resultMap.put(fieldName, entry.getValue());

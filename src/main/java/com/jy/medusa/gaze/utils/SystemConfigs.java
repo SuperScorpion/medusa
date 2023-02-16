@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * 定义常量
- * Created by neo on 16/6/28.
+ * Created by SuperScorpion on 16/6/28.
  */
 public class SystemConfigs {
 

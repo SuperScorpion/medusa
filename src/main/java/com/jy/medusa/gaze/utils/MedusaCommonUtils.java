@@ -9,7 +9,7 @@ import java.nio.charset.Charset;
 import java.util.Iterator;
 
 /**
- * Created by neo on 2016/12/4.
+ * Created by SuperScorpion on 2016/12/4.
  */
 public class MedusaCommonUtils {
 

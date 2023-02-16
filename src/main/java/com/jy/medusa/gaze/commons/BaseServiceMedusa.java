@@ -8,6 +8,7 @@ import java.util.List;
  * before : BaseServiceMedusa - BaseServiceMedusaString - BaseServiceMedusaLambda
  * after : BaseServiceMedusa -  BaseServiceMedusaLambda
  * @param <T> 参数
+ * @author SuperScorpion
  */
 public interface BaseServiceMedusa<T> extends BaseServiceMedusaLambda<T> {
 

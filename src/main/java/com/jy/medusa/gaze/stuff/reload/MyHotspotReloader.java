@@ -1,7 +1,7 @@
 package com.jy.medusa.gaze.stuff.reload;
 
 /**
- * Created by neo on 2016/12/10.
+ * Created by SuperScorpion on 2016/12/10.
  */
 
 import com.jy.medusa.gaze.stuff.exception.MedusaException;
@@ -94,7 +94,7 @@ import java.util.*;
                 logger.debug("Medusa: Because of xml file {} changed - all xml has been overloaded.", xmlParamName);
             }
 
-            if(mapperXmlFileList.size() != 0) mapperXmlFileList.clear();//modify by neo on 2016.12.15
+            if(mapperXmlFileList.size() != 0) mapperXmlFileList.clear();//modify by SuperScorpion on 2016.12.15
 
         } catch (Exception e) {
             e.printStackTrace();

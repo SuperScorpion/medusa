@@ -1,7 +1,7 @@
 package com.jy.medusa.validator;
 
 /**
- * Created by neo on 16/6/28.
+ * Created by SuperScorpion on 16/6/28.
  */
 public class MyPattern {
 

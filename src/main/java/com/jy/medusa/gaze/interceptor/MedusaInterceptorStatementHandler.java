@@ -1,7 +1,7 @@
 package com.jy.medusa.gaze.interceptor;
 
 /**
- * Created by neo on 16/9/15.
+ * Created by SuperScorpion on 16/9/15.
  */
 
 import com.jy.medusa.gaze.stuff.MedusaSqlHelper;
@@ -56,7 +56,7 @@ abstract class MedusaInterceptorStatementHandler extends MedusaInterceptorBaseHa
         //获取不到MappedStatement 所以使用下判断
         if (parObj instanceof Map && ((Map) parObj).containsKey("msid")//过滤掉非medusa方法
                 && ((Map) parObj).containsKey("param1")//过滤掉非batch方法
-                && sh.getBoundSql().getSql().startsWith("INSERT INTO")) {//过滤掉delete update之类的 非insert方法 modify by neo on 2017.12.13
+                && sh.getBoundSql().getSql().startsWith("INSERT INTO")) {//过滤掉delete update之类的 非insert方法 modify by SuperScorpion on 2017.12.13
 
             List<Object> paramList = (List) ((Map) parObj).get("param1");
 
@@ -71,7 +71,7 @@ abstract class MedusaInterceptorStatementHandler extends MedusaInterceptorBaseHa
 
                     if (!rs.next()) break;
 
-                    //modify by neo on 2019.08.07 for mycat
+                    //modify by SuperScorpion on 2019.08.07 for mycat
                     int currentIdValue = sh.getBoundSql().getSql().toLowerCase().contains("next value for") ? rs.getInt(1) - 1 : rs.getInt(1);//注入属性id值 mycat 方式取到的都是+1 所以这里-1
 
                     MedusaReflectionUtils.invokeSetterMethod(ot, MedusaSqlHelper.getSqlGenerator((Map) parObj).getPkPropertyName(), currentIdValue);

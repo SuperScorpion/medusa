@@ -7,10 +7,10 @@ import com.jy.medusa.gaze.base.BaseSelectMapper;
 import com.jy.medusa.gaze.base.BaseUpdateMapper;
 
 /**
- * 通用Mapper接口,其他接口继承该接口即可
- * 这是一个例子，自己扩展时可以参考
- * @param <T> 不能为空
- * @author neo
+ * 通用Mapper接口
+ * mapper的基础类 其他接口继承该接口即可
+ * @param <T> 实体类泛型
+ * @author SuperScorpion
  */
 public interface BaseMapper<T> extends
         BaseSelectMapper<T>,

@@ -9,8 +9,7 @@ import java.util.Map;
 
 /**
  * BaseInsertProvider实现类，基础方法实现类
- *
- * @author neo
+ * @author SuperScorpion
  */
 public class BaseInsertProvider {
 
@@ -20,7 +19,7 @@ public class BaseInsertProvider {
      * @return 返回值类型
      */
     public String insert(Map<String, Object> m) {
-        return MedusaSqlHelper.getSqlGenerator(m).sqlOfInsert();//modify by neo on 2016/11/12 m.get("pobj")
+        return MedusaSqlHelper.getSqlGenerator(m).sqlOfInsert();//modify by SuperScorpion on 2016/11/12 m.get("pobj")
     }
 
     /**
@@ -29,7 +28,7 @@ public class BaseInsertProvider {
      * @return 返回值类型
      */
     public String insertSelective(Map<String, Object> m) {
-        return MedusaSqlHelper.getSqlGenerator(m).sqlOfInsertSelective(m.get("pobj"));//modify by neo on 2016/11/12 m.get("pobj")
+        return MedusaSqlHelper.getSqlGenerator(m).sqlOfInsertSelective(m.get("pobj"));//modify by SuperScorpion on 2016/11/12 m.get("pobj")
     }
 
     /**

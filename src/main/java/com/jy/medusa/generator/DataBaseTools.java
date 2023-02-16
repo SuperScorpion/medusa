@@ -1,7 +1,7 @@
 package com.jy.medusa.generator;
 
 /**
- * Created by neo on 2020/2/14.
+ * Created by SuperScorpion on 2020/2/14.
  */
 
 import com.jy.medusa.gaze.utils.MedusaCommonUtils;
@@ -54,7 +54,7 @@ public class DataBaseTools {
         this.user = Home.jdbcUsername;
         this.password = Home.jdbcPassword;
 
-        //add by neo on 20220820 for https://blog.csdn.net/hechenggong159/article/details/120902126
+        //add by SuperScorpion on 20220820 for https://blog.csdn.net/hechenggong159/article/details/120902126
         this.url = this.url.contains("&nullCatalogMeansCurrent=") ? this.url : this.url.concat("&nullCatalogMeansCurrent=true");
     }
 

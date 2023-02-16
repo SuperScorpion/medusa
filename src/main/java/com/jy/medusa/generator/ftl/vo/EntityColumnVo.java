@@ -1,7 +1,7 @@
 package com.jy.medusa.generator.ftl.vo;
 
 /**
- * Created by neo on 2017/10/27.
+ * Created by SuperScorpion on 2017/10/27.
  */
 public class EntityColumnVo {
 

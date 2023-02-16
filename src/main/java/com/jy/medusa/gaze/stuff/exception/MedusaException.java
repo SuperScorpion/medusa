@@ -1,7 +1,7 @@
 package com.jy.medusa.gaze.stuff.exception;
 
 /**
- * Created by neo on 2016/11/4.
+ * Created by SuperScorpion on 2016/11/4.
  */
 public class MedusaException extends RuntimeException{
 

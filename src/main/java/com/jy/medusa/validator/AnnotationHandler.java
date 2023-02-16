@@ -15,7 +15,7 @@ import java.util.*;
 
 /**
  * 2016.07.11
- * @author neo refactor on 2017.9.1
+ * @author SuperScorpion refactor on 2017.9.1
  * 参数校验主要类
  */
 @Aspect
@@ -83,16 +83,16 @@ public abstract class AnnotationHandler {
             }
         }
 
-        //modify by neo on 2017.09.03
+        //modify by SuperScorpion on 2017.09.03
         processErrorMsg(k, messageList);
-        //modify by neo on 2022.08.04
+        //modify by SuperScorpion on 2022.08.04
 //        processErrorMsgDefault(k, messageList);
     }
 
     protected abstract void processErrorMsg(ErrorInfo errorInfo, List<String> messageList);
 
     protected void processErrorMsgDefault(List<String> messageList) {
-        if(messageList != null && !messageList.isEmpty()) {//add by neo on 2022.07.29
+        if(messageList != null && !messageList.isEmpty()) {//add by SuperScorpion on 2022.07.29
              throw new ValidException(messageList.get(0));
         } else {
             //do nothing
@@ -157,7 +157,7 @@ public abstract class AnnotationHandler {
 
         if(fieldValue != null) {
 
-            String value = String.valueOf(fieldValue);//modify by neo 20160128
+            String value = String.valueOf(fieldValue);//modify by SuperScorpion 20160128
 
             if(selects != null && selects.length > 0) {
                 List<String> paramList = Arrays.asList(selects);

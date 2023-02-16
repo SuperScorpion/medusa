@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.Date;
 
 /**
- * Created by neo on 16/7/19.
+ * Created by SuperScorpion on 16/7/19.
  * @deprecated
  */
 
@@ -68,7 +68,7 @@ public class GenEntity {
         String sqlComments = "show full columns from " + tableName;
 
         try {
-            //modify by neo on 2019.08.17
+            //modify by SuperScorpion on 2019.08.17
             //get current primary key from table
             DatabaseMetaData dbmd = conn.getMetaData();
             ResultSet resultSet = dbmd.getPrimaryKeys(null, null, tableName);
@@ -101,8 +101,8 @@ public class GenEntity {
             for (int i = 0; i < rsmd.getColumnCount(); i++) {
 
                 colSqlNames[i] = rsmd.getColumnName(i + 1);
-//                colFieldNames[i] = colSqlNames[i].equals(primaryKey) ? SystemConfigs.PRIMARY_KEY : MedusaGenUtils.getCamelStr(colSqlNames[i]);//modify by neo on 2020.02.14
-                colFieldNames[i] = MedusaGenUtils.getCamelStr(colSqlNames[i]);//modify by neo on 2021.05.22
+//                colFieldNames[i] = colSqlNames[i].equals(primaryKey) ? SystemConfigs.PRIMARY_KEY : MedusaGenUtils.getCamelStr(colSqlNames[i]);//modify by SuperScorpion on 2020.02.14
+                colFieldNames[i] = MedusaGenUtils.getCamelStr(colSqlNames[i]);//modify by SuperScorpion on 2021.05.22
                 colTypes[i] = rsmd.getColumnTypeName(i + 1);
                 if (colTypes[i].equalsIgnoreCase("datetime") || colTypes[i].equalsIgnoreCase("date") || colTypes[i].equalsIgnoreCase("TIMESTAMP")) {
                     if(MedusaCommonUtils.isNotBlank(defaultMap.get(colFieldNames[i]))) isMedusaDateUtils = true;
@@ -238,7 +238,7 @@ public class GenEntity {
             if(MedusaCommonUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
 
                 String p = colSqlNames[i].trim().replace("_id", "").trim();
-                if(MedusaCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {//modify by neo, on 2016.11.25
+                if(MedusaCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {//modify by SuperScorpion, on 2016.11.25
                     p = p.concat(pluralAssociation);
                 }
 
@@ -330,7 +330,7 @@ public class GenEntity {
             if(MedusaCommonUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
 
                 String p = colSqlNames[i].trim().replace("_id", "").trim();
-                if(MedusaCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
+                if(MedusaCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by SuperScorpion on 2016.11.25
                     p = p.concat(pluralAssociation);
                 }
 

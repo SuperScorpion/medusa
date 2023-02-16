@@ -8,8 +8,7 @@ import java.util.Map;
 
 /**
  * BaseUpdateProvider实现类，基础方法实现类
- *
- * @author neo
+ * @author SuperScorpion
  */
 public class BaseUpdateProvider {
 

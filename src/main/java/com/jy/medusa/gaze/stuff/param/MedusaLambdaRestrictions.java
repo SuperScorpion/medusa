@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by neo on 2020/04/23.
+ * Created by SuperScorpion on 2020/04/23.
  * 一个构造参数对象的类 方便用户使用 使用lambda获取属性名
  */
 public class MedusaLambdaRestrictions<T> extends BaseRestrictions<T, HolyGetter<T>, MedusaLambdaRestrictions<T>> {
@@ -118,7 +118,7 @@ public class MedusaLambdaRestrictions<T> extends BaseRestrictions<T, HolyGetter<
     }
 
 
-    /////add by neo on 20221013 for order by and group by/////
+    /////add by SuperScorpion on 20221013 for order by and group by/////
     public MedusaLambdaRestrictions<T> orderByDescParam(HolyGetter<T> fn) {
 
         paramList.add(new OrderByParam(HolyGetPropertyNameLambda.convertToFieldName(fn), Pager.SortTypeEnum.SORT_DESC));
@@ -138,7 +138,7 @@ public class MedusaLambdaRestrictions<T> extends BaseRestrictions<T, HolyGetter<
     }
 
 
-    /////add by neo on 20230113 for or and/////
+    /////add by SuperScorpion on 20230113 for or and/////
     private List<MedusaLambdaRestrictions> orModelList;
     private List<MedusaLambdaRestrictions> andModelList;
 

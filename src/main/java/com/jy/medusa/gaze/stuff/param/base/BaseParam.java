@@ -1,8 +1,8 @@
 package com.jy.medusa.gaze.stuff.param.base;
 
 /**
- * @author neo
- * 最父类的多条件参数基类
+ * 多条件查询参数基类
+ * @author SuperScorpion
  */
 public abstract class BaseParam {
 

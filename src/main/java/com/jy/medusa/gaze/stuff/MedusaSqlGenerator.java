@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 /**
- * Created by neo on 16/7/27.
+ * Created by SuperScorpion on 16/7/27.
  */
 public class MedusaSqlGenerator {
 
@@ -45,7 +45,7 @@ public class MedusaSqlGenerator {
         this.columnsStr = MedusaCommonUtils.join(this.columns, ",");
         this.currentColumnFieldNameMap = cfMap;
         this.currentFieldColumnNameMap = MedusaSqlHelper.exchangeKeyValues(cfMap);
-        this.currentFieldTypeNameMap = ftMap;///modify by neo on 2016.12.15
+        this.currentFieldTypeNameMap = ftMap;///modify by SuperScorpion on 2016.12.15
 
         this.entityClass = entityClass;
     }
@@ -98,7 +98,7 @@ public class MedusaSqlGenerator {
     public String sqlOfInsertBatch(Object t, Boolean flag, Object[] ps) {
 
         if(flag != null && (ps == null || ps.length == 0))
-            throw new MedusaException("Medusa: The batch method need paramColumns");//add by neo on 20220927
+            throw new MedusaException("Medusa: If you have isExclude then the batch method need paramColumns");//add by SuperScorpion on 20220927
 
         String paramColumn = reSolveColumn(ps, flag);
 
@@ -112,7 +112,7 @@ public class MedusaSqlGenerator {
 
         sqlBuild.append("INSERT INTO ").append(tableName).append("(")
                 .append(paramColumn).append(") values ")
-                .append(dynamicSqlForBatch);//modify by neo on 2016.11.13
+                .append(dynamicSqlForBatch);//modify by SuperScorpion on 2016.11.13
 
         String sql = sqlBuild.toString();
 
@@ -125,7 +125,7 @@ public class MedusaSqlGenerator {
      * 生成新增的SQL not selective
      * @return 返回值类型
      */
-    public String sqlOfInsert() {//modify by neo on 2016.11.12 Object t
+    public String sqlOfInsert() {//modify by SuperScorpion on 2016.11.12 Object t
 
         String[] paraArray = MedusaSqlHelper.concatInsertDynamicSql(currentFieldTypeNameMap, currentFieldColumnNameMap, null, pkName);
         String insertColumn = paraArray[1], insertDynamicSql = paraArray[0];
@@ -135,7 +135,7 @@ public class MedusaSqlGenerator {
         StringBuilder sqlBuild = new StringBuilder(sbbLength);
         sqlBuild.append("INSERT INTO ").append(tableName).append("(")
                 .append(insertColumn).append(") values (")
-                .append(insertDynamicSql).append(")");//modify by neo on2016.11.12
+                .append(insertDynamicSql).append(")");//modify by SuperScorpion on2016.11.12
         String sql = sqlBuild.toString();
 
         logger.debug("Medusa: Generated SQL ^_^ " + sql);
@@ -149,7 +149,7 @@ public class MedusaSqlGenerator {
      * @return 返回值类型
      * @param t 参数
      */
-    public String sqlOfInsertSelective(Object t) {//modify by neo on 20170117
+    public String sqlOfInsertSelective(Object t) {//modify by SuperScorpion on 20170117
 
         if(t == null) throw new MedusaException("Medusa: The entity param is null");
 
@@ -161,7 +161,7 @@ public class MedusaSqlGenerator {
         StringBuilder sqlBuild = new StringBuilder(sbbLength);
         sqlBuild.append("INSERT INTO ").append(tableName).append("(")
                 .append(insertColumn).append(") values (")
-                .append(insertDynamicSql).append(")");//modify by neo on2016.11.12
+                .append(insertDynamicSql).append(")");//modify by SuperScorpion on2016.11.12
         String sql = sqlBuild.toString();
 
         logger.debug("Medusa: Generated SQL ^_^ " + sql);
@@ -173,13 +173,13 @@ public class MedusaSqlGenerator {
      * 生成根据ID删除的SQL
      * @return 返回值类型
      */
-    public String sqlOfDeleteByPrimaryKey() {//modify by neo on 2016.11.13 Object id
+    public String sqlOfDeleteByPrimaryKey() {//modify by SuperScorpion on 2016.11.13 Object id
 
         int len = 30 + tableName.length() + pkName.length();
 
         StringBuilder sqlBuild = new StringBuilder(len);
         sqlBuild.append("DELETE FROM ").append(tableName)
-                .append(" WHERE ").append(pkName).append(" = ").append("#{pobj}");//modify by neo on 2016.11.12
+                .append(" WHERE ").append(pkName).append(" = ").append("#{pobj}");//modify by SuperScorpion on 2016.11.12
 
         String sql = sqlBuild.toString();
 
@@ -235,7 +235,7 @@ public class MedusaSqlGenerator {
         sqlBuild.append("DELETE FROM ").append(tableName).append(" WHERE ");
 
         if (values == null || values.isEmpty()) {
-            sqlBuild.append("1!=1");//modify by neo on 2017 07
+            sqlBuild.append("1!=1");//modify by SuperScorpion on 2017 07
         } else {
             sqlBuild.append(MedusaCommonUtils.join(values, " AND "));
         }
@@ -253,14 +253,14 @@ public class MedusaSqlGenerator {
      */
     private List<String> obtainColumnValuesForDeleteByCondition(Object t) {
 
-        if(t == null || t instanceof Object[]) return null;//modify by neo on 2020.01.01 解决protostuff 序列化数组问题
+        if(t == null || t instanceof Object[]) return null;//modify by SuperScorpion on 2020.01.01 解决protostuff 序列化数组问题
 
         List<String> colVals = new ArrayList<>();
         for (String column : columns) {
-            String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
+            String fieldName = currentColumnFieldNameMap.get(column);//modify by SuperScorpion on 2016.11.13
             Object value = MedusaReflectionUtils.obtainFieldValue(t, fieldName);
             if (value != null) {
-                colVals.add(column + "=" + "#{pobj." + fieldName + "}");///modify by neo on 2016.11.12
+                colVals.add(column + "=" + "#{pobj." + fieldName + "}");///modify by SuperScorpion on 2016.11.12
             }
         }
         return colVals;
@@ -277,7 +277,7 @@ public class MedusaSqlGenerator {
     public String sqlOfUpdateByPrimaryKeyBatch(Object t, Boolean flag, Object[] ps) {
 
         if(flag != null && (ps == null || ps.length == 0))
-            throw new MedusaException("Medusa: The batch method need paramColumns");//add by neo on 20220927
+            throw new MedusaException("Medusa: If you have isExclude then the batch method need paramColumns");//add by SuperScorpion on 20220927
 
         String paramColumn = reSolveColumn(ps, flag);
 
@@ -285,7 +285,7 @@ public class MedusaSqlGenerator {
 
         boolean notContainPkName = !paramColumn.contains("," + pkName) || !paramColumn.startsWith(pkName + ",");
 
-        if(paramColumn != columnsStr && notContainPkName) paramColumn = pkName + "," + paramColumn;/////modify by neo on 2017.04.20
+        if(paramColumn != columnsStr && notContainPkName) paramColumn = pkName + "," + paramColumn;/////modify by SuperScorpion on 2017.04.20
 
         String dynamicSqlForBatch = MedusaSqlHelper.concatUpdateDynamicSqlValuesForBatchPre(tableName, t, paramColumn, currentColumnFieldNameMap, pkName);
 
@@ -312,7 +312,7 @@ public class MedusaSqlGenerator {
         StringBuilder sqlBuild = new StringBuilder(len);
         sqlBuild.append("UPDATE ").append(tableName).append(" SET ")
                 .append(MedusaCommonUtils.join(values, ",")).append(" WHERE ")
-                .append(pkName).append(" = ").append("#{pobj.").append(currentColumnFieldNameMap.get(pkName)).append("}");///modify by neo on 2019.08.20
+                .append(pkName).append(" = ").append("#{pobj.").append(currentColumnFieldNameMap.get(pkName)).append("}");///modify by SuperScorpion on 2019.08.20
 
         String sql = sqlBuild.toString();
 
@@ -334,12 +334,12 @@ public class MedusaSqlGenerator {
 
         for (String column : columns) {
 
-            String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
+            String fieldName = currentColumnFieldNameMap.get(column);//modify by SuperScorpion on 2016.11.13
 
-            Object value = MedusaReflectionUtils.invokeGetterMethod(t, fieldName);/// modify on 2016 11 21 by neo cause:先查询出来对象了 再更新对象的话 会更新到动态代理的 对象类 就会抛出找不到属性的异常问题 改为反射执行get属性方法则可以
+            Object value = MedusaReflectionUtils.invokeGetterMethod(t, fieldName);/// modify on 2016 11 21 by SuperScorpion cause:先查询出来对象了 再更新对象的话 会更新到动态代理的 对象类 就会抛出找不到属性的异常问题 改为反射执行get属性方法则可以
 
             if (value != null && !column.equalsIgnoreCase(pkName)) {
-                colVals.add(column + "=" + "#{pobj." + fieldName + "}");///modify by neo on 2016.11.12
+                colVals.add(column + "=" + "#{pobj." + fieldName + "}");///modify by SuperScorpion on 2016.11.12
             }
         }
         return colVals;
@@ -365,7 +365,7 @@ public class MedusaSqlGenerator {
         StringBuilder sqlBuild = new StringBuilder(len);
         sqlBuild.append("UPDATE ").append(tableName).append(" SET ")
                 .append(MedusaCommonUtils.join(values, ",")).append(" WHERE ")
-                .append(pkName).append(" = ").append("#{param1.").append(currentColumnFieldNameMap.get(pkName)).append("}");///modify by neo on 2020.02.13
+                .append(pkName).append(" = ").append("#{param1.").append(currentColumnFieldNameMap.get(pkName)).append("}");///modify by SuperScorpion on 2020.02.13
 
         String sql = sqlBuild.toString();
 
@@ -383,8 +383,8 @@ public class MedusaSqlGenerator {
         List<String> colVals = new ArrayList<>();
         for (String column : columns) {
             if (!column.equalsIgnoreCase(pkName) && parList.contains(column)) {
-                String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
-                colVals.add(column + "=" + "#{param1." + fieldName +"}");///modify by neo on 2020.02.13
+                String fieldName = currentColumnFieldNameMap.get(column);//modify by SuperScorpion on 2016.11.13
+                colVals.add(column + "=" + "#{param1." + fieldName +"}");///modify by SuperScorpion on 2020.02.13
             }
         }
 
@@ -437,14 +437,14 @@ public class MedusaSqlGenerator {
      * @param ps 参数
      * @return 返回值类型
      */
-    public String sqlOfSelectByPrimaryKey(Object id, Object[] ps) {///modify by neo on 2016.11.21 Object id,这个 id 不能去掉的
+    public String sqlOfSelectByPrimaryKey(Object id, Object[] ps) {///modify by SuperScorpion on 2016.11.21 Object id,这个 id 不能去掉的
 
         String paramColumn = reSolveColumn(ps);
 
         int len = 39 + tableName.length() + pkName.length() + paramColumn.length();
 
         StringBuilder sqlBuild = new StringBuilder(len);
-        sqlBuild.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName).append(" WHERE ").append(pkName).append(" = ").append("#{param1}");///modify by neo on 2020.02.13
+        sqlBuild.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName).append(" WHERE ").append(pkName).append(" = ").append("#{param1}");///modify by SuperScorpion on 2020.02.13
 
         String sql = sqlBuild.toString();
 
@@ -527,14 +527,14 @@ public class MedusaSqlGenerator {
      */
     private List<String> obtainColumnValusForSelectList(Object t) {
 
-        if(t == null || t instanceof Object[]) return null;//modify by neo on 2017.07.02 解决protostuff 序列化数组问题
+        if(t == null || t instanceof Object[]) return null;//modify by SuperScorpion on 2017.07.02 解决protostuff 序列化数组问题
 
         List<String> colVals = new ArrayList<>();
         for (String column : columns) {
-            String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
+            String fieldName = currentColumnFieldNameMap.get(column);//modify by SuperScorpion on 2016.11.13
             Object value = MedusaReflectionUtils.obtainFieldValue(t, fieldName);
             if (value != null) {
-                colVals.add(column + "=" + "#{param1." + fieldName + "}");///modify by neo on 2020.02.13
+                colVals.add(column + "=" + "#{param1." + fieldName + "}");///modify by SuperScorpion on 2020.02.13
             }
         }
         return colVals;
@@ -550,13 +550,13 @@ public class MedusaSqlGenerator {
      */
     private String reSolveColumn(Object[] ps) {
 
-        boolean isValidColumn = (ps == null || ps.length == 0);//modify by neo on 2020.01.17
+        boolean isValidColumn = (ps == null || ps.length == 0);//modify by SuperScorpion on 2020.01.17
 
         return isValidColumn ? columnsStr : MedusaSqlHelper.buildColumnNameForSelect(ps, currentFieldColumnNameMap);
     }
 
     /**
-     * add by neo on 20220913 for batch
+     * add by SuperScorpion on 20220913 for batch
      * 处理传入的字段字符
      * @param ps        参数
      * @return 返回值类型
@@ -564,7 +564,7 @@ public class MedusaSqlGenerator {
      */
     private String reSolveColumn(Object[] ps, Boolean flag) {
 
-        boolean isValidColumn = (ps == null || ps.length == 0);//modify by neo on 2020.01.17
+        boolean isValidColumn = (ps == null || ps.length == 0);//modify by SuperScorpion on 2020.01.17
 
         return isValidColumn ? columnsStr : MedusaSqlHelper.buildColumnNameForSelect(ps, currentFieldColumnNameMap, flag, columns);
     }
@@ -619,7 +619,7 @@ public class MedusaSqlGenerator {
         //3.objParams 里的map类型参数处理
 //        List<String> mps = obtainMedusaGazeByMap(objParams);
 
-//        values.addAll(mps);///合并两个集合 modify by neo on 2020.01.19
+//        values.addAll(mps);///合并两个集合 modify by SuperScorpion on 2020.01.19
 
 //        int valuesLen = values == null || values.isEmpty() ? 0 : values.size();
 
@@ -638,11 +638,11 @@ public class MedusaSqlGenerator {
         //3.objParams 里的多条件查询类型参数处理
         if(objParams != null && objParams.length > 0) {
 
-            /////处理各个参数 add by neo on 2022.09.30
+            /////处理各个参数 add by SuperScorpion on 2022.09.30
             processObjParams(sbb, objParams);
         }
 
-        //处理 语句里1=1和1!=1 add by neo on 20230113
+        //处理 语句里1=1和1!=1 add by SuperScorpion on 20230113
         String sql = sbb.toString().replace("1!=1 OR", "").replace("1=1 AND", "").replace("1=1 OR", "");
 
         logger.debug("Medusa: Generated SQL ^_^ " + sql);
@@ -658,9 +658,9 @@ public class MedusaSqlGenerator {
      * @param objParams 参数
      * @return 返回值类型
      **/
-    public String sqlOfSelectMedusaGaze(Object[] objParams) {//modify by neo on 2016.12.23
+    public String sqlOfSelectMedusaGaze(Object[] objParams) {//modify by SuperScorpion on 2016.12.23
 
-        //获取到缓存中的分页查询语句 modify by neo on 2016.11.16
+        //获取到缓存中的分页查询语句 modify by SuperScorpion on 2016.11.16
         ///分页时先执行查询分页再执行查询分页 再执行总计数句 boundsql(因为)
         String cacheSq = MedusaSqlHelper.myThreadLocal.get();
         if (MedusaCommonUtils.isNotBlank(cacheSq)) {
@@ -677,7 +677,7 @@ public class MedusaSqlGenerator {
         //3.objParams 里的map类型参数处理
 //        List<String> mps = obtainMedusaGazeByMap(objParams);
 
-//        values.addAll(mps);///合并两个集合 modify by neo on 2020.01.19
+//        values.addAll(mps);///合并两个集合 modify by SuperScorpion on 2020.01.19
 
 //        int valuesLen = values == null || values.isEmpty() ? 0 : values.size();
 
@@ -697,16 +697,16 @@ public class MedusaSqlGenerator {
         //4.objParams 里的多条件查询类型参数处理
         if(objParams != null && objParams.length > 0) {
 
-            /////处理各个参数 add by neo on 2022.09.30
+            /////处理各个参数 add by SuperScorpion on 2022.09.30
             Pager pa = processObjParams(sbb, objParams);
 
             ///////分页开始
             if(pa != null) {
 
-                //modify by neo on 20220822 for lambda
+                //modify by SuperScorpion on 20220822 for lambda
                 if(pa.getOrderByList() != null && pa.getOrderByList().size() > 0 && sbb.lastIndexOf("ORDER BY") == -1) {
 
-                    sbb.append(" ORDER BY ");//modify by neo 2016.10.12
+                    sbb.append(" ORDER BY ");//modify by SuperScorpion 2016.10.12
 
                     int i = 0;
                     for(; i < pa.getOrderByList().size(); i++) {
@@ -736,7 +736,7 @@ public class MedusaSqlGenerator {
 
         logger.debug("Medusa: Generated SQL ^_^ " + sbb.toString());
 
-        //处理 语句里1=1和1!=1 add by neo on 20230113
+        //处理 语句里1=1和1!=1 add by SuperScorpion on 20230113
         return sbb.toString().replace("1!=1 OR", "").replace("1=1 AND", "").replace("1=1 OR", "");
     }
 
@@ -754,7 +754,7 @@ public class MedusaSqlGenerator {
 
         for (Object z : objParams) {///遍历各个参数
 
-            if(z instanceof BaseRestrictions) {//modify by neo on 2016.12.09  if(z instanceof BaseParam) {
+            if(z instanceof BaseRestrictions) {//modify by SuperScorpion on 2016.12.09  if(z instanceof BaseParam) {
 
                 short v = 0;
 
@@ -768,7 +768,7 @@ public class MedusaSqlGenerator {
                     }
                 }
 
-                //处理or and 条件的语句 add by neo on 20230113
+                //处理or and 条件的语句 add by SuperScorpion on 20230113
                 if(z instanceof MedusaLambdaRestrictions) {
                     orAndParamHandler(sbb, z, isd);
                 }
@@ -777,11 +777,11 @@ public class MedusaSqlGenerator {
                 pa = (Pager) z;//只要最后一个对象 pager
             }
 
-            //modify by neo on 2022.08.23 for 处理实体类型条件
+            //modify by SuperScorpion on 2022.08.23 for 处理实体类型条件
             else if(entityClass.isInstance(z)) {
                 paramEntityConditionHandler(sbb, z, isd);
             }
-            //modify by neo on 2022.08.23 for 处理普通map<String, Object>
+            //modify by SuperScorpion on 2022.08.23 for 处理普通map<String, Object>
             else if(z instanceof Map<?, ?> && !(z instanceof MedusaLambdaMap)) {
                 paramMapConditionHandler(sbb, z, isd);
             }
@@ -864,11 +864,11 @@ public class MedusaSqlGenerator {
      */
     private void paramEntityConditionHandler(StringBuilder sbb, Object z, short isd) {
         for (String column : columns) {
-            String fieldName = currentColumnFieldNameMap.get(column);//modify by neo on 2016.11.13
+            String fieldName = currentColumnFieldNameMap.get(column);//modify by SuperScorpion on 2016.11.13
             Object value = MedusaReflectionUtils.obtainFieldValue(z, fieldName);
-            if (value != null && MedusaCommonUtils.isNotBlank(value.toString())) {//modify by neo on 2020.01.19
-//                            colVals.add(column + "=" + "#{array[" + i + "]." + fieldName + "}");///modify by neo on 2020.02.13
-                sbb.append(" AND ").append(column).append(" = ").append("#{array[").append(isd).append("].").append(fieldName).append("}");///modify by neo on 2020.02.13
+            if (value != null && MedusaCommonUtils.isNotBlank(value.toString())) {//modify by SuperScorpion on 2020.01.19
+//                            colVals.add(column + "=" + "#{array[" + i + "]." + fieldName + "}");///modify by SuperScorpion on 2020.02.13
+                sbb.append(" AND ").append(column).append(" = ").append("#{array[").append(isd).append("].").append(fieldName).append("}");///modify by SuperScorpion on 2020.02.13
             }
         }
     }
@@ -888,25 +888,25 @@ public class MedusaSqlGenerator {
         while(iter.hasNext()) {
             Map.Entry<Object, Object> entry = iter.next();
             if (entry != null && entry.getKey() instanceof String && entry.getValue() != null
-                    && MedusaCommonUtils.isNotBlank(entry.getKey().toString()) && MedusaCommonUtils.isNotBlank(entry.getValue().toString())) {//modify by neo on 2020.01.19
+                    && MedusaCommonUtils.isNotBlank(entry.getKey().toString()) && MedusaCommonUtils.isNotBlank(entry.getValue().toString())) {//modify by SuperScorpion on 2020.01.19
                 String column = MedusaSqlHelper.buildColumnNameForAll(entry.getKey().toString(), currentFieldColumnNameMap);
-//                            colVals.add(column + "=" + "#{array[" + i + "]." + entry.getKey() + "}");///modify by neo on 2020.02.13
-                sbb.append(" AND ").append(column).append(" = ").append("#{array[").append(isd).append("].").append(entry.getKey()).append("}");///modify by neo on 2020.02.13
+//                            colVals.add(column + "=" + "#{array[" + i + "]." + entry.getKey() + "}");///modify by SuperScorpion on 2020.02.13
+                sbb.append(" AND ").append(column).append(" = ").append("#{array[").append(isd).append("].").append(entry.getKey()).append("}");///modify by SuperScorpion on 2020.02.13
             }
         }
     }
 
     /**
-     * modify by neo on 2016.12.09 添加 .paramList[index]
+     * modify by SuperScorpion on 2016.12.09 添加 .paramList[index]
      * isd 为(T entity, Object... param) param的index
      * ind 为MyRestrctions里paramList()的index.
      * @param sbb 参数
      * @param z             参数
      * @param isd           参数
      * @param ind           参数
-     * @param imd           参数  //add by neo on 20230113 for or and
-     * @param isAndList     参数  //add by neo on 20230113 for or and
-     * @param isAndListElement    参数  //add by neo on 20230113 for or and
+     * @param imd           参数  //add by SuperScorpion on 20230113 for or and
+     * @param isAndList     参数  //add by SuperScorpion on 20230113 for or and
+     * @param isAndListElement    参数  //add by SuperScorpion on 20230113 for or and
      */
     public void baseParamHandler(StringBuilder sbb, Object z, Short isd, Short ind, Short imd, Boolean isAndList, Boolean isAndListElement) {
 
@@ -921,7 +921,7 @@ public class MedusaSqlGenerator {
 
         if (z instanceof BaseComplexParam) {
 
-            if (z instanceof SingleParam) {//modify by neo on 2016.11.17
+            if (z instanceof SingleParam) {//modify by SuperScorpion on 2016.11.17
 
                 Object p = ((SingleParam) z).getValue();
                 Boolean f = ((SingleParam) z).getNeq();
@@ -932,7 +932,7 @@ public class MedusaSqlGenerator {
                         sbb.append(" != ");
                     else
                         sbb.append(" = ");
-                    sbb.append("#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].value}");///modify by neo on 2020.02.13
+                    sbb.append("#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].value}");///modify by SuperScorpion on 2020.02.13
                 }
             } else if (z instanceof BetweenParam) {
 
@@ -942,9 +942,9 @@ public class MedusaSqlGenerator {
                 if (start != null && end != null && MedusaCommonUtils.isNotBlank(start.toString()) && MedusaCommonUtils.isNotBlank(end.toString())) {
                     sbb.append(orAndStr).append(column).append(" BETWEEN ")
                             //.append("'").append(MedusaDateUtils.convertDateToStr(p.getEnd(), MedusaDateUtils.DATE_FULL_STR)).append("'")
-                            .append("#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].start}")///modify by neo on 2020.02.13
+                            .append("#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].start}")///modify by SuperScorpion on 2020.02.13
                             .append(" AND ")
-                            .append("#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].end}");///modify by neo on 2020.02.13
+                            .append("#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].end}");///modify by SuperScorpion on 2020.02.13
                 }
             } else if (z instanceof NotInParam) {
 
@@ -962,8 +962,8 @@ public class MedusaSqlGenerator {
 
                     int k = 0;
                     while (k < p.size()) {
-                        if (p.get(k) != null && MedusaCommonUtils.isNotBlank(p.get(k).toString())) {//add by neo on 20220923
-                            sbb.append("#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].value[").append(k).append("]},");///modify by neo on 2020.02.13
+                        if (p.get(k) != null && MedusaCommonUtils.isNotBlank(p.get(k).toString())) {//add by SuperScorpion on 20220923
+                            sbb.append("#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].value[").append(k).append("]},");///modify by SuperScorpion on 2020.02.13
                             k += 1;
                         }
                     }
@@ -976,7 +976,7 @@ public class MedusaSqlGenerator {
                 Object p = ((LikeParam) z).getValue();
 
                 if (p != null && MedusaCommonUtils.isNotBlank(p.toString())) {
-                    sbb.append(orAndStr).append(column).append(" LIKE ").append("CONCAT('%',#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].value},'%')");///modify by neo on 2020.02.13
+                    sbb.append(orAndStr).append(column).append(" LIKE ").append("CONCAT('%',#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].value},'%')");///modify by SuperScorpion on 2020.02.13
                 }
             } else if (z instanceof NotNullParam) {
 
@@ -998,16 +998,16 @@ public class MedusaSqlGenerator {
 
                 if (z instanceof GreatThanParam) {
 
-                    sbb.append(orAndStr).append(column).append(" > ").append("#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].value}");///modify by neo on 2020.02.13
+                    sbb.append(orAndStr).append(column).append(" > ").append("#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].value}");///modify by SuperScorpion on 2020.02.13
                 } else if (z instanceof GreatEqualParam) {
 
-                    sbb.append(orAndStr).append(column).append(" >= ").append("#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].value}");///modify by neo on 2020.02.13
+                    sbb.append(orAndStr).append(column).append(" >= ").append("#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].value}");///modify by SuperScorpion on 2020.02.13
                 } else if (z instanceof LessThanParam) {
 
-                    sbb.append(orAndStr).append(column).append(" < ").append("#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].value}");///modify by neo on 2020.02.13
+                    sbb.append(orAndStr).append(column).append(" < ").append("#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].value}");///modify by SuperScorpion on 2020.02.13
                 } else if (z instanceof LessEqualParam) {
 
-                    sbb.append(orAndStr).append(column).append(" <= ").append("#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].value");///modify by neo on 2020.02.13
+                    sbb.append(orAndStr).append(column).append(" <= ").append("#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].value");///modify by SuperScorpion on 2020.02.13
                 }
             }
         } else if (z instanceof BaseSortParam) {

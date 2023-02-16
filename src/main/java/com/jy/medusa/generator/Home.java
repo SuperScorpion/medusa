@@ -17,7 +17,7 @@ import java.util.Properties;
 import java.util.Random;
 
 /**
- * Created by neo on 16/8/4.
+ * Created by SuperScorpion on 16/8/4.
  */
 public class Home {
 
@@ -141,7 +141,7 @@ public class Home {
 
                 if(!validateTableExist(tabName)) {
                     System.out.println("Medusa: 不存在该表 " + tabName + " 已跳过...");
-                    continue;//add by neo on 20220907 检查表是否存在
+                    continue;//add by SuperScorpion on 20220907 检查表是否存在
                 }
 
                 //TODO 自动生成参数校验
@@ -377,8 +377,8 @@ public class Home {
 
     /**
      * 多模块的环境下 System.getProperty("user.dir") 获得的路径不够深入 所以用classLoader处理
-     * /Users/neo/Desktop/my-work/arbitrage/webapi/target/classes/application.yml
-     * /Users/neo/Desktop/my-work/arbitrage/webapi/src/main/java/
+     * /Users/SuperScorpion/Desktop/my-work/arbitrage/webapi/target/classes/application.yml
+     * /Users/SuperScorpion/Desktop/my-work/arbitrage/webapi/src/main/java/
      * @param medusaProFileName 参数
      * @param resPaths 参数
      */
@@ -389,8 +389,8 @@ public class Home {
 
     /**
      * 多模块的环境下 System.getProperty("user.dir") 获得的路径不够深入 所以用classLoader处理
-     * /Users/neo/Desktop/my-work/arbitrage/webapi/target/classes/application.yml
-     * /Users/neo/Desktop/my-work/arbitrage/webapi/src/main/resources/
+     * /Users/SuperScorpion/Desktop/my-work/arbitrage/webapi/target/classes/application.yml
+     * /Users/SuperScorpion/Desktop/my-work/arbitrage/webapi/src/main/resources/
      * @param resPaths 参数
      */
     private void gainTheProResourcePath(String resPaths, String medusaProFileName) {

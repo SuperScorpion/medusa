@@ -10,17 +10,18 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * 通用Mapper接口,查询
- * @param <T> 不能为空
- * @author neo
+ * 通用Mapper接口
+ * 根据主键的list查询结果集
+ * @param <T> 实体类泛型
+ * @author SuperScorpion
  */
 public interface SelectByPrimaryKeyBatchMapper<T> {
 
     /**
-     * 根据ids查询
-     * @param pks        参数
-     * @param paramColumns        参数
-     * @return 返回值类型
+     * 根据主键的list查询结果集
+     * @param pks           主键list参数
+     * @param paramColumns  可选列名称的双冒号形式的参数
+     * @return              返回实体对象的list结果
      */
     @SelectProvider(type = BaseSelectProvider.class, method = "selectByPrimaryKeyBatch")
     @ResultMap("BaseResultMap")

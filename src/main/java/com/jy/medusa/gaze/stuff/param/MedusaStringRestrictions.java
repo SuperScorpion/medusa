@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  * @deprecated
- * Created by neo on 2016/10/14.
+ * Created by SuperScorpion on 2016/10/14.
  * 一个构造参数对象的类 方便用户使用
  */
 public class MedusaStringRestrictions<T> extends BaseRestrictions<T, String, MedusaStringRestrictions<T>> {
@@ -113,7 +113,7 @@ public class MedusaStringRestrictions<T> extends BaseRestrictions<T, String, Med
     }
 
 
-    /////add by neo on 20221013 for order by and group by/////
+    /////add by SuperScorpion on 20221013 for order by and group by/////
     public MedusaStringRestrictions orderByDescParam(String c) {
 
         paramList.add(new OrderByParam(c, Pager.SortTypeEnum.SORT_DESC));

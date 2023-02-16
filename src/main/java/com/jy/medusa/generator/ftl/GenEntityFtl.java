@@ -1,7 +1,7 @@
 package com.jy.medusa.generator.ftl;
 
 /**
- * Created by neo on 16/7/19.
+ * Created by SuperScorpion on 16/7/19.
  */
 
 import com.jy.medusa.gaze.utils.MedusaCommonUtils;
@@ -74,7 +74,7 @@ public class GenEntityFtl {
         String tableInfoSql = "SHOW CREATE TABLE " + tableName;
 
         try {
-            //modify by neo on 2019.08.17
+            //modify by SuperScorpion on 2019.08.17
             //get current primary key from table
             DatabaseMetaData dbmd = conn.getMetaData();
             ResultSet resultSet = dbmd.getPrimaryKeys(null, null, tableName);
@@ -87,7 +87,7 @@ public class GenEntityFtl {
             }
 
 
-            //1.先处理表备注信息 add by neo on 20210120
+            //1.先处理表备注信息 add by SuperScorpion on 20210120
             pstmt = conn.prepareStatement(tableInfoSql);
             rs = pstmt.executeQuery();
             if (rs != null) {
@@ -125,7 +125,7 @@ public class GenEntityFtl {
             for (int i = 0; i < rsmd.getColumnCount(); i++) {
 
                 colSqlNames[i] = rsmd.getColumnName(i + 1);
-                colFieldNames[i] = MedusaGenUtils.getCamelStr(rsmd.getColumnName(i + 1));//modify by neo on 20210121
+                colFieldNames[i] = MedusaGenUtils.getCamelStr(rsmd.getColumnName(i + 1));//modify by SuperScorpion on 20210121
                 colTypes[i] = rsmd.getColumnTypeName(i + 1);
                 if (colTypes[i].equalsIgnoreCase("datetime") || colTypes[i].equalsIgnoreCase("date") || colTypes[i].equalsIgnoreCase("TIMESTAMP")) {
                     if(MedusaCommonUtils.isNotBlank(defaultMap.get(colFieldNames[i]))) isMedusaDateUtils = true;
@@ -293,7 +293,7 @@ public class GenEntityFtl {
 
             String p = colSqlNames[i].trim().replace("_id", "").trim();
 
-            if(MedusaCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
+            if(MedusaCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by SuperScorpion on 2016.11.25
                 p = p.concat(pluralAssociation);
             }
 
@@ -344,7 +344,7 @@ public class GenEntityFtl {
     }
 
     private String sqlType2JavaType(String sqlType) {
-        sqlType = sqlType.toLowerCase().trim().replace(" unsigned", "");//add by neo on 20210120
+        sqlType = sqlType.toLowerCase().trim().replace(" unsigned", "");//add by SuperScorpion on 20210120
         if (sqlType.equalsIgnoreCase("bit")) {
             return "Boolean";
         } else if (sqlType.equalsIgnoreCase("tinyint")) {
@@ -377,7 +377,7 @@ public class GenEntityFtl {
             return "Blob";
         } else if (sqlType.equalsIgnoreCase("text")) {
             return "Clob";
-        } else if (sqlType.equalsIgnoreCase("json")) {//add by neo on 20210120
+        } else if (sqlType.equalsIgnoreCase("json")) {//add by SuperScorpion on 20210120
             return "String";
         }
         return null;

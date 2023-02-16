@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.regex.Pattern;
 
 /**
- * Created by neo on 16/7/27.
+ * Created by SuperScorpion on 16/7/27.
  */
 public class MedusaDateUtils {
 

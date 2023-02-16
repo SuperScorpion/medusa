@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author neo 2016.09.23
- * Bean类 - 分页
+ * Bean类 - 分页 - 2016.09.23
+ * @author SuperScorpion
  */
 
 public class Pager<T> implements Serializable {

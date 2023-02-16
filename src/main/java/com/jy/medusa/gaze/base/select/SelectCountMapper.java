@@ -7,16 +7,17 @@ import org.apache.ibatis.annotations.SelectProvider;
 import java.io.Serializable;
 
 /**
- * 通用Mapper接口,查询
- * @param <T> 不能为空
- * @author neo
+ * 这是个大招 万能查询方法 根据多条件查询数据条数
+ * @param <T> 实体类泛型
+ * @author SuperScorpion
  */
 public interface SelectCountMapper<T> {
 
     /**
-     * 根据实体中的属性查询总数，查询条件使用等号
-     * @param mixParams       参数
-     * @return 返回值类型
+     * 这是个大招 万能查询方法 根据多条件查询数据条数 请参考medusaGazeMagic方法
+     * @param mixParams     各种类型的参数
+     *                      包含 实体类型 String HashMap MedusaLambdaMap MedusaLambdaRestrictions MedusaLambdaColumns Pager
+     * @return              返回查询出的总条数
      */
     @SelectProvider(type = BaseSelectProvider.class, method = "selectCount")
     int selectCount(Object... mixParams);

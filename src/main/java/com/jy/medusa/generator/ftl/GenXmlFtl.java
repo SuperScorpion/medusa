@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.*;
 
 /**
- * Created by neo on 16/7/27.
+ * Created by SuperScorpion on 16/7/27.
  */
 public class GenXmlFtl {
 
@@ -62,7 +62,7 @@ public class GenXmlFtl {
 
         for(int i=0; i < colTypesSql.length ;i++) {
             if (MedusaCommonUtils.isNotBlank(colTypesSql[i])) {
-                String sqlTypeNoUnsigned = colTypesSql[i].toLowerCase().trim().replace(" unsigned", "");//add by neo on 20210120
+                String sqlTypeNoUnsigned = colTypesSql[i].toLowerCase().trim().replace(" unsigned", "");//add by SuperScorpion on 20210120
                 switch (sqlTypeNoUnsigned) {
                     case "INT":
                         colTypes[i] = "INTEGER";
@@ -91,7 +91,7 @@ public class GenXmlFtl {
         try {
             Map<String, Object> map = parse();
 
-            //modify by neo on 2020.02.15
+            //modify by SuperScorpion on 2020.02.15
             String path;
             if(Home.xmlSuffix.matches("^classpath.*:.*")) {
                 path = Home.proResourcePath + Home.xmlSuffix.replaceFirst("^classpath.*:", "");
@@ -164,7 +164,7 @@ public class GenXmlFtl {
 
             changeTypes(colTypes, colTypesSql);//处理mybatis类型 和 sql类型不一致
 
-            //modify by neo on 2019.08.17
+            //modify by SuperScorpion on 2019.08.17
             //get current primary key from table
             DatabaseMetaData dbmd = conn.getMetaData();
             ResultSet resultSet = dbmd.getPrimaryKeys(null, null, tableName);
@@ -203,8 +203,8 @@ public class GenXmlFtl {
         for (int i = 0; i < colSqlNames.length; i++) {
 
             if (colSqlNames[i].trim().equalsIgnoreCase(primaryKey)) {
-//                resultMapStrList.add("<id column=\"" + colSqlNames[i] + "\" jdbcType=\""+ colTypes[i] +"\" property=\""+ primaryKey +"\" />");//modify by neo on 2020.02.15
-                resultMapStrList.add("<id column=\"" + colSqlNames[i] + "\" property=\""+ colFieldNames[i] +"\" />");//modify by neo on 2021.05.22
+//                resultMapStrList.add("<id column=\"" + colSqlNames[i] + "\" jdbcType=\""+ colTypes[i] +"\" property=\""+ primaryKey +"\" />");//modify by SuperScorpion on 2020.02.15
+                resultMapStrList.add("<id column=\"" + colSqlNames[i] + "\" property=\""+ colFieldNames[i] +"\" />");//modify by SuperScorpion on 2021.05.22
             } else {
 //                resultMapStrList.add("<result column=\"" + colSqlNames[i] + "\" jdbcType=\"" + colTypes[i] + "\" property=\"" + colFieldNames[i] + "\" />");
                 resultMapStrList.add("<result column=\"" + colSqlNames[i] + "\" property=\"" + colFieldNames[i] + "\" />");
@@ -218,7 +218,7 @@ public class GenXmlFtl {
             if(MedusaCommonUtils.isNotBlank(colSqlNames[i]) && colSqlNames[i].endsWith("_id") && associationColumn.contains(colSqlNames[i])) {
 
                 String p = colSqlNames[i].trim().replace("_id", "").trim();
-                if(MedusaCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
+                if(MedusaCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by SuperScorpion on 2016.11.25
                     p = p.concat(pluralAssociation);
                 }
 
@@ -241,7 +241,7 @@ public class GenXmlFtl {
 
                 String p = colSqlNames[i].trim().replace("_id", "").trim();
 
-                if(MedusaCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by neo on 2016.11.25
+                if(MedusaCommonUtils.isNotBlank(pluralAssociation) && !p.endsWith(pluralAssociation)) {///modify by SuperScorpion on 2016.11.25
                     p = p.concat(pluralAssociation);
                 }
 
