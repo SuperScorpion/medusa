@@ -4,10 +4,10 @@ import com.jy.medusa.gaze.stuff.annotation.Column;
 import com.jy.medusa.gaze.stuff.annotation.Id;
 import com.jy.medusa.gaze.stuff.annotation.Table;
 
-<#if lazyLoad?? && lazyLoad==true>
+<#if lazyLoadSwitch?? && lazyLoadSwitch==true>
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 </#if>
-<#if entitySerializable?? && entitySerializable==true>
+<#if entitySerializableSwitch?? && entitySerializableSwitch==true>
 import java.io.Serializable;
 </#if>
 <#if isMedusaDateUtils?? && isMedusaDateUtils==true>
@@ -33,7 +33,7 @@ import SystemConfigs.VALID_VALIDATOR_PATH;
 * ${tableComment?default("")}
 */
 @Table(name = "${tableName?default("")}")
-<#if lazyLoad?? && lazyLoad==true>
+<#if lazyLoadSwitch?? && lazyLoadSwitch==true>
 @JsonIgnoreProperties(value={"handler"})
 </#if>
 public class ${upcaseFirstTableName?default("")}${entityNameSuffix?default("")} {

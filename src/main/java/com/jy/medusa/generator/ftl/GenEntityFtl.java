@@ -205,12 +205,12 @@ public class GenEntityFtl {
      */
     private Map<String, Object> parse() {
 
-        boolean lazyLoad = false;
-        boolean entitySerializable = false;
+        boolean lazyLoadSwitch = false;
+        boolean entitySerializableSwitch = false;
         boolean useValid = false;
 
-        if(MedusaCommonUtils.isNotBlank(Home.lazyLoad)) lazyLoad = true;
-        if(MedusaCommonUtils.isNotBlank(Home.entitySerializable)) entitySerializable = true;
+        if(MedusaCommonUtils.isNotBlank(Home.lazyLoadSwitch)) lazyLoadSwitch = true;
+        if(MedusaCommonUtils.isNotBlank(Home.entitySerializableSwitch)) entitySerializableSwitch = true;
 
         //参数校验
         /*if(colValidArray != null && !colValidArray.isEmpty()) {
@@ -233,8 +233,8 @@ public class GenEntityFtl {
         map.put("isSql", isSql);
         map.put("isMoney", isMoney);
 
-        map.put("lazyLoad", lazyLoad);
-        map.put("entitySerializable", entitySerializable);
+        map.put("lazyLoadSwitch", lazyLoadSwitch);
+        map.put("entitySerializableSwitch", entitySerializableSwitch);
         map.put("useValid", useValid);
 
 

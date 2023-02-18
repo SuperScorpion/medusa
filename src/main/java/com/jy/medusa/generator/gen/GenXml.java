@@ -231,7 +231,7 @@ public class GenXml {
                 String bigStr = MedusaGenUtils.upcaseFirst(p);
                 String smallStr = MedusaGenUtils.getCamelStr(p);
 
-                String param = "\t\t<association property=\"" + smallStr + "\" column=\"" + colSqlNames[i] + "\" select=\"find" + bigStr + "ById\" " + Home.lazyLoad + "/>\r\n";
+                String param = "\t\t<association property=\"" + smallStr + "\" column=\"" + colSqlNames[i] + "\" select=\"find" + bigStr + "ById\" " + Home.lazyLoadSwitch + "/>\r\n";
                 String paramStr11 = MedusaGenUtils.genMarkStr(markXmlList , param, "/>");
 
                 //上次若有相同的association标签的话 并且内容相同则使用旧的 并且markxmllist里remove掉 不再遍历它

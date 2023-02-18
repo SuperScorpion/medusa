@@ -27,8 +27,8 @@ public class GenXmlFtl {
     private String[] colTypesSql;//mysql 对应的类型数组
     private Integer[] colSizes; // 列名大小数组
 
-    private String packagePath;//mapper
-    private String mapperPath;//xml
+    private String xmlPath;//xml
+    private String mapperPath;//mapper
     private String tableName;
 //    private String propertyFilename;
     private String entityPath;//entity
@@ -44,8 +44,8 @@ public class GenXmlFtl {
 
 
 
-    public GenXmlFtl(String mapperPath, String packagePath, String entityPath, String tableName) {
-        this.packagePath = packagePath;
+    public GenXmlFtl(String mapperPath, String xmlPath, String entityPath, String tableName) {
+        this.xmlPath = xmlPath;
         this.mapperPath = mapperPath;
         this.tableName = tableName;
 //        this.propertyFilename = propertyFilename;
@@ -54,7 +54,7 @@ public class GenXmlFtl {
         this.tag = Home.tag;
         this.associationColumn = Arrays.asList(Home.associationColumn.split(","));
         this.pluralAssociation = Home.pluralAssociation;
-//        this.markXmlList = MedusaGenUtils.genTagStrList(entityName + "Mapper.xml", packagePath, tag, "xml");
+//        this.markXmlList = MedusaGenUtils.genTagStrList(entityName + "Mapper.xml", xmlPath, tag, "xml");
     }
 
     //TODO 待添加 但是xml的jdbcType没用了 所以此方法没意义了
@@ -96,7 +96,7 @@ public class GenXmlFtl {
             if(Home.xmlSuffix.matches("^classpath.*:.*")) {
                 path = Home.proResourcePath + Home.xmlSuffix.replaceFirst("^classpath.*:", "");
             } else {
-                path = Home.proJavaPath + packagePath.replaceAll("\\.", "/");
+                path = Home.proJavaPath + xmlPath.replaceAll("\\.", "/");
             }
 
             File file = new File(path);
@@ -225,7 +225,7 @@ public class GenXmlFtl {
                 String bigStr = MedusaGenUtils.upcaseFirst(p);
                 String smallStr = MedusaGenUtils.getCamelStr(p);
 
-                String param = "<association property=\"" + smallStr + "\" column=\"" + colSqlNames[i] + "\" select=\"find" + bigStr + "ById\" " + Home.lazyLoad + "/>";
+                String param = "<association property=\"" + smallStr + "\" column=\"" + colSqlNames[i] + "\" select=\"find" + bigStr + "ById\" " + Home.lazyLoadSwitch + "/>";
                 resultMapStrList.add(param);
             }
         }

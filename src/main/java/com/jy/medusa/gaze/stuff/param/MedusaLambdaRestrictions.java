@@ -140,11 +140,13 @@ public class MedusaLambdaRestrictions<T> extends BaseRestrictions<T, HolyGetter<
 
     /////add by SuperScorpion on 20230113 for or and/////
     private List<MedusaLambdaRestrictions> orModelList;
+
     private List<MedusaLambdaRestrictions> andModelList;
 
     public List<MedusaLambdaRestrictions> getOrModelList() {
         return orModelList;
     }
+
     public List<MedusaLambdaRestrictions> getAndModelList() {
         return andModelList;
     }
@@ -154,6 +156,7 @@ public class MedusaLambdaRestrictions<T> extends BaseRestrictions<T, HolyGetter<
         orModelList.add(omc);
         return this;
     }
+
     public MedusaLambdaRestrictions<T> and(MedusaLambdaRestrictions omc) {
         if(andModelList == null) andModelList = new ArrayList<>();
         andModelList.add(omc);
@@ -163,6 +166,7 @@ public class MedusaLambdaRestrictions<T> extends BaseRestrictions<T, HolyGetter<
     public BaseModelClass<T> orModel() {
         return new OrModelClass();
     }
+
     public BaseModelClass<T> andModel() {
         return new AndModelClass();
     }

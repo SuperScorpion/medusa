@@ -29,7 +29,7 @@ public class GenEntity {
     private boolean isSql = false; // 是否需要导入包java.sql.*
     private boolean isMoney = false; // 是否需要导入包java.math.BigDecimal
 
-    private String packagePath;
+    private String entityPath;
     private String tableName;
     private String tag;//标记 mark
 //    private JSONArray colValidArray;//参数校验
@@ -44,14 +44,14 @@ public class GenEntity {
     private String primaryKey = SystemConfigs.PRIMARY_KEY;//默认主键字段名
 
 
-    public GenEntity(String packagePath, String tableName, Object colValidArray) {
-        this.packagePath = packagePath;
+    public GenEntity(String entityPath, String tableName, Object colValidArray) {
+        this.entityPath = entityPath;
         this.tableName = tableName;
         this.tag = Home.tag;
 //        this.colValidArray = colValidArray;
         this.associationColumn = Arrays.asList(Home.associationColumn.split(","));
         this.pluralAssociation = Home.pluralAssociation;
-        this.markStrList = MedusaGenUtils.genTagStrList(MedusaGenUtils.upcaseFirst(tableName) + ".java", packagePath, tag, "java");
+        this.markStrList = MedusaGenUtils.genTagStrList(MedusaGenUtils.upcaseFirst(tableName) + ".java", entityPath, tag, "java");
     }
 
     public GenEntity() {
@@ -119,7 +119,7 @@ public class GenEntity {
 
             try {
                 String content = parse();
-                String path = Home.proJavaPath + packagePath.replaceAll("\\.", "/");
+                String path = Home.proJavaPath + entityPath.replaceAll("\\.", "/");
                 File file = new File(path);
                 if(!file.exists()) {
                     file.mkdirs();
@@ -141,11 +141,11 @@ public class GenEntity {
      */
     private String parse() {
         StringBuilder sb = new StringBuilder();
-        sb.append("package " + packagePath + ";\r\n\r\n");
+        sb.append("package " + entityPath + ";\r\n\r\n");
 
 //        sb.append("import " + basePoPath + ";\r\n");//TODO
-        if(MedusaCommonUtils.isNotBlank(Home.lazyLoad)) sb.append("import com.fasterxml.jackson.annotation.JsonIgnoreProperties;\r\n");
-        if(MedusaCommonUtils.isNotBlank(Home.entitySerializable)) sb.append("import java.io.Serializable;\r\n");
+        if(MedusaCommonUtils.isNotBlank(Home.lazyLoadSwitch)) sb.append("import com.fasterxml.jackson.annotation.JsonIgnoreProperties;\r\n");
+        if(MedusaCommonUtils.isNotBlank(Home.entitySerializableSwitch)) sb.append("import java.io.Serializable;\r\n");
 
         sb.append("import com.jy.medusa.gaze.stuff.annotation.Column;\r\n");
         sb.append("import com.jy.medusa.gaze.stuff.annotation.Table;\r\n");
@@ -178,10 +178,10 @@ public class GenEntity {
 
         sb.append("@Table(name = \""+ tableName +"\")\r\n");
 
-        if(MedusaCommonUtils.isNotBlank(Home.lazyLoad)) sb.append("@JsonIgnoreProperties(value={\"handler\"})\r\n");
+        if(MedusaCommonUtils.isNotBlank(Home.lazyLoadSwitch)) sb.append("@JsonIgnoreProperties(value={\"handler\"})\r\n");
 
         sb.append("public class " + MedusaGenUtils.upcaseFirst(tableName) + Home.entityNameSuffix);
-        if(MedusaCommonUtils.isNotBlank(Home.entitySerializable)) sb.append(" implements Serializable");
+        if(MedusaCommonUtils.isNotBlank(Home.entitySerializableSwitch)) sb.append(" implements Serializable");
         sb.append(" {\r\n\r\n");
 
         processAllAttrs(sb);

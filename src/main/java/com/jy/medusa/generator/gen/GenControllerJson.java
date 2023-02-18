@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class GenControllerJson {
 
-    private String packagePath;
+    private String controlPath;
     private String entityPath;
     private String servicePath;
 
@@ -27,19 +27,19 @@ public class GenControllerJson {
     private String tag;//标记 mark
 
 
-    public GenControllerJson(String tableName, String packagePath, String entityPath, String servicePath) {
+    public GenControllerJson(String tableName, String controlPath, String entityPath, String servicePath) {
         this.entityPath = entityPath;
         this.servicePath = servicePath;
         this.entityName = MedusaGenUtils.upcaseFirst(tableName);
-        this.packagePath = packagePath;
+        this.controlPath = controlPath;
         this.tag = Home.tag;
-        this.markServiceList = MedusaGenUtils.genTagStrList(entityName + "Controller.java", packagePath, tag, "java");
+        this.markServiceList = MedusaGenUtils.genTagStrList(entityName + "Controller.java", controlPath, tag, "java");
     }
 
     public void process() {
 
         try {
-            String path = Home.proJavaPath + packagePath.replaceAll("\\.", "/");
+            String path = Home.proJavaPath + controlPath.replaceAll("\\.", "/");
             File file = new File(path);
             if(!file.exists()) {
                 file.mkdirs();
@@ -60,7 +60,7 @@ public class GenControllerJson {
 
         StringBuilder sbb = new StringBuilder();
 
-        sbb.append("package " + packagePath + ";\r\n\r\n");
+        sbb.append("package " + controlPath + ";\r\n\r\n");
 
         sbb.append("import " + entityPath + "." + entityName + Home.entityNameSuffix + ";\r\n");
         sbb.append("import " + servicePath + "." + entityName + "Service" + ";\r\n");

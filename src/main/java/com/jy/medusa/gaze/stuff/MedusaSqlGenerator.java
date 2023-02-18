@@ -898,15 +898,17 @@ public class MedusaSqlGenerator {
 
     /**
      * modify by SuperScorpion on 2016.12.09 添加 .paramList[index]
-     * isd 为(T entity, Object... param) param的index
-     * ind 为MyRestrctions里paramList()的index.
-     * @param sbb 参数
-     * @param z             参数
-     * @param isd           参数
-     * @param ind           参数
-     * @param imd           参数  //add by SuperScorpion on 20230113 for or and
-     * @param isAndList     参数  //add by SuperScorpion on 20230113 for or and
-     * @param isAndListElement    参数  //add by SuperScorpion on 20230113 for or and
+     * modify by SuperScorpion on 2023.01.13 添加 or 和 and 条件
+     * @param sbb                   参数 待拼接的字符串
+     * @param z                     参数 BaseParam的子类对象
+     * @param isd                   参数 为(T entity, Object... param) param的index
+     * @param ind                   参数 为MyRestrctions里paramList()的index.
+     * @param imd                   参数 add by SuperScorpion on 20230113 for or and
+     *                              如果mrs有or或and条件则传入 表示MedusaLambdaRestrictions里 orModelList或andModelList的index
+     * @param isAndList             参数 add by SuperScorpion on 20230113 for or and
+     *                              如果mrs有or或and条件则传入 true是 MedusaLambdaRestrictions里 andModelList[imd] 反之为 orModelList[imd]
+     * @param isAndListElement      参数 add by SuperScorpion on 20230113 for or and
+     *                              如果mrs有or或and条件则传入 true是 拼接sql语句时的 ...and a = #{xxx[z]...vvv[c].value} 反之为 ...or a = #{xxx[z]...vvv[c].value}
      */
     public void baseParamHandler(StringBuilder sbb, Object z, Short isd, Short ind, Short imd, Boolean isAndList, Boolean isAndListElement) {
 

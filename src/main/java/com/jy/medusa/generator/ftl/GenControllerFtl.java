@@ -19,7 +19,7 @@ import java.util.Map;
  */
 public class GenControllerFtl {
 
-    private String packagePath;
+    private String controlPath;
     private String entityPath;
     private String servicePath;
 
@@ -29,19 +29,19 @@ public class GenControllerFtl {
     private String tag;//标记 mark
 
 
-    public GenControllerFtl(String tableName, String packagePath, String entityPath, String servicePath) {
+    public GenControllerFtl(String tableName, String controlPath, String entityPath, String servicePath) {
         this.entityPath = entityPath;
         this.servicePath = servicePath;
         this.entityName = MedusaGenUtils.upcaseFirst(tableName);
-        this.packagePath = packagePath;
+        this.controlPath = controlPath;
         this.tag = Home.tag;
-//        this.markServiceList = MedusaGenUtils.genTagStrList(entityName + "Controller.java", packagePath, tag, "java");
+//        this.markServiceList = MedusaGenUtils.genTagStrList(entityName + "Controller.java", controlPath, tag, "java");
     }
 
     public void process() {
 
         try {
-            String path = Home.proJavaPath + packagePath.replaceAll("\\.", "/");
+            String path = Home.proJavaPath + controlPath.replaceAll("\\.", "/");
             File file = new File(path);
             if(!file.exists()) {
                 file.mkdirs();
@@ -89,7 +89,7 @@ public class GenControllerFtl {
 
         Map<String, Object> map = new HashMap<>();
 
-        map.put("packagePath", packagePath);
+        map.put("controlPath", controlPath);
         map.put("entityName", entityName);
         map.put("entityPath", entityPath);
         map.put("servicePath", servicePath);

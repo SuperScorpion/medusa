@@ -35,8 +35,8 @@ public class Home {
 
     public static String author;
     public static String entityNameSuffix;//实体文件后缀名
-    public static String lazyLoad;
-    public static String entitySerializable;
+    public static String lazyLoadSwitch;
+    public static String entitySerializableSwitch;
     public static String ftlDirPath;
 
     public static String jdbcDriver;
@@ -353,8 +353,8 @@ public class Home {
 
             this.author = childMap.get("author") == null || MedusaCommonUtils.isBlank(childMap.get("author").toString()) ?  "administrator" : childMap.get("author").toString().trim();
             this.entityNameSuffix = childMap.get("entityNameSuffix") == null || MedusaCommonUtils.isBlank(childMap.get("entityNameSuffix").toString()) ?  "" : childMap.get("entityNameSuffix").toString().trim();
-            this.lazyLoad = childMap.get("lazyLoad") == null || MedusaCommonUtils.isBlank(childMap.get("lazyLoad").toString()) ?  "" : "fetchType=\"lazy\"";
-            this.entitySerializable = childMap.get("entitySerializable") == null || MedusaCommonUtils.isBlank(childMap.get("entitySerializable").toString()) ?  "" : childMap.get("entitySerializable").toString().trim();
+            this.lazyLoadSwitch = childMap.get("lazyLoadSwitch") == null || MedusaCommonUtils.isBlank(childMap.get("lazyLoadSwitch").toString()) ?  "" : "fetchType=\"lazy\"";
+            this.entitySerializableSwitch = childMap.get("entitySerializableSwitch") == null || MedusaCommonUtils.isBlank(childMap.get("entitySerializableSwitch").toString()) ?  "" : childMap.get("entitySerializableSwitch").toString().trim();
             this.baseServiceSwitch = childMap.get("baseServiceSwitch") == null || MedusaCommonUtils.isBlank(childMap.get("baseServiceSwitch").toString()) ?  "" : childMap.get("baseServiceSwitch").toString().trim();
 
             this.ftlDirPath = childMap.get("ftlDirPath") == null || MedusaCommonUtils.isBlank(childMap.get("ftlDirPath").toString()) ?  "" : childMap.get("ftlDirPath").toString().trim();
@@ -418,9 +418,10 @@ public class Home {
     public static boolean checkBaseServiceSwitch() {
         boolean result = false;
 
-        if(MedusaCommonUtils.isBlank(baseServiceSwitch) ||
+        if(MedusaCommonUtils.isNotBlank(baseServiceSwitch) &&
                 (baseServiceSwitch.trim().equalsIgnoreCase("true") || baseServiceSwitch.trim().equalsIgnoreCase("yes")
-                        || baseServiceSwitch.trim().equalsIgnoreCase("y") || baseServiceSwitch.trim().equalsIgnoreCase("ok")))
+                        || baseServiceSwitch.trim().equalsIgnoreCase("y") || baseServiceSwitch.trim().equalsIgnoreCase("ok")
+                        || baseServiceSwitch.trim().equalsIgnoreCase("on") || baseServiceSwitch.trim().equalsIgnoreCase("open")))
             result = true;
 
         return result;
@@ -595,8 +596,8 @@ public class Home {
 
         this.author = childMap.get(prefix + "author") == null || MedusaCommonUtils.isBlank(childMap.get(prefix + "author").toString()) ?  "administrator" : childMap.get(prefix + "author").toString().trim();
         this.entityNameSuffix = childMap.get(prefix + "entityNameSuffix") == null || MedusaCommonUtils.isBlank(childMap.get(prefix + "entityNameSuffix").toString()) ?  "" : childMap.get(prefix + "entityNameSuffix").toString().trim();
-        this.lazyLoad = childMap.get(prefix + "lazyLoad") == null || MedusaCommonUtils.isBlank(childMap.get(prefix + "lazyLoad").toString()) ?  "" : "fetchType=\"lazy\"";
-        this.entitySerializable = childMap.get(prefix + "entitySerializable") == null || MedusaCommonUtils.isBlank(childMap.get(prefix + "entitySerializable").toString()) ?  "" : childMap.get(prefix + "entitySerializable").toString().trim();
+        this.lazyLoadSwitch = childMap.get(prefix + "lazyLoadSwitch") == null || MedusaCommonUtils.isBlank(childMap.get(prefix + "lazyLoadSwitch").toString()) ?  "" : "fetchType=\"lazy\"";
+        this.entitySerializableSwitch = childMap.get(prefix + "entitySerializableSwitch") == null || MedusaCommonUtils.isBlank(childMap.get(prefix + "entitySerializableSwitch").toString()) ?  "" : childMap.get(prefix + "entitySerializableSwitch").toString().trim();
         this.baseServiceSwitch = childMap.get(prefix + "baseServiceSwitch") == null || MedusaCommonUtils.isBlank(childMap.get(prefix + "baseServiceSwitch").toString()) ?  "" : childMap.get(prefix + "baseServiceSwitch").toString().trim();
 
         this.ftlDirPath = childMap.get(prefix + "ftlDirPath") == null || MedusaCommonUtils.isBlank(childMap.get(prefix + "ftlDirPath").toString()) ?  "" : childMap.get(prefix + "ftlDirPath").toString().trim();
