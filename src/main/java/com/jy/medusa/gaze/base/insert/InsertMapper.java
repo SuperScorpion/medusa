@@ -8,14 +8,14 @@ import org.apache.ibatis.annotations.Options;
 
 /**
  * 通用Mapper接口
- * 保存单个实体类，null的属性会直接保存
+ * 保存单个实体类，null的属性值不会被过滤 会直接保存入库
  * @param <T> 实体类泛型
  * @author SuperScorpion
  */
 public interface InsertMapper<T> {
 
     /**
-     * 保存单个实体类，null的属性会直接保存
+     * 保存单个实体类，null的属性值不会被过滤 会直接保存入库
      * @param record  实体类参数
      * @return        保存的条数
      */

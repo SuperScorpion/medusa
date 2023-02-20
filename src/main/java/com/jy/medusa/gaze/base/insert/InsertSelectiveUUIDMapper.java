@@ -8,14 +8,14 @@ import org.apache.ibatis.annotations.SelectKey;
 
 /**
  * 通用Mapper接口
- * 保存单个实体类 生成UUID主键(已经过滤横杠)
+ * 保存单个实体类 生成UUID主键(已经过滤横杠) 其它同insertSelective
  * @param <T> 实体类泛型
  * @author SuperScorpion
  */
 public interface InsertSelectiveUUIDMapper<T> {
 
     /**
-     * 保存单个实体类 生成UUID主键(已经过滤横杠)
+     * 保存单个实体类 生成UUID主键(已经过滤横杠) 其它同insertSelective
      * @param record  实体类参数
      * @return        保存的条数
      */

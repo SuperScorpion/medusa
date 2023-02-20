@@ -36,7 +36,7 @@ medusa:
   author: admin #作者名字
   tableName: users,products #需要生成的表名 多表时使用逗号分隔
   baseServiceSwitch: yes #是否需要生成基础的baseService和baseServiceImpl类 不写则是不生成
-  ftlDirPath: /Users/neo/Desktop/template #是否使用ftl模版生成代码 1.路径正确则使用该路径的模版 2.写错路径则使用内置模版 3.不写则使用内置代码模式生成
+  ftlDirPath: /Users/xxx/Desktop/template #是否使用ftl模版生成代码 1.路径正确则使用该路径的模版 2.写错路径则使用内置模版 3.不写则使用内置代码模式生成
   jdbc:
     url: jdbc:mysql://127.0.0.1:3306/cms?autoReconnect=true&useSSL=false
     driver: com.mysql.jdbc.Driver
