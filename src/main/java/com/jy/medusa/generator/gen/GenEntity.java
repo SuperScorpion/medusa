@@ -26,7 +26,7 @@ public class GenEntity {
     private int[] colSizes; // 列名大小数组
     private boolean isMedusaDateUtils = false; // 是否需要导入包 MedusaDateUtils
     private boolean isDate = false; // 是否需要导入包java.util.Date
-    private boolean isSql = false; // 是否需要导入包java.sql.*
+//    private boolean isSql = false; // 是否需要导入包java.sql.*
     private boolean isMoney = false; // 是否需要导入包java.math.BigDecimal
 
     private String entityPath;
@@ -104,16 +104,18 @@ public class GenEntity {
 //                colFieldNames[i] = colSqlNames[i].equals(primaryKey) ? SystemConfigs.PRIMARY_KEY : MedusaGenUtils.getCamelStr(colSqlNames[i]);//modify by SuperScorpion on 2020.02.14
                 colFieldNames[i] = MedusaGenUtils.getCamelStr(colSqlNames[i]);//modify by SuperScorpion on 2021.05.22
                 colTypes[i] = rsmd.getColumnTypeName(i + 1);
-                if (colTypes[i].equalsIgnoreCase("datetime") || colTypes[i].equalsIgnoreCase("date") || colTypes[i].equalsIgnoreCase("TIMESTAMP")) {
+
+                if (sqlType2JavaType(colTypes[i]).equals("Date")) {
                     if(MedusaCommonUtils.isNotBlank(defaultMap.get(colFieldNames[i]))) isMedusaDateUtils = true;
                     isDate = true;
                 }
-                if (colTypes[i].equalsIgnoreCase("image") || colTypes[i].equalsIgnoreCase("text")) {
-                    isSql = true;
-                }
-                if (colTypes[i].equalsIgnoreCase("decimal")) {
+                if (sqlType2JavaType(colTypes[i]).equals("BigDecimal")) {
                     isMoney = true;
                 }
+//                if (colTypes[i].equalsIgnoreCase("image")) {
+//                    isSql = true;
+//                }
+
                 colSizes[i] = rsmd.getColumnDisplaySize(i + 1);
             }
 
@@ -125,7 +127,14 @@ public class GenEntity {
                     file.mkdirs();
                 }
                 String resPath = path + "/" + MedusaGenUtils.upcaseFirst(tableName) + Home.entityNameSuffix + ".java";
-                MedusaCommonUtils.writeString2File(new File(resPath), content, "UTF-8");
+
+                //如果目标文件已存在 则跳过 add by SuperScorpion on 20230221
+                File resPathFile = new File(resPath);
+                if(resPathFile.exists()) {
+                    System.out.println("Medusa: " + MedusaGenUtils.upcaseFirst(tableName) + Home.entityNameSuffix + ".java" + " 文件已存在 已跳过生成...");
+                    return;
+                }
+                MedusaCommonUtils.writeString2File(resPathFile, content, "UTF-8");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -164,9 +173,9 @@ public class GenEntity {
         if (isDate) {
             sb.append("import java.util.Date;\r\n\r\n");
         }
-        if (isSql) {
-            sb.append("import java.sql.*;\r\n\r\n");
-        }
+//        if (isSql) {
+//            sb.append("import java.sql.*;\r\n\r\n");
+//        }
         if (isMoney) {
             sb.append("import java.math.BigDecimal;\r\n\r\n");
         }
@@ -352,8 +361,14 @@ public class GenEntity {
     }
 
 
+    /**
+     * 根据数据库类型和默认值生成实体类里的字段默认值
+     * @param sqlType
+     * @param def
+     * @return
+     */
     private String sqlType2JavaTypeForDefault(String sqlType, String def) {
-        if (sqlType.equalsIgnoreCase("bit")) {
+        if (sqlType2JavaType(sqlType).equals("Boolean")) {
             if(def.equals("0")) {
                 return "false";
             } else if(def.equals("1")) {
@@ -361,42 +376,37 @@ public class GenEntity {
             } else {
                 return def;
             }
-        } else if (sqlType.equalsIgnoreCase("bigint")) {
+        } else if (sqlType2JavaType(sqlType).equals("Long")) {
             return def + "l";
-        } else if (sqlType.equalsIgnoreCase("float")) {
+        } else if (sqlType2JavaType(sqlType).equals("Float")) {
             return def + "f";
-        } else if (sqlType.equalsIgnoreCase("double")) {
+        } else if (sqlType2JavaType(sqlType).equals("Double")) {
             return def + "d";
-        } else if (sqlType.equalsIgnoreCase("decimal")
-                || sqlType.equalsIgnoreCase("numeric")
-                || sqlType.equalsIgnoreCase("real")
-                || sqlType.equalsIgnoreCase("money")
-                || sqlType.equalsIgnoreCase("smallmoney")) {
+        } else if (sqlType2JavaType(sqlType).equals("BigDecimal")) {
             return "new BigDecimal(" + def + ")";
-        } else if (sqlType.equalsIgnoreCase("varchar")
-                || sqlType.equalsIgnoreCase("char")
-                || sqlType.equalsIgnoreCase("nvarchar")
-                || sqlType.equalsIgnoreCase("nchar")) {
+        } else if (sqlType2JavaType(sqlType).equals("String")) {
             return "\"" + def + "\"";
-        } else if (sqlType.equalsIgnoreCase("datetime") || sqlType.equalsIgnoreCase("date") || sqlType.equalsIgnoreCase("timestamp")) {
+        } else if (sqlType2JavaType(sqlType).equals("Date")) {
             if(def.equals("CURRENT_TIMESTAMP")) {
                 return "new Date()";
             } else {
                 return "MedusaDateUtils.convertStrToDate(\"" + def + "\")";
             }
         }
-
         return def;
     }
 
+    /**
+     * mysql数据库类型 转 java类型 待优化
+     * @param sqlType
+     * @return
+     */
     private String sqlType2JavaType(String sqlType) {
+        sqlType = sqlType.toLowerCase().trim().replace(" unsigned", "");//add by SuperScorpion on 20210120
         if (sqlType.equalsIgnoreCase("bit")) {
             return "Boolean";
-        } else if (sqlType.equalsIgnoreCase("tinyint")) {
-            return "Byte";
-        } else if (sqlType.equalsIgnoreCase("smallint")) {
-            return "Short";
-        } else if (sqlType.equalsIgnoreCase("int") || sqlType.equalsIgnoreCase("integer") || sqlType.equalsIgnoreCase("int unsigned")) {
+        } else if (sqlType.equalsIgnoreCase("tinyint") || sqlType.equalsIgnoreCase("smallint") || sqlType.equalsIgnoreCase("mediumint")
+                || sqlType.equalsIgnoreCase("int") || sqlType.equalsIgnoreCase("integer")) {
             return "Integer";
         } else if (sqlType.equalsIgnoreCase("bigint")) {
             return "Long";
@@ -406,9 +416,8 @@ public class GenEntity {
             return "Double";
         } else if (sqlType.equalsIgnoreCase("decimal")
                 || sqlType.equalsIgnoreCase("numeric")
-                || sqlType.equalsIgnoreCase("real")) {
-            return "BigDecimal";
-        } else if (sqlType.equalsIgnoreCase("money")
+                || sqlType.equalsIgnoreCase("real")
+                || sqlType.equalsIgnoreCase("money")
                 || sqlType.equalsIgnoreCase("smallmoney")) {
             return "BigDecimal";
         } else if (sqlType.equalsIgnoreCase("varchar")
@@ -416,14 +425,18 @@ public class GenEntity {
                 || sqlType.equalsIgnoreCase("nvarchar")
                 || sqlType.equalsIgnoreCase("nchar")) {
             return "String";
-        } else if (sqlType.equalsIgnoreCase("datetime") || sqlType.equalsIgnoreCase("date") || sqlType.equalsIgnoreCase("timestamp")) {
+        } else if (sqlType.equalsIgnoreCase("datetime") || sqlType.equalsIgnoreCase("date") || sqlType.equalsIgnoreCase("timestamp")
+                || sqlType.equalsIgnoreCase("time")) {
             return "Date";
+        } else if (sqlType.equalsIgnoreCase("json") || sqlType.equalsIgnoreCase("set") || sqlType.equalsIgnoreCase("enum")
+                || sqlType.equalsIgnoreCase("tinytext") || sqlType.equalsIgnoreCase("text") || sqlType.equalsIgnoreCase("mediumtext")
+                || sqlType.equalsIgnoreCase("longtext")) {//add by SuperScorpion on 20210120
+            return "String";
+        } else if (sqlType.equalsIgnoreCase("tinyblob") || sqlType.equalsIgnoreCase("blob") || sqlType.equalsIgnoreCase("mediumblob")
+                || sqlType.equalsIgnoreCase("longblob") || sqlType.equalsIgnoreCase("binary") || sqlType.equalsIgnoreCase("varbinary")) {
+            return "Byte[]";
         }
-        else if (sqlType.equalsIgnoreCase("image")) {
-            return "Blob";
-        } else if (sqlType.equalsIgnoreCase("text")) {
-            return "Clob";
-        }
+
         return null;
     }
 }

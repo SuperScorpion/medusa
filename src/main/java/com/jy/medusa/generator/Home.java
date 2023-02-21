@@ -1,10 +1,7 @@
 package com.jy.medusa.generator;
 
 import com.jy.medusa.gaze.utils.MedusaCommonUtils;
-import com.jy.medusa.generator.ftl.GenControllerFtl;
-import com.jy.medusa.generator.ftl.GenEntityFtl;
-import com.jy.medusa.generator.ftl.GenServiceFtl;
-import com.jy.medusa.generator.ftl.GenXmlFtl;
+import com.jy.medusa.generator.ftl.gen.*;
 import com.jy.medusa.generator.gen.*;
 import org.yaml.snakeyaml.Yaml;
 
@@ -162,6 +159,16 @@ public class Home {
                     System.out.println("Medusa: 已完成 " + tabName + " - " + entitySuffix + "文件 总用时 - " + (System.nanoTime() - nanoSs) / 1000000.00 + " ms");
                 }
 
+                if(MedusaCommonUtils.isNotBlank(entitySuffix) && MedusaCommonUtils.isNotBlank(mapperSuffix)) {
+                    long nanoSs = System.nanoTime();
+                    if(checkIsFtl()) {
+                        new GenMapperFtl(tabName, entityPath, mapperPath).process();
+                    } else {
+                        new GenMapper(tabName, entityPath, mapperPath).process();//执行生成service serviceimpl mapper
+                    }
+                    System.out.println("Medusa: 已完成 " + tabName + " - " + mapperSuffix + "文件 总用时 - " + (System.nanoTime() - nanoSs) / 1000000.00 + " ms");
+                }
+
                 if(MedusaCommonUtils.isNotBlank(serviceImplSuffix) && MedusaCommonUtils.isNotBlank(serviceSuffix) && MedusaCommonUtils.isNotBlank(entitySuffix) && MedusaCommonUtils.isNotBlank(mapperSuffix)) {
                     long nanoSs = System.nanoTime();
                     if(checkIsFtl()) {
@@ -179,7 +186,7 @@ public class Home {
                     } else {
                         new GenXml(mapperPath, xmlPath, entityPath, tabName).process();//执行生成xml
                     }
-                    System.out.println("Medusa: 已完成 " + tabName + " - " + mapperSuffix + "&xml" + "文件 总用时 - " + (System.nanoTime() - nanoSs)  / 1000000.00 + " ms");
+                    System.out.println("Medusa: 已完成 " + tabName + " - " + "xml" + "文件 总用时 - " + (System.nanoTime() - nanoSs)  / 1000000.00 + " ms");
                 }
 
 
@@ -316,7 +323,7 @@ public class Home {
                 return;
             }
 
-            Map<String ,String> jdbcMap = (Map<String, String>) childMap.get("jdbc");
+            Map<String ,Object> jdbcMap = (Map<String, Object>) childMap.get("jdbc");
 
             if(!jdbcMap.containsKey("driver")) {
                 System.out.println("Medusa: 未找到 yml 文件里的 medusa - jdbc - driver 配置...");

@@ -25,7 +25,7 @@ public class GenXml {
     private String[] colTypesSql;//mysql 对应的类型数组
     private Integer[] colSizes; // 列名大小数组
 
-    private String packagePath;//mapper
+    private String xmlPath;//mapper
     private String mapperPath;//xml
     private String tableName;
 //    private String propertyFilename;
@@ -42,8 +42,8 @@ public class GenXml {
 
 
 
-    public GenXml(String mapperPath, String packagePath, String entityPath, String tableName) {
-        this.packagePath = packagePath;
+    public GenXml(String mapperPath, String xmlPath, String entityPath, String tableName) {
+        this.xmlPath = xmlPath;
         this.mapperPath = mapperPath;
         this.tableName = tableName;
 //        this.propertyFilename = propertyFilename;
@@ -52,7 +52,7 @@ public class GenXml {
         this.tag = Home.tag;
         this.associationColumn = Arrays.asList(Home.associationColumn.split(","));
         this.pluralAssociation = Home.pluralAssociation;
-        this.markXmlList = MedusaGenUtils.genTagStrList(entityName + "Mapper.xml", packagePath, tag, "xml");
+        this.markXmlList = MedusaGenUtils.genTagStrList(entityName + "Mapper.xml", xmlPath, tag, "xml");
     }
 
     private void changeTypes(String[] colTypes, String[] colTypesSql) {//TODO
@@ -95,7 +95,7 @@ public class GenXml {
             if(Home.xmlSuffix.matches("^classpath.*:.*")) {
                 path = Home.proResourcePath + Home.xmlSuffix.replaceFirst("^classpath.*:", "");
             } else {
-                path = Home.proJavaPath + packagePath.replaceAll("\\.", "/");
+                path = Home.proJavaPath + xmlPath.replaceAll("\\.", "/");
             }
 
             File file = new File(path);
@@ -104,7 +104,13 @@ public class GenXml {
             }
             String resPath = path + "/" + entityName + "Mapper.xml";
 
-            MedusaCommonUtils.writeString2File(new File(resPath), content, "UTF-8");
+            //如果目标文件已存在 则跳过 add by SuperScorpion on 20230221
+            File resPathFile = new File(resPath);
+            if(resPathFile.exists()) {
+                System.out.println("Medusa: " + entityName + "Mapper.xml" + " 文件已存在 已跳过生成...");
+                return;
+            }
+            MedusaCommonUtils.writeString2File(resPathFile, content, "UTF-8");
         } catch (IOException e) {
             e.printStackTrace();
         }

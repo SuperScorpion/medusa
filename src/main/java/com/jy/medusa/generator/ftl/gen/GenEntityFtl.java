@@ -1,4 +1,4 @@
-package com.jy.medusa.generator.ftl;
+package com.jy.medusa.generator.ftl.gen;
 
 /**
  * Created by SuperScorpion on 16/7/19.
@@ -28,10 +28,10 @@ public class GenEntityFtl {
     private int[] colSizes; // 列名大小数组
     private boolean isMedusaDateUtils = false; // 是否需要导入包 MedusaDateUtils
     private boolean isDate = false; // 是否需要导入包java.util.Date
-    private boolean isSql = false; // 是否需要导入包java.sql.*
+//    private boolean isSql = false; // 是否需要导入包java.sql.*
     private boolean isMoney = false; // 是否需要导入包java.math.BigDecimal
 
-    private String packagePath;
+    private String entityPath;
     private String tableName;
 //    private String tag;//标记 mark
 //    private JSONArray colValidArray;//参数校验
@@ -52,14 +52,14 @@ public class GenEntityFtl {
 
     }
 
-    public GenEntityFtl(String packagePath, String tableName, Object colValidArray) {
-        this.packagePath = packagePath;
+    public GenEntityFtl(String entityPath, String tableName, Object colValidArray) {
+        this.entityPath = entityPath;
         this.tableName = tableName;
 //        this.tag = tag;
 //        this.colValidArray = colValidArray;
         this.associationColumn = Arrays.asList(Home.associationColumn.split(","));
         this.pluralAssociation = Home.pluralAssociation;
-//        this.markStrList = MedusaGenUtils.genTagStrList(MedusaGenUtils.upcaseFirst(tableName) + ".java", packagePath, tag, "java");
+//        this.markStrList = MedusaGenUtils.genTagStrList(MedusaGenUtils.upcaseFirst(tableName) + ".java", entityPath, tag, "java");
     }
 
     public void process() {
@@ -127,22 +127,24 @@ public class GenEntityFtl {
                 colSqlNames[i] = rsmd.getColumnName(i + 1);
                 colFieldNames[i] = MedusaGenUtils.getCamelStr(rsmd.getColumnName(i + 1));//modify by SuperScorpion on 20210121
                 colTypes[i] = rsmd.getColumnTypeName(i + 1);
-                if (colTypes[i].equalsIgnoreCase("datetime") || colTypes[i].equalsIgnoreCase("date") || colTypes[i].equalsIgnoreCase("TIMESTAMP")) {
+
+                if (sqlType2JavaType(colTypes[i]).equals("Date")) {
                     if(MedusaCommonUtils.isNotBlank(defaultMap.get(colFieldNames[i]))) isMedusaDateUtils = true;
                     isDate = true;
                 }
-                if (colTypes[i].equalsIgnoreCase("image") || colTypes[i].equalsIgnoreCase("text")) {
-                    isSql = true;
-                }
-                if (colTypes[i].equalsIgnoreCase("decimal")) {
+                if (sqlType2JavaType(colTypes[i]).equals("BigDecimal")) {
                     isMoney = true;
                 }
+//                if (colTypes[i].equalsIgnoreCase("image")) {
+//                    isSql = true;
+//                }
+
                 colSizes[i] = rsmd.getColumnDisplaySize(i + 1);
             }
 
             /*try {
                 String content = parse();
-                String path = Home.proJavaPath + packagePath.replaceAll("\\.", "/");
+                String path = Home.proJavaPath + entityPath.replaceAll("\\.", "/");
                 File file = new File(path);
                 if(!file.exists()) {
                     file.mkdirs();
@@ -155,7 +157,7 @@ public class GenEntityFtl {
 
             Map<String, Object> map = parse();
 
-            String path = Home.proJavaPath + packagePath.replaceAll("\\.", "/");
+            String path = Home.proJavaPath + entityPath.replaceAll("\\.", "/");
             File file = new File(path);
             if(!file.exists()) {
                 file.mkdirs();
@@ -173,10 +175,17 @@ public class GenEntityFtl {
                     cfg.setDirectoryForTemplateLoading(new File(Home.ftlDirPath));
                 }
 
-
                 Template temp = cfg.getTemplate("entity.ftl");//TODO
 
-                FileOutputStream fos = new FileOutputStream(new File(resPath));
+
+                //如果目标文件已存在 则跳过 add by SuperScorpion on 20230221
+                File resPathFile = new File(resPath);
+                if(resPathFile.exists()) {
+                    System.out.println("Medusa: " + MedusaGenUtils.upcaseFirst(tableName) + Home.entityNameSuffix + ".java" + " 文件已存在 将跳过生成...");
+                    return;
+                }
+                FileOutputStream fos = new FileOutputStream(resPathFile);
+
 
                 Writer out = new BufferedWriter(new OutputStreamWriter(fos, "utf-8"), 10240);
 
@@ -222,7 +231,7 @@ public class GenEntityFtl {
 
         map.put("tableName", tableName);
         map.put("tableComment", tableComment);
-        map.put("entityPath", packagePath);
+        map.put("entityPath", entityPath);
         map.put("author", Home.author);
         map.put("upcaseFirstTableName", MedusaGenUtils.upcaseFirst(tableName));
         map.put("entityNameSuffix", Home.entityNameSuffix);
@@ -230,7 +239,7 @@ public class GenEntityFtl {
 
         map.put("isMedusaDateUtils", isMedusaDateUtils);
         map.put("isDate", isDate);
-        map.put("isSql", isSql);
+//        map.put("isSql", isSql);
         map.put("isMoney", isMoney);
 
         map.put("lazyLoadSwitch", lazyLoadSwitch);
@@ -305,9 +314,14 @@ public class GenEntityFtl {
     }
 
 
-
+    /**
+     * 根据数据库类型和默认值生成实体类里的字段默认值
+     * @param sqlType
+     * @param def
+     * @return
+     */
     private String sqlType2JavaTypeForDefault(String sqlType, String def) {
-        if (sqlType.equalsIgnoreCase("bit")) {
+        if (sqlType2JavaType(sqlType).equals("Boolean")) {
             if(def.equals("0")) {
                 return "false";
             } else if(def.equals("1")) {
@@ -315,43 +329,38 @@ public class GenEntityFtl {
             } else {
                 return def;
             }
-        } else if (sqlType.equalsIgnoreCase("bigint")) {
+        } else if (sqlType2JavaType(sqlType).equals("Long")) {
             return def + "l";
-        } else if (sqlType.equalsIgnoreCase("float")) {
+        } else if (sqlType2JavaType(sqlType).equals("Float")) {
             return def + "f";
-        } else if (sqlType.equalsIgnoreCase("double")) {
+        } else if (sqlType2JavaType(sqlType).equals("Double")) {
             return def + "d";
-        } else if (sqlType.equalsIgnoreCase("decimal")
-                || sqlType.equalsIgnoreCase("numeric")
-                || sqlType.equalsIgnoreCase("real")
-                || sqlType.equalsIgnoreCase("money")
-                || sqlType.equalsIgnoreCase("smallmoney")) {
+        } else if (sqlType2JavaType(sqlType).equals("BigDecimal")) {
             return "new BigDecimal(" + def + ")";
-        } else if (sqlType.equalsIgnoreCase("varchar")
-                || sqlType.equalsIgnoreCase("char")
-                || sqlType.equalsIgnoreCase("nvarchar")
-                || sqlType.equalsIgnoreCase("nchar")) {
+        } else if (sqlType2JavaType(sqlType).equals("String")) {
             return "\"" + def + "\"";
-        } else if (sqlType.equalsIgnoreCase("datetime") || sqlType.equalsIgnoreCase("date") || sqlType.equalsIgnoreCase("timestamp")) {
+        } else if (sqlType2JavaType(sqlType).equals("Date")) {
             if(def.equals("CURRENT_TIMESTAMP")) {
                 return "new Date()";
             } else {
                 return "MedusaDateUtils.convertStrToDate(\"" + def + "\")";
             }
         }
-
         return def;
     }
 
+
+    /**
+     * mysql数据库类型 转 java类型 待优化
+     * @param sqlType
+     * @return
+     */
     private String sqlType2JavaType(String sqlType) {
         sqlType = sqlType.toLowerCase().trim().replace(" unsigned", "");//add by SuperScorpion on 20210120
         if (sqlType.equalsIgnoreCase("bit")) {
             return "Boolean";
-        } else if (sqlType.equalsIgnoreCase("tinyint")) {
-            return "Byte";
-        } else if (sqlType.equalsIgnoreCase("smallint")) {
-            return "Short";
-        } else if (sqlType.equalsIgnoreCase("int") || sqlType.equalsIgnoreCase("integer")) {
+        } else if (sqlType.equalsIgnoreCase("tinyint") || sqlType.equalsIgnoreCase("smallint") || sqlType.equalsIgnoreCase("mediumint")
+           || sqlType.equalsIgnoreCase("int") || sqlType.equalsIgnoreCase("integer")) {
             return "Integer";
         } else if (sqlType.equalsIgnoreCase("bigint")) {
             return "Long";
@@ -361,9 +370,8 @@ public class GenEntityFtl {
             return "Double";
         } else if (sqlType.equalsIgnoreCase("decimal")
                 || sqlType.equalsIgnoreCase("numeric")
-                || sqlType.equalsIgnoreCase("real")) {
-            return "BigDecimal";
-        } else if (sqlType.equalsIgnoreCase("money")
+                || sqlType.equalsIgnoreCase("real")
+                || sqlType.equalsIgnoreCase("money")
                 || sqlType.equalsIgnoreCase("smallmoney")) {
             return "BigDecimal";
         } else if (sqlType.equalsIgnoreCase("varchar")
@@ -371,15 +379,18 @@ public class GenEntityFtl {
                 || sqlType.equalsIgnoreCase("nvarchar")
                 || sqlType.equalsIgnoreCase("nchar")) {
             return "String";
-        } else if (sqlType.equalsIgnoreCase("datetime") || sqlType.equalsIgnoreCase("date") || sqlType.equalsIgnoreCase("timestamp")) {
+        } else if (sqlType.equalsIgnoreCase("datetime") || sqlType.equalsIgnoreCase("date") || sqlType.equalsIgnoreCase("timestamp")
+                || sqlType.equalsIgnoreCase("time")) {
             return "Date";
-        } else if (sqlType.equalsIgnoreCase("image")) {
-            return "Blob";
-        } else if (sqlType.equalsIgnoreCase("text")) {
-            return "Clob";
-        } else if (sqlType.equalsIgnoreCase("json")) {//add by SuperScorpion on 20210120
+        } else if (sqlType.equalsIgnoreCase("json") || sqlType.equalsIgnoreCase("set") || sqlType.equalsIgnoreCase("enum")
+                || sqlType.equalsIgnoreCase("tinytext") || sqlType.equalsIgnoreCase("text") || sqlType.equalsIgnoreCase("mediumtext")
+                || sqlType.equalsIgnoreCase("longtext")) {//add by SuperScorpion on 20210120
             return "String";
+        } else if (sqlType.equalsIgnoreCase("tinyblob") || sqlType.equalsIgnoreCase("blob") || sqlType.equalsIgnoreCase("mediumblob")
+                || sqlType.equalsIgnoreCase("longblob") || sqlType.equalsIgnoreCase("binary") || sqlType.equalsIgnoreCase("varbinary")) {
+            return "Byte[]";
         }
+
         return null;
     }
 }

@@ -36,15 +36,31 @@ public class GenBaseServiceAndImpl {
             //写入service 和 impl
             String path = Home.proJavaPath + servicePath.replaceAll("\\.", "/");
             String pathImp = Home.proJavaPath + serviceImplPath.replaceAll("\\.", "/");
+
             File file1 = new File(path);
             if(!file1.exists()) file1.mkdirs();
             File file2 = new File(pathImp);
             if(!file2.exists()) file2.mkdirs();
-            String resPath1 = path + "/" + "BaseService.java";
-            String resPath2 = pathImp + "/" + "BaseServiceImpl.java";
-            MedusaCommonUtils.writeString2File(new File(resPath1), process11(), "UTF-8");
-            MedusaCommonUtils.writeString2File(new File(resPath2), process22(), "UTF-8");
 
+
+            String resPath1 = path + "/" + "BaseService.java";
+            //如果目标文件已存在 则跳过 add by SuperScorpion on 20230221
+            File resPathFile1 = new File(resPath1);
+            if(resPathFile1.exists()) {
+                System.out.println("Medusa: " + "BaseService.java" + " 文件已存在 已跳过生成...");
+                return;
+            }
+            MedusaCommonUtils.writeString2File(resPathFile1, process11(), "UTF-8");
+
+
+            String resPath2 = pathImp + "/" + "BaseServiceImpl.java";
+            //如果目标文件已存在 则跳过 add by SuperScorpion on 20230221
+            File resPathFile2 = new File(resPath2);
+            if(resPathFile2.exists()) {
+                System.out.println("Medusa: " + "BaseServiceImpl.java" + " 文件已存在 已跳过生成...");
+                return;
+            }
+            MedusaCommonUtils.writeString2File(resPathFile2, process22(), "UTF-8");
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -1,4 +1,4 @@
-package ${packagePath};
+package ${controlPath};
 
 import com.alibaba.fastjson.JSONObject;
 import ${medusa_pager_path};

@@ -41,7 +41,6 @@ public class GenService {
 
         this.markServiceList = MedusaGenUtils.genTagStrList(entityName + "Service.java", servicePath, tag, "service");
         this.markServiceImplList = MedusaGenUtils.genTagStrList(entityName + "ServiceImpl.java", serviceImplPath, tag, "serviceImpl");
-        this.markMapperList = MedusaGenUtils.genTagStrList(entityName + "Mapper.java", mapperPath, tag, "mapper");
     }
 
     public void process() {
@@ -51,25 +50,35 @@ public class GenService {
 
             File file;
 
+
+            //service
             String path = Home.proJavaPath + servicePath.replaceAll("\\.", "/");
             file = new File(path);
             if(!file.exists()) {file.mkdirs();}
             String resPath1 = path + "/" + entityName + "Service.java";
-            MedusaCommonUtils.writeString2File(new File(resPath1), process1(), "UTF-8");
 
+            //如果目标文件已存在 则跳过 add by SuperScorpion on 20230221
+            File resPathFile1 = new File(resPath1);
+            if(resPathFile1.exists()) {
+                System.out.println("Medusa: " + entityName + "Service.java" + " 文件已存在 已跳过生成...");
+                return;
+            }
+            MedusaCommonUtils.writeString2File(resPathFile1, process1(), "UTF-8");
+
+
+            //serviceImpl
             String pathImp = Home.proJavaPath + serviceImplPath.replaceAll("\\.", "/");
             file = new File(pathImp);
             if(!file.exists()) {file.mkdirs();}
             String resPath2 = pathImp + "/" + entityName + "ServiceImpl.java";
-            MedusaCommonUtils.writeString2File(new File(resPath2), process2(), "UTF-8");
 
-            //mapper
-            String pathmm = Home.proJavaPath + mapperPath.replaceAll("\\.", "/");
-            file = new File(pathmm);
-            if(!file.exists()) {file.mkdirs();}
-            String resPath3 = pathmm + "/" + entityName + "Mapper.java";
-            MedusaCommonUtils.writeString2File(new File(resPath3), process3(), "UTF-8");
-
+            //如果目标文件已存在 则跳过 add by SuperScorpion on 20230221
+            File resPathFile2 = new File(resPath2);
+            if(resPathFile2.exists()) {
+                System.out.println("Medusa: " + entityName + "ServiceImpl.java" + " 文件已存在 已跳过生成...");
+                return;
+            }
+            MedusaCommonUtils.writeString2File(resPathFile2, process2(), "UTF-8");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -175,33 +184,6 @@ public class GenService {
         sbb.append("\t}\r\n");*/
 
         MedusaGenUtils.processAllRemains(markServiceImplList, sbb, tag, "serviceImpl");
-
-        sbb.append("}");
-
-        return sbb.toString();
-    }
-
-    /**
-     * mapper
-     * @return 返回值类型
-     */
-    private String process3() {
-
-        StringBuilder sbb = new StringBuilder();
-
-        sbb.append("package " + mapperPath + ";\r\n\r\n");
-
-        sbb.append("import " + entityPath + "." + entityName + Home.entityNameSuffix + ";\r\n");
-        sbb.append("import " + mixMapper + ";\r\n\r\n");//TODO
-
-        //添加作者
-        sbb.append("/**\r\n");
-        sbb.append(" * Created by " + Home.author + " on " + MedusaDateUtils.convertDateToStr(new Date(), null) + "\r\n");
-        sbb.append(" */\r\n");
-
-        sbb.append("public interface " + entityName + "Mapper extends Mapper<" + entityName + Home.entityNameSuffix + "> {\r\n");
-
-        MedusaGenUtils.processAllRemains(markMapperList, sbb, tag, "mapper");
 
         sbb.append("}");
 

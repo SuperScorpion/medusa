@@ -45,8 +45,14 @@ public class GenControllerMortal {
                 file.mkdirs();
             }
             String resPath = path + "/" + entityName + "Controller.java";
-            MedusaCommonUtils.writeString2File(new File(resPath), home(), "UTF-8");
 
+            //如果目标文件已存在 则跳过 add by SuperScorpion on 20230221
+            File resPathFile = new File(resPath);
+            if(resPathFile.exists()) {
+                System.out.println("Medusa: " + entityName + "Controller.java" + " 文件已存在 已跳过生成...");
+                return;
+            }
+            MedusaCommonUtils.writeString2File(resPathFile, home(), "UTF-8");
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -1,4 +1,4 @@
-package com.jy.medusa.generator.ftl;
+package com.jy.medusa.generator.ftl.gen;
 
 import com.jy.medusa.generator.Home;
 import com.jy.medusa.generator.MedusaGenUtils;
@@ -37,9 +37,9 @@ public class GenServiceFtl {
 
     public GenServiceFtl(String tableName, String entityPath, String servicePath, String serviceImplPath, String mapperPath) {
         this.entityPath = entityPath;
+        this.mapperPath = mapperPath;
         this.servicePath = servicePath;
         this.serviceImplPath = serviceImplPath;
-        this.mapperPath = mapperPath;
         this.entityName = MedusaGenUtils.upcaseFirst(tableName);
 
 //        this.tag = Home.tag;
@@ -69,17 +69,6 @@ public class GenServiceFtl {
             String resPath2 = pathImp + "/" + entityName + "ServiceImpl.java";
 //            MedusaCommonUtils.writeString2File(new File(resPath2), process2(), "UTF-8");
 
-            //mapper
-            String pathmm = Home.proJavaPath + mapperPath.replaceAll("\\.", "/");
-            File file3 = new File(pathmm);
-            if(!file3.exists()) {
-                file3.mkdirs();
-            }
-            String resPath3 = pathmm + "/" + entityName + "Mapper.java";
-//            MedusaCommonUtils.writeString2File(new File(resPath3), process3(), "UTF-8");
-
-
-
 
 
             Configuration cfg = new Configuration(Configuration.VERSION_2_3_22);
@@ -98,7 +87,13 @@ public class GenServiceFtl {
 
             Template temp1 = cfg.getTemplate("service.ftl");//TODO
 
-            FileOutputStream fos1 = new FileOutputStream(new File(resPath1));
+            //如果目标文件已存在 则跳过 add by SuperScorpion on 20230221
+            File resPathFile1 = new File(resPath1);
+            if(resPathFile1.exists()) {
+                System.out.println("Medusa: " + entityName + "Service.java" + " 文件已存在 将跳过生成...");
+                return;
+            }
+            FileOutputStream fos1 = new FileOutputStream(resPathFile1);
 
             Writer out1 = new BufferedWriter(new OutputStreamWriter(fos1, "utf-8"), 9999);
 
@@ -110,24 +105,17 @@ public class GenServiceFtl {
 
             Template temp2 = cfg.getTemplate("serviceImpl.ftl");//TODO
 
-            FileOutputStream fos2 = new FileOutputStream(new File(resPath2));
+            //如果目标文件已存在 则跳过 add by SuperScorpion on 20230221
+            File resPathFile2 = new File(resPath2);
+            if(resPathFile2.exists()) {
+                System.out.println("Medusa: " + entityName + "ServiceImpl.java" + " 文件已存在 将跳过生成...");
+                return;
+            }
+            FileOutputStream fos2 = new FileOutputStream(resPathFile2);
 
             Writer out2 = new BufferedWriter(new OutputStreamWriter(fos2, "utf-8"), 9999);
 
             if(temp2 != null) temp2.process(map2, out2);
-
-
-            //mapper
-            Map<String, Object> map3 = process3();
-
-            Template temp3 = cfg.getTemplate("mapper.ftl");//TODO
-
-            FileOutputStream fos3 = new FileOutputStream(new File(resPath3));
-
-            Writer out3 = new BufferedWriter(new OutputStreamWriter(fos3, "utf-8"), 9999);
-
-            if(temp3 != null) temp3.process(map3, out3);
-
         } catch (IOException e) {
             e.printStackTrace();
         } catch (TemplateException e) {
@@ -181,27 +169,6 @@ public class GenServiceFtl {
 
         String medusaStarterServiceImplPacName = Home.checkBaseServiceSwitch() ? "" : "com.ysl.medusa.base.BaseServiceImpl";
         map.put("medusaStarterServiceImplPacName", medusaStarterServiceImplPacName);
-
-        return map;
-    }
-
-    /**
-     * mapper
-     * @return 返回值类型
-     */
-    private Map<String, Object> process3() {
-
-        Map<String, Object> map = new HashMap<>();
-
-        map.put("mapperPath", mapperPath);
-        map.put("entityPath", entityPath);
-        map.put("entityName", entityName);
-        map.put("entityNameSuffix", Home.entityNameSuffix);
-
-        map.put("mixMapper", mixMapper);
-
-        map.put("author", Home.author);
-        map.put("now_time", MedusaDateUtils.convertDateToStr(new Date(), null));
 
         return map;
     }

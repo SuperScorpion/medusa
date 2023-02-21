@@ -153,14 +153,17 @@
                         <groupId>org.simplify4u.plugins</groupId>
                         <artifactId>sign-maven-plugin</artifactId>
                         <version>1.0.1</version>
-                        <configuration>
-                            <keyPass>1234567890</keyPass>
-                        </configuration>
+<!--                        <configuration>-->
+<!--                            <keyPass>1234567890</keyPass>-->
+<!--                        </configuration>-->
                         <executions>
                             <execution>
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
+                                <configuration>
+                                    <keyPass>1234567890</keyPass>
+                                </configuration>
 <!--                                <configuration>-->
 <!--                                    <keyId>431DBB35F96F5BA0</keyId>-->
 <!--                                    <keyPass>1234567890</keyPass>-->

@@ -1,4 +1,4 @@
-package com.jy.medusa.generator.ftl;
+package com.jy.medusa.generator.ftl.gen;
 
 import com.jy.medusa.gaze.utils.MedusaCommonUtils;
 import com.jy.medusa.gaze.utils.MedusaDateUtils;
@@ -105,7 +105,6 @@ public class GenXmlFtl {
             }
             String resPath = path + "/" + entityName + "Mapper.xml";
 
-
             Configuration cfg = new Configuration(Configuration.VERSION_2_3_22);
 
             if(!Home.checkIsFtlAvailable()) {
@@ -116,10 +115,15 @@ public class GenXmlFtl {
                 cfg.setDirectoryForTemplateLoading(new File(Home.ftlDirPath));
             }
 
-
             Template temp = cfg.getTemplate("xml.ftl");//TODO
 
-            FileOutputStream fos = new FileOutputStream(new File(resPath));
+            //如果目标文件已存在 则跳过 add by SuperScorpion on 20230221
+            File resPathFile = new File(resPath);
+            if(resPathFile.exists()) {
+                System.out.println("Medusa: " + entityName + "Mapper.xml" + " 文件已存在 将跳过生成...");
+                return;
+            }
+            FileOutputStream fos = new FileOutputStream(resPathFile);
 
             Writer out = new BufferedWriter(new OutputStreamWriter(fos, "utf-8"), 10240);
 
