@@ -151,60 +151,64 @@ public class Home {
 
                 if(MedusaCommonUtils.isNotBlank(entitySuffix)) {
                     long nanoSs = System.nanoTime();
+                    Boolean res = false;
                     if(checkIsFtl()) {
-                        new GenEntityFtl(entityPath, tabName, null).process();
+                        res = new GenEntityFtl(entityPath, tabName, null).process();
                     } else {
-                        new GenEntity(entityPath, tabName, null).process();//生成 实体类
+                        res = new GenEntity(entityPath, tabName, null).process();//生成 实体类
                     }
-                    System.out.println("Medusa: 已完成 " + tabName + " - " + entitySuffix + "文件 总用时 - " + (System.nanoTime() - nanoSs) / 1000000.00 + " ms");
+                    if(res) System.out.println("Medusa: 已完成 " + tabName + " - " + entitySuffix + "文件 总用时 - " + (System.nanoTime() - nanoSs) / 1000000.00 + " ms");
                 }
 
                 if(MedusaCommonUtils.isNotBlank(entitySuffix) && MedusaCommonUtils.isNotBlank(mapperSuffix)) {
                     long nanoSs = System.nanoTime();
+                    Boolean res = false;
                     if(checkIsFtl()) {
-                        new GenMapperFtl(tabName, entityPath, mapperPath).process();
+                        res = new GenMapperFtl(tabName, entityPath, mapperPath).process();
                     } else {
-                        new GenMapper(tabName, entityPath, mapperPath).process();//执行生成service serviceimpl mapper
+                        res = new GenMapper(tabName, entityPath, mapperPath).process();//执行生成service serviceimpl mapper
                     }
-                    System.out.println("Medusa: 已完成 " + tabName + " - " + mapperSuffix + "文件 总用时 - " + (System.nanoTime() - nanoSs) / 1000000.00 + " ms");
+                    if(res) System.out.println("Medusa: 已完成 " + tabName + " - " + mapperSuffix + "文件 总用时 - " + (System.nanoTime() - nanoSs) / 1000000.00 + " ms");
                 }
 
                 if(MedusaCommonUtils.isNotBlank(serviceImplSuffix) && MedusaCommonUtils.isNotBlank(serviceSuffix) && MedusaCommonUtils.isNotBlank(entitySuffix) && MedusaCommonUtils.isNotBlank(mapperSuffix)) {
                     long nanoSs = System.nanoTime();
+                    Boolean res = false;
                     if(checkIsFtl()) {
-                        new GenServiceFtl(tabName, entityPath, servicePath, serviceImplPath, mapperPath).process();
+                        res = new GenServiceFtl(tabName, entityPath, servicePath, serviceImplPath, mapperPath).process();
                     } else {
-                        new GenService(tabName, entityPath, servicePath, serviceImplPath, mapperPath).process();//执行生成service serviceimpl mapper
+                        res = new GenService(tabName, entityPath, servicePath, serviceImplPath, mapperPath).process();//执行生成service serviceimpl mapper
                     }
-                    System.out.println("Medusa: 已完成 " + tabName + " - " + serviceSuffix + "&impl" + "文件 总用时 - " + (System.nanoTime() - nanoSs) / 1000000.00 + " ms");
+                    if(res) System.out.println("Medusa: 已完成 " + tabName + " - " + serviceSuffix + "&impl" + "文件 总用时 - " + (System.nanoTime() - nanoSs) / 1000000.00 + " ms");
                 }
 
                 if(MedusaCommonUtils.isNotBlank(xmlSuffix) && MedusaCommonUtils.isNotBlank(entitySuffix) && MedusaCommonUtils.isNotBlank(mapperSuffix)) {
                     long nanoSs = System.nanoTime();
+                    Boolean res = false;
                     if(checkIsFtl()) {
-                        new GenXmlFtl(mapperPath, xmlPath, entityPath, tabName).process();
+                        res = new GenXmlFtl(mapperPath, xmlPath, entityPath, tabName).process();
                     } else {
-                        new GenXml(mapperPath, xmlPath, entityPath, tabName).process();//执行生成xml
+                        res = new GenXml(mapperPath, xmlPath, entityPath, tabName).process();//执行生成xml
                     }
-                    System.out.println("Medusa: 已完成 " + tabName + " - " + "xml" + "文件 总用时 - " + (System.nanoTime() - nanoSs)  / 1000000.00 + " ms");
+                    if(res) System.out.println("Medusa: 已完成 " + tabName + " - " + "xml" + "文件 总用时 - " + (System.nanoTime() - nanoSs)  / 1000000.00 + " ms");
                 }
 
 
                 if(checkIsFtl()) {
                     long nanoSs = System.nanoTime();
-                    new GenControllerFtl(tabName, controlPathJson, entityPath, servicePath).process();
-                    System.out.println("Medusa: 已完成 " + tabName + " - controller文件 总用时 - " + (System.nanoTime() - nanoSs) / 1000000.00 + " ms");
+                    Boolean res = new GenControllerFtl(tabName, controlPathJson, entityPath, servicePath).process();
+                    if(res) System.out.println("Medusa: 已完成 " + tabName + " - controller文件 总用时 - " + (System.nanoTime() - nanoSs) / 1000000.00 + " ms");
                 } else {
                     if (MedusaCommonUtils.isNotBlank(entitySuffix) && MedusaCommonUtils.isNotBlank(serviceSuffix)) {
                         if (MedusaCommonUtils.isNotBlank(controlJsonSuffix)) {
                             long nanoSs = System.nanoTime();
-                            new GenControllerJson(tabName, controlPathJson, entityPath, servicePath).process();//生成controller
-                            System.out.println("Medusa: 已完成 " + tabName + " - controllerJson文件 总用时 - " + (System.nanoTime() - nanoSs) / 1000000.00 + " ms");
+                            Boolean res = new GenControllerJson(tabName, controlPathJson, entityPath, servicePath).process();//生成controller
+                            if(res) System.out.println("Medusa: 已完成 " + tabName + " - controllerJson文件 总用时 - " + (System.nanoTime() - nanoSs) / 1000000.00 + " ms");
                         }
                         if (MedusaCommonUtils.isNotBlank(controlMortalSuffix)) {
                             long nanoSs = System.nanoTime();
-                            new GenControllerMortal(tabName, controlPathMortal, entityPath, servicePath).process();//生成controller
-                            System.out.println("Medusa: 已完成 " + tabName + " - controllerMortal文件 总用时 - " + (System.nanoTime() - nanoSs) / 1000000.00 + " ms");
+                            Boolean res = new GenControllerMortal(tabName, controlPathMortal, entityPath, servicePath).process();//生成controller
+                            if(res) System.out.println("Medusa: 已完成 " + tabName + " - controllerMortal文件 总用时 - " + (System.nanoTime() - nanoSs) / 1000000.00 + " ms");
                         }
                     }
                 }
@@ -214,8 +218,8 @@ public class Home {
         ///yml 文件里面的属性值 会自动转换 比如 on->true yes->true no->false
         ///baseService和baseServiceImpl 只需要生成一次所以没做ftl的模版
         if(checkBaseServiceSwitch()) {
-            new GenBaseServiceAndImpl(servicePath, serviceImplPath).process();//处理生成基础的 service
-            System.out.println("Medusa: 已完成 基础service和impl类文件...");
+            Boolean res = new GenBaseServiceAndImpl(servicePath, serviceImplPath).process();//处理生成基础的 service
+            if(res) System.out.println("Medusa: 已完成 基础service和impl类文件...");
         }
 
         System.out.println("Medusa: The task has been completed...");

@@ -43,45 +43,57 @@ public class GenService {
         this.markServiceImplList = MedusaGenUtils.genTagStrList(entityName + "ServiceImpl.java", serviceImplPath, tag, "serviceImpl");
     }
 
-    public void process() {
+    public Boolean process() {
 
         try {
             //写入service 和 impl
-
-            File file;
-
-
-            //service
-            String path = Home.proJavaPath + servicePath.replaceAll("\\.", "/");
-            file = new File(path);
-            if(!file.exists()) {file.mkdirs();}
-            String resPath1 = path + "/" + entityName + "Service.java";
-
-            //如果目标文件已存在 则跳过 add by SuperScorpion on 20230221
-            File resPathFile1 = new File(resPath1);
-            if(resPathFile1.exists()) {
-                System.out.println("Medusa: " + entityName + "Service.java" + " 文件已存在 已跳过生成...");
-                return;
-            }
-            MedusaCommonUtils.writeString2File(resPathFile1, process1(), "UTF-8");
-
-
-            //serviceImpl
-            String pathImp = Home.proJavaPath + serviceImplPath.replaceAll("\\.", "/");
-            file = new File(pathImp);
-            if(!file.exists()) {file.mkdirs();}
-            String resPath2 = pathImp + "/" + entityName + "ServiceImpl.java";
-
-            //如果目标文件已存在 则跳过 add by SuperScorpion on 20230221
-            File resPathFile2 = new File(resPath2);
-            if(resPathFile2.exists()) {
-                System.out.println("Medusa: " + entityName + "ServiceImpl.java" + " 文件已存在 已跳过生成...");
-                return;
-            }
-            MedusaCommonUtils.writeString2File(resPathFile2, process2(), "UTF-8");
+            return processService() && processServiceImpl();
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
+    }
+
+
+
+    private Boolean processService() throws IOException {
+        File file;
+
+        //service
+        String path = Home.proJavaPath + servicePath.replaceAll("\\.", "/");
+        file = new File(path);
+        if(!file.exists()) {file.mkdirs();}
+        String resPath1 = path + "/" + entityName + "Service.java";
+
+        //如果目标文件已存在 则跳过 add by SuperScorpion on 20230221
+        File resPathFile1 = new File(resPath1);
+        if(resPathFile1.exists()) {
+            System.out.println("Medusa: " + entityName + "Service.java" + " 文件已存在 已跳过生成...");
+            return false;
+        }
+        MedusaCommonUtils.writeString2File(resPathFile1, process1(), "UTF-8");
+
+        return true;
+    }
+
+    private Boolean processServiceImpl() throws IOException {
+        File file;
+
+        //serviceImpl
+        String pathImp = Home.proJavaPath + serviceImplPath.replaceAll("\\.", "/");
+        file = new File(pathImp);
+        if(!file.exists()) {file.mkdirs();}
+        String resPath2 = pathImp + "/" + entityName + "ServiceImpl.java";
+
+        //如果目标文件已存在 则跳过 add by SuperScorpion on 20230221
+        File resPathFile2 = new File(resPath2);
+        if(resPathFile2.exists()) {
+            System.out.println("Medusa: " + entityName + "ServiceImpl.java" + " 文件已存在 已跳过生成...");
+            return false;
+        }
+        MedusaCommonUtils.writeString2File(resPathFile2, process2(), "UTF-8");
+
+        return true;
     }
 
     /**

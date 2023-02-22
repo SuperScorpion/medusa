@@ -38,7 +38,7 @@ public class GenMapper {
         this.markMapperList = MedusaGenUtils.genTagStrList(entityName + "Mapper.java", mapperPath, tag, "mapper");
     }
 
-    public void process() {
+    public Boolean process() {
 
         try {
             //写入service 和 impl
@@ -54,13 +54,16 @@ public class GenMapper {
             File resPathFile3 = new File(resPath3);
             if(resPathFile3.exists()) {
                 System.out.println("Medusa: " + entityName + "Mapper.java" + " 文件已存在 已跳过生成...");
-                return;
+                return false;
             }
             MedusaCommonUtils.writeString2File(resPathFile3, process3(), "UTF-8");
 
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
+
+        return true;
     }
 
     /**

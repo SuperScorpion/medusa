@@ -77,7 +77,7 @@ public class GenXml {
         }
     }
 
-    public void process() {
+    public Boolean process() {
 
         Map<String, Object[]> resultMap = genAllKindTypes(tableName);
 
@@ -108,13 +108,16 @@ public class GenXml {
             File resPathFile = new File(resPath);
             if(resPathFile.exists()) {
                 System.out.println("Medusa: " + entityName + "Mapper.xml" + " 文件已存在 已跳过生成...");
-                return;
+                return false;
             }
             MedusaCommonUtils.writeString2File(resPathFile, content, "UTF-8");
+
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
 
+        return true;
     }
 
     public Map<String, Object[]> genAllKindTypes(String tableName) {

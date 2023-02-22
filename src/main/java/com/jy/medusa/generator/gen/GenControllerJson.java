@@ -36,7 +36,7 @@ public class GenControllerJson {
         this.markServiceList = MedusaGenUtils.genTagStrList(entityName + "Controller.java", controlPath, tag, "java");
     }
 
-    public void process() {
+    public Boolean process() {
 
         try {
             String path = Home.proJavaPath + controlPath.replaceAll("\\.", "/");
@@ -50,12 +50,16 @@ public class GenControllerJson {
             File resPathFile = new File(resPath);
             if(resPathFile.exists()) {
                 System.out.println("Medusa: " + entityName + "Controller.java" + " 文件已存在 已跳过生成...");
-                return;
+                return false;
             }
             MedusaCommonUtils.writeString2File(resPathFile, home(), "UTF-8");
+
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
+
+        return true;
     }
 
     /**

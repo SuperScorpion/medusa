@@ -11,9 +11,8 @@ import com.jy.medusa.generator.DataBaseTools;
 import com.jy.medusa.generator.Home;
 import com.jy.medusa.generator.MedusaGenUtils;
 import com.jy.medusa.generator.ftl.vo.EntityColumnVo;
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
+import freemarker.core.ParseException;
+import freemarker.template.*;
 
 import java.io.*;
 import java.sql.*;
@@ -62,7 +61,7 @@ public class GenEntityFtl {
 //        this.markStrList = MedusaGenUtils.genTagStrList(MedusaGenUtils.upcaseFirst(tableName) + ".java", entityPath, tag, "java");
     }
 
-    public void process() {
+    public Boolean process() {
 
         DataBaseTools dataBaseTools = Home.staticDataBaseTools;
 
@@ -166,47 +165,43 @@ public class GenEntityFtl {
 
             Configuration cfg = new Configuration(Configuration.VERSION_2_3_22);
 
-            try {
-                if(!Home.checkIsFtlAvailable()) {
+            if(!Home.checkIsFtlAvailable()) {
 
-                    cfg.setClassLoaderForTemplateLoading(this.getClass().getClassLoader(), "/template");
-                } else {
+                cfg.setClassLoaderForTemplateLoading(this.getClass().getClassLoader(), "/template");
+            } else {
 
-                    cfg.setDirectoryForTemplateLoading(new File(Home.ftlDirPath));
-                }
-
-                Template temp = cfg.getTemplate("entity.ftl");//TODO
-
-
-                //如果目标文件已存在 则跳过 add by SuperScorpion on 20230221
-                File resPathFile = new File(resPath);
-                if(resPathFile.exists()) {
-                    System.out.println("Medusa: " + MedusaGenUtils.upcaseFirst(tableName) + Home.entityNameSuffix + ".java" + " 文件已存在 将跳过生成...");
-                    return;
-                }
-                FileOutputStream fos = new FileOutputStream(resPathFile);
-
-
-                Writer out = new BufferedWriter(new OutputStreamWriter(fos, "utf-8"), 10240);
-
-                /*Map<String, Object> map = new HashMap<>();
-                map.put("projectName", "lisi");
-                map.put("packageName", "wangwu");
-                map.put("wt", true);*/
-
-                if(temp != null) temp.process(map, out);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (TemplateException e) {
-                e.printStackTrace();
+                cfg.setDirectoryForTemplateLoading(new File(Home.ftlDirPath));
             }
 
-        } catch (SQLException e) {
+            Template temp = cfg.getTemplate("entity.ftl");//TODO
+
+
+            //如果目标文件已存在 则跳过 add by SuperScorpion on 20230221
+            File resPathFile = new File(resPath);
+            if(resPathFile.exists()) {
+                System.out.println("Medusa: " + MedusaGenUtils.upcaseFirst(tableName) + Home.entityNameSuffix + ".java" + " 文件已存在 将跳过生成...");
+                return false;
+            }
+            FileOutputStream fos = new FileOutputStream(resPathFile);
+
+
+            Writer out = new BufferedWriter(new OutputStreamWriter(fos, "utf-8"), 10240);
+
+            /*Map<String, Object> map = new HashMap<>();
+            map.put("projectName", "lisi");
+            map.put("packageName", "wangwu");
+            map.put("wt", true);*/
+
+            if(temp != null) temp.process(map, out);
+
+        } catch (Exception e) {
             e.printStackTrace();
+            return false;
         } finally {
             dataBaseTools.closeConnection(conn, pstmt);
         }
+
+        return true;
     }
 
     /**

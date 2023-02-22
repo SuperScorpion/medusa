@@ -58,7 +58,7 @@ public class GenEntity {
 
     }
 
-    public void process() {
+    public Boolean process() {
 
         DataBaseTools dataBaseTools = Home.staticDataBaseTools;
 
@@ -119,30 +119,30 @@ public class GenEntity {
                 colSizes[i] = rsmd.getColumnDisplaySize(i + 1);
             }
 
-            try {
-                String content = parse();
-                String path = Home.proJavaPath + entityPath.replaceAll("\\.", "/");
-                File file = new File(path);
-                if(!file.exists()) {
-                    file.mkdirs();
-                }
-                String resPath = path + "/" + MedusaGenUtils.upcaseFirst(tableName) + Home.entityNameSuffix + ".java";
-
-                //如果目标文件已存在 则跳过 add by SuperScorpion on 20230221
-                File resPathFile = new File(resPath);
-                if(resPathFile.exists()) {
-                    System.out.println("Medusa: " + MedusaGenUtils.upcaseFirst(tableName) + Home.entityNameSuffix + ".java" + " 文件已存在 已跳过生成...");
-                    return;
-                }
-                MedusaCommonUtils.writeString2File(resPathFile, content, "UTF-8");
-            } catch (IOException e) {
-                e.printStackTrace();
+            String content = parse();
+            String path = Home.proJavaPath + entityPath.replaceAll("\\.", "/");
+            File file = new File(path);
+            if(!file.exists()) {
+                file.mkdirs();
             }
-        } catch (SQLException e) {
+            String resPath = path + "/" + MedusaGenUtils.upcaseFirst(tableName) + Home.entityNameSuffix + ".java";
+
+            //如果目标文件已存在 则跳过 add by SuperScorpion on 20230221
+            File resPathFile = new File(resPath);
+            if(resPathFile.exists()) {
+                System.out.println("Medusa: " + MedusaGenUtils.upcaseFirst(tableName) + Home.entityNameSuffix + ".java" + " 文件已存在 已跳过生成...");
+                return false;
+            }
+            MedusaCommonUtils.writeString2File(resPathFile, content, "UTF-8");
+
+        } catch (Exception e) {
             e.printStackTrace();
+            return false;
         } finally {
             dataBaseTools.closeConnection(conn, pstmt);
         }
+
+        return true;
     }
 
     /**

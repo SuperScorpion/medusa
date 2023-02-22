@@ -45,7 +45,7 @@ public class GenMapperFtl {
 //        this.markMapperList = MedusaGenUtils.genTagStrList(entityName + "Mapper.java", mapperPath, tag, "mapper");
     }
 
-    public void process() {
+    public Boolean process() {
 
         try {
             //mapper
@@ -56,7 +56,6 @@ public class GenMapperFtl {
             }
             String resPath3 = pathmm + "/" + entityName + "Mapper.java";
 //            MedusaCommonUtils.writeString2File(new File(resPath3), process3(), "UTF-8");
-
 
 
             Configuration cfg = new Configuration(Configuration.VERSION_2_3_22);
@@ -70,7 +69,6 @@ public class GenMapperFtl {
             }
 
 
-
             //mapper
             Map<String, Object> map3 = process3();
 
@@ -80,7 +78,7 @@ public class GenMapperFtl {
             File resPathFile3 = new File(resPath3);
             if(resPathFile3.exists()) {
                 System.out.println("Medusa: " + entityName + "Mapper.java" + " 文件已存在 将跳过生成...");
-                return;
+                return false;
             }
             FileOutputStream fos3 = new FileOutputStream(resPathFile3);
 
@@ -88,11 +86,12 @@ public class GenMapperFtl {
 
             if(temp3 != null) temp3.process(map3, out3);
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (TemplateException e) {
-            e.printStackTrace();
+            return false;
         }
+
+        return true;
     }
 
 
