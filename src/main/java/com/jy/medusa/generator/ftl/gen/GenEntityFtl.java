@@ -163,7 +163,7 @@ public class GenEntityFtl {
             }
             String resPath = path + "/" + MedusaGenUtils.upcaseFirst(tableName) + Home.entityNameSuffix + ".java";
 
-            Configuration cfg = new Configuration(Configuration.VERSION_2_3_22);
+            Configuration cfg = Home.cfg;
 
             if(!Home.checkIsFtlAvailable()) {
 

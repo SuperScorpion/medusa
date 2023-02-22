@@ -52,7 +52,7 @@ public class GenServiceFtl {
     public Boolean process() {
 
         try {
-            Configuration cfg = new Configuration(Configuration.VERSION_2_3_22);
+            Configuration cfg = Home.cfg;
             if(!Home.checkIsFtlAvailable()) {
                 cfg.setClassLoaderForTemplateLoading(this.getClass().getClassLoader(), "/template");
             } else {

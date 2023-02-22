@@ -51,7 +51,7 @@ public class GenControllerFtl {
 
             Map<String, Object> map = home();
 
-            Configuration cfg = new Configuration(Configuration.VERSION_2_3_22);
+            Configuration cfg = Home.cfg;
 
             if(!Home.checkIsFtlAvailable()) {
 

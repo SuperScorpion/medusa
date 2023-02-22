@@ -3,6 +3,7 @@ package com.jy.medusa.generator;
 import com.jy.medusa.gaze.utils.MedusaCommonUtils;
 import com.jy.medusa.generator.ftl.gen.*;
 import com.jy.medusa.generator.gen.*;
+import freemarker.template.Configuration;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
@@ -62,6 +63,8 @@ public class Home {
     public static String baseServiceSwitch;///是否生成基础的service类
 
     public static DataBaseTools staticDataBaseTools;//数据库连接
+
+    public static Configuration cfg = new Configuration(Configuration.VERSION_2_3_22);
 
     public Home() {
     }

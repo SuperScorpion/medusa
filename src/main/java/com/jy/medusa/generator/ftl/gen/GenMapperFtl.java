@@ -58,7 +58,7 @@ public class GenMapperFtl {
 //            MedusaCommonUtils.writeString2File(new File(resPath3), process3(), "UTF-8");
 
 
-            Configuration cfg = new Configuration(Configuration.VERSION_2_3_22);
+            Configuration cfg = Home.cfg;
 
             if(!Home.checkIsFtlAvailable()) {
 

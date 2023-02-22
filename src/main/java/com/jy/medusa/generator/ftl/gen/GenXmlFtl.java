@@ -105,7 +105,7 @@ public class GenXmlFtl {
             }
             String resPath = path + "/" + entityName + "Mapper.xml";
 
-            Configuration cfg = new Configuration(Configuration.VERSION_2_3_22);
+            Configuration cfg = Home.cfg;
 
             if(!Home.checkIsFtlAvailable()) {
 
