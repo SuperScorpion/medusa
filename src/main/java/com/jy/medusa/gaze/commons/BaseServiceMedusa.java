@@ -26,11 +26,11 @@ public interface BaseServiceMedusa<T> extends BaseServiceMedusaLambda<T> {
 
 //	List<T> selectByGazeMagic(Object... mixParams);
 
-	int saveSelective(T entity);
+	int insertSelective(T entity);
 
-	int save(T entity);
+	int insert(T entity);
 
-	int saveBatch(List<T> obs);
+	int insertBatch(List<T> obs);
 
 	int update(T entity);
 
@@ -40,7 +40,7 @@ public interface BaseServiceMedusa<T> extends BaseServiceMedusaLambda<T> {
 
 	int deleteById(Serializable id);
 
-	int deleteBatch(List<Serializable> ids);
+	int deleteBatchByIds(List<Serializable> ids);
 
-	int deleteBy(T entity);
+	int delete(T entity);
 }

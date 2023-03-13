@@ -14,6 +14,25 @@ import java.util.Iterator;
 public class MedusaCommonUtils {
 
     /**
+     * copy code from org.apache.commons.lang3.StringUtils.isEmpty
+     * @param cs 参数
+     * @return 返回值
+     */
+    public static boolean isEmpty(CharSequence cs) {
+        return cs == null || cs.length() == 0;
+    }
+
+    /**
+     * copy code from org.apache.commons.lang3.StringUtils.isNotEmpty
+     * @param cs 参数
+     * @return 返回值
+     */
+    public static boolean isNotEmpty(CharSequence cs) {
+        return !isEmpty(cs);
+    }
+
+
+    /**
      * copy code from org.apache.commons.lang3.StringUtils.isBlank
      * @param cs 参数
      * @return 返回值

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Deprecated
-public interface BaseServiceMedusaString<T> extends BaseServiceMedusaLambda<T> {
+public interface BaseServiceMedusaString<T> {
 
 	List<T> selectAll(String... paramColumn);
 
@@ -14,11 +14,11 @@ public interface BaseServiceMedusaString<T> extends BaseServiceMedusaLambda<T> {
 
 	T selectById(Serializable id, String... paramColumns);
 
-	List<T> selectListBy(T entity, String... paramColumns);
+//	List<T> selectListBy(T entity, String... paramColumns);
 
-//	int selectCount(Object... mixParams);
+	int selectCount(Object... mixParams);
 
-//	List<T> selectByGaze(Object... mixParams);
+	List<T> selectByGazeMagic(Object... mixParams);
 
 //	int saveSelective(T entity);
 
@@ -28,7 +28,7 @@ public interface BaseServiceMedusaString<T> extends BaseServiceMedusaLambda<T> {
 
 	int saveBatchExclude(List<T> obs, String... paramColumns);
 
-	int update(T entity, String... paramColumns);
+//	int update(T entity, String... paramColumns);
 
 //	int updateSelective(T entity);
 

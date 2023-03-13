@@ -15,7 +15,7 @@ public interface BaseServiceMedusaLambda<T> {
 
     T selectById(Serializable id, HolyGetter<T>... paramFns);
 
-	List<T> selectListBy(T entity, HolyGetter<T>... paramFns);
+//	List<T> select(T entity, HolyGetter<T>... paramFns);
 
 	int selectCount(Object... mixParams);
 

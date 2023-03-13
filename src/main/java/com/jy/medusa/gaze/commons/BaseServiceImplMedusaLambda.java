@@ -23,9 +23,9 @@ public abstract class BaseServiceImplMedusaLambda<T> extends BaseServiceImplLamb
 		return mapper.selectByPrimaryKey(id, paramFns);
 	}
 
-	public List<T> selectListBy(T entity, HolyGetter<T>... paramFns) {
-		return mapper.select(entity, paramFns);
-	}
+//	public List<T> selectListBy(T entity, HolyGetter<T>... paramFns) {
+//		return mapper.select(entity, paramFns);
+//	}
 
 	public int selectCount(Object... mixParams) {
 		return mapper.selectCount(mixParams);

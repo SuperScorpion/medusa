@@ -866,7 +866,7 @@ public class MedusaSqlGenerator {
         for (String column : columns) {
             String fieldName = currentColumnFieldNameMap.get(column);//modify by SuperScorpion on 2016.11.13
             Object value = MedusaReflectionUtils.obtainFieldValue(z, fieldName);
-            if (value != null && MedusaCommonUtils.isNotBlank(value.toString())) {//modify by SuperScorpion on 2020.01.19
+            if (value != null && MedusaCommonUtils.isNotEmpty(value.toString())) {//modify by SuperScorpion on 2020.01.19
 //                            colVals.add(column + "=" + "#{array[" + i + "]." + fieldName + "}");///modify by SuperScorpion on 2020.02.13
                 sbb.append(" AND ").append(column).append(" = ").append("#{array[").append(isd).append("].").append(fieldName).append("}");///modify by SuperScorpion on 2020.02.13
             }
@@ -888,7 +888,7 @@ public class MedusaSqlGenerator {
         while(iter.hasNext()) {
             Map.Entry<Object, Object> entry = iter.next();
             if (entry != null && entry.getKey() instanceof String && entry.getValue() != null
-                    && MedusaCommonUtils.isNotBlank(entry.getKey().toString()) && MedusaCommonUtils.isNotBlank(entry.getValue().toString())) {//modify by SuperScorpion on 2020.01.19
+                    && MedusaCommonUtils.isNotEmpty(entry.getKey().toString()) && MedusaCommonUtils.isNotEmpty(entry.getValue().toString())) {//modify by SuperScorpion on 2020.01.19
                 String column = MedusaSqlHelper.buildColumnNameForAll(entry.getKey().toString(), currentFieldColumnNameMap);
 //                            colVals.add(column + "=" + "#{array[" + i + "]." + entry.getKey() + "}");///modify by SuperScorpion on 2020.02.13
                 sbb.append(" AND ").append(column).append(" = ").append("#{array[").append(isd).append("].").append(entry.getKey()).append("}");///modify by SuperScorpion on 2020.02.13
@@ -928,7 +928,7 @@ public class MedusaSqlGenerator {
                 Object p = ((SingleParam) z).getValue();
                 Boolean f = ((SingleParam) z).getNeq();
 
-                if (p != null && MedusaCommonUtils.isNotBlank(p.toString()) && f != null) {
+                if (p != null && MedusaCommonUtils.isNotEmpty(p.toString()) && f != null) {
                     sbb.append(orAndStr).append(column);
                     if(f)
                         sbb.append(" != ");
@@ -941,7 +941,7 @@ public class MedusaSqlGenerator {
                 Object start = ((BetweenParam) z).getStart();
                 Object end = ((BetweenParam) z).getEnd();
 
-                if (start != null && end != null && MedusaCommonUtils.isNotBlank(start.toString()) && MedusaCommonUtils.isNotBlank(end.toString())) {
+                if (start != null && end != null && MedusaCommonUtils.isNotEmpty(start.toString()) && MedusaCommonUtils.isNotEmpty(end.toString())) {
                     sbb.append(orAndStr).append(column).append(" BETWEEN ")
                             //.append("'").append(MedusaDateUtils.convertDateToStr(p.getEnd(), MedusaDateUtils.DATE_FULL_STR)).append("'")
                             .append("#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].start}")///modify by SuperScorpion on 2020.02.13
@@ -964,7 +964,7 @@ public class MedusaSqlGenerator {
 
                     int k = 0;
                     while (k < p.size()) {
-                        if (p.get(k) != null && MedusaCommonUtils.isNotBlank(p.get(k).toString())) {//add by SuperScorpion on 20220923
+                        if (p.get(k) != null && MedusaCommonUtils.isNotEmpty(p.get(k).toString())) {//add by SuperScorpion on 20220923
                             sbb.append("#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].value[").append(k).append("]},");///modify by SuperScorpion on 2020.02.13
                             k += 1;
                         }
@@ -977,7 +977,7 @@ public class MedusaSqlGenerator {
 
                 Object p = ((LikeParam) z).getValue();
 
-                if (p != null && MedusaCommonUtils.isNotBlank(p.toString())) {
+                if (p != null && MedusaCommonUtils.isNotEmpty(p.toString())) {
                     sbb.append(orAndStr).append(column).append(" LIKE ").append("CONCAT('%',#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].value},'%')");///modify by SuperScorpion on 2020.02.13
                 }
             } else if (z instanceof NotNullParam) {
@@ -996,7 +996,7 @@ public class MedusaSqlGenerator {
 
             Object p = ((BaseGeLeParam) z).getValue();
 
-            if (p != null && MedusaCommonUtils.isNotBlank(p.toString())) {
+            if (p != null && MedusaCommonUtils.isNotEmpty(p.toString())) {
 
                 if (z instanceof GreatThanParam) {
 

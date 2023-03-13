@@ -5,8 +5,8 @@ import java.util.List;
 
 /**
  * 基础接口
- * before : BaseServiceMedusa - BaseServiceMedusaString - BaseServiceMedusaLambda
- * after : BaseServiceMedusa -  BaseServiceMedusaLambda
+ * fix before : BaseServiceMedusa - BaseServiceMedusaString - BaseServiceMedusaLambda
+ * fix after : BaseServiceMedusa -  BaseServiceMedusaLambda
  * @param <T> 参数
  * @author SuperScorpion
  */
@@ -40,15 +40,15 @@ public abstract class BaseServiceImplMedusa<T> extends BaseServiceImplMedusaLamb
 //		return mapper.medusaGazeMagic(mixParams);
 //	}
 
-	public int saveSelective(T entity) {//
+	public int insertSelective(T entity) {//
 		return mapper.insertSelective(entity);
 	}
 
-	public int save(T entity) {//
+	public int insert(T entity) {//
 		return mapper.insert(entity);
 	}
 
-	public int saveBatch(List<T> obs) {
+	public int insertBatch(List<T> obs) {
 		return mapper.insertBatch(obs, null);
 	}
 
@@ -68,11 +68,11 @@ public abstract class BaseServiceImplMedusa<T> extends BaseServiceImplMedusaLamb
 		return mapper.deleteByPrimaryKey(id);
 	}
 
-	public int deleteBatch(List<Serializable> ids) {//
+	public int deleteBatchByIds(List<Serializable> ids) {//
 		return mapper.deleteBatch(ids);
 	}
 
-	public int deleteBy(T entity) {//
+	public int delete(T entity) {//
 		return mapper.delete(entity);
 	}
 }
