@@ -1,6 +1,5 @@
 package com.jy.medusa.gaze.stuff.param;
 
-import com.jy.medusa.gaze.stuff.Pager;
 import com.jy.medusa.gaze.stuff.param.gele.GreatEqualParam;
 import com.jy.medusa.gaze.stuff.param.gele.GreatThanParam;
 import com.jy.medusa.gaze.stuff.param.gele.LessEqualParam;
@@ -8,13 +7,7 @@ import com.jy.medusa.gaze.stuff.param.gele.LessThanParam;
 import com.jy.medusa.gaze.stuff.param.lambda.HolyGetPropertyNameLambda;
 import com.jy.medusa.gaze.stuff.param.lambda.HolyGetter;
 import com.jy.medusa.gaze.stuff.param.mix.*;
-import com.jy.medusa.gaze.stuff.param.orand.AndModelClass;
-import com.jy.medusa.gaze.stuff.param.orand.BaseModelClass;
-import com.jy.medusa.gaze.stuff.param.orand.OrModelClass;
-import com.jy.medusa.gaze.stuff.param.sort.GroupByParam;
-import com.jy.medusa.gaze.stuff.param.sort.OrderByParam;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
