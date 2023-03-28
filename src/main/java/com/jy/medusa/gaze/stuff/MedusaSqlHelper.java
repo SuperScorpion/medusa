@@ -173,7 +173,7 @@ public class MedusaSqlHelper {
             if(msr != null) {
                 return msr;
             } else {
-                logger.debug("Medusa: Successfully initialize the " + c.getSimpleName() + " Basic information of MedusaSqlGenerator!  - Sou");
+                logger.debug("Medusa: Successfully initialize the " + c.getSimpleName() + " Basic information of MedusaSqlGenerator!");
                 return q;
             }
         }
@@ -194,15 +194,10 @@ public class MedusaSqlHelper {
             return por;
         } else {
             Class<?> c = getEntityClass(p);
-            MedusaSqlGenerator q = initSqlGenerator(c);
-            MedusaSqlGenerator msr = MedusaSqlHelperCacheManager.putCacheGeneratorByMapperPath(p, q);
+            MedusaSqlGenerator msrBc = getSqlGeneratorByClass(c);//msrBc 一定有值
+            MedusaSqlHelperCacheManager.putCacheGeneratorByMapperPath(p, msrBc);//msr 不一定有值
 
-            if(msr != null) {
-                return msr;
-            } else {
-                logger.debug("Medusa: Successfully initialize the " + c.getSimpleName() + " Basic information of MedusaSqlGenerator!");
-                return q;
-            }
+            return msrBc;
         }
     }
 

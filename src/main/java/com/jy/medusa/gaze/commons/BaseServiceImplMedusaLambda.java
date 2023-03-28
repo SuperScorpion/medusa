@@ -34,19 +34,19 @@ public abstract class BaseServiceImplMedusaLambda<T> extends BaseServiceImplLamb
 	}
 
 	public int insertBatchInclude(List<T> obs, HolyGetter<T>... paramFns) {
-		return mapper.insertBatch(obs, false, paramFns);
+		return mapper.insertBatch(obs, Boolean.FALSE, paramFns);
 	}
 
 	public int insertBatchExclude(List<T> obs, HolyGetter<T>... paramFns) {
-		return mapper.insertBatch(obs, true, paramFns);
+		return mapper.insertBatch(obs, Boolean.TRUE, paramFns);
 	}
 
 	public int updateBatchInclude(List<T> obs, HolyGetter<T>... paramFns) {
-		return mapper.updateByPrimaryKeyBatch(obs, false, paramFns);
+		return mapper.updateByPrimaryKeyBatch(obs, Boolean.FALSE, paramFns);
 	}
 
 	public int updateBatchExclude(List<T> obs, HolyGetter<T>... paramFns) {
-		return mapper.updateByPrimaryKeyBatch(obs, true, paramFns);
+		return mapper.updateByPrimaryKeyBatch(obs, Boolean.TRUE, paramFns);
 	}
 
 	public int saveOrUpdate(T entity) {
