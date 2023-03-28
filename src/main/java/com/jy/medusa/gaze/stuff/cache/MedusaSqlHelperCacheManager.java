@@ -17,8 +17,8 @@ public class MedusaSqlHelperCacheManager {
      * Cache Class and MedusaSqlGenerator
      */
     private static final Map<String, Class<?>> entityClassMap = new ConcurrentHashMap<>();//缓存class @unused
-    private static final Map<String, MedusaSqlGenerator> generatorCacheMap = new ConcurrentHashMap<>();//缓存generator (key:xxx.xxx.xxxMapper)
-    private static final Map<Class<?>, MedusaSqlGenerator> generatorSouCacheMap = new ConcurrentHashMap<>();//缓存generator (key:实体类的class类 for saveOrUpdate)
+    private static final Map<String, MedusaSqlGenerator> generatorMapperPathCacheMap = new ConcurrentHashMap<>();//缓存generator (key:xxx.xxx.xxxMapper)
+    private static final Map<Class<?>, MedusaSqlGenerator> generatorClassCacheMap = new ConcurrentHashMap<>();//缓存generator (key:实体类的class类 for saveOrUpdate)
 
 
     public static Class<?> getCacheClass(String p) {
@@ -45,8 +45,8 @@ public class MedusaSqlHelperCacheManager {
 
         if(p == null) throw new MedusaException("Medusa: The param key is null");
 
-        if(generatorCacheMap.containsKey(p)) {
-            return generatorCacheMap.get(p);
+        if(generatorMapperPathCacheMap.containsKey(p)) {
+            return generatorMapperPathCacheMap.get(p);
         } else {
             return null;
         }
@@ -54,7 +54,7 @@ public class MedusaSqlHelperCacheManager {
 
     public static MedusaSqlGenerator putCacheGeneratorByMapperPath(String p, MedusaSqlGenerator t) {
         if(p != null && t != null) {
-            return generatorCacheMap.putIfAbsent(p, t);
+            return generatorMapperPathCacheMap.putIfAbsent(p, t);
         } else {
             throw new MedusaException("Medusa: The param key or value is null");
         }
@@ -65,8 +65,8 @@ public class MedusaSqlHelperCacheManager {
 
         if(p == null) throw new MedusaException("Medusa: The param key is null");
 
-        if(generatorSouCacheMap.containsKey(p)) {
-            return generatorSouCacheMap.get(p);
+        if(generatorClassCacheMap.containsKey(p)) {
+            return generatorClassCacheMap.get(p);
         } else {
             return null;
         }
@@ -74,7 +74,7 @@ public class MedusaSqlHelperCacheManager {
 
     public static MedusaSqlGenerator putCacheGeneratorByClass(Class<?> p, MedusaSqlGenerator t) {
         if(p != null && t != null) {
-            return generatorSouCacheMap.putIfAbsent(p, t);
+            return generatorClassCacheMap.putIfAbsent(p, t);
         } else {
             throw new MedusaException("Medusa: The param key or value is null");
         }
