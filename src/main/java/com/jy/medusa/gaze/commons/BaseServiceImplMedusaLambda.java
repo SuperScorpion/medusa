@@ -1,6 +1,8 @@
 package com.jy.medusa.gaze.commons;
 
+import com.jy.medusa.gaze.stuff.MedusaSqlHelper;
 import com.jy.medusa.gaze.stuff.param.lambda.HolyGetter;
+import com.jy.medusa.gaze.utils.MedusaReflectionUtils;
 
 import java.io.Serializable;
 import java.util.List;
@@ -23,10 +25,6 @@ public abstract class BaseServiceImplMedusaLambda<T> extends BaseServiceImplLamb
 		return mapper.selectByPrimaryKey(id, paramFns);
 	}
 
-//	public List<T> selectListBy(T entity, HolyGetter<T>... paramFns) {
-//		return mapper.select(entity, paramFns);
-//	}
-
 	public int selectCount(Object... mixParams) {
 		return mapper.selectCount(mixParams);
 	}
@@ -35,29 +33,13 @@ public abstract class BaseServiceImplMedusaLambda<T> extends BaseServiceImplLamb
 		return mapper.medusaGazeMagic(mixParams);
 	}
 
-//	public int saveSelective(T entity) {
-//		return mapper.insertSelective(entity);
-//	}
-
-//	public int save(T entity) {
-//		return mapper.insert(entity);
-//	}
-
-	public int saveBatchInclude(List<T> obs, HolyGetter<T>... paramFns) {
+	public int insertBatchInclude(List<T> obs, HolyGetter<T>... paramFns) {
 		return mapper.insertBatch(obs, false, paramFns);
 	}
 
-	public int saveBatchExclude(List<T> obs, HolyGetter<T>... paramFns) {
+	public int insertBatchExclude(List<T> obs, HolyGetter<T>... paramFns) {
 		return mapper.insertBatch(obs, true, paramFns);
 	}
-
-//	public int update(T entity, HolyGetter<T>... paramFns) {
-//		return mapper.updateByPrimaryKey(entity, paramFns);
-//	}
-
-//	public int updateSelective(T entity) {
-//		return mapper.updateByPrimaryKeySelective(entity);
-//	}
 
 	public int updateBatchInclude(List<T> obs, HolyGetter<T>... paramFns) {
 		return mapper.updateByPrimaryKeyBatch(obs, false, paramFns);
@@ -67,16 +49,22 @@ public abstract class BaseServiceImplMedusaLambda<T> extends BaseServiceImplLamb
 		return mapper.updateByPrimaryKeyBatch(obs, true, paramFns);
 	}
 
-//	public int deleteById(Serializable id) {
-//		return mapper.deleteByPrimaryKey(id);
-//	}
+	public int saveOrUpdate(T entity) {
+		int result = 0;
+		if(entity == null) return result;
+		Object pkValue = MedusaReflectionUtils.obtainFieldValue(entity,
+				MedusaSqlHelper.getSqlGeneratorByClass(entity.getClass()).getPkPropertyName());
 
-//	public int deleteBatch(List<Serializable> ids) {
-//		return mapper.deleteBatch(ids);
-//	}
+		if(pkValue != null) {
+			if(mapper.selectByPrimaryKey((Serializable) pkValue) != null) {//update
+				result = mapper.updateByPrimaryKeySelective(entity);
+			} else {//save
+				result = mapper.insertSelective(entity);
+			}
+		} else {//save
+			result = mapper.insertSelective(entity);
+		}
 
-//	public int deleteBy(T entity) {
-//		return mapper.delete(entity);
-//	}
-
+		return result;
+	}
 }

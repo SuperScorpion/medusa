@@ -130,7 +130,7 @@ public class GenControllerMortal {
         sbb.append("\tpublic String save(" + entityName + Home.entityNameSuffix + " param, ModelMap model, HttpServletRequest request) {\r\n\r\n");
 
         sbb.append("\t\ttry {\r\n");
-        sbb.append("\t\t\tif(param != null) " + MedusaGenUtils.lowcaseFirst(entityName) + "Service.save(param);\r\n");
+        sbb.append("\t\t\tif(param != null) " + MedusaGenUtils.lowcaseFirst(entityName) + "Service.insertSelective(param);\r\n");
         sbb.append("\t\t\tmodel.put(\"result\", param);\r\n");
         sbb.append("\t\t\treturn \"" + MedusaGenUtils.lowcaseFirst(entityName) + "/success\";\r\n");
         sbb.append("\t\t} catch (Exception e) {\r\n");

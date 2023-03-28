@@ -642,12 +642,9 @@ public class MedusaSqlGenerator {
             processObjParams(sbb, objParams);
         }
 
-        //处理 语句里1=1和1!=1 add by SuperScorpion on 20230113
-        String sql = sbb.toString().replace("1!=1 OR", "").replace("1=1 AND", "").replace("1=1 OR", "");
+        logger.debug("Medusa: Generated SQL ^_^ " + sbb.toString());
 
-        logger.debug("Medusa: Generated SQL ^_^ " + sql);
-
-        return sql;
+        return sbb.toString();
     }
 
 
@@ -736,8 +733,7 @@ public class MedusaSqlGenerator {
 
         logger.debug("Medusa: Generated SQL ^_^ " + sbb.toString());
 
-        //处理 语句里1=1和1!=1 add by SuperScorpion on 20230113
-        return sbb.toString().replace("1!=1 OR", "").replace("1=1 AND", "").replace("1=1 OR", "");
+        return sbb.toString();
     }
 
     /**
@@ -788,6 +784,11 @@ public class MedusaSqlGenerator {
 
             isd++;
         }
+
+        //处理语句里1=1和1!=1 add by SuperScorpion on 20230113
+        MedusaCommonUtils.replaceAll(sbb, "1!=1 OR", "");
+        MedusaCommonUtils.replaceAll(sbb, "1=1 AND", "");
+        MedusaCommonUtils.replaceAll(sbb, "1=1 OR", "");
 
         return pa;
     }

@@ -6,7 +6,7 @@
 
     <groupId>com.github.superscorpion</groupId>
     <artifactId>medusa</artifactId>
-    <version>3.2.4</version>
+    <version>3.2.5</version>
     <packaging>jar</packaging>
 
     <name>medusa</name>
@@ -15,7 +15,7 @@
 
     <properties>
         <mybatis.version>3.5.13</mybatis.version>
-        <slf4j-api.version>2.0.6</slf4j-api.version>
+        <slf4j-api.version>2.0.7</slf4j-api.version>
         <aspect.version>1.9.19</aspect.version>
         <freemarker.version>2.3.32</freemarker.version>
         <snakeyaml.version>2.0</snakeyaml.version>

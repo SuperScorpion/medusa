@@ -124,7 +124,7 @@ public class GenControllerJson {
         sbb.append("\t\tJSONObject json = new JSONObject();\r\n\r\n");
 
         sb2.delete(0, sb2.length());
-        sb2.append("\t\t\tif(param != null) " + MedusaGenUtils.lowcaseFirst(entityName) + "Service.save(param);\r\n\r\n");
+        sb2.append("\t\t\tif(param != null) " + MedusaGenUtils.lowcaseFirst(entityName) + "Service.insertSelective(param);\r\n\r\n");
         genTryCatch(sbb, sb2.toString());
         sbb.append("\t\treturn json;\r\n");
         sbb.append("\t}\r\n\r\n");

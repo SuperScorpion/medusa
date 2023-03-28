@@ -14,7 +14,7 @@ import java.io.Serializable;
 public interface SelectCountMapper<T> {
 
     /**
-     * 这是个大招 万能查询方法 根据多条件查询数据条数 请参考medusaGazeMagic方法
+     * 这是个大招 万能查询方法 根据多条件查询数据条数 请参考{@link com.jy.medusa.gaze.base.select.SelectMedusaGazeMapper}
      * @param mixParams     各种类型的参数
      *                      包含 实体类型 String HashMap MedusaLambdaMap MedusaLambdaRestrictions MedusaLambdaColumns Pager
      * @return              返回查询出的总条数

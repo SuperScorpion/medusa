@@ -12,34 +12,6 @@ import java.util.List;
  */
 public abstract class BaseServiceImplMedusa<T> extends BaseServiceImplMedusaLambda<T> implements BaseServiceMedusa<T> {
 
-//	public List<T> selectAll() {
-//		return mapper.selectAll();
-//	}
-//
-//	public T selectOne(T entity) {
-//		return mapper.selectOne(entity);
-//	}
-//
-//	public List<T> selectByIds(List<Serializable> ids) {
-//		return mapper.selectByPrimaryKeyBatch(ids);
-//	}
-//
-//	public T selectById(Serializable id) {
-//		return mapper.selectByPrimaryKey(id);
-//	}
-//
-//	public List<T> selectListBy(T entity) {
-//		return mapper.select(entity);
-//	}
-
-//	public int selectCount(Object... mixParams) {
-//		return mapper.selectCount(mixParams);
-//	}
-//
-//	public List<T> selectByGazeMagic(Object... mixParams) {
-//		return mapper.medusaGazeMagic(mixParams);
-//	}
-
 	public int insertSelective(T entity) {//
 		return mapper.insertSelective(entity);
 	}

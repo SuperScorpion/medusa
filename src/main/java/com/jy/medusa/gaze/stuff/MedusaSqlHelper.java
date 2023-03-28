@@ -152,6 +152,33 @@ public class MedusaSqlHelper {
     }
 
 
+
+    /**
+     * add by SuperScorpion on 20230327 for SaveOrUpdate
+     * 获取 CacheGenerator 有则返回缓存里的 没有则创建
+     * 只提供给 saveOrUpdate 方法使用
+     * @param c 参数
+     * @return 返回值类型
+     */
+    public static MedusaSqlGenerator getSqlGeneratorByClass(Class<?> c) {
+
+        MedusaSqlGenerator por = MedusaSqlHelperCacheManager.getCacheGeneratorByClass(c);
+
+        if(por != null) {
+            return por;
+        } else {
+            MedusaSqlGenerator q = initSqlGenerator(c);
+            MedusaSqlGenerator msr = MedusaSqlHelperCacheManager.putCacheGeneratorByClass(c, q);
+
+            if(msr != null) {
+                return msr;
+            } else {
+                logger.debug("Medusa: Successfully initialize the " + c.getSimpleName() + " Basic information of MedusaSqlGenerator!  - Sou");
+                return q;
+            }
+        }
+    }
+
     /**
      * 获取 CacheGenerator 有则返回缓存里的 没有则创建
      * @param m 参数
@@ -159,16 +186,16 @@ public class MedusaSqlHelper {
      */
     public static MedusaSqlGenerator getSqlGenerator(Map<String, Object> m) {
 
-        String p = m.get("msid").toString();
+        String p = m.get("msid").toString();//mapper path
 
-        MedusaSqlGenerator por = MedusaSqlHelperCacheManager.getCacheGenerator(p);
+        MedusaSqlGenerator por = MedusaSqlHelperCacheManager.getCacheGeneratorByMapperPath(p);
 
         if(por != null) {
             return por;
         } else {
             Class<?> c = getEntityClass(p);
             MedusaSqlGenerator q = initSqlGenerator(c);
-            MedusaSqlGenerator msr = MedusaSqlHelperCacheManager.putCacheGenerator(p, q);
+            MedusaSqlGenerator msr = MedusaSqlHelperCacheManager.putCacheGeneratorByMapperPath(p, q);
 
             if(msr != null) {
                 return msr;

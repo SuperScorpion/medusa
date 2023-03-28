@@ -318,7 +318,8 @@ public class GenEntity {
             String primaryAnnotationTxt = colSqlNames[i].trim().equalsIgnoreCase(primaryKey) ? "\t@Id\r\n" : "";
 
             //添加默认值
-            String defaultStr = MedusaCommonUtils.isNotBlank(defaultMap.get(colFieldNames[i])) ? " = " + sqlType2JavaTypeForDefault(colTypes[i], defaultMap.get(colFieldNames[i])) : "";
+//            String defaultStr = MedusaCommonUtils.isNotBlank(defaultMap.get(colFieldNames[i])) ? " = " + sqlType2JavaTypeForDefault(colTypes[i], defaultMap.get(colFieldNames[i])) : "";
+            String defaultStr = "";
 
             String wellStr = primaryAnnotationTxt + "\t@Column(name = \"" + colSqlNames[i] + "\")\r\n\tprivate " + sqlType2JavaType(colTypes[i]) + " " + colFieldNames[i] + defaultStr + ";\r\n\r\n";
 

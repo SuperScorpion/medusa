@@ -54,7 +54,7 @@ public class ${entityName}Controller {
         JSONObject json = new JSONObject();
 
         try {
-            if(param != null) ${lowcaseFirstEntityName}Service.saveSelective(param);
+            if(param != null) ${lowcaseFirstEntityName}Service.insertSelective(param);
 
             ${lowcaseFirstEntityName}Service.resultSuccess(param, "ok", json);
         } catch (Exception e) {

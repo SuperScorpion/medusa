@@ -14,6 +14,41 @@ import java.util.Iterator;
 public class MedusaCommonUtils {
 
     /**
+     * 实现StringBuilder的replaceAll
+     * @param sbb
+     * @param oldStr 被替换的字符串
+     * @param newStr 替换oldStr
+     * @return sbb
+     */
+    public static StringBuilder replaceAll(StringBuilder sbb, String oldStr, String newStr) {
+        if (sbb == null || oldStr == null || newStr == null || sbb.length() == 0 || oldStr.length() == 0)
+            return sbb;
+        int index = sbb.indexOf(oldStr);
+        if (index > -1 && !oldStr.equals(newStr)) {
+            int lastIndex = 0;
+            while (index > -1) {
+                sbb.replace(index, index + oldStr.length(), newStr);
+                lastIndex = index + newStr.length();
+                index = sbb.indexOf(oldStr, lastIndex);
+            }
+        }
+        return sbb;
+    }
+
+    /**
+     * 实现String对象的新旧字符串替换
+     * @param allCs
+     * @param oldCs
+     * @param newCs
+     * @return 过滤处理后allCs
+     */
+    public static String replace(String allCs, String oldCs, String newCs) {
+        if (isEmpty(allCs)) return allCs;
+        if (!allCs.contains(oldCs)) return allCs;
+        return allCs.replace(oldCs, newCs);
+    }
+
+    /**
      * copy code from org.apache.commons.lang3.StringUtils.isEmpty
      * @param cs 参数
      * @return 返回值
