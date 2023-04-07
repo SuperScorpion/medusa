@@ -55,12 +55,4 @@ Mybatis Mapper Plugin
 https://github.com/SuperScorpion/medusa/wiki/Medusa-Version-Logs
 <br>
 <br>
-性能对比数据<br>
-测试循环单条插入 10w 数据<br>
-medusa 第一次 16327、第二次 18660、第三次 19072<br>
-baomidou 第一次 16669、第二次 19056、第三次 19505<br>
-测试循环单条插入 50w 数据<br>
-medusa 79706<br>
-baomidou 95461<br>
-<br>
 如有问题请联系作者
