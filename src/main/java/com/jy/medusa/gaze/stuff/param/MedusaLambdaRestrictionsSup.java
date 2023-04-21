@@ -19,7 +19,7 @@ import java.util.List;
 public abstract class MedusaLambdaRestrictionsSup<T> extends BaseRestrictions<T, HolyGetter<T>, MedusaLambdaRestrictionsSup<T>> {
 
     /**
-     * 此条件会被转为 {@code = }
+     * 此条件会被转为 {@code = value}
      * @param fn 参数
      * @param v 参数
      * @return 结果
@@ -30,7 +30,7 @@ public abstract class MedusaLambdaRestrictionsSup<T> extends BaseRestrictions<T,
     }
 
     /**
-     * 此条件会被转为 {@code != }
+     * 此条件会被转为 {@code != value}
      * @param fn 参数
      * @param v 参数
      * @return 结果
