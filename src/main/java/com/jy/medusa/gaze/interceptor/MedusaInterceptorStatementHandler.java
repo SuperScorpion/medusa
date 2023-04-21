@@ -21,12 +21,12 @@ abstract class MedusaInterceptorStatementHandler extends MedusaInterceptorBaseHa
 
     /**
      * 处理拦截器 StatementHandler 的逻辑
-     * @param invocation
-     * @return
-     * @throws SQLException
-     * @throws ParseException
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
+     * @param invocation 参数
+     * @return 结果
+     * @throws SQLException 异常
+     * @throws ParseException 异常
+     * @throws InvocationTargetException 异常
+     * @throws IllegalAccessException 异常
      */
     protected Object processStatementHandler(Invocation invocation) throws SQLException, ParseException, InvocationTargetException, IllegalAccessException {
 
@@ -72,7 +72,7 @@ abstract class MedusaInterceptorStatementHandler extends MedusaInterceptorBaseHa
                     if (!rs.next()) break;
 
                     //modify by SuperScorpion on 2019.08.07 for mycat
-                    int currentIdValue = sh.getBoundSql().getSql().toLowerCase().contains("next value for") ? rs.getInt(1) - 1 : rs.getInt(1);//注入属性id值 mycat 方式取到的都是+1 所以这里-1
+                    Long currentIdValue = sh.getBoundSql().getSql().toLowerCase().contains("next value for") ? rs.getLong(1) - 1 : rs.getLong(1);//注入属性id值 mycat 方式取到的都是+1 所以这里-1
 
                     MedusaReflectionUtils.invokeSetterMethod(ot, MedusaSqlHelper.getSqlGenerator((Map) parObj).getPkPropertyName(), currentIdValue);
                 }

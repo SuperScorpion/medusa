@@ -15,10 +15,10 @@ public class MedusaCommonUtils {
 
     /**
      * 实现StringBuilder的replaceAll
-     * @param sbb
+     * @param sbb    整个字符串
      * @param oldStr 被替换的字符串
      * @param newStr 替换oldStr
-     * @return sbb
+     * @return 结果
      */
     public static StringBuilder replaceAll(StringBuilder sbb, String oldStr, String newStr) {
         if (sbb == null || oldStr == null || newStr == null || sbb.length() == 0 || oldStr.length() == 0)
@@ -37,10 +37,10 @@ public class MedusaCommonUtils {
 
     /**
      * 实现String对象的新旧字符串替换
-     * @param allCs
-     * @param oldCs
-     * @param newCs
-     * @return 过滤处理后allCs
+     * @param allCs 参数
+     * @param oldCs 参数
+     * @param newCs 参数
+     * @return 结果
      */
     public static String replace(String allCs, String oldCs, String newCs) {
         if (isEmpty(allCs)) return allCs;

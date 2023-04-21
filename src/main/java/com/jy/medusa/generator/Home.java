@@ -497,8 +497,8 @@ public class Home {
 
     /**
      * 检查表是否存在
-     * @param tableName
-     * @return
+     * @param tableName 参数
+     * @return 结果
      */
     public boolean validateTableExist(String tableName) {
         boolean flag = false;

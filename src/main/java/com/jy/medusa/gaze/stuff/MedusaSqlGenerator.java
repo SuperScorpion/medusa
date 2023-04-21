@@ -63,8 +63,9 @@ public class MedusaSqlGenerator {
      * 生成根据IDs批量新增的SQL not selective
      * @param t 参数
      * @param mycatSeq 参数
+     * @param flag 参数
      * @param ps 参数
-     * @return 返回值类型
+     * @return 拼接sql语句
      */
     public String sqlOfInsertBatchForMyCat(Object t, Object mycatSeq, Boolean flag, Object[] ps) {
 
@@ -92,8 +93,9 @@ public class MedusaSqlGenerator {
     /**
      * 生成根据IDs批量新增的SQL not selective
      * @param t 参数
+     * @param flag 参数
      * @param ps 参数
-     * @return 返回值类型
+     * @return 拼接sql语句
      */
     public String sqlOfInsertBatch(Object t, Boolean flag, Object[] ps) {
 
@@ -271,6 +273,7 @@ public class MedusaSqlGenerator {
     /**
      * 生成根据条件批量更新的语句
      * @param t 参数
+     * @param flag 参数
      * @param ps 参数
      * @return 返回值类型
      */

@@ -26,7 +26,7 @@ public class ${entityName}Controller {
     private static final Logger logger = LoggerFactory.getLogger(${entityName}Controller.class);
 
     @Resource
-    ${entityName}Service ${lowcaseFirstEntityName}Service;
+    private ${entityName}Service ${lowcaseFirstEntityName}Service;
 
     @RequestMapping(value = "/index.json", method = RequestMethod.GET)
     @ResponseBody

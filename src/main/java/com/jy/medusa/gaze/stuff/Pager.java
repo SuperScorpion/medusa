@@ -103,8 +103,8 @@ public class Pager<T> implements Serializable {
 
 	/**
 	 * @deprecated
-	 * @param fns
-	 * @return
+	 * @param fns 参数
+	 * @return 结果
 	 */
 	public Pager<T> setSortColumn(HolyGetter<T> fns) {
 
@@ -117,8 +117,8 @@ public class Pager<T> implements Serializable {
 
 	/**
 	 * @deprecated
-	 * @param sortTypeEnum
-	 * @return
+	 * @param sortTypeEnum 参数
+	 * @return 结果
 	 */
 	public Pager<T> setSortType(SortTypeEnum sortTypeEnum) {
 

@@ -29,13 +29,13 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
     /**
      * 处理拦截器 Executor 的逻辑
      * For mybatis interceptor of Executor
-     * @param invocation
-     * @return
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
-     * @throws ParseException
-     * @throws SQLException
-     * @throws NoSuchFieldException
+     * @param invocation 参数
+     * @return 结果
+     * @throws InvocationTargetException 异常
+     * @throws IllegalAccessException 异常
+     * @throws ParseException 异常
+     * @throws SQLException 异常
+     * @throws NoSuchFieldException 异常
      */
     protected Object processExecutor(Invocation invocation) throws InvocationTargetException, IllegalAccessException, ParseException, SQLException, NoSuchFieldException {
 
@@ -180,7 +180,7 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
 
                 if (((Map) invocation.getArgs()[1]).get(pkName) != null) {///modify by SuperScorpion on 2016.10.27 因为有些非自增主键 手动添加的id值 不会返回id
 
-                    Object m = Integer.valueOf((((Map) invocation.getArgs()[1]).get(pkName).toString()));// mybatis long is default id types
+                    Long m = Long.valueOf((((Map) invocation.getArgs()[1]).get(pkName).toString()));// mybatis long is default id types
 
                     MedusaReflectionUtils.invokeSetterMethod(p.get("pobj"), MedusaSqlHelper.getSqlGenerator(p).getPkPropertyName(), m);//注入属性id值
                 }

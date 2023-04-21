@@ -345,9 +345,11 @@ public class MedusaSqlHelper {
 
     /**
      * add by SuperScorpion on 20220913 for batch
-     * @param psArray
-     * @param currentFieldColumnNameMap
-     * @return
+     * @param psArray 参数
+     * @param currentFieldColumnNameMap 参数
+     * @param flag 参数
+     * @param columns 参数
+     * @return 处理后的列名字符串
      */
     public static String buildColumnNameForSelect(Object[] psArray, Map<String, String> currentFieldColumnNameMap, Boolean flag, Set<String> columns) {
 
@@ -919,8 +921,8 @@ public class MedusaSqlHelper {
 
     /**
      * 处理 MedusaLambdaColumns MedusaLambdaMap 的lambda for gaze
-     * @param paramObjs
-     * @return
+     * @param paramObjs 参数
+     * @return 处理后的结果集
      */
     public static Object[] transferLambdaForGaze(Object[] paramObjs) {
 
@@ -970,8 +972,8 @@ public class MedusaSqlHelper {
 
     /**
      * 处理 普通lambda字段 转为字符串字段
-     * @param paramFns
-     * @return
+     * @param paramFns 参数
+     * @return 处理后的结果集
      */
     public static String[] transferStringColumnByLambda(HolyGetter<?>[] paramFns) {
 
