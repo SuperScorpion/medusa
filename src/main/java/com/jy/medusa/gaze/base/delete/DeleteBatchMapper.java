@@ -21,5 +21,5 @@ public interface DeleteBatchMapper<T> {
      * @return     删除的总共条数
      */
     @DeleteProvider(type = BaseDeleteProvider.class, method = "deleteBatch")
-    int deleteBatch(List<Serializable> pks);
+    int deleteBatch(List<? extends Serializable> pks);
 }

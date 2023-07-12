@@ -25,5 +25,5 @@ public interface SelectByPrimaryKeyBatchMapper<T> {
      */
     @SelectProvider(type = BaseSelectProvider.class, method = "selectByPrimaryKeyBatch")
     @ResultMap("BaseResultMap")
-    List<T> selectByPrimaryKeyBatch(List<Serializable> pks, HolyGetter<T>... paramColumns);
+    List<T> selectByPrimaryKeyBatch(List<? extends Serializable> pks, HolyGetter<T>... paramColumns);
 }

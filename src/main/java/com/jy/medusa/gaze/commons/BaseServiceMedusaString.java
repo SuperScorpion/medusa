@@ -10,15 +10,15 @@ public interface BaseServiceMedusaString<T> {
 
 	T selectOne(T entity, String... paramColumns);
 
-	List<T> selectByIds(List<Serializable> ids, String... paramColumns);
+	List<T> selectByIds(List<? extends Serializable> ids, String... paramColumns);
 
 	T selectById(Serializable id, String... paramColumns);
 
 //	List<T> selectListBy(T entity, String... paramColumns);
 
-	int selectCount(Object... mixParams);
+	int selectCount(Serializable... mixParams);
 
-	List<T> selectByGazeMagic(Object... mixParams);
+	List<T> selectByGazeMagic(Serializable... mixParams);
 
 //	int saveSelective(T entity);
 
@@ -38,7 +38,7 @@ public interface BaseServiceMedusaString<T> {
 
 //	int deleteById(Serializable id);
 
-//	int deleteBatch(List<Serializable> ids);
+//	int deleteBatch(List<? extends Serializable> ids);
 
 //	int deleteBy(T entity);
 }

@@ -6,7 +6,7 @@
 
     <groupId>com.github.superscorpion</groupId>
     <artifactId>medusa</artifactId>
-    <version>3.2.6</version>
+    <version>3.2.7</version>
     <packaging>jar</packaging>
 
     <name>medusa</name>

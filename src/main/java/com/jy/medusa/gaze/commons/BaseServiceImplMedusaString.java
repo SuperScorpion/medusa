@@ -14,7 +14,7 @@ public abstract class BaseServiceImplMedusaString<T> extends BaseServiceImplLamb
 		return mapper.selectOne(entity, paramColumns);
 	}
 
-	public List<T> selectByIds(List<Serializable> ids, String... paramColumns) {
+	public List<T> selectByIds(List<? extends Serializable> ids, String... paramColumns) {
 		return mapper.selectByPrimaryKeyBatch(ids, paramColumns);
 	}
 
@@ -26,11 +26,11 @@ public abstract class BaseServiceImplMedusaString<T> extends BaseServiceImplLamb
 //		return mapper.select(entity, paramColumns);
 //	}
 
-	public int selectCount(Object... mixParams) {
+	public int selectCount(Serializable... mixParams) {
 		return mapper.selectCount(mixParams);
 	}
 
-	public List<T> selectByGazeMagic(Object... mixParams) {
+	public List<T> selectByGazeMagic(Serializable... mixParams) {
 		return mapper.medusaGazeMagic(mixParams);
 	}
 

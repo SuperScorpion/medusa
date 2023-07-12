@@ -8,6 +8,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -299,16 +300,16 @@ public class Home {
             }
         }
 
-        //给proJavaPath赋值 其它地方也要使用
-        gainTheProJavaPath(resPaths, medusaProFileName);
-
-        //给proResourcePath赋值 其它地方也要使用
-        gainTheProResourcePath(resPaths, medusaProFileName);
-
         FileInputStream fileInputStream = null;
         try {
+
+            //给proJavaPath赋值 其它地方也要使用
+            gainTheProJavaPath(URLDecoder.decode(resPaths, "UTF-8"), medusaProFileName);
+            //给proResourcePath赋值 其它地方也要使用
+            gainTheProResourcePath(URLDecoder.decode(resPaths, "UTF-8"), medusaProFileName);
+
             Yaml yaml = new Yaml();//实例化解析器
-            File file = new File(resPaths);//配置文件地址
+            File file = new File(URLDecoder.decode(resPaths, "UTF-8"));//modify by SuperScorpion on 20230712 for 中文路径
             fileInputStream = new FileInputStream(file);
             Map<String ,Object> map = yaml.loadAs(fileInputStream, Map.class);//装载的对象，这里使用Map, 当然也可使用自己写的对象
 
@@ -378,7 +379,7 @@ public class Home {
             this.jdbcUsername = jdbcMap.get("username") == null || MedusaCommonUtils.isBlank(jdbcMap.get("username").toString()) ?  "" : jdbcMap.get("username").toString().trim();
             this.jdbcPassword = jdbcMap.get("password") == null || MedusaCommonUtils.isBlank(jdbcMap.get("password").toString()) ?  "" : jdbcMap.get("password").toString().trim();
 
-        } catch(FileNotFoundException e) {
+        } catch(FileNotFoundException | UnsupportedEncodingException e) {
             e.printStackTrace();
         } finally {
             try {
@@ -422,10 +423,15 @@ public class Home {
     public static boolean checkIsFtlAvailable() {
         boolean result = false;
 
-        if(checkIsFtl()) {
-            File p = new File(ftlDirPath);
-            if(p.exists()) return true;
+        try {
+            if(checkIsFtl()) {
+                File p = new File(URLDecoder.decode(ftlDirPath, "UTF-8"));
+                if(p.exists()) return true;
+            }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
+
         return result;
     }
 
@@ -524,7 +530,7 @@ public class Home {
 
 
     /**
-     * modify by admin on 20220714 for 万弟弟
+     * modify by SuperScorpion on 20220714 for 万弟弟
      * 1.yml文件找不到则启用properties文件加载 | 2.指定使用properties文件加载
      * @param medusaProFileName 一定有值 1.用户指定文件名 2.默认值 application.properties
      */
@@ -546,6 +552,12 @@ public class Home {
         Properties props = new Properties();
         try {
             props.load(this.getClass().getClassLoader().getResourceAsStream(medusaProFileName));
+
+            //给proJavaPath赋值 其它地方也要使用
+            gainTheProJavaPath(URLDecoder.decode(this.getClass().getClassLoader().getResource(medusaProFileName).getPath(), "UTF-8"), medusaProFileName);
+            //给proResourcePath赋值 其它地方也要使用
+            gainTheProResourcePath(URLDecoder.decode(this.getClass().getClassLoader().getResource(medusaProFileName).getPath(), "UTF-8"), medusaProFileName);
+
         } catch (FileNotFoundException e) {
             System.out.println("Medusa: 未找到配置文件的异常 " + medusaProFileName + " 请检查配置...");
             e.printStackTrace();
@@ -556,13 +568,6 @@ public class Home {
             System.out.println("Medusa: 请确认 yml 或 properties 配置文件正确...");
             return;
         }
-
-        //给proJavaPath赋值 其它地方也要使用
-        gainTheProJavaPath(this.getClass().getClassLoader().getResource(medusaProFileName).getPath(), medusaProFileName);
-
-        //给proResourcePath赋值 其它地方也要使用
-        gainTheProResourcePath(this.getClass().getClassLoader().getResource(medusaProFileName).getPath(), medusaProFileName);
-
 
         Map<String, String> childMap = new HashMap<>((Map) props);
 

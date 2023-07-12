@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.URLDecoder;
 import java.util.*;
 
  class MyHotspotReloader {
@@ -49,7 +50,7 @@ import java.util.*;
 
             // step.1 扫描文件
             try {
-                scanMapperXml(xmlAbsolutelyPath);
+                scanMapperXml(URLDecoder.decode(xmlAbsolutelyPath, "UTF-8"));
             } catch (IOException e) {
                 e.printStackTrace();
                 return;

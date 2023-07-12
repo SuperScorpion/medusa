@@ -17,7 +17,7 @@ public abstract class BaseServiceImplMedusaLambda<T> extends BaseServiceImplLamb
 		return mapper.selectOne(entity, paramFns);
 	}
 
-	public List<T> selectByIds(List<Serializable> ids, HolyGetter<T>... paramFns) {
+	public List<T> selectByIds(List<? extends Serializable> ids, HolyGetter<T>... paramFns) {
 		return mapper.selectByPrimaryKeyBatch(ids, paramFns);
 	}
 
@@ -25,11 +25,11 @@ public abstract class BaseServiceImplMedusaLambda<T> extends BaseServiceImplLamb
 		return mapper.selectByPrimaryKey(id, paramFns);
 	}
 
-	public int selectCount(Object... mixParams) {
+	public int selectCount(Serializable... mixParams) {
 		return mapper.selectCount(mixParams);
 	}
 
-	public List<T> selectByGazeMagic(Object... mixParams) {
+	public List<T> selectByGazeMagic(Serializable... mixParams) {
 		return mapper.medusaGazeMagic(mixParams);
 	}
 

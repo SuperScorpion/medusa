@@ -20,5 +20,5 @@ public interface SelectCountMapper<T> {
      * @return              返回查询出的总条数
      */
     @SelectProvider(type = BaseSelectProvider.class, method = "selectCount")
-    int selectCount(Object... mixParams);
+    int selectCount(Serializable... mixParams);
 }

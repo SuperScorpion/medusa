@@ -40,7 +40,7 @@ public abstract class BaseServiceImplMedusa<T> extends BaseServiceImplMedusaLamb
 		return mapper.deleteByPrimaryKey(id);
 	}
 
-	public int deleteBatchByIds(List<Serializable> ids) {//
+	public int deleteBatchByIds(List<? extends Serializable> ids) {//
 		return mapper.deleteBatch(ids);
 	}
 

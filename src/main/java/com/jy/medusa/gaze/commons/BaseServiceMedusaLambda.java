@@ -28,7 +28,7 @@ public interface BaseServiceMedusaLambda<T> {
 	 * @param paramFns 可选结果集需要的列名(双冒号形式)
 	 * @return 查询出来的list结果集
 	 */
-	List<T> selectByIds(List<Serializable> ids, HolyGetter<T>... paramFns);
+	List<T> selectByIds(List<? extends Serializable> ids, HolyGetter<T>... paramFns);
 
 	/**
 	 * 根据主键单个查询
@@ -43,14 +43,14 @@ public interface BaseServiceMedusaLambda<T> {
 	 * @param mixParams 请参考{@link com.jy.medusa.gaze.base.select.SelectMedusaGazeMapper}
 	 * @return 查询出的总条数
 	 */
-	int selectCount(Object... mixParams);
+	int selectCount(Serializable... mixParams);
 
 	/**
 	 * 这是个大招 万能查询方法 根据多条件查询数据结果集
 	 * @param mixParams 请参考{@link com.jy.medusa.gaze.base.select.SelectMedusaGazeMapper}
 	 * @return 查询出来的list结果集
 	 */
-	List<T> selectByGazeMagic(Object... mixParams);
+	List<T> selectByGazeMagic(Serializable... mixParams);
 
 	/**
 	 * 批量新增数据(可选包含的列名)

@@ -66,7 +66,7 @@ public interface BaseServiceMedusa<T> extends BaseServiceMedusaLambda<T> {
 	 * @param ids 主键的list集合参数
 	 * @return 影响的行数
 	 */
-	int deleteBatchByIds(List<Serializable> ids);
+	int deleteBatchByIds(List<? extends Serializable> ids);
 
 	/**
 	 * 根据实体类对应条件删除数据
