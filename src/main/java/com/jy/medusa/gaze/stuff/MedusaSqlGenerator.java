@@ -1013,7 +1013,7 @@ public class MedusaSqlGenerator {
                     sbb.append(orAndStr).append(column).append(" < ").append("#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].value}");///modify by SuperScorpion on 2020.02.13
                 } else if (z instanceof LessEqualParam) {
 
-                    sbb.append(orAndStr).append(column).append(" <= ").append("#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].value");///modify by SuperScorpion on 2020.02.13
+                    sbb.append(orAndStr).append(column).append(" <= ").append("#{array[").append(isd).append("]").append(modelListStr).append(".paramList[").append(ind).append("].value}");///modify by SuperScorpion on 2020.02.13
                 }
             }
         } else if (z instanceof BaseSortParam) {
