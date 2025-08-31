@@ -52,6 +52,7 @@ public class BaseInsertProvider {
      * 批量插入mycat
      * @param m 参数
      * @return 返回值类型
+     * @deprecated
      */
     public String insertBatchOfMyCat(Map<String, Object> m) {
 

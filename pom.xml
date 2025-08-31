@@ -6,7 +6,7 @@
 
     <groupId>com.github.superscorpion</groupId>
     <artifactId>medusa</artifactId>
-    <version>3.2.8</version>
+    <version>3.2.9</version>
     <packaging>jar</packaging>
 
     <name>medusa</name>
@@ -14,11 +14,13 @@
     <url>https://github.com/SuperScorpion/medusa</url>
 
     <properties>
-        <mybatis.version>3.5.15</mybatis.version>
-        <slf4j-api.version>2.0.11</slf4j-api.version>
-        <aspect.version>1.9.21</aspect.version>
-        <freemarker.version>2.3.32</freemarker.version>
-        <snakeyaml.version>2.2</snakeyaml.version>
+        <mybatis.version>3.5.19</mybatis.version>
+        <slf4j-api.version>2.0.17</slf4j-api.version>
+        <aspect.version>1.9.24</aspect.version>
+        <freemarker.version>2.3.34</freemarker.version>
+        <snakeyaml.version>2.4</snakeyaml.version>
+        <hutool.version>5.8.40</hutool.version>
+        <lang3.version>3.18.0</lang3.version>
         <!--<com.alibaba.fastjson>1.2.66</com.alibaba.fastjson>-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -79,6 +81,18 @@
             <artifactId>javax.inject</artifactId>
             <version>1</version>
 <!--            <optional>true</optional>&lt;!&ndash;让用户来提供&ndash;&gt;-->
+        </dependency>
+
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>${hutool.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${lang3.version}</version>
         </dependency>
 
     </dependencies>

@@ -10,7 +10,7 @@ import java.util.List;
  * @param <T> 参数
  * @author SuperScorpion
  */
-public abstract class BaseServiceImplMedusa<T> extends BaseServiceImplMedusaLambda<T> implements BaseServiceMedusa<T> {
+public abstract class BaseServiceImplMedusa<T> extends BaseServiceImplMedusaCombo<T> implements BaseServiceMedusa<T> {
 
 	public int insertSelective(T entity) {//
 		return mapper.insertSelective(entity);
@@ -41,10 +41,10 @@ public abstract class BaseServiceImplMedusa<T> extends BaseServiceImplMedusaLamb
 	}
 
 	public int deleteBatchByIds(List<? extends Serializable> ids) {//
-		return mapper.deleteBatch(ids);
+		return mapper.deleteByPrimaryKeyBatch(ids);
 	}
 
-	public int delete(T entity) {//
-		return mapper.delete(entity);
+	public int deleteMedusaCombo(Serializable... mixParams) {//
+		return mapper.deleteMedusaCombo(mixParams);
 	}
 }

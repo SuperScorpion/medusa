@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class SystemConfigs {
 
-    public static final String PRIMARY_KEY = "id";// insert的相关方法主键能否动态呢 (通过拦截器反射更改keyProperties属性解决)
+    public static final String PRIMARY_KEY = "id";// insert的相关方法主键能否动态呢 (已通过拦截器反射更改keyProperties属性解决)
 
     public static final String DATE_FULL_STR = "yyyy-MM-dd HH:mm:ss";
 
@@ -31,23 +31,23 @@ public class SystemConfigs {
     public static final List<String> MY_ALL_METHOD_NANES_LIST = new ArrayList<>(20);
 
     static {
-        MY_ALL_METHOD_NANES_LIST.add("medusaGazeMagic");
-        MY_ALL_METHOD_NANES_LIST.add("selectAll");
-        MY_ALL_METHOD_NANES_LIST.add("selectByPrimaryKeyBatch");
         MY_ALL_METHOD_NANES_LIST.add("selectByPrimaryKey");
-        MY_ALL_METHOD_NANES_LIST.add("selectCount");
-        MY_ALL_METHOD_NANES_LIST.add("select");
-        MY_ALL_METHOD_NANES_LIST.add("selectOne");
+        MY_ALL_METHOD_NANES_LIST.add("selectByPrimaryKeyBatch");
+        MY_ALL_METHOD_NANES_LIST.add("selectAll");
+        MY_ALL_METHOD_NANES_LIST.add("selectOneCombo");
+        MY_ALL_METHOD_NANES_LIST.add("selectCountCombo");
+        MY_ALL_METHOD_NANES_LIST.add("selectMedusaCombo");
+//        MY_ALL_METHOD_NANES_LIST.add("select");
+        MY_ALL_METHOD_NANES_LIST.add("insert");
         MY_ALL_METHOD_NANES_LIST.add("insertSelective");
         MY_ALL_METHOD_NANES_LIST.add("insertBatch");
-        MY_ALL_METHOD_NANES_LIST.add("insertBatchOfMyCat");
-        MY_ALL_METHOD_NANES_LIST.add("insert");
-        MY_ALL_METHOD_NANES_LIST.add("insertSelectiveUUID");
+//        MY_ALL_METHOD_NANES_LIST.add("insertBatchOfMyCat");
+//        MY_ALL_METHOD_NANES_LIST.add("insertSelectiveUUID");
         MY_ALL_METHOD_NANES_LIST.add("updateByPrimaryKey");
         MY_ALL_METHOD_NANES_LIST.add("updateByPrimaryKeySelective");
         MY_ALL_METHOD_NANES_LIST.add("updateByPrimaryKeyBatch");
-        MY_ALL_METHOD_NANES_LIST.add("deleteBatch");
         MY_ALL_METHOD_NANES_LIST.add("deleteByPrimaryKey");
-        MY_ALL_METHOD_NANES_LIST.add("delete");
+        MY_ALL_METHOD_NANES_LIST.add("deleteByPrimaryKeyBatch");
+        MY_ALL_METHOD_NANES_LIST.add("deleteMedusaCombo");
     }
 }

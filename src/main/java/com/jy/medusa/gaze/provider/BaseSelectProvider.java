@@ -33,15 +33,20 @@ public class BaseSelectProvider {
      * @param m 参数
      * @return 返回值类型
      */
-    public String selectOne(Map<String, Object> m) {
+    public String selectOneCombo(Map<String, Object> m) {
 
-//        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
-            return MedusaSqlHelper.getSqlGenerator(m).sqlOfSelectOne(
-                    ((MapperMethod.ParamMap) m).get("param1"),
-                    MedusaSqlHelper.transferStringColumnByLambda((HolyGetter<?>[]) ((MapperMethod.ParamMap) m).get("param2")));
-//        } else {
-//            throw new MedusaException("Medusa: selectOne MapperMethod.ParamMap Exception");
-//        }
+////        if(m.get("pobj") instanceof MapperMethod.ParamMap) {
+//            return MedusaSqlHelper.getSqlGenerator(m).sqlOfSelectOne(
+//                    ((MapperMethod.ParamMap) m).get("param1"),
+//                    MedusaSqlHelper.transferStringColumnByLambda((HolyGetter<?>[]) ((MapperMethod.ParamMap) m).get("param2")));
+////        } else {
+////            throw new MedusaException("Medusa: selectOne MapperMethod.ParamMap Exception");
+////        }
+        Object[] targetObjArray = MedusaSqlHelper.transferLambdaForGaze((Object[]) ((MapperMethod.ParamMap) m).get("array"));
+
+        ((MapperMethod.ParamMap) m).put("array", targetObjArray);
+
+        return MedusaSqlHelper.getSqlGenerator(m).sqlOfselectOneCombo(targetObjArray);
     }
 
 
@@ -49,6 +54,7 @@ public class BaseSelectProvider {
      * 查询
      * @param m 参数
      * @return 返回值类型
+     * @deprecated
      */
     public String select(Map<String, Object> m) {
 
@@ -100,13 +106,13 @@ public class BaseSelectProvider {
      * @return 返回值类型
      * 新老版本产生的 bug fixed (DefaultSqlSession.StrictMap - MapperMethod.ParamMap) 20210113
      */
-    public String selectCount(Map<String, Object> m) {
+    public String selectCountCombo(Map<String, Object> m) {
 
         Object[] targetObjArray = MedusaSqlHelper.transferLambdaForGaze((Object[]) ((MapperMethod.ParamMap) m).get("array"));
 
         ((MapperMethod.ParamMap) m).put("array", targetObjArray);
 
-        return MedusaSqlHelper.getSqlGenerator(m).sqlOfSelectCount(targetObjArray);
+        return MedusaSqlHelper.getSqlGenerator(m).sqlOfSelectCountCombo(targetObjArray);
     }
 
 
@@ -117,12 +123,12 @@ public class BaseSelectProvider {
      * @return 返回值类型
      * 新老版本产生的 bug fixed (DefaultSqlSession.StrictMap - MapperMethod.ParamMap) 20210113
      */
-    public String selectMedusaGaze(Map<String, Object> m) {
+    public String selectMedusaCombo(Map<String, Object> m) {
 
         Object[] targetObjArray = MedusaSqlHelper.transferLambdaForGaze((Object[]) ((MapperMethod.ParamMap) m).get("array"));
 
         ((MapperMethod.ParamMap) m).put("array", targetObjArray);
 
-        return MedusaSqlHelper.getSqlGenerator(m).sqlOfSelectMedusaGaze(targetObjArray);
+        return MedusaSqlHelper.getSqlGenerator(m).sqlOfSelectMedusaCombo(targetObjArray);
     }
 }

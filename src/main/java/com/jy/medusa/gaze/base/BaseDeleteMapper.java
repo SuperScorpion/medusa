@@ -1,9 +1,9 @@
 
 package com.jy.medusa.gaze.base;
 
-import com.jy.medusa.gaze.base.delete.DeleteBatchMapper;
+import com.jy.medusa.gaze.base.delete.DeleteByPrimaryKeyBatchMapper;
 import com.jy.medusa.gaze.base.delete.DeleteByPrimaryKeyMapper;
-import com.jy.medusa.gaze.base.delete.DeleteMapper;
+import com.jy.medusa.gaze.base.delete.DeleteMedusaComboMapper;
 
 /**
  * 通用Mapper接口
@@ -12,7 +12,7 @@ import com.jy.medusa.gaze.base.delete.DeleteMapper;
  * @author SuperScorpion
  */
 public interface BaseDeleteMapper<T> extends
-        DeleteMapper<T>,
+        DeleteMedusaComboMapper<T>,
         DeleteByPrimaryKeyMapper<T>,
-        DeleteBatchMapper<T> {
+        DeleteByPrimaryKeyBatchMapper<T> {
 }

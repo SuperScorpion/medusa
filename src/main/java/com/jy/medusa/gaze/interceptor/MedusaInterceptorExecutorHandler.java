@@ -6,6 +6,7 @@ package com.jy.medusa.gaze.interceptor;
 
 import com.jy.medusa.gaze.stuff.MedusaSqlHelper;
 import com.jy.medusa.gaze.stuff.Pager;
+import com.jy.medusa.gaze.stuff.annotation.Id;
 import com.jy.medusa.gaze.stuff.exception.MedusaException;
 import com.jy.medusa.gaze.utils.MedusaReflectionUtils;
 import org.apache.ibatis.binding.MapperMethod;
@@ -13,13 +14,11 @@ import org.apache.ibatis.builder.annotation.ProviderSqlSource;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.plugin.Invocation;
-import org.apache.ibatis.scripting.defaults.RawSqlSource;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,7 +84,7 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
                 p.remove("msid");//还原
             }
 
-        } else if (mt.getSqlSource() instanceof RawSqlSource//processExecutor里的invocationProceed(invocation)嵌套进入
+        } /*else if (mt.getSqlSource() instanceof RawSqlSource//processExecutor里的invocationProceed(invocation)嵌套进入
                 // medusa的insertSelectiveUUID 生成UUID时 SELECT REPLACE(UUID(), '-', '') 内部嵌套查询UUID的查询方法
                  && MedusaSqlHelper.checkInsertUUIDMethodSelectKey(medusaMethodName)) {
 
@@ -95,7 +94,7 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
             Map<String, Object> p = (Map) invocation.getArgs()[1];
 
             MedusaReflectionUtils.invokeSetterMethod(p.get("pobj"), MedusaSqlHelper.getSqlGenerator(p).getPkPropertyName(), ((ArrayList) result).get(0));//注入属性id值
-        } else {//其他的各种方法
+        }*/ else {//其他的各种方法
             result = invocationProceed(invocation);
         }
 
@@ -124,10 +123,10 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
                 Field f = mt.getClass().getDeclaredField("keyProperties");
                 f.setAccessible(true);
                 f.set(mt, new String[]{"param1.".concat(MedusaSqlHelper.getSqlGenerator(p).getPkPropertyName())});
-            } else if (MedusaSqlHelper.checkInsertUUIDMethod(medusaMethodName)) {
+            } /*else if (MedusaSqlHelper.checkInsertUUIDMethod(medusaMethodName)) {
                 //插入主键为UUID的方法时 keyProperties没啥用 因为是嵌套生成的UUID
                 //do nothing
-            } else {
+            } */else {
                 //do nothing
             }
         }
@@ -149,7 +148,8 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
 
         //测试结果由高到低:startWith->indexOf->contains modify by SuperScorpion on 2016.11.07
         //medusa的一些方法后续处理(insert相关 update相关 medusaGaze相关)
-        if (!medusaMethodName.startsWith("select") && !medusaMethodName.startsWith("delete")) {//查询比较多 避免再去判断是不是以下方法中的 提升性能 可以 短路 modify by SuperScorpion on 2016.11.07
+        if (medusaMethodName.startsWith("selectMedusa") || medusaMethodName.startsWith("insert")
+                || medusaMethodName.startsWith("update")) {//查询比较多 避免再去判断是不是以下方法中的 提升性能 modify by SuperScorpion on 2025.08.30
 
             if (MedusaSqlHelper.checkMedusaGazeMethod(medusaMethodName)) {//若是多条件查询 medusa
 
@@ -176,9 +176,13 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
 
                 //returns generator id key change return values
                 //增加动态主键 modify by SuperScorpion on 20210521
+                //增加id type modify by SuperScorpion on 20250830
                 String pkName = MedusaSqlHelper.getSqlGenerator(p).getPkPropertyName();
+                Id.Type pkGeneratedType = MedusaSqlHelper.getSqlGenerator(p).getPkGeneratedType();
 
-                if (((Map) invocation.getArgs()[1]).get(pkName) != null) {///modify by SuperScorpion on 2016.10.27 因为有些非自增主键 手动添加的id值 不会返回id
+                //modify by SuperScorpion on 20161027 使用@Options(useGeneratedKeys = true 才会返回id
+                //modify by SuperScorpion on 20250830 自定义增长主键的值(snowflake uuid)已经在实体插入前通过反射写入了 所以不需要再反射写入主键值
+                if (((Map) invocation.getArgs()[1]).get(pkName) != null && pkGeneratedType.equals(Id.Type.AUTO)) {
 
                     Long m = Long.valueOf((((Map) invocation.getArgs()[1]).get(pkName).toString()));// mybatis long is default id types
 
@@ -189,7 +193,6 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
 
                 if (result.toString().equals("0"))
                     throw new MedusaException("Medusa: The update method is there a number of exceptions to zero!(Maybe your incoming primary key is empty please check!)");
-
             } else {
 //                        do nothing
             }

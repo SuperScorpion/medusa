@@ -16,11 +16,10 @@ public interface BaseServiceMedusaLambda<T> {
 
 	/**
 	 * 根据实体类参数查询第一个结果
-	 * @param entity 实体类参数
-	 * @param paramFns 可选结果集需要的列名(双冒号形式)
+	 * @param mixParams 请参考{@link com.jy.medusa.gaze.base.select.SelectMedusaComboMapper}
 	 * @return 单个实体类结果
 	 */
-	T selectOne(T entity, HolyGetter<T>... paramFns);
+	T selectOneCombo(Serializable... mixParams);
 
 	/**
 	 * 根据主键集合批量查询
@@ -40,17 +39,17 @@ public interface BaseServiceMedusaLambda<T> {
 
 	/**
 	 * 这是个大招 万能查询方法 根据多条件查询数据条数
-	 * @param mixParams 请参考{@link com.jy.medusa.gaze.base.select.SelectMedusaGazeMapper}
+	 * @param mixParams 请参考{@link com.jy.medusa.gaze.base.select.SelectMedusaComboMapper}
 	 * @return 查询出的总条数
 	 */
-	int selectCount(Serializable... mixParams);
+	int selectCountCombo(Serializable... mixParams);
 
 	/**
 	 * 这是个大招 万能查询方法 根据多条件查询数据结果集
-	 * @param mixParams 请参考{@link com.jy.medusa.gaze.base.select.SelectMedusaGazeMapper}
+	 * @param mixParams 请参考{@link com.jy.medusa.gaze.base.select.SelectMedusaComboMapper}
 	 * @return 查询出来的list结果集
 	 */
-	List<T> selectByGazeMagic(Serializable... mixParams);
+	List<T> selectMedusaCombo(Serializable... mixParams);
 
 	/**
 	 * 批量新增数据(可选包含的列名)

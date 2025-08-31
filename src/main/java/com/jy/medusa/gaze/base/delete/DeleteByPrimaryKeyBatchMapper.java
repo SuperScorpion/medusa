@@ -13,7 +13,7 @@ import java.util.List;
  * @param <T> 实体类泛型
  * @author SuperScorpion
  */
-public interface DeleteBatchMapper<T> {
+public interface DeleteByPrimaryKeyBatchMapper<T> {
 
     /**
      * 批量删除     根据主键的list集合做删除操作
@@ -21,5 +21,5 @@ public interface DeleteBatchMapper<T> {
      * @return     删除的总共条数
      */
     @DeleteProvider(type = BaseDeleteProvider.class, method = "deleteBatch")
-    int deleteBatch(List<? extends Serializable> pks);
+    int deleteByPrimaryKeyBatch(List<? extends Serializable> pks);
 }

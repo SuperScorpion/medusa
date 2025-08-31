@@ -1,6 +1,7 @@
 package com.jy.medusa.gaze.stuff;
 
 
+import com.jy.medusa.gaze.stuff.annotation.Id;
 import com.jy.medusa.gaze.stuff.exception.MedusaException;
 import com.jy.medusa.gaze.stuff.param.BaseRestrictions;
 import com.jy.medusa.gaze.stuff.param.MedusaLambdaMap;
@@ -31,17 +32,21 @@ public class MedusaSqlGenerator {
     private Set<String>    columns;
     private String        columnsStr;
     private String        tableName;
-    private String        pkName;
+    private String        pkColumnName;
+    private String        pkPropertyName;
+    private Id.Type       pkGeneratedType;
     private Map<String, String> currentColumnFieldNameMap;
     private Map<String, String> currentFieldColumnNameMap;
     private Map<String, String> currentFieldTypeNameMap;
     private Class<?> entityClass;
 
 
-    public MedusaSqlGenerator(Map<String, String> cfMap, Map<String, String> ftMap, String tableName, String pkColumnName, Class<?> entityClass) {
+    public MedusaSqlGenerator(Map<String, String> cfMap, Map<String, String> ftMap, String tableName, String pkColumnName, Id.Type pkGeneratedType, Class<?> entityClass) {
         this.columns = cfMap.keySet();
         this.tableName = tableName;
-        this.pkName = pkColumnName;
+        this.pkColumnName = pkColumnName;
+        this.pkPropertyName = cfMap.get(pkColumnName);
+        this.pkGeneratedType = pkGeneratedType;
         this.columnsStr = MedusaCommonUtils.join(this.columns, ",");
         this.currentColumnFieldNameMap = cfMap;
         this.currentFieldColumnNameMap = MedusaSqlHelper.exchangeKeyValues(cfMap);
@@ -51,37 +56,68 @@ public class MedusaSqlGenerator {
     }
 
     public String getPkColumnName() {
-        return this.pkName;
+        return this.pkColumnName;
     }
 
     public String getPkPropertyName() {
-        return currentColumnFieldNameMap.get(pkName);
+        return this.pkPropertyName;
+    }
+
+    public Id.Type getPkGeneratedType() {
+        return this.pkGeneratedType;
+    }
+
+
+
+
+
+
+
+
+    /**
+     * return "SELECT * FROM  users WHERE NAME = #{pobj.param1.name} limit 0,1";
+     * 根据条件只查出一条符合的数据
+     * @param objParams 参数
+     * @return 返回值类型
+     */
+    public String sqlOfselectOneCombo(Object[] objParams) {
+
+        String paramColumns = reSolveColumn(null);
+
+        int len = 30 + tableName.length() + (10 * 39) + 512;
+
+        StringBuilder sbb = new StringBuilder(len);
+
+        sbb.append("SELECT ").append(paramColumns).append(" FROM ").append(tableName).append(" WHERE ");
+        sbb.append("1=1");
+
+        //objParams 里的多条件查询类型参数处理
+        if(objParams != null && objParams.length > 0) {
+            /////处理各个参数 add by SuperScorpion on 2022.09.30
+            processObjParams(sbb, objParams);
+        }
+
+        sbb.append(" limit 0,1");
+
+        String sql = sbb.toString();
+        logger.debug("Medusa: Generated SQL ^_^ " + sql);
+        return sql;
     }
 
     /**
-     * for mycat
-     * 生成根据IDs批量新增的SQL not selective
-     * @param t 参数
-     * @param mycatSeq 参数
-     * @param flag 参数
+     * 生成根据ID查询的SQL
+     * @param id 参数
      * @param ps 参数
-     * @return 拼接sql语句
+     * @return 返回值类型
      */
-    public String sqlOfInsertBatchForMyCat(Object t, Object mycatSeq, Boolean flag, Object[] ps) {
+    public String sqlOfSelectByPrimaryKey(Object id, Object[] ps) {///modify by SuperScorpion on 2016.11.21 Object id,这个 id 不能去掉的
 
-        String paramColumn = reSolveColumn(ps, flag);
+        String paramColumns = reSolveColumn(ps);
 
-        if(paramColumn.equals("*")) paramColumn = columnsStr;
+        int len = 39 + tableName.length() + pkColumnName.length() + paramColumns.length();
 
-        String dynamicSqlForBatch = MedusaSqlHelper.concatInsertDynamicSqlForBatch(currentColumnFieldNameMap, currentFieldTypeNameMap, t, paramColumn, pkName, String.valueOf(mycatSeq));
-
-        int sbbLength = paramColumn.length() + tableName.length() + dynamicSqlForBatch.length() + 33;
-
-        StringBuilder sqlBuild = new StringBuilder(sbbLength);
-
-        sqlBuild.append("INSERT INTO ").append(tableName).append("(")
-                .append(paramColumn).append(") values ")
-                .append(dynamicSqlForBatch);
+        StringBuilder sqlBuild = new StringBuilder(len);
+        sqlBuild.append("SELECT ").append(paramColumns).append(" FROM ").append(tableName).append(" WHERE ").append(pkColumnName).append(" = ").append("#{param1}");///modify by SuperScorpion on 2020.02.13
 
         String sql = sqlBuild.toString();
 
@@ -91,30 +127,32 @@ public class MedusaSqlGenerator {
     }
 
     /**
-     * 生成根据IDs批量新增的SQL not selective
+     * 生成根据IDs批量查询的SQL
      * @param t 参数
-     * @param flag 参数
      * @param ps 参数
-     * @return 拼接sql语句
+     * @return 返回值类型
      */
-    public String sqlOfInsertBatch(Object t, Boolean flag, Object[] ps) {
+    public String sqlOfSelectByPrimaryKeyBatch(Object t, Object[] ps) {
 
-        if(flag != null && (ps == null || ps.length == 0))
-            throw new MedusaException("Medusa: If you have isExclude then the batch method need paramColumns");//add by SuperScorpion on 20220927
+        List<Object> ids = t instanceof List ? (ArrayList)t : new ArrayList<>();
 
-        String paramColumn = reSolveColumn(ps, flag);
+        String paramColumns = reSolveColumn(ps);
 
-        if(paramColumn.equals("*")) paramColumn = columnsStr;
+        int l = ids.size(), i = 0;
 
-        String dynamicSqlForBatch = MedusaSqlHelper.concatInsertDynamicSqlForBatch(currentColumnFieldNameMap, currentFieldTypeNameMap, t, paramColumn, pkName, null);
+        int len = 30 + paramColumns.length() + tableName.length() + pkColumnName.length() + l * 9;
 
-        int sbbLength = paramColumn.length() + tableName.length() + dynamicSqlForBatch.length() + 33;
+        StringBuilder sqlBuild = new StringBuilder(len);
+        sqlBuild.append("SELECT ").append(paramColumns).append(" FROM ").append(tableName).append(" WHERE ")
+                .append(pkColumnName).append(" in (");
 
-        StringBuilder sqlBuild = new StringBuilder(sbbLength);
+        for (; i < l; i++) {
+            sqlBuild.append(ids.get(i)).append(",");
+        }
 
-        sqlBuild.append("INSERT INTO ").append(tableName).append("(")
-                .append(paramColumn).append(") values ")
-                .append(dynamicSqlForBatch);//modify by SuperScorpion on 2016.11.13
+        sqlBuild.append(")");
+
+        if(sqlBuild.lastIndexOf(",") != -1) sqlBuild.deleteCharAt(sqlBuild.lastIndexOf(","));
 
         String sql = sqlBuild.toString();
 
@@ -122,6 +160,61 @@ public class MedusaSqlGenerator {
 
         return sql;
     }
+
+    /**
+     * 根据条件查出多条符合的数据
+     * @param t 参数
+     * @param ps 参数
+     * @return 返回值类型
+     * @deprecated
+     */
+    public String sqlOfSelect(Object t, Object[] ps) {
+
+        String paramColumns = reSolveColumn(ps);
+
+        List<String> values = obtainColumnValusForSelectList(t);
+
+        int valuesLen = values == null || values.isEmpty() ? 0 : values.size();
+
+        int len = 30 + tableName.length() + paramColumns.length() + (valuesLen * 39);
+
+        StringBuilder sqlBuild = new StringBuilder(len);
+        sqlBuild.append("SELECT ").append(paramColumns).append(" FROM ").append(tableName).append(" WHERE ");
+
+        if (values == null || values.isEmpty()) {
+            sqlBuild.append("1=1");
+        } else {
+            sqlBuild.append(MedusaCommonUtils.join(values, " AND "));
+        }
+
+        String sql = sqlBuild.toString();
+
+        logger.debug("Medusa: Generated SQL ^_^ " + sql);
+
+        return sql;
+    }
+
+    /**
+     * 生成查询所有的SQL
+     * @param objParams 参数
+     * @return 返回值类型
+     */
+    public String sqlOfSelectAll(Object[] objParams) {
+
+        String paramColumns = (objParams == null || objParams.length == 0) ? columnsStr : MedusaSqlHelper.buildColumnNameForSelect(objParams, currentFieldColumnNameMap);
+
+        int len = 20 + tableName.length() + paramColumns.length();
+
+        StringBuilder sqlBuild = new StringBuilder(len);
+        sqlBuild.append("SELECT ").append(paramColumns).append(" FROM ").append(tableName);
+        String sql = sqlBuild.toString();
+
+        logger.debug("Medusa: Generated SQL ^_^ " + sql);
+
+        return sql;
+    }
+
+
 
     /**
      * 生成新增的SQL not selective
@@ -129,8 +222,8 @@ public class MedusaSqlGenerator {
      */
     public String sqlOfInsert() {//modify by SuperScorpion on 2016.11.12 Object t
 
-        String[] paraArray = MedusaSqlHelper.concatInsertDynamicSql(currentFieldTypeNameMap, currentFieldColumnNameMap, null, pkName);
-        String insertColumn = paraArray[1], insertDynamicSql = paraArray[0];
+        String[] paraArray = MedusaSqlHelper.concatInsertDynamicSql(currentFieldTypeNameMap, currentFieldColumnNameMap, null, pkColumnName, pkPropertyName, pkGeneratedType);
+        String insertColumn = paraArray[0], insertDynamicSql = paraArray[1];
 
         int sbbLength = insertColumn.length() + tableName.length() + insertDynamicSql.length() + 33;
 
@@ -155,8 +248,8 @@ public class MedusaSqlGenerator {
 
         if(t == null) throw new MedusaException("Medusa: The entity param is null");
 
-        String[] dynamicSqlForSelective = MedusaSqlHelper.concatInsertDynamicSql(currentFieldTypeNameMap, currentFieldColumnNameMap, t, pkName);
-        String insertColumn = dynamicSqlForSelective[1], insertDynamicSql = dynamicSqlForSelective[0];
+        String[] dynamicSqlForSelective = MedusaSqlHelper.concatInsertDynamicSql(currentFieldTypeNameMap, currentFieldColumnNameMap, t, pkColumnName, pkPropertyName, pkGeneratedType);
+        String insertColumn = dynamicSqlForSelective[0], insertDynamicSql = dynamicSqlForSelective[1];
 
         int sbbLength = insertColumn.length() + tableName.length() + insertDynamicSql.length() + 33;
 
@@ -171,17 +264,141 @@ public class MedusaSqlGenerator {
         return sql;
     }
 
+
+    /**
+     * 生成根据IDs批量新增的SQL not selective
+     * @param t 参数
+     * @param flag 参数
+     * @param ps 参数
+     * @return 拼接sql语句
+     */
+    public String sqlOfInsertBatch(Object t, Boolean flag, Object[] ps) {
+
+        if(flag != null && (ps == null || ps.length == 0))
+            throw new MedusaException("Medusa: If you have isExclude then the batch method need paramColumnss");//add by SuperScorpion on 20220927
+
+        String paramColumns = reSolveColumn(ps, flag);
+
+        if(paramColumns.equals("*")) paramColumns = columnsStr;
+
+        String dynamicSqlForBatch = MedusaSqlHelper.concatInsertDynamicSqlForBatch(currentColumnFieldNameMap, currentFieldTypeNameMap, t, paramColumns, pkColumnName, pkPropertyName, pkGeneratedType, null);
+
+        int sbbLength = paramColumns.length() + tableName.length() + dynamicSqlForBatch.length() + 33;
+
+        StringBuilder sqlBuild = new StringBuilder(sbbLength);
+
+        sqlBuild.append("INSERT INTO ").append(tableName).append("(")
+                .append(paramColumns).append(") values ")
+                .append(dynamicSqlForBatch);//modify by SuperScorpion on 2016.11.13
+
+        String sql = sqlBuild.toString();
+
+        logger.debug("Medusa: Generated SQL ^_^ " + sql);
+
+        return sql;
+    }
+
+    /**
+     * @deprecated
+     * for mycat
+     * 生成根据IDs批量新增的SQL not selective
+     * @param t 参数
+     * @param mycatSeq 参数
+     * @param flag 参数
+     * @param ps 参数
+     * @return 拼接sql语句
+     */
+    public String sqlOfInsertBatchForMyCat(Object t, Object mycatSeq, Boolean flag, Object[] ps) {
+
+        String paramColumns = reSolveColumn(ps, flag);
+
+        if(paramColumns.equals("*")) paramColumns = columnsStr;
+
+        String dynamicSqlForBatch = MedusaSqlHelper.concatInsertDynamicSqlForBatch(currentColumnFieldNameMap, currentFieldTypeNameMap, t, paramColumns, pkColumnName, pkPropertyName, pkGeneratedType, String.valueOf(mycatSeq));
+
+        int sbbLength = paramColumns.length() + tableName.length() + dynamicSqlForBatch.length() + 33;
+
+        StringBuilder sqlBuild = new StringBuilder(sbbLength);
+
+        sqlBuild.append("INSERT INTO ").append(tableName).append("(")
+                .append(paramColumns).append(") values ")
+                .append(dynamicSqlForBatch);
+
+        String sql = sqlBuild.toString();
+
+        logger.debug("Medusa: Generated SQL ^_^ " + sql);
+
+        return sql;
+    }
+
+
+    /**
+     * 生成根据条件批量更新的语句
+     * @param t 参数
+     * @param flag 参数
+     * @param ps 参数
+     * @return 返回值类型
+     */
+    public String sqlOfUpdateByPrimaryKeyBatch(Object t, Boolean flag, Object[] ps) {
+
+        if(flag != null && (ps == null || ps.length == 0))
+            throw new MedusaException("Medusa: If you have isExclude then the batch method need paramColumnss");//add by SuperScorpion on 20220927
+
+        String paramColumns = reSolveColumn(ps, flag);
+
+        if(paramColumns.equals("*")) paramColumns = columnsStr;
+
+        boolean notContainpkColumnName = !paramColumns.contains("," + pkColumnName) || !paramColumns.startsWith(pkColumnName + ",");
+
+        if(paramColumns != columnsStr && notContainpkColumnName) paramColumns = pkColumnName + "," + paramColumns;/////modify by SuperScorpion on 2017.04.20
+
+        String dynamicSqlForBatch = MedusaSqlHelper.concatUpdateDynamicSqlValuesForBatchPre(tableName, t, paramColumns, currentColumnFieldNameMap, pkColumnName);
+
+        logger.debug("Medusa: Generated SQL ^_^ " + dynamicSqlForBatch);
+
+        return dynamicSqlForBatch;
+    }
+
+    /**
+     * Selective
+     * 生成更新的SQL
+     * 不允许空值
+     * @param t 参数
+     * @return 返回值类型
+     */
+    public String sqlOfUpdateByPrimaryKeySelective(Object t) {
+
+        List<String> values = obtainColumnValusForModify(t);
+
+        if(values == null || values.isEmpty()) throw new MedusaException("Medusa: There is nothing to update");
+
+        int len = 30 + tableName.length() + (pkColumnName.length() << 1) + (values.size() * 30);
+
+        StringBuilder sqlBuild = new StringBuilder(len);
+        sqlBuild.append("UPDATE ").append(tableName).append(" SET ")
+                .append(MedusaCommonUtils.join(values, ",")).append(" WHERE ")
+                .append(pkColumnName).append(" = ").append("#{pobj.").append(currentColumnFieldNameMap.get(pkColumnName)).append("}");///modify by SuperScorpion on 2019.08.20
+
+        String sql = sqlBuild.toString();
+
+        logger.debug("Medusa: Generated SQL ^_^ " + sql);
+
+        return sql;
+    }
+
+
+
     /**
      * 生成根据ID删除的SQL
      * @return 返回值类型
      */
     public String sqlOfDeleteByPrimaryKey() {//modify by SuperScorpion on 2016.11.13 Object id
 
-        int len = 30 + tableName.length() + pkName.length();
+        int len = 30 + tableName.length() + pkColumnName.length();
 
         StringBuilder sqlBuild = new StringBuilder(len);
         sqlBuild.append("DELETE FROM ").append(tableName)
-                .append(" WHERE ").append(pkName).append(" = ").append("#{pobj}");//modify by SuperScorpion on 2016.11.12
+                .append(" WHERE ").append(pkColumnName).append(" = ").append("#{pobj}");//modify by SuperScorpion on 2016.11.12
 
         String sql = sqlBuild.toString();
 
@@ -201,11 +418,11 @@ public class MedusaSqlGenerator {
 
         int l = ids.size(), i = 0;
 
-        int len = 30 + tableName.length() + pkName.length() + l * 9;
+        int len = 30 + tableName.length() + pkColumnName.length() + l * 9;
 
         StringBuilder sqlBuild = new StringBuilder(len);
         sqlBuild.append("DELETE FROM ").append(tableName)
-                .append(" WHERE ").append(pkName).append(" IN ( 0 ");
+                .append(" WHERE ").append(pkColumnName).append(" IN ( 0 ");
 
         for (; i < l; i++) {
             sqlBuild.append(",").append(ids.get(i));
@@ -222,29 +439,58 @@ public class MedusaSqlGenerator {
 
     /**
      * 根据条件来删除
+     * @param objParams 参数
+     * @return 返回值类型
+     */
+    public String sqlOfDeleteMedusaCombo(Object[] objParams) {
+
+//        List<String> values = obtainColumnValuesForDeleteByCondition(t);
+//
+//        int valuesLen = (values == null || values.isEmpty()) ? 0 : values.size();
+//
+        int len = 30 + tableName.length() + (10 * 39) + 512;
+
+        StringBuilder sbb = new StringBuilder(len);
+        sbb.append("DELETE FROM ").append(tableName).append(" WHERE ");
+        sbb.append("1=1");
+
+        //3.objParams 里的多条件查询类型参数处理
+        if(objParams != null && objParams.length > 0) {
+            /////处理各个参数 add by SuperScorpion on 2022.09.30
+            processObjParams(sbb, objParams);
+        }
+//        if (values == null || values.isEmpty()) {
+//            sqlBuild.append("1!=1");//modify by SuperScorpion on 2017 07
+//        } else {
+//            sqlBuild.append(MedusaCommonUtils.join(values, " AND "));
+//        }
+
+        String sql = sbb.toString();
+        logger.debug("Medusa: Generated SQL ^_^ " + sql);
+        return sql;
+    }
+
+
+
+
+    /**
+     * 提供给selectList和selectOne使用的
      * @param t 参数
      * @return 返回值类型
      */
-    public String sqlOfDelete(Object t) {
+    private List<String> obtainColumnValusForSelectList(Object t) {
 
-        List<String> values = obtainColumnValuesForDeleteByCondition(t);
+        if(t == null || t instanceof Object[]) return null;//modify by SuperScorpion on 2017.07.02 解决protostuff 序列化数组问题
 
-        int valuesLen = (values == null || values.isEmpty()) ? 0 : values.size();
-
-        int len = 30 + tableName.length() + (valuesLen * 36);
-
-        StringBuilder sqlBuild = new StringBuilder(len);
-        sqlBuild.append("DELETE FROM ").append(tableName).append(" WHERE ");
-
-        if (values == null || values.isEmpty()) {
-            sqlBuild.append("1!=1");//modify by SuperScorpion on 2017 07
-        } else {
-            sqlBuild.append(MedusaCommonUtils.join(values, " AND "));
+        List<String> colVals = new ArrayList<>();
+        for (String column : columns) {
+            String fieldName = currentColumnFieldNameMap.get(column);//modify by SuperScorpion on 2016.11.13
+            Object value = MedusaReflectionUtils.obtainFieldValue(t, fieldName);
+            if (value != null) {
+                colVals.add(column + "=" + "#{param1." + fieldName + "}");///modify by SuperScorpion on 2020.02.13
+            }
         }
-
-        String sql = sqlBuild.toString();
-        logger.debug("Medusa: Generated SQL ^_^ " + sql);
-        return sql;
+        return colVals;
     }
 
     /**
@@ -268,62 +514,6 @@ public class MedusaSqlGenerator {
         return colVals;
     }
 
-
-
-    /**
-     * 生成根据条件批量更新的语句
-     * @param t 参数
-     * @param flag 参数
-     * @param ps 参数
-     * @return 返回值类型
-     */
-    public String sqlOfUpdateByPrimaryKeyBatch(Object t, Boolean flag, Object[] ps) {
-
-        if(flag != null && (ps == null || ps.length == 0))
-            throw new MedusaException("Medusa: If you have isExclude then the batch method need paramColumns");//add by SuperScorpion on 20220927
-
-        String paramColumn = reSolveColumn(ps, flag);
-
-        if(paramColumn.equals("*")) paramColumn = columnsStr;
-
-        boolean notContainPkName = !paramColumn.contains("," + pkName) || !paramColumn.startsWith(pkName + ",");
-
-        if(paramColumn != columnsStr && notContainPkName) paramColumn = pkName + "," + paramColumn;/////modify by SuperScorpion on 2017.04.20
-
-        String dynamicSqlForBatch = MedusaSqlHelper.concatUpdateDynamicSqlValuesForBatchPre(tableName, t, paramColumn, currentColumnFieldNameMap, pkName);
-
-        logger.debug("Medusa: Generated SQL ^_^ " + dynamicSqlForBatch);
-
-        return dynamicSqlForBatch;
-    }
-
-    /**
-     * Selective
-     * 生成更新的SQL
-     * 不允许空值
-     * @param t 参数
-     * @return 返回值类型
-     */
-    public String sqlOfUpdateByPrimaryKeySelective(Object t) {
-
-        List<String> values = obtainColumnValusForModify(t);
-
-        if(values == null || values.isEmpty()) throw new MedusaException("Medusa: There is nothing to update");
-
-        int len = 30 + tableName.length() + (pkName.length() << 1) + (values.size() * 30);
-
-        StringBuilder sqlBuild = new StringBuilder(len);
-        sqlBuild.append("UPDATE ").append(tableName).append(" SET ")
-                .append(MedusaCommonUtils.join(values, ",")).append(" WHERE ")
-                .append(pkName).append(" = ").append("#{pobj.").append(currentColumnFieldNameMap.get(pkName)).append("}");///modify by SuperScorpion on 2019.08.20
-
-        String sql = sqlBuild.toString();
-
-        logger.debug("Medusa: Generated SQL ^_^ " + sql);
-
-        return sql;
-    }
-
     /**
      * 提供给生成更新SQL使用 不能为空值
      * @param t 参数
@@ -341,7 +531,7 @@ public class MedusaSqlGenerator {
 
             Object value = MedusaReflectionUtils.invokeGetterMethod(t, fieldName);/// modify on 2016 11 21 by SuperScorpion cause:先查询出来对象了 再更新对象的话 会更新到动态代理的 对象类 就会抛出找不到属性的异常问题 改为反射执行get属性方法则可以
 
-            if (value != null && !column.equalsIgnoreCase(pkName)) {
+            if (value != null && !column.equalsIgnoreCase(pkColumnName)) {
                 colVals.add(column + "=" + "#{pobj." + fieldName + "}");///modify by SuperScorpion on 2016.11.12
             }
         }
@@ -357,18 +547,18 @@ public class MedusaSqlGenerator {
      */
     public String sqlOfUpdateByPrimaryKey(Object t, Object[] ps) {
 
-        String paramColumn = reSolveColumn(ps);
+        String paramColumns = reSolveColumn(ps);
 
-        List<String> values = obtainColumnValsForModifyNull(Arrays.asList(paramColumn.split(",")));
+        List<String> values = obtainColumnValsForModifyNull(Arrays.asList(paramColumns.split(",")));
 
         if(values == null || values.isEmpty()) return "";
 
-        int len = 39 + tableName.length() + (pkName.length() << 1) + (values.size() * 30);
+        int len = 39 + tableName.length() + (pkColumnName.length() << 1) + (values.size() * 30);
 
         StringBuilder sqlBuild = new StringBuilder(len);
         sqlBuild.append("UPDATE ").append(tableName).append(" SET ")
                 .append(MedusaCommonUtils.join(values, ",")).append(" WHERE ")
-                .append(pkName).append(" = ").append("#{param1.").append(currentColumnFieldNameMap.get(pkName)).append("}");///modify by SuperScorpion on 2020.02.13
+                .append(pkColumnName).append(" = ").append("#{param1.").append(currentColumnFieldNameMap.get(pkColumnName)).append("}");///modify by SuperScorpion on 2020.02.13
 
         String sql = sqlBuild.toString();
 
@@ -385,7 +575,7 @@ public class MedusaSqlGenerator {
     private List<String> obtainColumnValsForModifyNull(List<Object> parList) {
         List<String> colVals = new ArrayList<>();
         for (String column : columns) {
-            if (!column.equalsIgnoreCase(pkName) && parList.contains(column)) {
+            if (!column.equalsIgnoreCase(pkColumnName) && parList.contains(column)) {
                 String fieldName = currentColumnFieldNameMap.get(column);//modify by SuperScorpion on 2016.11.13
                 colVals.add(column + "=" + "#{param1." + fieldName +"}");///modify by SuperScorpion on 2020.02.13
             }
@@ -398,150 +588,9 @@ public class MedusaSqlGenerator {
 
 
 
-    /**
-     * return "SELECT * FROM  users WHERE NAME = #{pobj.param1.name} limit 0,1";
-     * 根据条件只查出一条符合的数据
-     * @param t 参数
-     * @param ps  参数
-     * @return 返回值类型
-     */
-    public String sqlOfSelectOne(Object t, Object[] ps) {
 
-        String paramColumn = reSolveColumn(ps);
 
-        List<String> values = obtainColumnValusForSelectList(t);
 
-        int valuesLen = values == null || values.isEmpty() ? 0 : values.size();
-
-        int len = 39 + tableName.length() + paramColumn.length() + (valuesLen * 39);
-
-        StringBuilder sqlBuild = new StringBuilder(len);
-
-        sqlBuild.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName).append(" WHERE ");
-
-        if (values == null || values.isEmpty()) {
-            sqlBuild.append("1=1");
-        } else {
-            sqlBuild.append(MedusaCommonUtils.join(values, " AND "));
-        }
-
-        sqlBuild.append(" limit 0,1");
-
-        String sql = sqlBuild.toString();
-
-        logger.debug("Medusa: Generated SQL ^_^ " + sql);
-
-        return sql;
-    }
-
-    /**
-     * 生成根据ID查询的SQL
-     * @param id 参数
-     * @param ps 参数
-     * @return 返回值类型
-     */
-    public String sqlOfSelectByPrimaryKey(Object id, Object[] ps) {///modify by SuperScorpion on 2016.11.21 Object id,这个 id 不能去掉的
-
-        String paramColumn = reSolveColumn(ps);
-
-        int len = 39 + tableName.length() + pkName.length() + paramColumn.length();
-
-        StringBuilder sqlBuild = new StringBuilder(len);
-        sqlBuild.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName).append(" WHERE ").append(pkName).append(" = ").append("#{param1}");///modify by SuperScorpion on 2020.02.13
-
-        String sql = sqlBuild.toString();
-
-        logger.debug("Medusa: Generated SQL ^_^ " + sql);
-
-        return sql;
-    }
-
-    /**
-     * 生成根据IDs批量查询的SQL
-     * @param t 参数
-     * @param ps 参数
-     * @return 返回值类型
-     */
-    public String sqlOfSelectByPrimaryKeyBatch(Object t, Object[] ps) {
-
-        List<Object> ids = t instanceof List ? (ArrayList)t : new ArrayList<>();
-
-        String paramColumn = reSolveColumn(ps);
-
-        int l = ids.size(), i = 0;
-
-        int len = 30 + paramColumn.length() + tableName.length() + pkName.length() + l * 9;
-
-        StringBuilder sqlBuild = new StringBuilder(len);
-        sqlBuild.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName).append(" WHERE ")
-                .append(pkName).append(" in (");
-
-        for (; i < l; i++) {
-            sqlBuild.append(ids.get(i)).append(",");
-        }
-
-        sqlBuild.append(")");
-
-        if(sqlBuild.lastIndexOf(",") != -1) sqlBuild.deleteCharAt(sqlBuild.lastIndexOf(","));
-
-        String sql = sqlBuild.toString();
-
-        logger.debug("Medusa: Generated SQL ^_^ " + sql);
-
-        return sql;
-    }
-
-    /**
-     * 根据条件查出多条符合的数据
-     * @param t 参数
-     * @param ps 参数
-     * @return 返回值类型
-     */
-    public String sqlOfSelect(Object t, Object[] ps) {
-
-        String paramColumn = reSolveColumn(ps);
-
-        List<String> values = obtainColumnValusForSelectList(t);
-
-        int valuesLen = values == null || values.isEmpty() ? 0 : values.size();
-
-        int len = 30 + tableName.length() + paramColumn.length() + (valuesLen * 39);
-
-        StringBuilder sqlBuild = new StringBuilder(len);
-        sqlBuild.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName).append(" WHERE ");
-
-        if (values == null || values.isEmpty()) {
-            sqlBuild.append("1=1");
-        } else {
-            sqlBuild.append(MedusaCommonUtils.join(values, " AND "));
-        }
-
-        String sql = sqlBuild.toString();
-
-        logger.debug("Medusa: Generated SQL ^_^ " + sql);
-
-        return sql;
-    }
-
-    /**
-     * 提供给selectList和selectOne使用的
-     * @param t 参数
-     * @return 返回值类型
-     */
-    private List<String> obtainColumnValusForSelectList(Object t) {
-
-        if(t == null || t instanceof Object[]) return null;//modify by SuperScorpion on 2017.07.02 解决protostuff 序列化数组问题
-
-        List<String> colVals = new ArrayList<>();
-        for (String column : columns) {
-            String fieldName = currentColumnFieldNameMap.get(column);//modify by SuperScorpion on 2016.11.13
-            Object value = MedusaReflectionUtils.obtainFieldValue(t, fieldName);
-            if (value != null) {
-                colVals.add(column + "=" + "#{param1." + fieldName + "}");///modify by SuperScorpion on 2020.02.13
-            }
-        }
-        return colVals;
-    }
 
 
 
@@ -572,32 +621,17 @@ public class MedusaSqlGenerator {
         return isValidColumn ? columnsStr : MedusaSqlHelper.buildColumnNameForSelect(ps, currentFieldColumnNameMap, flag, columns);
     }
 
-    /**
-     * 生成查询所有的SQL
-     * @param objParams 参数
-     * @return 返回值类型
-     */
-    public String sqlOfSelectAll(Object[] objParams) {
 
-        String paramColumn = (objParams == null || objParams.length == 0) ? columnsStr : MedusaSqlHelper.buildColumnNameForSelect(objParams, currentFieldColumnNameMap);
 
-        int len = 20 + tableName.length() + paramColumn.length();
 
-        StringBuilder sqlBuild = new StringBuilder(len);
-        sqlBuild.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName);
-        String sql = sqlBuild.toString();
 
-        logger.debug("Medusa: Generated SQL ^_^ " + sql);
-
-        return sql;
-    }
 
     /**
      * 生成查询数量的SQL
      * @param objParams 参数
      * @return 返回值类型
      */
-    public String sqlOfSelectCount(Object[] objParams) {
+    public String sqlOfSelectCountCombo(Object[] objParams) {
 
         //从缓存里拿到分页查询语句 必须清理掉缓存
         String cacheSq = MedusaSqlHelper.myThreadLocal.get();
@@ -658,7 +692,7 @@ public class MedusaSqlGenerator {
      * @param objParams 参数
      * @return 返回值类型
      **/
-    public String sqlOfSelectMedusaGaze(Object[] objParams) {//modify by SuperScorpion on 2016.12.23
+    public String sqlOfSelectMedusaCombo(Object[] objParams) {//modify by SuperScorpion on 2016.12.23
 
         //获取到缓存中的分页查询语句 modify by SuperScorpion on 2016.11.16
         ///分页时先执行查询分页再执行查询分页 再执行总计数句 boundsql(因为)
@@ -669,7 +703,7 @@ public class MedusaSqlGenerator {
         }
 
         //1.objParams 里的column字段名参数处理
-        String paramColumn = (objParams == null || objParams.length == 0) ? columnsStr : MedusaSqlHelper.buildColumnNameForSelect(objParams, currentFieldColumnNameMap);
+        String paramColumns = (objParams == null || objParams.length == 0) ? columnsStr : MedusaSqlHelper.buildColumnNameForSelect(objParams, currentFieldColumnNameMap);
 
         //2.objParams 里的entity实体类型参数处理
 //        List<String> values = obtainMedusaGazeS(objParams);
@@ -681,11 +715,11 @@ public class MedusaSqlGenerator {
 
 //        int valuesLen = values == null || values.isEmpty() ? 0 : values.size();
 
-//        int len = 30 + tableName.length() + paramColumn.length() + (valuesLen * 39) + 512;
-        int len = 30 + tableName.length() + paramColumn.length() + (10 * 39) + 512;
+//        int len = 30 + tableName.length() + paramColumns.length() + (valuesLen * 39) + 512;
+        int len = 30 + tableName.length() + paramColumns.length() + (10 * 39) + 512;
 
         StringBuilder sbb = new StringBuilder(len);
-        sbb.append("SELECT ").append(paramColumn).append(" FROM ").append(tableName).append(" WHERE ");
+        sbb.append("SELECT ").append(paramColumns).append(" FROM ").append(tableName).append(" WHERE ");
 
 
 //        if (values == null || values.isEmpty()) {
@@ -789,17 +823,26 @@ public class MedusaSqlGenerator {
         }
 
         //处理语句里1=1和1!=1 add by SuperScorpion on 20230113
-        MedusaCommonUtils.replaceAll(sbb, "1!=1 OR", "");
-        MedusaCommonUtils.replaceAll(sbb, "1=1 AND", "");
-        MedusaCommonUtils.replaceAll(sbb, "1=1 OR", "");
 
+        MedusaCommonUtils.replaceAll(sbb, "1=1 AND", "");//外层
+        MedusaCommonUtils.replaceAll(sbb, "1=1 OR", "");//外层
+
+//        MedusaCommonUtils.replaceAll(sbb, "1=1 AND", "");//baseParamHandler里
+        MedusaCommonUtils.replaceAll(sbb, "1!=1 OR", "");//baseParamHandler里
+
+        //add by SuperScorpion on 20250830 参数都为null的情况
+        MedusaCommonUtils.replaceAll(sbb, "AND (1!=1)", "");
+        MedusaCommonUtils.replaceAll(sbb, "OR (1=1)", "");
+
+        MedusaCommonUtils.replaceAll(sbb, "WHERE  (1!=1)", "");
+        MedusaCommonUtils.replaceAll(sbb, "WHERE  (1=1)", "");
         return pa;
     }
 
 
     /**
-     * select * from bac_logs where 1=1 AND (1!=1 OR user_id = 123 OR remark ="11111");
-     * select * from bac_logs where 1!=1 OR (1=1 AND user_id = 123 AND remark ="11111");
+     * select * from bac_logs where 1=1 AND xxx=xxx AND (1!=1 OR user_id = 123 OR remark ="11111");
+     * select * from bac_logs where 1=1 AND xxx=xxx OR (1=1 AND user_id = 123 AND remark ="11111");
      * @param sbb
      * @param z
      * @param isd

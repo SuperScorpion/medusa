@@ -11,6 +11,7 @@ import org.apache.ibatis.annotations.SelectKey;
  * 保存单个实体类 生成UUID主键(已经过滤横杠) 其它同insertSelective
  * @param <T> 实体类泛型
  * @author SuperScorpion
+ * @deprecated 暂时弃用
  */
 public interface InsertSelectiveUUIDMapper<T> {
 

@@ -7,30 +7,30 @@ import com.jy.medusa.gaze.utils.MedusaReflectionUtils;
 import java.io.Serializable;
 import java.util.List;
 
-public abstract class BaseServiceImplMedusaLambda<T> extends BaseServiceImplLambdaBasis<T> implements BaseServiceMedusaLambda<T> {
+public abstract class BaseServiceImplMedusaCombo<T> extends BaseServiceImplLambdaBasis<T> implements BaseServiceMedusaLambda<T> {
 
-	public List<T> selectAll(HolyGetter<T>... paramFns) {
-		return mapper.selectAll(paramFns);
-	}
-
-	public T selectOne(T entity, HolyGetter<T>... paramFns) {
-		return mapper.selectOne(entity, paramFns);
+	public T selectById(Serializable id, HolyGetter<T>... paramFns) {
+		return mapper.selectByPrimaryKey(id, paramFns);
 	}
 
 	public List<T> selectByIds(List<? extends Serializable> ids, HolyGetter<T>... paramFns) {
 		return mapper.selectByPrimaryKeyBatch(ids, paramFns);
 	}
 
-	public T selectById(Serializable id, HolyGetter<T>... paramFns) {
-		return mapper.selectByPrimaryKey(id, paramFns);
+	public List<T> selectAll(HolyGetter<T>... paramFns) {
+		return mapper.selectAll(paramFns);
 	}
 
-	public int selectCount(Serializable... mixParams) {
-		return mapper.selectCount(mixParams);
+	public T selectOneCombo(Serializable... mixParams) {
+		return mapper.selectOneCombo(mixParams);
 	}
 
-	public List<T> selectByGazeMagic(Serializable... mixParams) {
-		return mapper.medusaGazeMagic(mixParams);
+	public int selectCountCombo(Serializable... mixParams) {
+		return mapper.selectCountCombo(mixParams);
+	}
+
+	public List<T> selectMedusaCombo(Serializable... mixParams) {
+		return mapper.selectMedusaCombo(mixParams);
 	}
 
 	public int insertBatchInclude(List<T> obs, HolyGetter<T>... paramFns) {

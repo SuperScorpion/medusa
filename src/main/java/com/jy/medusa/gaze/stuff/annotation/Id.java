@@ -11,4 +11,15 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Id {
+    Type type() default Type.AUTO;
+
+    public enum Type {
+        AUTO,
+        UUID,
+        SNOWFLAKE,
+        ;
+    }
 }
+
+
+

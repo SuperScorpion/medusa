@@ -120,15 +120,15 @@ public class Home {
             m = (JSONArray) job.get("validator");
         }*/
 
-        if(checkIsFtl()) {
+//        if(checkIsFtl()) {
             System.out.println("Medusa: " + "启动 ftl 生成模式...");
             if(checkIsFtlAvailable())
                 System.out.println("Medusa: " + "启动 自定义模块 生成模式...");
             else
                 System.out.println("Medusa: " + "启动 内置模版 生成模式...");
-        } else {
-            System.out.println("Medusa: " + "启动 default 生成模式...");
-        }
+//        } else {
+//            System.out.println("Medusa: " + "启动 default 生成模式...");
+//        }
 
         tableName = MedusaCommonUtils.isBlank(tableName) ? getAllTableNameSwitch() : tableName;//如果不写表明则生成所有的表相关
         if(MedusaCommonUtils.isBlank(tableName)) return;
@@ -156,66 +156,66 @@ public class Home {
                 if(MedusaCommonUtils.isNotBlank(entitySuffix)) {
                     long nanoSs = System.nanoTime();
                     Boolean res = false;
-                    if(checkIsFtl()) {
+//                    if(checkIsFtl()) {
                         res = new GenEntityFtl(entityPath, tabName, null).process();
-                    } else {
-                        res = new GenEntity(entityPath, tabName, null).process();//生成 实体类
-                    }
+//                    } else {
+//                        res = new GenEntity(entityPath, tabName, null).process();//生成 实体类
+//                    }
                     if(res) System.out.println("Medusa: 已完成 " + tabName + " - " + entitySuffix + "文件 总用时 - " + (System.nanoTime() - nanoSs) / 1000000.00 + " ms");
                 }
 
                 if(MedusaCommonUtils.isNotBlank(entitySuffix) && MedusaCommonUtils.isNotBlank(mapperSuffix)) {
                     long nanoSs = System.nanoTime();
                     Boolean res = false;
-                    if(checkIsFtl()) {
+//                    if(checkIsFtl()) {
                         res = new GenMapperFtl(tabName, entityPath, mapperPath).process();
-                    } else {
-                        res = new GenMapper(tabName, entityPath, mapperPath).process();//执行生成service serviceimpl mapper
-                    }
+//                    } else {
+//                        res = new GenMapper(tabName, entityPath, mapperPath).process();//执行生成service serviceimpl mapper
+//                    }
                     if(res) System.out.println("Medusa: 已完成 " + tabName + " - " + mapperSuffix + "文件 总用时 - " + (System.nanoTime() - nanoSs) / 1000000.00 + " ms");
                 }
 
                 if(MedusaCommonUtils.isNotBlank(serviceImplSuffix) && MedusaCommonUtils.isNotBlank(serviceSuffix) && MedusaCommonUtils.isNotBlank(entitySuffix) && MedusaCommonUtils.isNotBlank(mapperSuffix)) {
                     long nanoSs = System.nanoTime();
                     Boolean res = false;
-                    if(checkIsFtl()) {
+//                    if(checkIsFtl()) {
                         res = new GenServiceFtl(tabName, entityPath, servicePath, serviceImplPath, mapperPath).process();
-                    } else {
-                        res = new GenService(tabName, entityPath, servicePath, serviceImplPath, mapperPath).process();//执行生成service serviceimpl mapper
-                    }
+//                    } else {
+//                        res = new GenService(tabName, entityPath, servicePath, serviceImplPath, mapperPath).process();//执行生成service serviceimpl mapper
+//                    }
                     if(res) System.out.println("Medusa: 已完成 " + tabName + " - " + serviceSuffix + "&impl" + "文件 总用时 - " + (System.nanoTime() - nanoSs) / 1000000.00 + " ms");
                 }
 
                 if(MedusaCommonUtils.isNotBlank(xmlSuffix) && MedusaCommonUtils.isNotBlank(entitySuffix) && MedusaCommonUtils.isNotBlank(mapperSuffix)) {
                     long nanoSs = System.nanoTime();
                     Boolean res = false;
-                    if(checkIsFtl()) {
+//                    if(checkIsFtl()) {
                         res = new GenXmlFtl(mapperPath, xmlPath, entityPath, tabName).process();
-                    } else {
-                        res = new GenXml(mapperPath, xmlPath, entityPath, tabName).process();//执行生成xml
-                    }
+//                    } else {
+//                        res = new GenXml(mapperPath, xmlPath, entityPath, tabName).process();//执行生成xml
+//                    }
                     if(res) System.out.println("Medusa: 已完成 " + tabName + " - " + "xml" + "文件 总用时 - " + (System.nanoTime() - nanoSs)  / 1000000.00 + " ms");
                 }
 
 
-                if(checkIsFtl()) {
+//                if(checkIsFtl()) {
                     long nanoSs = System.nanoTime();
                     Boolean res = new GenControllerFtl(tabName, controlPathJson, entityPath, servicePath).process();
                     if(res) System.out.println("Medusa: 已完成 " + tabName + " - controller文件 总用时 - " + (System.nanoTime() - nanoSs) / 1000000.00 + " ms");
-                } else {
-                    if (MedusaCommonUtils.isNotBlank(entitySuffix) && MedusaCommonUtils.isNotBlank(serviceSuffix)) {
-                        if (MedusaCommonUtils.isNotBlank(controlJsonSuffix)) {
-                            long nanoSs = System.nanoTime();
-                            Boolean res = new GenControllerJson(tabName, controlPathJson, entityPath, servicePath).process();//生成controller
-                            if(res) System.out.println("Medusa: 已完成 " + tabName + " - controllerJson文件 总用时 - " + (System.nanoTime() - nanoSs) / 1000000.00 + " ms");
-                        }
-                        if (MedusaCommonUtils.isNotBlank(controlMortalSuffix)) {
-                            long nanoSs = System.nanoTime();
-                            Boolean res = new GenControllerMortal(tabName, controlPathMortal, entityPath, servicePath).process();//生成controller
-                            if(res) System.out.println("Medusa: 已完成 " + tabName + " - controllerMortal文件 总用时 - " + (System.nanoTime() - nanoSs) / 1000000.00 + " ms");
-                        }
-                    }
-                }
+//                } else {
+//                    if (MedusaCommonUtils.isNotBlank(entitySuffix) && MedusaCommonUtils.isNotBlank(serviceSuffix)) {
+//                        if (MedusaCommonUtils.isNotBlank(controlJsonSuffix)) {
+//                            long nanoSs = System.nanoTime();
+//                            Boolean res = new GenControllerJson(tabName, controlPathJson, entityPath, servicePath).process();//生成controller
+//                            if(res) System.out.println("Medusa: 已完成 " + tabName + " - controllerJson文件 总用时 - " + (System.nanoTime() - nanoSs) / 1000000.00 + " ms");
+//                        }
+//                        if (MedusaCommonUtils.isNotBlank(controlMortalSuffix)) {
+//                            long nanoSs = System.nanoTime();
+//                            Boolean res = new GenControllerMortal(tabName, controlPathMortal, entityPath, servicePath).process();//生成controller
+//                            if(res) System.out.println("Medusa: 已完成 " + tabName + " - controllerMortal文件 总用时 - " + (System.nanoTime() - nanoSs) / 1000000.00 + " ms");
+//                        }
+//                    }
+//                }
             }
         }
 
@@ -333,8 +333,8 @@ public class Home {
 
             Map<String ,Object> jdbcMap = (Map<String, Object>) childMap.get("jdbc");
 
-            if(!jdbcMap.containsKey("driver")) {
-                System.out.println("Medusa: 未找到 yml 文件里的 medusa - jdbc - driver 配置...");
+            if(!jdbcMap.containsKey("driver-class-name")) {
+                System.out.println("Medusa: 未找到 yml 文件里的 medusa - jdbc - driver-class-name 配置...");
                 return;
             }
             if(!jdbcMap.containsKey("url")) {
@@ -374,7 +374,7 @@ public class Home {
 
             this.ftlDirPath = childMap.get("ftlDirPath") == null || MedusaCommonUtils.isBlank(childMap.get("ftlDirPath").toString()) ?  "" : childMap.get("ftlDirPath").toString().trim();
 
-            this.jdbcDriver = jdbcMap.get("driver") == null || MedusaCommonUtils.isBlank(jdbcMap.get("driver").toString()) ?  "" : jdbcMap.get("driver").toString().trim();
+            this.jdbcDriver = jdbcMap.get("driver-class-name") == null || MedusaCommonUtils.isBlank(jdbcMap.get("driver-class-name").toString()) ?  "" : jdbcMap.get("driver-class-name").toString().trim();
             this.jdbcUrl = jdbcMap.get("url") == null || MedusaCommonUtils.isBlank(jdbcMap.get("url").toString()) ?  "" : jdbcMap.get("url").toString().trim();
             this.jdbcUsername = jdbcMap.get("username") == null || MedusaCommonUtils.isBlank(jdbcMap.get("username").toString()) ?  "" : jdbcMap.get("username").toString().trim();
             this.jdbcPassword = jdbcMap.get("password") == null || MedusaCommonUtils.isBlank(jdbcMap.get("password").toString()) ?  "" : jdbcMap.get("password").toString().trim();
@@ -576,8 +576,8 @@ public class Home {
             return;
         }
 
-        if(!childMap.containsKey("medusa.jdbc.driver")) {
-            System.out.println("Medusa: 未找到 properties 文件里的 medusa.jdbc.driver 配置...");
+        if(!childMap.containsKey("medusa.jdbc.driver-class-name")) {
+            System.out.println("Medusa: 未找到 properties 文件里的 medusa.jdbc.driver-class-name 配置...");
             return;
         }
         if(!childMap.containsKey("medusa.jdbc.url")) {
@@ -621,7 +621,7 @@ public class Home {
 
         this.ftlDirPath = childMap.get(prefix + "ftlDirPath") == null || MedusaCommonUtils.isBlank(childMap.get(prefix + "ftlDirPath").toString()) ?  "" : childMap.get(prefix + "ftlDirPath").toString().trim();
 
-        this.jdbcDriver = childMap.get(jdbcPrefix + "driver") == null || MedusaCommonUtils.isBlank(childMap.get(jdbcPrefix + "driver").toString()) ?  "" : childMap.get(jdbcPrefix + "driver").toString().trim();
+        this.jdbcDriver = childMap.get(jdbcPrefix + "driver-class-name") == null || MedusaCommonUtils.isBlank(childMap.get(jdbcPrefix + "driver-class-name").toString()) ?  "" : childMap.get(jdbcPrefix + "driver-class-name").toString().trim();
         this.jdbcUrl = childMap.get(jdbcPrefix + "url") == null || MedusaCommonUtils.isBlank(childMap.get(jdbcPrefix + "url").toString()) ?  "" : childMap.get(jdbcPrefix + "url").toString().trim();
         this.jdbcUsername = childMap.get(jdbcPrefix + "username") == null || MedusaCommonUtils.isBlank(childMap.get(jdbcPrefix + "username").toString()) ?  "" : childMap.get(jdbcPrefix + "username").toString().trim();
         this.jdbcPassword = childMap.get(jdbcPrefix + "password") == null || MedusaCommonUtils.isBlank(childMap.get(jdbcPrefix + "password").toString()) ?  "" : childMap.get(jdbcPrefix + "password").toString().trim();

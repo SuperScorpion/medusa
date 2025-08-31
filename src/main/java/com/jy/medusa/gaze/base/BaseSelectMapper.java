@@ -10,11 +10,11 @@ import com.jy.medusa.gaze.base.select.*;
  * @author SuperScorpion
  */
 public interface BaseSelectMapper<T> extends
-        SelectOneMapper<T>,
-        SelectMapper<T>,
-        SelectAllMapper<T>,
-        SelectCountMapper<T>,
         SelectByPrimaryKeyMapper<T>,
-        SelectMedusaGazeMapper<T>,
-        SelectByPrimaryKeyBatchMapper<T> {
+        SelectByPrimaryKeyBatchMapper<T>,
+        SelectAllMapper<T>,
+//        SelectMapper<T>,
+        SelectOneComboMapper<T>,
+        SelectCountComboMapper<T>,
+        SelectMedusaComboMapper<T> {
 }

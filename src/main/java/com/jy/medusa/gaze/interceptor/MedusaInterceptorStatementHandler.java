@@ -5,6 +5,7 @@ package com.jy.medusa.gaze.interceptor;
  */
 
 import com.jy.medusa.gaze.stuff.MedusaSqlHelper;
+import com.jy.medusa.gaze.stuff.annotation.Id;
 import com.jy.medusa.gaze.utils.MedusaReflectionUtils;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.plugin.Invocation;
@@ -58,10 +59,13 @@ abstract class MedusaInterceptorStatementHandler extends MedusaInterceptorBaseHa
                 && ((Map) parObj).containsKey("param1")//过滤掉非batch方法
                 && sh.getBoundSql().getSql().startsWith("INSERT INTO")) {//过滤掉delete update之类的 非insert方法 modify by SuperScorpion on 2017.12.13
 
-            List<Object> paramList = (List) ((Map) parObj).get("param1");
+            //modify by SuperScorpion on 20250830 自定义增长主键的值(snowflake uuid)已经在实体插入前通过反射写入了 所以不需要再反射写入主键值
+            Id.Type pkGeneratedType = MedusaSqlHelper.getSqlGenerator((Map<String, Object>) parObj).getPkGeneratedType();
 
             //过滤medusa单个insert delete update 的方法
-            if (paramList != null && !paramList.isEmpty()) {
+            List<Object> paramList = (List) ((Map) parObj).get("param1");
+
+            if (paramList != null && !paramList.isEmpty() && pkGeneratedType.equals(Id.Type.AUTO)) {
 
                 Statement st = (Statement) invocation.getArgs()[0];
 

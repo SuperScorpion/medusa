@@ -11,6 +11,7 @@ import com.jy.medusa.gaze.stuff.param.MedusaLambdaMap;
 import com.jy.medusa.gaze.stuff.param.lambda.HolyGetPropertyNameLambda;
 import com.jy.medusa.gaze.stuff.param.lambda.HolyGetter;
 import com.jy.medusa.gaze.utils.MedusaCommonUtils;
+import com.jy.medusa.gaze.utils.MedusaPkGeneratedUtils;
 import com.jy.medusa.gaze.utils.MedusaReflectionUtils;
 import com.jy.medusa.gaze.utils.SystemConfigs;
 import com.jy.medusa.generator.MedusaGenUtils;
@@ -37,6 +38,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -88,7 +90,7 @@ public class MedusaSqlHelper {
 
 
     /**
-     * 在interceptori 里面判断方法是不是用户自定义方法
+     * 在interceptor 里面判断方法是不是用户自定义方法
      * @param msidWho 参数
      * @return 返回值类型
      */
@@ -130,13 +132,14 @@ public class MedusaSqlHelper {
      * @return 返回值类型
      */
     public static boolean checkMedusaGazeMethod(String methodName) {
-        return methodName.equals("medusaGazeMagic") ? true : false;
+        return methodName.equals("selectMedusaCombo") ? true : false;
     }
 
     /**
      * check insertUUID method
      * @param methodName     参数
      * @return 返回值类型
+     * @deprecated
      */
     public static boolean checkInsertUUIDMethod(String methodName) {
         return methodName.equals("insertSelectiveUUID") ? true : false;
@@ -146,6 +149,7 @@ public class MedusaSqlHelper {
      * check insertUUID selectKey method
      * @param methodName     参数
      * @return 返回值类型
+     * @deprecated
      */
     public static boolean checkInsertUUIDMethodSelectKey(String methodName) {
         return methodName.equals("insertSelectiveUUID!selectKey") ? true : false;
@@ -186,16 +190,16 @@ public class MedusaSqlHelper {
      */
     public static MedusaSqlGenerator getSqlGenerator(Map<String, Object> m) {
 
-        String p = m.get("msid").toString();//mapper path
+        String msid = m.get("msid").toString();//mapper path
 
-        MedusaSqlGenerator por = MedusaSqlHelperCacheManager.getCacheGeneratorByMapperPath(p);
+        MedusaSqlGenerator por = MedusaSqlHelperCacheManager.getCacheGeneratorByMapperPath(msid);
 
         if(por != null) {
             return por;
         } else {
-            Class<?> c = getEntityClass(p);
+            Class<?> c = getEntityClass(msid);
             MedusaSqlGenerator msrBc = getSqlGeneratorByClass(c);//msrBc 一定有值
-            MedusaSqlHelperCacheManager.putCacheGeneratorByMapperPath(p, msrBc);//msr 不一定有值
+            MedusaSqlHelperCacheManager.putCacheGeneratorByMapperPath(msid, msrBc);//msr 不一定有值
 
             return msrBc;
         }
@@ -275,6 +279,7 @@ public class MedusaSqlHelper {
         }
 
         String pkName = SystemConfigs.PRIMARY_KEY;//默认实体类主键名称
+        Id.Type pkGeneratedType = Id.Type.AUTO;
         String tableName;//表名
 
         Map<String, String> currentColumnFieldNameMap = new HashMap<>();
@@ -298,7 +303,10 @@ public class MedusaSqlHelper {
 
                     columnName = tableColumn.name();
 
-                    if (field.isAnnotationPresent(Id.class)) pkName = tableColumn.name();
+                    if (field.isAnnotationPresent(Id.class)) {
+                        pkName = tableColumn.name();
+                        pkGeneratedType = field.getAnnotation(Id.class).type();
+                    }
 
                     // 如果未标识特殊的列名，默认取字段名
                     columnName = MedusaCommonUtils.isBlank(columnName) ? MedusaGenUtils.camelToUnderline(fieldName) : columnName.trim();
@@ -313,7 +321,7 @@ public class MedusaSqlHelper {
         if (table == null) throw new MedusaException("Medusa: class - " + entityClass + " Not using @Table annotation identification!");
         tableName = table.name();
 
-        return new MedusaSqlGenerator(currentColumnFieldNameMap, currentFieldTypeNameMap, tableName, pkName, entityClass);
+        return new MedusaSqlGenerator(currentColumnFieldNameMap, currentFieldTypeNameMap, tableName, pkName, pkGeneratedType, entityClass);
     }
 
     /**
@@ -470,7 +478,7 @@ public class MedusaSqlHelper {
         ResultSet rs = null;
 
 //        String countSql = getSqlGenerator(p).sql_findAllCount(((MapperMethod.ParamMap) p.get("pobj")).get("param1"));
-        String countSql = getSqlGenerator(p).sqlOfSelectCount((Object[]) ((DefaultSqlSession.StrictMap) p.get("pobj")).get("array"));
+        String countSql = getSqlGenerator(p).sqlOfSelectCountCombo((Object[]) ((DefaultSqlSession.StrictMap) p.get("pobj")).get("array"));
 
         int totalCount = 0;
 
@@ -519,7 +527,7 @@ public class MedusaSqlHelper {
 
 /*            String countSql = getSqlGenerator(p).sql_findAllCount(((MapperMethod.ParamMap) p.get("pobj")).get("param1"),
                     ((MapperMethod.ParamMap) p.get("pobj")).get("param2"));*/
-            String countSql = getSqlGenerator(p).sqlOfSelectCount((Object[]) ((MapperMethod.ParamMap) p).get("array"));//新老版本产生的 bug fixed (DefaultSqlSession.StrictMap - MapperMethod.ParamMap) 20210113
+            String countSql = getSqlGenerator(p).sqlOfSelectCountCombo((Object[]) ((MapperMethod.ParamMap) p).get("array"));//新老版本产生的 bug fixed (DefaultSqlSession.StrictMap - MapperMethod.ParamMap) 20210113
 
 //            BoundSql countBS = new BoundSql(mst.getConfiguration(), countSql, boundSql.getParameterMappings(),p);
 
@@ -612,71 +620,118 @@ public class MedusaSqlHelper {
      * @param currentFieldColumnNameMap 参数
      * @param t 参数
      * @param primaryKeyColumn 参数
+     * @param pkPropertyName 参数
+     * @param pkGeneratedType 参数
      * @return 返回值类型
      */
-    public static String[] concatInsertDynamicSql(Map<String, String> currentFieldTypeNameMap, Map<String, String> currentFieldColumnNameMap, Object t, String primaryKeyColumn) {
+    public static String[] concatInsertDynamicSql(Map<String, String> currentFieldTypeNameMap, Map<String, String> currentFieldColumnNameMap, Object t, String primaryKeyColumn, String pkPropertyName, Id.Type pkGeneratedType) {
 
         int dataSizeAll = currentFieldTypeNameMap.size();
 
-        StringBuilder sbb = new StringBuilder(39 * dataSizeAll);
         StringBuilder sbs = new StringBuilder(15 * dataSizeAll);
+        StringBuilder sbb = new StringBuilder(39 * dataSizeAll);
+
+        //modify by SuperScorpion on 20250830 自定义增长主键的值(snowflake uuid) 反射写入主键值
+        if(pkGeneratedType.equals(Id.Type.SNOWFLAKE) || pkGeneratedType.equals(Id.Type.UUID)) {
+            reflectSetPkValueForSnowFlakeAndUUID(t, pkPropertyName, pkGeneratedType);
+        }
 
         for (Map.Entry<String, String> entry : currentFieldTypeNameMap.entrySet()) {//同一个hashset 遍历的元素顺序是否一样的
 
             String fieName = entry.getKey();
 
-            if (t == null || (t != null && MedusaReflectionUtils.obtainFieldValue(t, fieName) != null)) {///modify by SuperScorpion on 20170117 selective
+            // modify by SuperScorpion on 20170117 selective 包含非空值主键
+            if (t == null || (MedusaReflectionUtils.obtainFieldValue(t, fieName) != null)) {
 
-               /* if (fieName.trim().equalsIgnoreCase(primaryKeyColumn)) {
-
-//                sbb.append("#{id, jdbcType=" + javaType2SqlTypes(currentFieldTypeNameMap.get(fieName)) + "},");
-                    sbb.append("#{pobj.").append(primaryKeyColumn).append(", jdbcType=").append(javaType2SqlTypes(entry.getValue())).append("},");
-
+//                if (fieName.trim().equalsIgnoreCase(primaryKeyColumn)) {//add by SuperScorpion on 20250830 主键自增值处理
+//                    if(pkGeneratedType.equals(Id.Type.SNOWFLAKE) || pkGeneratedType.equals(Id.Type.UUID)) {
+//
+//                        Object pkValue = "";
+//
+//                        if(pkGeneratedType.equals(Id.Type.SNOWFLAKE)) pkValue = MedusaPkGeneratedUtils.genSnowflake();
+//                        if(pkGeneratedType.equals(Id.Type.UUID)) pkValue = MedusaPkGeneratedUtils.genUUID();
+//
+//                        sbs.append(currentFieldColumnNameMap.get(fieName));
+//                        sbs.append(",");
+//
+//                        sbb.append(pkValue);
+//                        sbb.append(",");
+//                    } else {
+//                        //AUTO
+//                        //do nothing
+//                    }
+//                } else {//非主键属性处理
                     sbs.append(currentFieldColumnNameMap.get(fieName));
                     sbs.append(",");
-                } else {*/
 
                     sbb.append("#{pobj.");
                     sbb.append(fieName);
                     sbb.append(", jdbcType=");
                     sbb.append(javaType2SqlTypes(entry.getValue()));
                     sbb.append("},");
-
-                    sbs.append(currentFieldColumnNameMap.get(fieName));
-                    sbs.append(",");
-                /*}*/
+//                }
             }
         }
 
+        if(sbs.lastIndexOf(",") != -1) sbs.deleteCharAt(sbs.lastIndexOf(","));//2 - sbs
         if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));//1 - sbb
 
-        if(sbs.lastIndexOf(",") != -1) sbs.deleteCharAt(sbs.lastIndexOf(","));//2 - sbs
-
-        String[] result = {sbb.toString(), sbs.toString()};///////一个是插入语句的 字段名 一个是动态值
+        String[] result = {sbs.toString(), sbb.toString()};///////一个是插入语句的 字段名 一个是动态值
 
         return result;
     }
 
 
     /**
+     * add by SuperScorpion on 20250830
+     * 在插入执行之前 给实体主键写入生成的主键值
+     * @param t 参数
+     * @param pkPropertyName 参数
+     * @param pkGeneratedType 参数
+     */
+    private static void reflectSetPkValueForSnowFlakeAndUUID(Object t, String pkPropertyName, Id.Type pkGeneratedType) {
+
+        Object pkValue = MedusaReflectionUtils.obtainFieldValue(t, pkPropertyName);
+        if(pkValue != null) return;//在插入前已经存在主键值则不再生成新主键值
+
+        if (pkGeneratedType.equals(Id.Type.SNOWFLAKE)) pkValue = MedusaPkGeneratedUtils.genSnowflake();
+        if (pkGeneratedType.equals(Id.Type.UUID)) pkValue = MedusaPkGeneratedUtils.genUUID();
+        try {
+            MedusaReflectionUtils.invokeSetterMethod(t, pkPropertyName, pkValue);
+        } catch (ParseException e) {
+            logger.error("Medusa: Reflect set pkValue has error, please check the type of the " + pkPropertyName + " field is correct " + e);
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * 生成插入的sql语句时 要把动态部分缓存起 批量
      * @param currentColumnFieldNameMap 参数
      * @param currentFieldTypeNameMap 参数
-     * @param t 参数
+     * @param tList 参数
      * @param paramColumn 参数
      * @param primaryKeyColumn 参数
+     * @param pkPropertyName 参数
+     * @param pkGeneratedType 参数
      * @param myCatSequence 参数
      * @return 返回值类型
      */
-    public static String concatInsertDynamicSqlForBatch(Map<String, String> currentColumnFieldNameMap, Map<String, String> currentFieldTypeNameMap, Object t, String paramColumn, String primaryKeyColumn, String myCatSequence) {
+    public static String concatInsertDynamicSqlForBatch(Map<String, String> currentColumnFieldNameMap, Map<String, String> currentFieldTypeNameMap, Object tList, String paramColumn, String primaryKeyColumn, String pkPropertyName, Id.Type pkGeneratedType, String myCatSequence) {
 
         boolean myCatFlag = MedusaCommonUtils.isNotBlank(myCatSequence);//modify by SuperScorpion on 2019.08.07 for mycat
 
-        List<Object> obs = t instanceof List ? (ArrayList)t : new ArrayList<>();
+        List<Object> obs = tList instanceof List ? (ArrayList)tList : new ArrayList<>();
 
         if(obs.size() == 0) throw new MedusaException("Medusa: insertBatch method parameter is null or empty!");
 
         if(obs.size() > 320000) logger.warn("Medusa: The number of data is too many [{}]. Please pay attention to the performance.", obs.size());
+
+        //modify by SuperScorpion on 20250830 自定义增长主键的值(snowflake uuid) 反射写入主键值
+        if(pkGeneratedType.equals(Id.Type.SNOWFLAKE) || pkGeneratedType.equals(Id.Type.UUID)) {
+            for(Object t : obs) {
+                reflectSetPkValueForSnowFlakeAndUUID(t, pkPropertyName, pkGeneratedType);
+            }
+        }
 
         String[] columnArr = paramColumn.split(",");
 

@@ -70,8 +70,8 @@ public interface BaseServiceMedusa<T> extends BaseServiceMedusaLambda<T> {
 
 	/**
 	 * 根据实体类对应条件删除数据
-	 * @param entity 实体类参数
+	 * @param mixParams 请参考{@link com.jy.medusa.gaze.base.select.SelectMedusaComboMapper}
 	 * @return 影响的行数
 	 */
-	int delete(T entity);
+	int deleteMedusaCombo(Serializable... mixParams);
 }

@@ -102,7 +102,6 @@ public class Pager<T> implements Serializable {
 //	}
 
 	/**
-	 * @deprecated
 	 * @param fns 参数
 	 * @return 结果
 	 */
@@ -116,7 +115,6 @@ public class Pager<T> implements Serializable {
 	}
 
 	/**
-	 * @deprecated
 	 * @param sortTypeEnum 参数
 	 * @return 结果
 	 */

@@ -20,8 +20,13 @@ public class BaseDeleteProvider {
      * @param m 参数
      * @return 返回值类型
      */
-    public String delete(Map<String, Object> m) {
-        return MedusaSqlHelper.getSqlGenerator(m).sqlOfDelete(m.get("pobj"));
+    public String deleteMedusaCombo(Map<String, Object> m) {
+
+        Object[] targetObjArray = MedusaSqlHelper.transferLambdaForGaze((Object[]) ((MapperMethod.ParamMap) m).get("array"));
+
+        ((MapperMethod.ParamMap) m).put("array", targetObjArray);
+
+        return MedusaSqlHelper.getSqlGenerator(m).sqlOfDeleteMedusaCombo(targetObjArray);
     }
 
     /**

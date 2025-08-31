@@ -13,6 +13,7 @@ import java.util.List;
  * 根据实体中的非空属性值进行查询
  * @param <T> 实体类泛型
  * @author SuperScorpion
+ * @deprecated
  */
 public interface SelectMapper<T> {
 

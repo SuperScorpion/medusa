@@ -1,7 +1,9 @@
 
 package com.jy.medusa.gaze.base;
 
-import com.jy.medusa.gaze.base.insert.*;
+import com.jy.medusa.gaze.base.insert.InsertBatchMapper;
+import com.jy.medusa.gaze.base.insert.InsertMapper;
+import com.jy.medusa.gaze.base.insert.InsertSelectiveMapper;
 
 /**
  * 通用Mapper接口
@@ -12,7 +14,7 @@ import com.jy.medusa.gaze.base.insert.*;
 public interface BaseInsertMapper<T> extends
         InsertSelectiveMapper<T>,
         InsertBatchMapper<T>,
-        InsertBatchOfMyCatMapper<T>,
-        InsertSelectiveUUIDMapper<T>,
+//        InsertBatchOfMyCatMapper<T>,
+//        InsertSelectiveUUIDMapper<T>,
         InsertMapper<T> {
 }

@@ -14,7 +14,7 @@ import java.util.List;
  * @param <T> 实体类泛型
  * @author SuperScorpion
  */
-public interface SelectMedusaGazeMapper<T> {
+public interface SelectMedusaComboMapper<T> {
 
     /**
      * 这是个大招 万能查询方法 根据多条件查询数据
@@ -72,7 +72,7 @@ public interface SelectMedusaGazeMapper<T> {
      *                      包含 实体类型 String HashMap MedusaLambdaMap MedusaLambdaRestrictions MedusaLambdaColumns Pager
      * @return              返回实体对象的list结果
      */
-    @SelectProvider(type = BaseSelectProvider.class, method = "selectMedusaGaze")
+    @SelectProvider(type = BaseSelectProvider.class, method = "selectMedusaCombo")
     @ResultMap("BaseResultMap")
-    List<T> medusaGazeMagic(Serializable... mixParams);
+    List<T> selectMedusaCombo(Serializable... mixParams);
 }
