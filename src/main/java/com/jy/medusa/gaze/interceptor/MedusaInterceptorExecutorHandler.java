@@ -10,8 +10,10 @@ import com.jy.medusa.gaze.stuff.annotation.Id;
 import com.jy.medusa.gaze.stuff.exception.MedusaException;
 import com.jy.medusa.gaze.utils.MedusaReflectionUtils;
 import org.apache.ibatis.binding.MapperMethod;
+import org.apache.ibatis.builder.StaticSqlSource;
 import org.apache.ibatis.builder.annotation.ProviderSqlSource;
 import org.apache.ibatis.executor.Executor;
+import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.plugin.Invocation;
 
@@ -44,27 +46,11 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
 
         String medusaMethodName = MedusaSqlHelper.getLastWord(mt.getId()).trim();
 
-        if (mt.getSqlSource() instanceof ProviderSqlSource && MedusaSqlHelper.checkMortalMethds(medusaMethodName)) {//Modify by SuperScorpion on 2019.05.31
+        //过滤只有medusa框架相关方法才能进入 Modify by SuperScorpion on 2019.05.31
+        if (mt.getSqlSource() instanceof ProviderSqlSource && MedusaSqlHelper.checkMortalMethds(medusaMethodName)) {
 
-            Map<String, Object> p;
-
-            //批量插入 解析不了 多级对象如 pobj.param1.id 只能解析到param1.id 所以需要做以下区分功能
-            if (invocation.getArgs()[1] instanceof Map) {//1.方法里有两个参数以上或参数类型为array或list 则mybatis会自动封装它为 map集合 modify by SuperScorpion on 2020.02.13
-
-                p = (Map<String, Object>) invocation.getArgs()[1];
-
-                p.put("msid", MedusaSqlHelper.removeLastWord(mt.getId()));
-
-            } else {//2.方法里若是单个参数且不是array或list 需要用到 msid 所以手动封装map 带到provider方法去使用
-
-                p = new HashMap<>(1 << 2);/// 1<<1
-
-                p.put("pobj", invocation.getArgs()[1]);
-
-                p.put("msid", MedusaSqlHelper.removeLastWord(mt.getId()));
-
-                invocation.getArgs()[1] = p;
-            }
+            //重新构造invocation里的map参数
+            Map<String, Object> p = rebuildParamMap(invocation, mt);
 
             //通过反射改变 insert相关方法的 keyProperties 的主键属性 实现插入时动态变更 @Options-keyProperty 的功能 modify by SuperScorpion on 20210522
             processInsertKeyPropertiesBeforeProceed(mt, medusaMethodName, p);
@@ -77,12 +63,7 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
             processMedusaMethod(medusaMethodName, result, invocation, p, mt);
 
             //clean map params
-            if(p.containsKey("pobj")) {//第二种情况清除新建的 hashmap
-                invocation.getArgs()[1] = p.get("pobj");//还原
-                p.clear();//help gc
-            } else {//第一种情况 只删除put进去的msid
-                p.remove("msid");//还原
-            }
+            resetParamMap(invocation, p);
 
         } /*else if (mt.getSqlSource() instanceof RawSqlSource//processExecutor里的invocationProceed(invocation)嵌套进入
                 // medusa的insertSelectiveUUID 生成UUID时 SELECT REPLACE(UUID(), '-', '') 内部嵌套查询UUID的查询方法
@@ -94,11 +75,96 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
             Map<String, Object> p = (Map) invocation.getArgs()[1];
 
             MedusaReflectionUtils.invokeSetterMethod(p.get("pobj"), MedusaSqlHelper.getSqlGenerator(p).getPkPropertyName(), ((ArrayList) result).get(0));//注入属性id值
-        }*/ else {//其他的各种方法
-            result = invocationProceed(invocation);
+        }*/ else {//其他的各种普通方法
+
+            //添加非medusa方法的查询分页处理 add by SuperScorpion on 20250906
+            if(MedusaSqlHelper.myPagerThreadLocal.get() != null) {
+                Pager z = MedusaSqlHelper.myPagerThreadLocal.get();
+                MedusaSqlHelper.myPagerThreadLocal.remove();
+
+                //重新构造invocation里的map参数
+                Map<String, Object> p = rebuildParamMap(invocation, mt);
+
+                //获取原有的sql并拼接新的sql
+                BoundSql boundSql = mt.getSqlSource().getBoundSql(p);
+                String originSql = boundSql.getSql();
+                StringBuilder sbb = new StringBuilder(originSql.length() + 16);
+                sbb.append(originSql);
+                MedusaSqlHelper.concatDynamicSqlForPager(sbb, z);
+
+                //通过反射写入新的sql
+                StaticSqlSource sss = (StaticSqlSource) MedusaReflectionUtils.obtainFieldValue(mt.getSqlSource(), "sqlSource");
+                MedusaReflectionUtils.setFieldValue(sss, "sql", sbb.toString());
+
+                //help gc
+                sbb.delete(0, sbb.length());
+
+
+                //执行查询sql逻辑
+                result = invocationProceed(invocation);
+
+
+                //查询总记录数量
+                z.setList((List) result);//若结果集不为空则 给原有的pager参数注入list属性值
+                z.setTotalCount(MedusaSqlHelper.caculatePagerTotalCount(((Executor) invocation.getTarget()).getTransaction().getConnection(), mt, p));/////通过invocation参数获得connection连接 并且通过这个连接查询出totalCount 注意: 不通过mybatis的 interceptor
+                z.setPageCount(z.getPageCount());
+
+                //还原sqlsource里的sql mybatis有缓存 连续两次同样方法名的查询执行 发现后者limit依然存在
+                MedusaReflectionUtils.setFieldValue(sss, "sql", originSql);
+
+                //clean map params
+                resetParamMap(invocation, p);
+            } else {
+                result = invocationProceed(invocation);
+            }
         }
 
         return result;
+    }
+
+    /**
+     * 还原到方法执行之前invocation的原始参数
+     * @param invocation 参数
+     * @param p          参数
+     */
+    private void resetParamMap(Invocation invocation, Map<String, Object> p) {
+        if(p.containsKey("pobj")) {//第二种情况清除新建的 hashmap
+            invocation.getArgs()[1] = p.get("pobj");//还原
+            p.clear();//help gc
+        } else {//第一种情况 只删除put进去的msid
+            p.remove("msid");//还原
+        }
+    }
+
+    /**
+     * 对mybatis的invocation里的map重新赋值
+     * @param invocation 参数
+     * @param mt         参数
+     * @return
+     */
+    private Map<String, Object> rebuildParamMap(Invocation invocation, MappedStatement mt) {
+
+        Map<String, Object> p;
+
+        //批量插入 解析不了 多级对象如 pobj.param1.id 只能解析到param1.id 所以需要做以下区分功能
+        if (invocation.getArgs()[1] instanceof Map) {//1.方法里有一个参数以上或参数类型为array或list 则mybatis会自动封装它为 map集合 modify by SuperScorpion on 2020.02.13
+
+            p = (Map<String, Object>) invocation.getArgs()[1];
+
+            p.put("msid", MedusaSqlHelper.removeLastWord(mt.getId()));
+
+        } else {//2.方法里若是单个参数且不是array或list 需要用到 msid 所以手动封装map 带到provider方法去使用
+
+            p = new HashMap<>(1 << 2);/// 1<<1
+
+            p.put("pobj", invocation.getArgs()[1]);
+
+            p.put("msid", MedusaSqlHelper.removeLastWord(mt.getId()));
+
+            invocation.getArgs()[1] = p;
+        }
+
+        return p;
     }
 
     /**
@@ -148,8 +214,8 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
 
         //测试结果由高到低:startWith->indexOf->contains modify by SuperScorpion on 2016.11.07
         //medusa的一些方法后续处理(insert相关 update相关 medusaGaze相关)
-        if (medusaMethodName.startsWith("selectMedusa") || medusaMethodName.startsWith("insert")
-                || medusaMethodName.startsWith("update")) {//查询比较多 避免再去判断是不是以下方法中的 提升性能 modify by SuperScorpion on 2025.08.30
+        if (MedusaSqlHelper.checkMedusaGazeMethod(medusaMethodName) || MedusaSqlHelper.checkInsertMethod(medusaMethodName)
+                || MedusaSqlHelper.checkUpdateMethod(medusaMethodName)) {//查询比较多 避免再去判断是不是以下方法中的 提升性能 modify by SuperScorpion on 2025.08.30
 
             if (MedusaSqlHelper.checkMedusaGazeMethod(medusaMethodName)) {//若是多条件查询 medusa
 

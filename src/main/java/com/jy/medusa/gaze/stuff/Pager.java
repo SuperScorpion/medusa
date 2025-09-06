@@ -27,8 +27,13 @@ public class Pager<T> implements Serializable {
 
 
 	public static Pager getPager() {
-        return new Pager();
+		return new Pager();
     }
+
+	public Pager startPager() {
+		MedusaSqlHelper.myPagerThreadLocal.set(this);
+		return this;
+	}
 
 	public Integer getPageNumber() {
 		return pageNumber;
