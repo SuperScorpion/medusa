@@ -99,21 +99,21 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
                 //help gc
                 sbb.delete(0, sbb.length());
 
-
-                //执行查询sql逻辑
-                result = invocationProceed(invocation);
-
+                try {
+                    //执行查询sql逻辑
+                    result = invocationProceed(invocation);
+                } finally {
+                    //还原sqlsource里的sql mybatis有sqlSession缓存 同线程里连续两次同样方法名的查询 第二次执行sql语句和第一次一样 limit依然存在
+                    MedusaReflectionUtils.setFieldValue(sss, "sql", originSql);
+                }
 
                 //查询总记录数量
                 z.setList((List) result);//若结果集不为空则 给原有的pager参数注入list属性值
                 z.setTotalCount(MedusaSqlHelper.caculatePagerTotalCount(((Executor) invocation.getTarget()).getTransaction().getConnection(), mt, p));/////通过invocation参数获得connection连接 并且通过这个连接查询出totalCount 注意: 不通过mybatis的 interceptor
-                z.setPageCount(z.getPageCount());
-
-                //还原sqlsource里的sql mybatis有缓存 连续两次同样方法名的查询执行 发现后者limit依然存在
-                MedusaReflectionUtils.setFieldValue(sss, "sql", originSql);
 
                 //clean map params
                 resetParamMap(invocation, p);
+
             } else {
                 result = invocationProceed(invocation);
             }
@@ -231,7 +231,6 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
                 if (z != null) {//modify by SuperScorpion on 2016.10.11  && result != null
                     z.setList((List) result);//若结果集不为空则 给原有的pager参数注入list属性值
                     z.setTotalCount(MedusaSqlHelper.caculatePagerTotalCount(((Executor) invocation.getTarget()).getTransaction().getConnection(), mt, p));/////通过invocation参数获得connection连接 并且通过这个连接查询出totalCount 注意: 不通过mybatis的 interceptor
-                    z.setPageCount(z.getPageCount());
                 }
 
 //                for (Object m : x) {//帮助用户自动让MedusaRestrictions清空 modify by SuperScorpion on 2019.08.20
