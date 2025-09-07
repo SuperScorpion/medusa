@@ -738,7 +738,7 @@ public class MedusaSqlGenerator {
 
             ///////分页开始
             if(pa != null) {
-                MedusaSqlHelper.concatDynamicSqlForPager(sbb, pa);
+                PagerHelper.concatDynamicSqlForPager(sbb, pa);
             }
         }
 

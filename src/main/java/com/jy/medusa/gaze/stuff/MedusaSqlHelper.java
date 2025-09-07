@@ -1045,43 +1045,4 @@ public class MedusaSqlHelper {
 
         return paramList.toArray(new String[]{});
     }
-
-
-    /**
-     * modify by SuperScorpion on 20250906
-     * 处理pager类的拼接 普通方法和medusa方法使用
-     * @param sbb 参数
-     * @param pa 参数
-     */
-    public static void concatDynamicSqlForPager(StringBuilder sbb, Pager pa) {
-
-        //modify by SuperScorpion on 20220822 for lambda
-        if(pa.getOrderByList() != null && pa.getOrderByList().size() > 0 && sbb.lastIndexOf("ORDER BY") == -1) {
-
-            sbb.append(" ORDER BY ");//modify by SuperScorpion 2016.10.12
-
-            int i = 0;
-            for(; i < pa.getOrderByList().size(); i++) {
-
-                //orderType 默认取desc
-                String orderType = pa.getOrderTypeList().get(i) == null ? Pager.SortTypeEnum.SORT_DESC.getCode() : (String) pa.getOrderTypeList().get(i);
-
-                sbb.append(pa.getOrderByList().get(i));
-                sbb.append(" ");
-                sbb.append(orderType);
-                sbb.append(",");
-            }
-
-            if(sbb.lastIndexOf(",") != -1) sbb.deleteCharAt(sbb.lastIndexOf(","));//去除最后的一个,
-        }
-
-        sbb.append(" LIMIT ");
-        sbb.append(pa.getStartRecord());
-        sbb.append(",");
-        sbb.append(pa.getPageSize());
-
-        //缓存了分页的查询语句
-        MedusaSqlHelper.myThreadLocal.set(sbb.toString());
-        logger.debug("Medusa: Successfully saved the page query statement to the cache ^_^ " + sbb.toString());
-    }
 }

@@ -6,16 +6,19 @@ package com.jy.medusa.gaze.interceptor;
 
 import com.jy.medusa.gaze.stuff.MedusaSqlHelper;
 import com.jy.medusa.gaze.stuff.Pager;
+import com.jy.medusa.gaze.stuff.PagerHelper;
 import com.jy.medusa.gaze.stuff.annotation.Id;
 import com.jy.medusa.gaze.stuff.exception.MedusaException;
 import com.jy.medusa.gaze.utils.MedusaReflectionUtils;
 import org.apache.ibatis.binding.MapperMethod;
-import org.apache.ibatis.builder.StaticSqlSource;
 import org.apache.ibatis.builder.annotation.ProviderSqlSource;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.plugin.Invocation;
+import org.apache.ibatis.scripting.defaults.RawSqlSource;
+import org.apache.ibatis.scripting.xmltags.DynamicSqlSource;
+import org.apache.ibatis.scripting.xmltags.SqlNode;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -78,41 +81,50 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
         }*/ else {//其他的各种普通方法
 
             //添加非medusa方法的查询分页处理 add by SuperScorpion on 20250906
-            if(MedusaSqlHelper.myPagerThreadLocal.get() != null) {
-                Pager z = MedusaSqlHelper.myPagerThreadLocal.get();
-                MedusaSqlHelper.myPagerThreadLocal.remove();
+            if(MedusaSqlHelper.myPagerThreadLocal.get() != null
+                    && (mt.getSqlSource() instanceof RawSqlSource || mt.getSqlSource() instanceof DynamicSqlSource)) {
 
                 //重新构造invocation里的map参数
                 Map<String, Object> p = rebuildParamMap(invocation, mt);
 
-                //获取原有的sql并拼接新的sql
+                //获取原有的BoundSql
                 BoundSql boundSql = mt.getSqlSource().getBoundSql(p);
-                String originSql = boundSql.getSql();
-                StringBuilder sbb = new StringBuilder(originSql.length() + 16);
-                sbb.append(originSql);
-                MedusaSqlHelper.concatDynamicSqlForPager(sbb, z);
 
-                //通过反射写入新的sql
-                StaticSqlSource sss = (StaticSqlSource) MedusaReflectionUtils.obtainFieldValue(mt.getSqlSource(), "sqlSource");
-                MedusaReflectionUtils.setFieldValue(sss, "sql", sbb.toString());
+                //只处理RawSqlSource 和 DynamicSqlSource
+                //RawSqlSource里面其实包的就是StaticSqlSource
+                //这里反射修改BoundSql里面的sql是无效的 因为获取sql都是通过各个getBoundSql方法实现
+                //所以这里实现了自定义的sqlSource类 并在getBoundSql里拼接了分页limit的sql语句 然后覆盖原有的MappedStatement
+                if(mt.getSqlSource() instanceof RawSqlSource) {
+                    invocation.getArgs()[0] = PagerHelper.copyFromMappedStatement(mt, new PagerHelper.MedusaStaticSqlSource(mt.getConfiguration(), boundSql.getSql(), boundSql.getParameterMappings()));
+                } else if(mt.getSqlSource() instanceof DynamicSqlSource) {
+                    SqlNode rootSqlNode = (SqlNode) MedusaReflectionUtils.obtainFieldValue(mt.getSqlSource(), "rootSqlNode");
+                    invocation.getArgs()[0] = PagerHelper.copyFromMappedStatement(mt, new PagerHelper.MedusaDynamicSqlSource(mt.getConfiguration(), boundSql.getParameterMappings(), rootSqlNode));
+                } else {
+                    //do nothing
+                }
+
+                Pager z = null;
 
                 try {
                     //执行查询sql逻辑
                     result = invocationProceed(invocation);
                 } finally {
+                    z = MedusaSqlHelper.myPagerThreadLocal.get();
+                    MedusaSqlHelper.myPagerThreadLocal.remove();
+
+                    //使用了自定义的sqlSource实现类此处废弃
                     //注意:mybatis缓存的坑 mybatis有sqlSession缓存
                     //此需要还原StaticSqlSource里的sql 连续多次xml里同样方法名的查询
                     //第二次第三次...执行sql语句和第一次一样 sql里依然还存在拼接的分页limit语句
-                    MedusaReflectionUtils.setFieldValue(sss, "sql", originSql);
-
-                    //help gc
-                    sbb.delete(0, sbb.length());
-                    sbb = null;
+//                    StaticSqlSource sss = (StaticSqlSource) MedusaReflectionUtils.obtainFieldValue(mt.getSqlSource(), "sqlSource");
+//                    MedusaReflectionUtils.setFieldValue(sss, "sql", sbb.toString());
                 }
 
                 //查询总记录数量
-                z.setList((List) result);//若结果集不为空则 给原有的pager参数注入list属性值
-                z.setTotalCount(MedusaSqlHelper.caculatePagerTotalCount(((Executor) invocation.getTarget()).getTransaction().getConnection(), mt, p));/////通过invocation参数获得connection连接 并且通过这个连接查询出totalCount 注意: 不通过mybatis的 interceptor
+                if(z != null) {
+                    z.setList((List) result);//若结果集不为空则 给原有的pager参数注入list属性值
+                    z.setTotalCount(MedusaSqlHelper.caculatePagerTotalCount(((Executor) invocation.getTarget()).getTransaction().getConnection(), mt, p));/////通过invocation参数获得connection连接 并且通过这个连接查询出totalCount 注意: 不通过mybatis的 interceptor
+                }
 
                 //clean map params
                 resetParamMap(invocation, p);
@@ -124,6 +136,8 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
 
         return result;
     }
+
+
 
     /**
      * 还原到方法执行之前invocation的原始参数
