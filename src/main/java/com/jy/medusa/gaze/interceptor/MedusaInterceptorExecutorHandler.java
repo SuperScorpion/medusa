@@ -96,15 +96,18 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
                 StaticSqlSource sss = (StaticSqlSource) MedusaReflectionUtils.obtainFieldValue(mt.getSqlSource(), "sqlSource");
                 MedusaReflectionUtils.setFieldValue(sss, "sql", sbb.toString());
 
-                //help gc
-                sbb.delete(0, sbb.length());
-
                 try {
                     //执行查询sql逻辑
                     result = invocationProceed(invocation);
                 } finally {
-                    //还原sqlsource里的sql mybatis有sqlSession缓存 同线程里连续两次同样方法名的查询 第二次执行sql语句和第一次一样 limit依然存在
+                    //注意:mybatis缓存的坑 mybatis有sqlSession缓存
+                    //此需要还原StaticSqlSource里的sql 连续多次xml里同样方法名的查询
+                    //第二次第三次...执行sql语句和第一次一样 sql里依然还存在拼接的分页limit语句
                     MedusaReflectionUtils.setFieldValue(sss, "sql", originSql);
+
+                    //help gc
+                    sbb.delete(0, sbb.length());
+                    sbb = null;
                 }
 
                 //查询总记录数量
