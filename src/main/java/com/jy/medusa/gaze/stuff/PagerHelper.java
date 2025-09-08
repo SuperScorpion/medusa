@@ -152,23 +152,33 @@ public class PagerHelper {
 	 * @param newSqlSource 参数
 	 * @return MappedStatement
 	 */
-	public static MappedStatement copyFromMappedStatement(MappedStatement ms, SqlSource newSqlSource) {
+	public static MappedStatement rebuildMappedStatement(MappedStatement ms, SqlSource newSqlSource) {
 		MappedStatement.Builder builder = new MappedStatement.Builder(ms.getConfiguration(),
 				ms.getId(), newSqlSource, ms.getSqlCommandType());
 		builder.resource(ms.getResource());
 		builder.fetchSize(ms.getFetchSize());
+		builder.timeout(ms.getTimeout());
 		builder.statementType(ms.getStatementType());
+		builder.resultSetType(ms.getResultSetType());
+		builder.cache(ms.getCache());
+		builder.parameterMap(ms.getParameterMap());
+		builder.resultMaps(ms.getResultMaps());
 		builder.keyGenerator(ms.getKeyGenerator());
+
+		builder.databaseId(ms.getDatabaseId());
+		builder.lang(ms.getLang());
+
 		if (ms.getKeyProperties() != null) {
 			for (String keyProperty : ms.getKeyProperties()) {
 				builder.keyProperty(keyProperty);
 			}
 		}
-		builder.timeout(ms.getTimeout());
-		builder.parameterMap(ms.getParameterMap());
-		builder.resultMaps(ms.getResultMaps());
-		builder.cache(ms.getCache());
+		if (ms.getResultSets() != null) {
+			for (String resultSet : ms.getResultSets()) {
+				builder.resultSets(resultSet);
+			}
+		}
+
 		return builder.build();
 	}
-
 }
