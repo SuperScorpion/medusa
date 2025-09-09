@@ -125,14 +125,13 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
             //do nothing
         }
 
-
         //执行查询sql逻辑
         //此处会调用sqlSource里的getBoundSql方法 MedusaSqlHelper.myPagerThreadLocal.get()也会被调用
         result = invocationProceed(invocation);
-        //使用了自定义的sqlSource实现类此处废弃
-        //注意:mybatis缓存的坑 mybatis有sqlSession缓存
-        //此需要还原StaticSqlSource里的sql 连续多次xml里同样方法名的查询
-        //第二次第三次...执行sql语句和第一次一样 sql里依然还存在拼接的分页limit语句
+        //注意:mybatis缓存的坑 mybatis有sqlSession缓存 MappedStatement每次查询都会产生新的 但是里面的StaticSqlSource会被缓存起来
+        //StaticSqlSource里的sql 连续多次xml里同样方法名的查询
+        //第二次第三次...执行sql语句和第一次一样 第一次拼接的分页sql依然还存在 依然还包含limit语句
+        //使用了自定义的sqlSource实现类 所以下面的废弃
         //StaticSqlSource sss = (StaticSqlSource) MedusaReflectionUtils.obtainFieldValue(mt.getSqlSource(), "sqlSource");
         //MedusaReflectionUtils.setFieldValue(sss, "sql", sbb.toString());
 
