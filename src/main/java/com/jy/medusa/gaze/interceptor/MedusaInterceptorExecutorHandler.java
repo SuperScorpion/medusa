@@ -85,14 +85,11 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
             //Pager.startPage启用
             if(MedusaSqlHelper.myPagerThreadLocal.get() != null
                     && (mt.getSqlSource() instanceof RawSqlSource || mt.getSqlSource() instanceof DynamicSqlSource)) {
-
-                //保证myPagerThreadLocal一定会被释放掉
                 try {
                     result = processRawAndDynamicSqlSourcePagerHandler(invocation, mt);
                 } finally {
                     MedusaSqlHelper.myPagerThreadLocal.remove();
                 }
-
             } else {
                 result = invocationProceed(invocation);
             }
@@ -137,8 +134,7 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
 
         //拿到缓存的Pager类
         Pager z = MedusaSqlHelper.myPagerThreadLocal.get();
-
-        //查询总记录数量
+        //给pager赋result值和count值
         z.setList((List) result);//若结果集不为空则 给原有的pager参数注入list属性值
         z.setTotalCount(MedusaSqlHelper.caculatePagerTotalCount(((Executor) invocation.getTarget()).getTransaction().getConnection(), mt, p));/////通过invocation参数获得connection连接 并且通过这个连接查询出totalCount 注意: 不通过mybatis的 interceptor
 
@@ -249,13 +245,18 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
                 //新老版本产生的 bug fixed (DefaultSqlSession.StrictMap - MapperMethod.ParamMap) 20210113
                 Object[] x = (Object[]) ((MapperMethod.ParamMap) p).get("array");//modify by SuperScorpion on 2020.02.13
 
-                Pager z = null;
-
-                for (Object m : x) {//保留最后一个对象 pager 同 sqlOfFindMedusaGaze 处理 Pager modify by SuperScorpion on 2019.08.20
-                    if (m instanceof Pager) z = (Pager) m;
+                for (Object m : x) {//同 sqlOfFindMedusaGaze 处理 Pager modify by SuperScorpion on 2019.08.20
+                    if (m instanceof Pager) {
+                        Pager z = (Pager) m;
+                        z.setList((List) result);//若结果集不为空则 给原有的pager参数注入list属性值
+                        z.setTotalCount(MedusaSqlHelper.caculatePagerTotalCount(((Executor) invocation.getTarget()).getTransaction().getConnection(), mt, p));/////通过invocation参数获得connection连接 并且通过这个连接查询出totalCount 注意: 不通过mybatis的 interceptor
+                    }
                 }
 
-                if (z != null) {//modify by SuperScorpion on 2016.10.11  && result != null
+                //add by SuperScorpion on 2025.09.16 for 插件分页功能
+                if(MedusaSqlHelper.myPagerThreadLocal.get() != null) {
+                    Pager z = MedusaSqlHelper.myPagerThreadLocal.get();
+                    MedusaSqlHelper.myPagerThreadLocal.remove();
                     z.setList((List) result);//若结果集不为空则 给原有的pager参数注入list属性值
                     z.setTotalCount(MedusaSqlHelper.caculatePagerTotalCount(((Executor) invocation.getTarget()).getTransaction().getConnection(), mt, p));/////通过invocation参数获得connection连接 并且通过这个连接查询出totalCount 注意: 不通过mybatis的 interceptor
                 }

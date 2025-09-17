@@ -763,27 +763,42 @@ public class MedusaSqlGenerator {
 
             if(z instanceof BaseRestrictions) {//modify by SuperScorpion on 2016.12.09  if(z instanceof BaseParam) {
 
-                short v = 0;
-
                 List<BaseParam> paramList = ((BaseRestrictions) z).getParamList();
 
                 if(paramList != null && !paramList.isEmpty()) {
 
+                    short v = 0;
+
+                    //order by 必须放所有条件的最后 modify by SuperScorpion on 20250917
+                    //优先处理paramList里非OrderByParam的参数对象
                     for (BaseParam x : paramList) {
-                        baseParamHandler(sbb, x, isd, v, null, null, null);
+                        if(!(x instanceof OrderByParam)) baseParamHandler(sbb, x, isd, v, null, null, null);
                         v++;
                     }
-                }
 
-                //处理or and 条件的语句 add by SuperScorpion on 20230113
-                if(z instanceof MedusaLambdaRestrictions) {
-                    orAndParamHandler(sbb, z, isd);
-                }
-            } else if (z instanceof Pager) {
+                    //再处理or and 条件的语句 add by SuperScorpion on 20230113
+                    if(z instanceof MedusaLambdaRestrictions) {
+                        orAndParamHandler(sbb, z, isd);
+                    }
 
+                    v = 0;//重置v为0
+
+                    //最后处理paramList里OrderByParam的参数对象 modify by SuperScorpion on 20250917
+                    for (BaseParam x : paramList) {
+                        if(x instanceof OrderByParam) baseParamHandler(sbb, x, isd, v, null, null, null);
+                        v++;
+                    }
+                } else {
+                    //再处理or and 条件的语句 add by SuperScorpion on 20230113
+                    if(z instanceof MedusaLambdaRestrictions) {
+                        orAndParamHandler(sbb, z, isd);
+                    }
+                }
+            }
+            //modify by SuperScorpion on 2022.08.23 for 是否含有分页参数对象 pager
+            else if (z instanceof Pager) {
                 pa = (Pager) z;//只要最后一个对象 pager
             }
-
             //modify by SuperScorpion on 2022.08.23 for 处理实体类型条件
             else if(entityClass.isInstance(z)) {
                 paramEntityConditionHandler(sbb, z, isd);
