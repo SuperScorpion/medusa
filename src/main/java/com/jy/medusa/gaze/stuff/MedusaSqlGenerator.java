@@ -769,21 +769,29 @@ public class MedusaSqlGenerator {
 
                     short v = 0;
 
-                    //order by 必须放所有条件的最后 modify by SuperScorpion on 20250917
-                    //优先处理paramList里非OrderByParam的参数对象
+                    //各种and或or条件 然后 group by xxx 最后 order by xxx
+                    //优先处理paramList里非OrderByParam和非GroupByParam的参数对象 modify by SuperScorpion on 20250917
                     for (BaseParam x : paramList) {
-                        if(!(x instanceof OrderByParam)) baseParamHandler(sbb, x, isd, v, null, null, null);
+                        if(!(x instanceof OrderByParam) && !(x instanceof GroupByParam)) baseParamHandler(sbb, x, isd, v, null, null, null);
                         v++;
                     }
 
-                    //再处理or and 条件的语句 add by SuperScorpion on 20230113
+                    //处理or and 条件的语句 add by SuperScorpion on 20230113
                     if(z instanceof MedusaLambdaRestrictions) {
                         orAndParamHandler(sbb, z, isd);
                     }
 
                     v = 0;//重置v为0
 
-                    //最后处理paramList里OrderByParam的参数对象 modify by SuperScorpion on 20250917
+                    //处理GroupByParam的参数对象 modify by SuperScorpion on 20250917
+                    for (BaseParam x : paramList) {
+                        if(x instanceof GroupByParam) baseParamHandler(sbb, x, isd, v, null, null, null);
+                        v++;
+                    }
+
+                    v = 0;//重置v为0
+
+                    //处理OrderByParam的参数对象 modify by SuperScorpion on 20250917
                     for (BaseParam x : paramList) {
                         if(x instanceof OrderByParam) baseParamHandler(sbb, x, isd, v, null, null, null);
                         v++;
