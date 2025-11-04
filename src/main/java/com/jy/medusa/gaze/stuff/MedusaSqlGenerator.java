@@ -729,17 +729,18 @@ public class MedusaSqlGenerator {
 //        }
 
         //4.objParams 里的多条件查询类型参数处理
+        Pager paParam = null;
         if(objParams != null && objParams.length > 0) {
-
             /////处理各个参数 add by SuperScorpion on 2022.09.30
-            Pager paParam = processObjParams(sbb, objParams);
-            /////medusa内置万能方法 优先使用方法参数的pager对象 modify by SuperScorpion on 20250906
-            Pager pa = paParam == null ? (MedusaSqlHelper.myPagerThreadLocal.get() == null ? null : MedusaSqlHelper.myPagerThreadLocal.get()) : paParam;
+            paParam = processObjParams(sbb, objParams);
+        }
 
-            ///////分页开始
-            if(pa != null) {
-                PagerHelper.concatDynamicSqlForPager(sbb, pa);
-            }
+        /////medusa内置万能方法 优先使用方法参数的pager对象 modify by SuperScorpion on 20250906
+        paParam = paParam == null ? (MedusaSqlHelper.myPagerThreadLocal.get() == null ? null : MedusaSqlHelper.myPagerThreadLocal.get()) : paParam;
+
+        ///////分页开始
+        if(paParam != null) {
+            PagerHelper.concatDynamicSqlForPager(sbb, paParam);
         }
 
         logger.debug("Medusa: Generated SQL ^_^ " + sbb.toString());
