@@ -48,7 +48,7 @@ public class HolyGetPropertyNameLambda {
         }
 
         //截取get/is之后的字符串并转换首字母为小写
-        return MedusaGenUtils.lowcaseFirst(methodName.replace(prefix, ""));
+        return MedusaGenUtils.lowcaseFirst(methodName.replaceFirst(prefix, ""));
     }
 
     /**
@@ -64,7 +64,7 @@ public class HolyGetPropertyNameLambda {
         if (!methodName.startsWith("set")) {
             logger.warn("Medusa: SerializedLambda里无效的setter方法：" + methodName);
         }
-        return MedusaGenUtils.lowcaseFirst(methodName.replace("set", ""));
+        return MedusaGenUtils.lowcaseFirst(methodName.replaceFirst("set", ""));
     }
 
     /**
