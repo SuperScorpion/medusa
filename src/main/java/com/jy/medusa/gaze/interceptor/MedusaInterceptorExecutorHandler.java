@@ -158,6 +158,7 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
 
         //拿到缓存的Pager类
         Pager z = MedusaSqlHelper.myPagerThreadLocal.get();
+//        MedusaSqlHelper.myPagerThreadLocal.remove();
         //给pager赋result值和count值
         z.setList((List) result);//若结果集不为空则 给原有的pager参数注入list属性值
         z.setTotalCount(MedusaSqlHelper.caculatePagerTotalCount(((Executor) invocation.getTarget()).getTransaction().getConnection(), mt, p));/////通过invocation参数获得connection连接 并且通过这个连接查询出totalCount 注意: 不通过mybatis的 interceptor
