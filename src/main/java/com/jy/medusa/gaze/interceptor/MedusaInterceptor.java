@@ -4,6 +4,7 @@ package com.jy.medusa.gaze.interceptor;
  * Created by SuperScorpion on 16/9/15.
  */
 
+import com.jy.medusa.gaze.stuff.MedusaSqlHelper;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -37,7 +38,13 @@ public class MedusaInterceptor extends MedusaInterceptorExecutorHandler implemen
         Object result;
 
         if (invocation.getTarget() instanceof Executor) {
-            result = processExecutor(invocation);
+            try {
+                result = processExecutor(invocation);
+            } finally {
+                //防止异常情况发生后 tomcat线程池重用线程导致threadLocal污染下一个查询 add by SuperScorpion on 20251105
+                if (MedusaSqlHelper.myPagerThreadLocal.get() != null) MedusaSqlHelper.myPagerThreadLocal.remove();
+                if (MedusaSqlHelper.myThreadLocal.get() != null) MedusaSqlHelper.myThreadLocal.remove();
+            }
         } else if (invocation.getTarget() instanceof StatementHandler) {
             //delete insert update 都会进来此拦截(medusa的或非medusa的)
             //processExecutor里的invocationProceed(invocation)嵌套进入

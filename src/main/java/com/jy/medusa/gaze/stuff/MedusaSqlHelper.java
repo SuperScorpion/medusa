@@ -51,7 +51,7 @@ public class MedusaSqlHelper {
     //主要是为了解决 分页时 多次生成查询分页语句和总计数的查询语句时 缓存分页的查询语句
     public static ThreadLocal<String> myThreadLocal = new ThreadLocal<>();
 
-    //for pager
+    //for Pager.startPage
     public static ThreadLocal<Pager<?>> myPagerThreadLocal = new ThreadLocal<>();
 
 

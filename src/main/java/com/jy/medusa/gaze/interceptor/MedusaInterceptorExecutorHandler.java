@@ -51,18 +51,7 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
 
         //过滤只有medusa框架相关方法才能进入 Modify by SuperScorpion on 2019.05.31
         if (mt.getSqlSource() instanceof ProviderSqlSource && MedusaSqlHelper.checkMortalMethds(medusaMethodName)) {
-
-            //Pager.startPage启用 只对此类分页方式做了特殊处理 防止异常情况发生后 tomcat线程池重用线程导致threadLocal污染下一个普通查询 Modify by SuperScorpion on 20251105
-            if (MedusaSqlHelper.myPagerThreadLocal.get() != null) {
-                try {
-                    result = processProviderSqlSourceHandler(invocation, mt, medusaMethodName);
-                } finally {
-                    MedusaSqlHelper.myPagerThreadLocal.remove();
-                }
-            } else {
-                result = processProviderSqlSourceHandler(invocation, mt, medusaMethodName);
-            }
-
+            result = processProviderSqlSourceHandler(invocation, mt, medusaMethodName);
         } /*else if (mt.getSqlSource() instanceof RawSqlSource//processExecutor里的invocationProceed(invocation)嵌套进入
                 // medusa的insertSelectiveUUID 生成UUID时 SELECT REPLACE(UUID(), '-', '') 内部嵌套查询UUID的查询方法
                  && MedusaSqlHelper.checkInsertUUIDMethodSelectKey(medusaMethodName)) {
@@ -80,11 +69,7 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
             //Pager.startPage启用
             if (MedusaSqlHelper.myPagerThreadLocal.get() != null
                     && (mt.getSqlSource() instanceof RawSqlSource || mt.getSqlSource() instanceof DynamicSqlSource)) {
-                try {
-                    result = processRawAndDynamicSqlSourceHandler(invocation, mt);
-                } finally {
-                    MedusaSqlHelper.myPagerThreadLocal.remove();
-                }
+                result = processRawAndDynamicSqlSourceHandler(invocation, mt);
             } else {
                 result = invocationProceed(invocation);
             }
@@ -295,7 +280,7 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
                 //add by SuperScorpion on 2025.09.16 for 插件分页功能
                 if(MedusaSqlHelper.myPagerThreadLocal.get() != null) {
                     Pager z = MedusaSqlHelper.myPagerThreadLocal.get();
-                    MedusaSqlHelper.myPagerThreadLocal.remove();
+//                    MedusaSqlHelper.myPagerThreadLocal.remove();
                     z.setList((List) result);//若结果集不为空则 给原有的pager参数注入list属性值
                     z.setTotalCount(MedusaSqlHelper.caculatePagerTotalCount(((Executor) invocation.getTarget()).getTransaction().getConnection(), mt, p));/////通过invocation参数获得connection连接 并且通过这个连接查询出totalCount 注意: 不通过mybatis的 interceptor
                 }
