@@ -52,21 +52,16 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
         //过滤只有medusa框架相关方法才能进入 Modify by SuperScorpion on 2019.05.31
         if (mt.getSqlSource() instanceof ProviderSqlSource && MedusaSqlHelper.checkMortalMethds(medusaMethodName)) {
 
-            //重新构造invocation里的map参数
-            Map<String, Object> p = rebuildParamMap(invocation, mt);
-
-            //通过反射改变 insert相关方法的 keyProperties 的主键属性 实现插入时动态变更 @Options-keyProperty 的功能 modify by SuperScorpion on 20210522
-            processInsertKeyPropertiesBeforeProceed(mt, medusaMethodName, p);
-
-            //执行db操作 (当然 mybatis 的后续还有很多处理 比如 insert update delete 都会进下一个StatementHandler 的 interceptor)
-            result = invocationProceed(invocation);
-
-            //processBatchInsertPrimaryKeyWriteBack()先执行完后才到此处
-            //medusa的一些方法后续处理(insert相关 update相关 medusaGaze相关)
-            processMedusaMethod(medusaMethodName, result, invocation, p, mt);
-
-            //clean map params
-            resetParamMap(invocation, p);
+            //Pager.startPage启用 只对此类分页方式做了特殊处理 防止异常情况发生后 tomcat线程池重用线程导致threadLocal污染下一个普通查询 Modify by SuperScorpion on 20251105
+            if (MedusaSqlHelper.myPagerThreadLocal.get() != null) {
+                try {
+                    result = processProviderSqlSourceHandler(invocation, mt, medusaMethodName);
+                } finally {
+                    MedusaSqlHelper.myPagerThreadLocal.remove();
+                }
+            } else {
+                result = processProviderSqlSourceHandler(invocation, mt, medusaMethodName);
+            }
 
         } /*else if (mt.getSqlSource() instanceof RawSqlSource//processExecutor里的invocationProceed(invocation)嵌套进入
                 // medusa的insertSelectiveUUID 生成UUID时 SELECT REPLACE(UUID(), '-', '') 内部嵌套查询UUID的查询方法
@@ -83,10 +78,10 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
             //添加非medusa方法的查询分页处理 add by SuperScorpion on 20250906
             //只处理RawSqlSource 和 DynamicSqlSource
             //Pager.startPage启用
-            if(MedusaSqlHelper.myPagerThreadLocal.get() != null
+            if (MedusaSqlHelper.myPagerThreadLocal.get() != null
                     && (mt.getSqlSource() instanceof RawSqlSource || mt.getSqlSource() instanceof DynamicSqlSource)) {
                 try {
-                    result = processRawAndDynamicSqlSourcePagerHandler(invocation, mt);
+                    result = processRawAndDynamicSqlSourceHandler(invocation, mt);
                 } finally {
                     MedusaSqlHelper.myPagerThreadLocal.remove();
                 }
@@ -98,7 +93,51 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
         return result;
     }
 
-    private Object processRawAndDynamicSqlSourcePagerHandler(Invocation invocation, MappedStatement mt) throws InvocationTargetException, IllegalAccessException, SQLException {
+    /**
+     * 对ProviderSqlSource类型的处理
+     * @param invocation
+     * @param mt
+     * @param medusaMethodName
+     * @return
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     * @throws NoSuchFieldException
+     * @throws SQLException
+     * @throws ParseException
+     */
+    private Object processProviderSqlSourceHandler(Invocation invocation, MappedStatement mt, String medusaMethodName) throws InvocationTargetException, IllegalAccessException, NoSuchFieldException, SQLException, ParseException {
+
+        Object result;
+
+        //重新构造invocation里的map参数
+        Map<String, Object> p = rebuildParamMap(invocation, mt);
+
+        //通过反射改变 insert相关方法的 keyProperties 的主键属性 实现插入时动态变更 @Options-keyProperty 的功能 modify by SuperScorpion on 20210522
+        processInsertKeyPropertiesBeforeProceed(mt, medusaMethodName, p);
+
+        //执行db操作 (当然 mybatis 的后续还有很多处理 比如 insert update delete 都会进下一个StatementHandler 的 interceptor)
+        result = invocationProceed(invocation);
+
+        //processBatchInsertPrimaryKeyWriteBack()先执行完后才到此处
+        //medusa的一些方法后续处理(insert相关 update相关 medusaGaze相关)
+        processMedusaMethod(medusaMethodName, result, invocation, p, mt);
+
+        //clean map params
+        resetParamMap(invocation, p);
+
+        return result;
+    }
+
+    /**
+     * 对RawSqlSource和DynamicSqlSource类型的处理
+     * @param invocation
+     * @param mt
+     * @return
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     * @throws SQLException
+     */
+    private Object processRawAndDynamicSqlSourceHandler(Invocation invocation, MappedStatement mt) throws InvocationTargetException, IllegalAccessException, SQLException {
 
         Object result;
 
