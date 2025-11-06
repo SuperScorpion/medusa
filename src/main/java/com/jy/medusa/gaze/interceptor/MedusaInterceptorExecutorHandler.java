@@ -51,7 +51,13 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
 
         //过滤只有medusa框架相关方法才能进入 Modify by SuperScorpion on 2019.05.31
         if (mt.getSqlSource() instanceof ProviderSqlSource && MedusaSqlHelper.checkMortalMethds(medusaMethodName)) {
-            result = processProviderSqlSourceHandler(invocation, mt, medusaMethodName);
+            try {
+                result = processProviderSqlSourceHandler(invocation, mt, medusaMethodName);
+            } finally {
+                //防止异常情况发生后 tomcat线程池重用线程导致threadLocal污染下一个查询 add by SuperScorpion on 20251105
+                if (MedusaSqlHelper.myPagerThreadLocal.get() != null) MedusaSqlHelper.myPagerThreadLocal.remove();
+                if (MedusaSqlHelper.myThreadLocal.get() != null) MedusaSqlHelper.myThreadLocal.remove();
+            }
         } /*else if (mt.getSqlSource() instanceof RawSqlSource//processExecutor里的invocationProceed(invocation)嵌套进入
                 // medusa的insertSelectiveUUID 生成UUID时 SELECT REPLACE(UUID(), '-', '') 内部嵌套查询UUID的查询方法
                  && MedusaSqlHelper.checkInsertUUIDMethodSelectKey(medusaMethodName)) {
@@ -69,7 +75,13 @@ abstract class MedusaInterceptorExecutorHandler extends MedusaInterceptorStateme
             //Pager.startPage启用
             if (MedusaSqlHelper.myPagerThreadLocal.get() != null
                     && (mt.getSqlSource() instanceof RawSqlSource || mt.getSqlSource() instanceof DynamicSqlSource)) {
-                result = processRawAndDynamicSqlSourceHandler(invocation, mt);
+                try {
+                    result = processRawAndDynamicSqlSourceHandler(invocation, mt);
+                } finally {
+                    //防止异常情况发生后 tomcat线程池重用线程导致threadLocal污染下一个查询 add by SuperScorpion on 20251105
+                    if (MedusaSqlHelper.myPagerThreadLocal.get() != null) MedusaSqlHelper.myPagerThreadLocal.remove();
+                    if (MedusaSqlHelper.myThreadLocal.get() != null) MedusaSqlHelper.myThreadLocal.remove();
+                }
             } else {
                 result = invocationProceed(invocation);
             }
