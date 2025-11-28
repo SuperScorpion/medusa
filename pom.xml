@@ -16,11 +16,11 @@
     <properties>
         <mybatis.version>3.5.19</mybatis.version>
         <slf4j-api.version>2.0.17</slf4j-api.version>
-        <aspect.version>1.9.24</aspect.version>
+        <aspect.version>1.9.25</aspect.version>
         <freemarker.version>2.3.34</freemarker.version>
-        <snakeyaml.version>2.4</snakeyaml.version>
-        <hutool.version>5.8.40</hutool.version>
-        <lang3.version>3.18.0</lang3.version>
+        <snakeyaml.version>2.5</snakeyaml.version>
+        <hutool.version>5.8.41</hutool.version>
+        <lang3.version>3.20.0</lang3.version>
         <!--<com.alibaba.fastjson>1.2.66</com.alibaba.fastjson>-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -40,11 +40,6 @@
             <version>${slf4j-api.version}</version>
             <optional>true</optional><!--让用户来提供-->
         </dependency>
-        <!--<dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>-->
 
         <!-- 生成entity时 参数校验解析的 json  -->
         <!--<dependency>

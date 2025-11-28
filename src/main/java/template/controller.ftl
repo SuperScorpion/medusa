@@ -7,19 +7,13 @@ import ${servicePath}.${entityName}Service;
 import ${entityPath}.${entityName}${entityNameSuffix};
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
+import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 /**
 * Created by ${author} on ${now_time}
 */
-@Controller
+@RestController
 @RequestMapping("/${lowcaseFirstEntityName}")
 public class ${entityName}Controller {
 
@@ -28,9 +22,8 @@ public class ${entityName}Controller {
     @Resource
     private ${entityName}Service ${lowcaseFirstEntityName}Service;
 
-    @RequestMapping(value = "/index.json", method = RequestMethod.GET)
-    @ResponseBody
-    public JSONObject index(@RequestParam Integer pageNum, ${entityName}${entityNameSuffix} param, HttpServletRequest request) {
+    @GetMapping(value = "/index")
+    public JSONObject index(@RequestParam Integer pageNum, ${entityName}${entityNameSuffix} param) {
 
         JSONObject json = new JSONObject();
 
@@ -47,9 +40,8 @@ public class ${entityName}Controller {
         return json;
     }
 
-    @RequestMapping(value = "/save.json", method = RequestMethod.POST)
-    @ResponseBody
-    public JSONObject save(${entityName}${entityNameSuffix} param, HttpServletRequest request) {
+    @PostMapping(value = "/save")
+    public JSONObject save(${entityName}${entityNameSuffix} param) {
 
         JSONObject json = new JSONObject();
 
@@ -65,9 +57,8 @@ public class ${entityName}Controller {
         return json;
     }
 
-    @RequestMapping(value = "/update.json", method = RequestMethod.POST)
-    @ResponseBody
-    public JSONObject update(${entityName}${entityNameSuffix} param, HttpServletRequest request) {
+    @PostMapping(value = "/update")
+    public JSONObject update(${entityName}${entityNameSuffix} param) {
 
         JSONObject json = new JSONObject();
 
@@ -83,9 +74,8 @@ public class ${entityName}Controller {
         return json;
     }
 
-    @RequestMapping(value = "/delete.json", method = RequestMethod.GET)
-    @ResponseBody
-    public JSONObject delete(@RequestParam Integer id, HttpServletRequest request) {
+    @GetMapping(value = "/delete")
+    public JSONObject delete(@RequestParam Integer id) {
 
         JSONObject json = new JSONObject();
 

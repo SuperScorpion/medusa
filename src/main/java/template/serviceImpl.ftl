@@ -2,6 +2,7 @@ package ${serviceImplPath};
 
 import ${entityPath}.${entityName}${entityNameSuffix};
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import ${mapperPath}.${entityName}Mapper;
 import org.springframework.stereotype.Service;
 import ${servicePath}.${entityName}Service;
@@ -15,4 +16,6 @@ public class ${entityName}ServiceImpl extends BaseServiceImpl<${entityName}${ent
     @Resource
     private ${entityName}Mapper ${lowcaseFirstEntityName}Mapper;
 
+    @Resource
+    private HttpServletRequest request;
 }
