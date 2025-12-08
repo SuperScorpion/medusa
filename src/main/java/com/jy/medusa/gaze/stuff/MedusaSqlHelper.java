@@ -566,6 +566,7 @@ public class MedusaSqlHelper {
     }
 
     /**
+     * org.apache.ibatis.scripting.defaults.DefaultParameterHandler
      * 对SQL参数(?)设值,参考org.apache.ibatis.executor.parameter.DefaultParameterHandler
      * @param ps               参数
      * @param mappedStatement      参数
@@ -573,41 +574,44 @@ public class MedusaSqlHelper {
      * @param parameterObject              参数
      * @throws SQLException
      */
-    private static void setParameters(PreparedStatement ps,MappedStatement mappedStatement,BoundSql boundSql,Object parameterObject) throws SQLException {
+    private static void setParameters(PreparedStatement ps, MappedStatement mappedStatement, BoundSql boundSql, Object parameterObject) throws SQLException {
+
+        Configuration configuration = mappedStatement.getConfiguration();
+        TypeHandlerRegistry typeHandlerRegistry = mappedStatement.getConfiguration().getTypeHandlerRegistry();
 
         ErrorContext.instance().activity("setting parameters").object(mappedStatement.getParameterMap().getId());
-        List parameterMappings = boundSql.getParameterMappings();
-        Configuration configuration = mappedStatement.getConfiguration();
-        TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
+        List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
+        if (parameterMappings != null) {
+            MetaObject metaObject = null;
 
-        if(parameterMappings != null) {
             for(int i = 0; i < parameterMappings.size(); ++i) {
                 ParameterMapping parameterMapping = (ParameterMapping)parameterMappings.get(i);
-                if(parameterMapping.getMode() != ParameterMode.OUT) {
+                if (parameterMapping.getMode() != ParameterMode.OUT) {
                     String propertyName = parameterMapping.getProperty();
                     Object value;
-                    if(boundSql.hasAdditionalParameter(propertyName)) {
+                    if (boundSql.hasAdditionalParameter(propertyName)) {
                         value = boundSql.getAdditionalParameter(propertyName);
-                    } else if(parameterObject == null) {
+                    } else if (parameterObject == null) {
                         value = null;
-                    } else if(typeHandlerRegistry.hasTypeHandler(parameterObject.getClass())) {
+                    } else if (typeHandlerRegistry.hasTypeHandler(parameterObject.getClass())) {
                         value = parameterObject;
                     } else {
-                        MetaObject typeHandler = configuration.newMetaObject(parameterObject);
-                        value = typeHandler.getValue(propertyName);
+                        if (metaObject == null) {
+                            metaObject = configuration.newMetaObject(parameterObject);
+                        }
+
+                        value = metaObject.getValue(propertyName);
                     }
 
-                    TypeHandler var12 = parameterMapping.getTypeHandler();
+                    TypeHandler typeHandler = parameterMapping.getTypeHandler();
                     JdbcType jdbcType = parameterMapping.getJdbcType();
-                    if(value == null && jdbcType == null) {
+                    if (value == null && jdbcType == null) {
                         jdbcType = configuration.getJdbcTypeForNull();
                     }
 
                     try {
-                        var12.setParameter(ps, i + 1, value, jdbcType);
-                    } catch (TypeException var10) {
-                        throw new TypeException("Could not set parameters for mapping: " + parameterMapping + ". Cause: " + var10, var10);
-                    } catch (SQLException var11) {
+                        typeHandler.setParameter(ps, i + 1, value, jdbcType);
+                    } catch (SQLException | TypeException var11) {
                         throw new TypeException("Could not set parameters for mapping: " + parameterMapping + ". Cause: " + var11, var11);
                     }
                 }
