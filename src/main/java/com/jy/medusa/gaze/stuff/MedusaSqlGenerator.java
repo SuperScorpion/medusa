@@ -642,9 +642,9 @@ public class MedusaSqlGenerator {
             MedusaSqlHelper.myThreadLocal.remove();
             logger.debug("Medusa: Successfully cleared the query page in the cache");
 
-            String countSq = cacheSq = cacheSq.replaceAll("(?i)SELECT[\\s\\S]+?FROM", "SELECT COUNT(1) FROM")//量后面加? 实现非懒模式 modify by SuperScorpion on 20251205
+            String countSq = cacheSq = cacheSq.replaceFirst("(?i)SELECT[\\s\\S]+?FROM", "SELECT COUNT(1) FROM")//量后面加? 实现非懒模式 modify by SuperScorpion on 20251205
                     .replaceAll("(?i)\\bORDER BY\\s+\\S+\\s+[ASC|DESC]*", "")
-                    .replaceAll("(?i)\\bLIMIT [0-9]*,[0-9]*", "");
+                    .replaceAll("(?i)\\bLIMIT ([0-9]*,[0-9]*|[0-9]*)", "");
             logger.debug("Medusa: Successfully returns the count sql of pages in the cache ^_^ " + countSq);
 
             return countSq;
