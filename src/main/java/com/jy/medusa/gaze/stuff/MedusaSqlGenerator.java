@@ -6,6 +6,7 @@ import com.jy.medusa.gaze.stuff.exception.MedusaException;
 import com.jy.medusa.gaze.stuff.param.BaseRestrictions;
 import com.jy.medusa.gaze.stuff.param.MedusaLambdaMap;
 import com.jy.medusa.gaze.stuff.param.MedusaLambdaRestrictions;
+import com.jy.medusa.gaze.stuff.param.MedusaLambdaRestrictionsSup;
 import com.jy.medusa.gaze.stuff.param.base.BaseParam;
 import com.jy.medusa.gaze.stuff.param.gele.*;
 import com.jy.medusa.gaze.stuff.param.mix.*;
@@ -847,8 +848,8 @@ public class MedusaSqlGenerator {
      */
     private void orAndParamHandler(StringBuilder sbb, Object z, short isd) {
 
-        List<BaseModelClass> orModelList = ((MedusaLambdaRestrictions) z).getOrModelList();
-        List<BaseModelClass> andModelList = ((MedusaLambdaRestrictions) z).getAndModelList();
+        List<MedusaLambdaRestrictionsSup> orModelList = ((MedusaLambdaRestrictions) z).getOrModelList();
+        List<MedusaLambdaRestrictionsSup> andModelList = ((MedusaLambdaRestrictions) z).getAndModelList();
 
         if(orModelList != null && !orModelList.isEmpty()) {
             orAndModelHandler(sbb, orModelList, isd, false);
@@ -858,44 +859,47 @@ public class MedusaSqlGenerator {
         }
     }
 
-    private void orAndModelHandler(StringBuilder sbb, List<BaseModelClass> modelList, short isd, boolean isAndList) {
+    private void orAndModelHandler(StringBuilder sbb, List<MedusaLambdaRestrictionsSup> modelList, short isd, boolean isAndList) {
 
         String orAndStr = isAndList == false ? " OR " : " AND ";
 
         short m = 0;
-        for (BaseModelClass bmc : modelList) {
+        for (MedusaLambdaRestrictionsSup bmc : modelList) {
 
-            if(bmc instanceof OrModelClass) {
-                List<BaseParam> omcParamList = bmc.getParamList();
+            if (bmc instanceof BaseModelClass) {
 
-                if(omcParamList != null && !omcParamList.isEmpty()) {
+                if (bmc instanceof OrModelClass) {
+                    List<BaseParam> omcParamList = bmc.getParamList();
 
-                    short n = 0;
-                    sbb.append(orAndStr).append("(1!=1");
-                    for (BaseParam x : omcParamList) {
-                        baseParamHandler(sbb, x, isd, n, m, isAndList, false);
-                        n++;
+                    if (omcParamList != null && !omcParamList.isEmpty()) {
+
+                        short n = 0;
+                        sbb.append(orAndStr).append("(1!=1");
+                        for (BaseParam x : omcParamList) {
+                            baseParamHandler(sbb, x, isd, n, m, isAndList, false);
+                            n++;
+                        }
+                        sbb.append(")");
                     }
-                    sbb.append(")");
                 }
-            }
 
-            if(bmc instanceof AndModelClass) {
-                List<BaseParam> omcParamList = bmc.getParamList();
+                if (bmc instanceof AndModelClass) {
+                    List<BaseParam> omcParamList = bmc.getParamList();
 
-                if(omcParamList != null && !omcParamList.isEmpty()) {
+                    if (omcParamList != null && !omcParamList.isEmpty()) {
 
-                    short n = 0;
-                    sbb.append(orAndStr).append("(1=1");
-                    for (BaseParam x : omcParamList) {
-                        baseParamHandler(sbb, x, isd, n, m, isAndList, true);
-                        n++;
+                        short n = 0;
+                        sbb.append(orAndStr).append("(1=1");
+                        for (BaseParam x : omcParamList) {
+                            baseParamHandler(sbb, x, isd, n, m, isAndList, true);
+                            n++;
+                        }
+                        sbb.append(")");
                     }
-                    sbb.append(")");
                 }
-            }
 
-            m++;
+                m++;
+            }
         }
     }
 
