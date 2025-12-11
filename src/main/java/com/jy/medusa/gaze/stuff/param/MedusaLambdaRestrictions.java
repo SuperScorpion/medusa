@@ -1,6 +1,7 @@
 package com.jy.medusa.gaze.stuff.param;
 
 import com.jy.medusa.gaze.stuff.Pager;
+import com.jy.medusa.gaze.stuff.exception.MedusaException;
 import com.jy.medusa.gaze.stuff.param.lambda.HolyGetPropertyNameLambda;
 import com.jy.medusa.gaze.stuff.param.lambda.HolyGetter;
 import com.jy.medusa.gaze.stuff.param.orand.AndModelClass;
@@ -56,12 +57,14 @@ public class MedusaLambdaRestrictions<T> extends MedusaLambdaRestrictionsSup<T> 
     }
 
     public MedusaLambdaRestrictions<T> or(MedusaLambdaRestrictionsSup omc) {
+        if(!(omc instanceof BaseModelClass)) throw new MedusaException("The method needs to include the orModel or andModel method to concatenate parameters!");
         if(orModelList == null) orModelList = new ArrayList<>();
         orModelList.add(omc);
         return this;
     }
 
     public MedusaLambdaRestrictions<T> and(MedusaLambdaRestrictionsSup omc) {
+        if(!(omc instanceof BaseModelClass)) throw new MedusaException("The method needs to include the orModel or andModel method to concatenate parameters!");
         if(andModelList == null) andModelList = new ArrayList<>();
         andModelList.add(omc);
         return this;
