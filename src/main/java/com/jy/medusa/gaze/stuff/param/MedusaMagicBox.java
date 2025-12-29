@@ -1,6 +1,9 @@
 package com.jy.medusa.gaze.stuff.param;
 
 import com.jy.medusa.gaze.stuff.Pager;
+import com.jy.medusa.gaze.stuff.param.orand.AndModelClass;
+import com.jy.medusa.gaze.stuff.param.orand.BaseModelClass;
+import com.jy.medusa.gaze.stuff.param.orand.OrModelClass;
 
 public class MedusaMagicBox {
 
@@ -44,5 +47,21 @@ public class MedusaMagicBox {
      */
     public static MedusaLambdaMap getLambdaMap() {
         return new MedusaLambdaMap();
+    }
+
+    /**
+     * MedusaLambdaRestrictions 复杂语句条件拼接时使用 作为and(...)或or(...)里的参数
+     * @return
+     */
+    public BaseModelClass orBuilder() {
+        return new OrModelClass();
+    }
+
+    /**
+     * MedusaLambdaRestrictions 复杂语句条件拼接时使用 作为and(...)或or(...)里的参数
+     * @return
+     */
+    public BaseModelClass andBuilder() {
+        return new AndModelClass();
     }
 }

@@ -822,12 +822,11 @@ public class MedusaSqlGenerator {
         }
 
         //处理语句里1=1和1!=1 add by SuperScorpion on 20230113
-
-        MedusaCommonUtils.replaceAll(sbb, "1=1 AND", "");//外层
-        MedusaCommonUtils.replaceAll(sbb, "1=1 OR", "");//外层
+        MedusaCommonUtils.replaceAll(sbb, "1=1 AND ", "");//外层
+        MedusaCommonUtils.replaceAll(sbb, "1=1 OR ", "");//外层
 
 //        MedusaCommonUtils.replaceAll(sbb, "1=1 AND", "");//baseParamHandler里
-        MedusaCommonUtils.replaceAll(sbb, "1!=1 OR", "");//baseParamHandler里
+        MedusaCommonUtils.replaceAll(sbb, "1!=1 OR ", "");//baseParamHandler里
 
         //add by SuperScorpion on 20250830 参数都为null的情况
         MedusaCommonUtils.replaceAll(sbb, "AND (1!=1)", "");
