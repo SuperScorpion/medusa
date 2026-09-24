@@ -17,7 +17,7 @@
         <mybatis.version>3.5.19</mybatis.version>
         <slf4j-api.version>2.0.17</slf4j-api.version>
         <aspect.version>1.9.25</aspect.version>
-        <freemarker.version>2.3.34</freemarker.version>
+        <freemarker.version>2.3.35</freemarker.version>
         <snakeyaml.version>2.5</snakeyaml.version>
         <hutool.version>5.8.41</hutool.version>
         <lang3.version>3.20.0</lang3.version>
