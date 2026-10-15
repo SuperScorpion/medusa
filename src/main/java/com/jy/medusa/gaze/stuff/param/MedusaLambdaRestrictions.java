@@ -57,24 +57,43 @@ public class MedusaLambdaRestrictions<T> extends MedusaLambdaRestrictionsSup<T> 
     }
 
     public MedusaLambdaRestrictions<T> or(MedusaLambdaRestrictionsSup omc) {
-        if(!(omc instanceof BaseModelClass)) throw new MedusaException("The method needs to include the orModel or andModel method to concatenate parameters!");
+        if(!(omc instanceof BaseModelClass)) throw new MedusaException("The method needs to include the orBuilder or andBuilder method to concatenate parameters!");
         if(orModelList == null) orModelList = new ArrayList<>();
         orModelList.add(omc);
         return this;
     }
 
     public MedusaLambdaRestrictions<T> and(MedusaLambdaRestrictionsSup omc) {
-        if(!(omc instanceof BaseModelClass)) throw new MedusaException("The method needs to include the orModel or andModel method to concatenate parameters!");
+        if(!(omc instanceof BaseModelClass)) throw new MedusaException("The method needs to include the orBuilder or andBuilder method to concatenate parameters!");
         if(andModelList == null) andModelList = new ArrayList<>();
         andModelList.add(omc);
         return this;
     }
 
+
+    /** @deprecated */
     public BaseModelClass<T> orModel() {
         return new OrModelClass();
     }
 
+    /** @deprecated */
     public BaseModelClass<T> andModel() {
+        return new AndModelClass();
+    }
+
+    /**
+     * MedusaLambdaRestrictions 复杂语句条件拼接时使用 作为and(...)或or(...)里的参数
+     * @return
+     */
+    public BaseModelClass orBuilder() {
+        return new OrModelClass();
+    }
+
+    /**
+     * MedusaLambdaRestrictions 复杂语句条件拼接时使用 作为and(...)或or(...)里的参数
+     * @return
+     */
+    public BaseModelClass andBuilder() {
         return new AndModelClass();
     }
 }
